@@ -26,6 +26,10 @@ Ecossistema Java: linguagem, frameworks, ferramentas e boas práticas.
   - [[Setting Up Kafka]]
   - [[Otimizando Kafka consumers]]
 
+## Frontend
+
+- [[JavaFX]]
+
 ## Protocolos e Comunicação
 
 - [[gRPC e Go]]

@@ -23,6 +23,7 @@ Caderno digital de desenvolvimento de software. Anotações, referências e guia
 
 - [[MOC - Arquitetura]]
 - [[Arquitetura de Software]] · [[System Design]] · [[Design Patterns]] · [[API Design]]
+- **Mensageria:** [[Mensageria]] · [[Event Streaming]] · [[Kafka]] · [[RabbitMQ]] · [[BullMQ]]
 - [[Event Storming]] · [[Gateway de Pagamento]]
 
 ## Java
@@ -30,17 +31,25 @@ Caderno digital de desenvolvimento de software. Anotações, referências e guia
 - [[MOC - Java]]
 - **Core:** [[Java Fundamentals]] · [[Trilha Java]]
 - **Backend:** [[Spring Boot]] · [[Kafka]] · [[Testes em Java]] · [[gRPC e Go]]
+- **Frontend:** [[JavaFX]]
 
 ## JavaScript
 
 - [[MOC - JavaScript]]
 - **Core:** [[JavaScript Fundamentals]] · [[TypeScript]]
 - **Backend:** [[Node.js]]
-- **Frontend:** [[React]]
+- **Frontend:** [[React]] · [[HTML e CSS]] · [[Bootstrap]] · [[Material UI]] · [[Mantine]]
+
+## Inteligência Artificial
+
+- [[MOC - IA]]
+- [[Inteligência Artificial]] · [[LLMs]] · [[Agents]] · [[Skills e Prompting]]
+- **Ferramentas:** [[Claude]] · [[GitHub Copilot]] · [[Codex]] · [[Gemini]] · [[Comparativo de LLMs]]
 
 ## Infraestrutura
 
 - [[MOC - Infraestrutura]]
+- [[Docker]] · [[Kubernetes]] · [[Nginx]] · [[Linux]] · [[Terminal]]
 - [[WSL, Docker e Kubernetes]] · [[Digital Ocean]] · [[Configurando Ambiente Linux no WSL]]
 
 ## Aprendizado

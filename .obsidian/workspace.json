@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "00 - Inbox/Entradas.md",
+                "file": "Arquitetura/API Design.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Entradas"
+              "title": "API Design"
             }
           },
           {
@@ -41,16 +41,15 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "00 - Inbox/Entradas.md",
+                "file": "Aprendizado/Trilha Cloud.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Entradas"
+              "title": "Trilha Cloud"
             }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -216,53 +215,53 @@
       "obsidian42-brat:BRAT": false
     }
   },
-  "active": "69b3cfbe98cbeb09",
+  "active": "0e940fedb58df06d",
   "lastOpenFiles": [
-    "Aprendizado/Claude Course.md",
-    "Aprendizado/Curso Fullcycle 3.0.md",
-    "Arquitetura/Arquitetura de Software.md",
-    "Arquitetura/Event Storming/Untitled 3.png",
+    "Aprendizado/Trilha Entrevistas.md.tmp.3042512.1775084589618",
+    "Aprendizado/Trilha Entrevistas.md.tmp.3042512.1775084585688",
+    "index.md.tmp.3042512.1775084575667",
+    "index.md.tmp.3042512.1775084572850",
+    "MOCs/MOC - Infraestrutura.md.tmp.3042512.1775084563363",
+    "MOCs/MOC - Arquitetura.md.tmp.3042512.1775084561032",
+    "MOCs/MOC - JavaScript.md.tmp.3042512.1775084559147",
+    "MOCs/MOC - IA.md",
+    "MOCs/MOC - IA.md.tmp.3042512.1775084544989",
+    "Infraestrutura/Terminal.md",
+    "Infraestrutura/Terminal.md.tmp.3042512.1775084526664",
+    "Infraestrutura/Linux.md",
+    "Infraestrutura/Linux.md.tmp.3042512.1775084507863",
+    "Infraestrutura/Nginx.md",
+    "Infraestrutura/Nginx.md.tmp.3042512.1775084490758",
+    "Infraestrutura/Kubernetes.md",
+    "Infraestrutura/Docker.md",
+    "Arquitetura/Mensageria/BullMQ.md",
+    "Arquitetura/Mensageria/RabbitMQ.md",
+    "Arquitetura/Mensageria/Kafka.md",
+    "Arquitetura/Mensageria/Event Streaming.md",
+    "Arquitetura/Mensageria/Mensageria.md",
     "Arquitetura/Event Storming/Event Storming.md",
+    "Arquitetura/Event Storming/Untitled 3.png",
+    "Arquitetura/Event Storming/Untitled 1 2.png",
     "Arquitetura/Event Storming/Exemplos.md",
-    "00 - Inbox/Entradas.md",
-    "00 - Inbox/Avaliar.md",
-    "Aprendizado/Trilha IA.md",
-    "Untitled.md",
-    "Aprendizado/Mestres/Giuliana Bezerra.md",
-    "index.md",
-    "_templates/Template - Mestre.md",
-    "_templates/Template - Mestre.md.tmp.737271.1774481977529",
-    "_templates/Template - MOC.md",
-    "_templates/Template - MOC.md.tmp.737271.1774481972957",
-    "_templates/Template - TIL.md",
-    "_templates/Template - TIL.md.tmp.737271.1774481968448",
-    "_templates/Template - How-To.md",
-    "_templates/Template - How-To.md.tmp.737271.1774481963461",
-    "_templates/Template - Nota.md",
-    "_templates/Template - Nota.md.tmp.737271.1774481958959",
-    "MOCs/MOC - Recursos.md",
-    "MOCs/MOC - Recursos.md.tmp.737271.1774481952644",
-    "MOCs/MOC - Aprendizado.md",
-    "MOCs/MOC - Aprendizado.md.tmp.737271.1774481948418",
-    "MOCs/MOC - Ferramentas.md",
-    "MOCs/MOC - Ferramentas.md.tmp.737271.1774481941239",
-    "Aprendizado/Mestres/Fernanda Kipper.md",
-    "Aprendizado/Mestres/Eduardo Mendes (Dunossauro).md",
-    "Aprendizado/Mestres/Bruno Souza.md",
-    "MOCs/MOC - Fundamentos.md",
-    "MOCs/MOC - Fundamentos.md.tmp.737271.1774474894555",
-    "MOCs/MOC - Infraestrutura.md",
-    "MOCs/MOC - Infraestrutura.md.tmp.737271.1774474887457",
-    "MOCs/MOC - Arquitetura.md",
-    "MOCs/MOC - Java.md",
+    "Aprendizado/Trilha Go.md",
+    "Aprendizado/Trilha Frontend.md",
+    "Aprendizado/Trilha Entrevistas.md",
+    "Aprendizado/Trilha Devops.md",
+    "Aprendizado/Trilha Cloud.md",
+    "Aprendizado/Trilha Backend.md",
+    "Aprendizado/System Design Practice.md",
+    "Aprendizado/STAR Method.md",
+    "Aprendizado/RPA.md",
+    "Aprendizado/Minha Narrativa Profissional.md",
+    "Aprendizado/Instalando Anaconda no Ubuntu.md",
+    "Aprendizado/Curso Fullcycle 3.0.md",
+    "Java/Backend/Kafka/Untitled 4.png",
     "Aprendizado/RPA/Untitled 1 4.png",
     "Aprendizado/RPA/Untitled 1 3.png",
-    "Arquitetura/Event Storming/Untitled 1 2.png",
     "Aprendizado/RPA/Untitled 7.png",
     "Aprendizado/RPA/Untitled 6.png",
     "Aprendizado/RPA/Untitled 5.png",
     "Java/Kafka/Untitled 4.png",
-    "Infraestrutura/Untitled 2.png",
-    "Infraestrutura/Untitled 1.png"
+    "Infraestrutura/Untitled 2.png"
   ]
 }

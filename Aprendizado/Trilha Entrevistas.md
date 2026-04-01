@@ -38,6 +38,11 @@ Roteiro de preparação para entrevistas de Senior Fullstack Developer em vagas 
 - [ ] [[API Design]]
 - [ ] [[Arquitetura de Software]]
 - [ ] [[Event Storming]]
+- [ ] [[Mensageria]]
+- [ ] [[Event Streaming]]
+- [ ] [[Kafka]]
+- [ ] [[RabbitMQ]]
+- [ ] [[BullMQ]]
 
 ## Fase 3 — Stack Java
 
@@ -46,6 +51,7 @@ Roteiro de preparação para entrevistas de Senior Fullstack Developer em vagas 
 - [ ] [[Java Fundamentals]]
 - [ ] [[Spring Boot]]
 - [ ] [[Kafka]]
+- [ ] [[JavaFX]]
 
 ## Fase 4 — Stack JavaScript/TypeScript
 
@@ -55,6 +61,34 @@ Roteiro de preparação para entrevistas de Senior Fullstack Developer em vagas 
 - [ ] [[TypeScript]]
 - [ ] [[Node.js]]
 - [ ] [[React]]
+- [ ] [[HTML e CSS]]
+- [ ] [[Bootstrap]]
+- [ ] [[Material UI]]
+- [ ] [[Mantine]]
+
+## Fase 4.5 — Infraestrutura & DevOps
+
+> O que sustenta tudo em produção.
+
+- [ ] [[Docker]]
+- [ ] [[Kubernetes]]
+- [ ] [[Nginx]]
+- [ ] [[Linux]]
+- [ ] [[Terminal]]
+
+## Fase 4.6 — Inteligência Artificial
+
+> IA como ferramenta de produtividade e feature de produto.
+
+- [ ] [[Inteligência Artificial]]
+- [ ] [[LLMs]]
+- [ ] [[Agents]]
+- [ ] [[Skills e Prompting]]
+- [ ] [[Claude]]
+- [ ] [[GitHub Copilot]]
+- [ ] [[Codex]]
+- [ ] [[Gemini]]
+- [ ] [[Comparativo de LLMs]]
 
 ## Fase 5 — Behavioral & Comunicação
 

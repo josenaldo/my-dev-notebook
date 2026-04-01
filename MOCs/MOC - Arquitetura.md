@@ -18,6 +18,12 @@ Padrões, estilos e práticas de arquitetura de sistemas.
 - [[Design Patterns]]
 - [[API Design]]
 
+## Mensageria e Event Streaming
+
+- [[Mensageria]] — conceitos gerais
+- [[Event Streaming]]
+- [[Kafka]] · [[RabbitMQ]] · [[BullMQ]]
+
 ## Modelagem e Design
 
 - [[Event Storming]]

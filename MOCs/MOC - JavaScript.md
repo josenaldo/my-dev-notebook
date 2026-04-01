@@ -20,6 +20,7 @@ Ecossistema JavaScript e TypeScript: linguagem, Node.js no backend, React no fro
 ## Frontend
 
 - [[React]]
+- [[HTML e CSS]] · [[Bootstrap]] · [[Material UI]] · [[Mantine]]
 
 ## Trilhas relacionadas
 

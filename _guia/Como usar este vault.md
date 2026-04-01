@@ -25,7 +25,7 @@ O vault está organizado por **domínios** (pastas) e **stacks** (ecossistemas d
 
 ### Stacks (ecossistemas de tecnologia)
 
-- **Java/** — Core (linguagem), Backend (Spring Boot, Kafka)
+- **Java/** — Core (linguagem), Backend (Spring Boot, Kafka), Frontend (JavaFx)
 - **JavaScript/** — Core (JS, TypeScript), Backend (Node.js), Frontend (React)
 - **Python/** — (futuro)
 - **Go/** — (futuro)
@@ -46,23 +46,25 @@ O vault está organizado por **domínios** (pastas) e **stacks** (ecossistemas d
 
 ## Templates disponíveis
 
-| Template | Quando usar |
-|----------|-------------|
-| Template - Nota | Conceitos genéricos |
+| Template                  | Quando usar                                 |
+| ------------------------- | ------------------------------------------- |
+| Template - Nota           | Conceitos genéricos                         |
 | Template - Interview Note | Conceitos com foco em entrevista (bilíngue) |
-| Template - How-To | Passo-a-passo de como fazer algo |
-| Template - TIL | Algo que aprendi hoje |
-| Template - MOC | Novo índice de área |
-| Template - Mestre | Referência de desenvolvedor/mentor |
+| Template - How-To         | Passo-a-passo de como fazer algo            |
+| Template - TIL            | Algo que aprendi hoje                       |
+| Template - MOC            | Novo índice de área                         |
+| Template - Mestre         | Referência de desenvolvedor/mentor          |
 
 ## Como usar as seções bilíngues
 
 Cada nota com o template **Interview Note** tem duas seções especiais:
 
 ### "Na prática (da minha experiência)"
+
 Exemplos reais dos seus projetos. Use para praticar como contar suas experiências em entrevistas.
 
 ### "How to explain in English"
+
 Como articular o conceito em inglês durante uma entrevista. Inclui vocabulário-chave (`termo_pt → english_term`). Leia em voz alta para praticar.
 
 ## Trilha de Entrevistas
