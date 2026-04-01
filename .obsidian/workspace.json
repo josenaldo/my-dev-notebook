@@ -1,0 +1,268 @@
+{
+  "main": {
+    "id": "a7c3bb6860fadeaa",
+    "type": "split",
+    "children": [
+      {
+        "id": "ce5f36110da9ad8d",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "0e940fedb58df06d",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "00 - Inbox/Entradas.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Entradas"
+            }
+          },
+          {
+            "id": "0a930671a9f08a6a",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Aprendizado/Trilha IA.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Trilha IA"
+            }
+          },
+          {
+            "id": "69b3cfbe98cbeb09",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "00 - Inbox/Entradas.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Entradas"
+            }
+          }
+        ],
+        "currentTab": 2
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "2463119c798ef068",
+    "type": "split",
+    "children": [
+      {
+        "id": "346bc7724c496d9a",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "88e6ec4b2ad8ce4f",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "3974e0d4dd252257",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "2e63133e1e532617",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "5cf9a1d974a02795",
+    "type": "split",
+    "children": [
+      {
+        "id": "48b7c706e00d8f0d",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "654a4c05af445258",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Welcome.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for Welcome"
+            }
+          },
+          {
+            "id": "e6f0500767897465",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Welcome.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from Welcome"
+            }
+          },
+          {
+            "id": "b5da0e73536d2541",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "8bb77a791292f43c",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "46242e4baef9ef5e",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Welcome.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of Welcome"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "obsidian-importer:Open Importer": false,
+      "obsidian-local-images-plus:Local Images Plus  0.16.4\r\nLocalize attachments (plugin folder)": false,
+      "templater-obsidian:Templater": false,
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false,
+      "obsidian42-brat:BRAT": false
+    }
+  },
+  "active": "69b3cfbe98cbeb09",
+  "lastOpenFiles": [
+    "Aprendizado/Claude Course.md",
+    "Aprendizado/Curso Fullcycle 3.0.md",
+    "Arquitetura/Arquitetura de Software.md",
+    "Arquitetura/Event Storming/Untitled 3.png",
+    "Arquitetura/Event Storming/Event Storming.md",
+    "Arquitetura/Event Storming/Exemplos.md",
+    "00 - Inbox/Entradas.md",
+    "00 - Inbox/Avaliar.md",
+    "Aprendizado/Trilha IA.md",
+    "Untitled.md",
+    "Aprendizado/Mestres/Giuliana Bezerra.md",
+    "index.md",
+    "_templates/Template - Mestre.md",
+    "_templates/Template - Mestre.md.tmp.737271.1774481977529",
+    "_templates/Template - MOC.md",
+    "_templates/Template - MOC.md.tmp.737271.1774481972957",
+    "_templates/Template - TIL.md",
+    "_templates/Template - TIL.md.tmp.737271.1774481968448",
+    "_templates/Template - How-To.md",
+    "_templates/Template - How-To.md.tmp.737271.1774481963461",
+    "_templates/Template - Nota.md",
+    "_templates/Template - Nota.md.tmp.737271.1774481958959",
+    "MOCs/MOC - Recursos.md",
+    "MOCs/MOC - Recursos.md.tmp.737271.1774481952644",
+    "MOCs/MOC - Aprendizado.md",
+    "MOCs/MOC - Aprendizado.md.tmp.737271.1774481948418",
+    "MOCs/MOC - Ferramentas.md",
+    "MOCs/MOC - Ferramentas.md.tmp.737271.1774481941239",
+    "Aprendizado/Mestres/Fernanda Kipper.md",
+    "Aprendizado/Mestres/Eduardo Mendes (Dunossauro).md",
+    "Aprendizado/Mestres/Bruno Souza.md",
+    "MOCs/MOC - Fundamentos.md",
+    "MOCs/MOC - Fundamentos.md.tmp.737271.1774474894555",
+    "MOCs/MOC - Infraestrutura.md",
+    "MOCs/MOC - Infraestrutura.md.tmp.737271.1774474887457",
+    "MOCs/MOC - Arquitetura.md",
+    "MOCs/MOC - Java.md",
+    "Aprendizado/RPA/Untitled 1 4.png",
+    "Aprendizado/RPA/Untitled 1 3.png",
+    "Arquitetura/Event Storming/Untitled 1 2.png",
+    "Aprendizado/RPA/Untitled 7.png",
+    "Aprendizado/RPA/Untitled 6.png",
+    "Aprendizado/RPA/Untitled 5.png",
+    "Java/Kafka/Untitled 4.png",
+    "Infraestrutura/Untitled 2.png",
+    "Infraestrutura/Untitled 1.png"
+  ]
+}
