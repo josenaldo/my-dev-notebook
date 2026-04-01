@@ -1,390 +1,346 @@
-- [[#LocalStack]]
-- [[#Fundamentos]]
-    - [[#Fundamentos da Arquitetura de Software]]
-    - [[#Arquitetura de Software - Primeira Temporada]]
-    - [[#Padrões Arquiteturais]]
-    - [[#Solid]]
-    - [[#Escalabilidade e Performance]]
-- [[#Event Driven]]
-- [[#12 fatores]]
-- [[#Architecture Antipatterns]]
-- [[#Google Engineering Practices Documentation]]
-- [[#REST]]
-    - [[#Rest do jeito certo]]
-    - [[#Best practices for design a pragmatic RESTFUL API]]
-    - [[#Rest API best Practices - REST Endpoint Design Examples]]
-    - [[#HTTP PUT vs HTTP PATCH in a REST API]]
-    - [[#Using JSON Patch in Spring REST APIs]]
-    - [[#Padronização de Respostas de Erro em APIs com RFC-9457]]
-        - [[#Padronização de Respostas de Erro em APIs com RFC-9457: Implementando no Spring Framework]]
-        - [[#RFC 9457 Problem Details for HTTP APIs]]
-- [[#Clean Architecture]]
-    - [[#The Clean Code Blog]]
-    - [[#Descomplicando a Clean Architecture]]
-    - [[#Clean Architecture: descubra o que é e onde aplicar Arquitetura Limpa]]
-- [[#Arquitetura Hexagonal]]
-    - [[#How to Implement a Hexagonal Architecture]]
-- [[#Tomato Architecture]]
-- [[#Clean Code]]
-- [[#DDD]]
-- [[#SOLID]]
-    - [[#Solid e DDD]]
-- [[#System Design]]
-- [[#Microservices]]
-- [[#Command Query Separation]]
-- [[#Technology Radar | Thoughtworks]]
-- [[#C4 Model]]
-    - [[#Curso de C4 Model na prática]]
-    - [[#VISUALIZANDO SISTEMAS DE SOFTWARE COM MODELO C4]]
-    - [[#Documentando arquiteturas na prática com C4 model]]
-    - [[#arc42 Documentation]]
-    - [[#The C4 model for visualising software architecture]]
-- [[#Architectural Katas: Practicing Architecture]]
-- [[#Architectural Decision Records]]
-    - [[#Architectural Decision Records - Homepage of the ADR GitHub organization]]
-- [[#Artigos]]
-- [[#Observabilidade]]
-
-## LocalStack
-
-Ambiente de desenvolvimento local que simula a AWS
-
-[https://github.com/localstack/localstack](https://github.com/localstack/localstack)
-
-# Fundamentos
-
-## Fundamentos da Arquitetura de Software
+---
+title: "Arquitetura de Software"
+created: 2026-04-01
+updated: 2026-04-01
+type: concept
+status: seedling
+tags:
+  - arquitetura
+  - entrevista
+publish: false
+---
 
-> [!info] Fundamentos de Arquitetura de Software  
->  
-> [https://www.youtube.com/playlist?list=PLkpjQs-GfEMPzOzinFrqfkkfZy2DpwpBh](https://www.youtube.com/playlist?list=PLkpjQs-GfEMPzOzinFrqfkkfZy2DpwpBh)  
+# Arquitetura de Software
 
-## **Arquitetura de Software - Primeira Temporada**
+Decisões estruturais que definem como um sistema é organizado — estilos, padrões, princípios e documentação.
 
-> [!info] Arquitetura de Software - Primeira Temporada  
->  
-> [https://www.youtube.com/playlist?list=PLkpjQs-GfEMNcWDlIck2I5TGBSSRCK39L](https://www.youtube.com/playlist?list=PLkpjQs-GfEMNcWDlIck2I5TGBSSRCK39L)  
+## O que é
 
-## Padrões Arquiteturais
+Arquitetura de Software é o conjunto de decisões de alto nível sobre a estrutura de um sistema: como componentes se organizam, comunicam e evoluem. Não existe arquitetura "certa" — existe a mais adequada ao contexto (equipe, escala, prazo, domínio).
 
-> [!info] Padrões Arquiteturais  
->  
-> [https://www.youtube.com/playlist?list=PLkpjQs-GfEMMoh78fnnHtrhK1iWe-ZSJ5](https://www.youtube.com/playlist?list=PLkpjQs-GfEMMoh78fnnHtrhK1iWe-ZSJ5)  
+## Estilos arquiteturais
 
-## Solid
+### Clean Architecture
 
-> [!info] The S.O.L.I.D Principles in Pictures  
-> If you are familiar with Object-Oriented Programming, then you’ve probably heard about the SOLID principles.  
-> [https://medium.com/backticks-tildes/the-s-o-l-i-d-principles-in-pictures-b34ce2f1e898](https://medium.com/backticks-tildes/the-s-o-l-i-d-principles-in-pictures-b34ce2f1e898)  
+Proposta por Uncle Bob, organiza o código em camadas concêntricas onde dependências apontam para dentro (Dependency Rule):
 
-> [!info] SOLID fica FÁCIL com Essas Ilustrações  
-> ✅ 𝗔𝗚𝗢𝗥𝗔 𝗘𝗨 𝗧𝗘𝗡𝗛𝗢 𝗨𝗠 𝗖𝗨𝗥𝗦𝗢 😍  
-> [https://www.youtube.com/watch?v=6SfrO3D4dHM](https://www.youtube.com/watch?v=6SfrO3D4dHM)  
+```text
+        ┌─────────────────────────┐
+        │    Frameworks & Drivers  │  ← UI, DB, APIs externas
+        │  ┌───────────────────┐  │
+        │  │    Adapters        │  │  ← Controllers, Gateways, Presenters
+        │  │  ┌─────────────┐  │  │
+        │  │  │  Use Cases   │  │  │  ← Application Business Rules
+        │  │  │  ┌────────┐  │  │  │
+        │  │  │  │Entities │  │  │  │  ← Enterprise Business Rules
+        │  │  │  └────────┘  │  │  │
+        │  │  └─────────────┘  │  │
+        │  └───────────────────┘  │
+        └─────────────────────────┘
+```
 
-> [!info] SOLID e Design de Software na prática  
->  
-> [https://www.youtube.com/watch?v=4oVByCJJkRI](https://www.youtube.com/watch?v=4oVByCJJkRI)  
+**Regra fundamental:** camadas internas não conhecem camadas externas. Entities não sabem que banco de dados existe.
 
-> [!info] Aprofundando os princípios SOLID  
-> Nesta playlist você vai encontrar tudo que produzimos sobre cada um destes princípios que nos ajudam a criar códigos cada vez melhores.  
-> [https://www.youtube.com/playlist?list=PLVHlvMRWE0Y7fBV0wUdIAMKYJvDewQ6Yl](https://www.youtube.com/playlist?list=PLVHlvMRWE0Y7fBV0wUdIAMKYJvDewQ6Yl)  
+**Benefícios:** domínio isolado, testável sem infraestrutura, independente de framework.
 
-  
+**Trade-off:** mais camadas = mais indireção. Para CRUD simples, pode ser over-engineering.
 
-https://www.youtube.com/live/RdOx2Pndc74?si=QBNfOVmYZKVd-qPx
+### Arquitetura Hexagonal (Ports & Adapters)
 
-  
+Proposta por Alistair Cockburn. O core da aplicação define **Ports** (interfaces) e o mundo externo implementa **Adapters**:
 
-## Escalabilidade e Performance
+```text
+                    ┌──────────────┐
+    HTTP Adapter ──→│  Port (in)   │
+    CLI Adapter  ──→│              │
+                    │   Domain     │
+                    │   Logic      │
+    DB Adapter   ←──│  Port (out)  │
+    Email Adapter←──│              │
+                    └──────────────┘
+```
 
-> [!info] Escalabilidade e Performance  
->  
-> [https://www.youtube.com/playlist?list=PLkpjQs-GfEMOqjfVgNktbKoJ7dcEiuYyl](https://www.youtube.com/playlist?list=PLkpjQs-GfEMOqjfVgNktbKoJ7dcEiuYyl)  
+- **Driving Ports (entrada):** interfaces que o mundo externo usa para acionar a aplicação (API, CLI, eventos)
+- **Driven Ports (saída):** interfaces que a aplicação usa para acessar o mundo externo (banco, email, APIs)
+- **Adapters:** implementações concretas dos ports
 
-# Event Driven
+**Na prática:** em Spring Boot, um `@Service` que depende de uma interface `PatientRepository` (port) implementada por `JpaPatientRepository` (adapter).
 
-> [!info] What do you mean by “Event-Driven”?  
-> Some notes on the different patterns that may be present when people talk about event-driven architectures.  
-> [https://martinfowler.com/articles/201701-event-driven.html](https://martinfowler.com/articles/201701-event-driven.html)  
+### Como tudo se conecta (Explicit Architecture)
 
-# 12 fatores
+Segundo Herberto Graça, Clean, Hexagonal, Onion e DDD convergem:
 
-> [!info] A Forma Ideal de Projetos Web | Os 12 Fatores  
-> Finalmente vou mostrar o que é o Heroku e como é o fluxo de trabalho mínimo de um projeto web ideal.  
-> [https://youtu.be/gpJgtED36U4?si=W3QxIMU54P2xiF_p](https://youtu.be/gpJgtED36U4?si=W3QxIMU54P2xiF_p)  
+- **Interface do Usuário** (delivery mechanisms) → controllers, CLI, event listeners
+- **Application Core** (lógica de negócio) → use cases, domain services, entities
+- **Infrastructure** (ferramentas externas) → banco, email, APIs, filas
 
-# Architecture Antipatterns
+Todas as dependências apontam para o center (domain). O domain nunca importa infrastructure. CQRS separa Commands (escrita) de Queries (leitura) para otimizar cada lado independentemente.
 
-> [!info] Architecture Antipatterns  
->  
-> [https://architecture-antipatterns.tech/](https://architecture-antipatterns.tech/)  
+### Tomato Architecture
 
-# Google Engineering Practices Documentation
+Abordagem pragmática para projetos que não precisam da cerimônia completa de Clean/Hexagonal:
 
-> [!info] Google Engineering Practices Documentation  
-> Google’s Engineering Practices documentation  
-> [https://google.github.io/eng-practices/](https://google.github.io/eng-practices/)  
+- Organização por **feature/domínio** (package by feature), não por camada
+- Separação clara de business logic e infrastructure
+- Menos overhead — ideal para equipes pequenas e projetos que precisam evoluir rápido
+- Quando a complexidade crescer, refatorar para Hexagonal é natural
 
-# REST
+**Quando usar:** projetos médios onde Clean Architecture seria over-engineering, mas "jogar tudo no controller" seria under-engineering.
 
-## Rest do jeito certo
+## Princípios
 
-> [!info] REST do Jeito Certo  
->  
-> [https://www.youtube.com/playlist?list=PLkpjQs-GfEMPituMCb77qd90onpF3khFt](https://www.youtube.com/playlist?list=PLkpjQs-GfEMPituMCb77qd90onpF3khFt)  
+### SOLID
 
-## Best practices for design a pragmatic RESTFUL API
+Ver [[Design Patterns]] e [[Orientação a Objetos]] para detalhes completos. Em resumo:
 
-> [!info] Best Practices for Designing a Pragmatic RESTful API  
-> An API is a user interface for a developer.  
-> [https://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api](https://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api)  
+| Princípio | Essência |
+| --- | --- |
+| Single Responsibility | Uma razão para mudar |
+| Open/Closed | Extender sem modificar |
+| Liskov Substitution | Subtipos são substituíveis |
+| Interface Segregation | Interfaces pequenas e focadas |
+| Dependency Inversion | Dependa de abstrações |
 
-## Rest API best Practices - REST Endpoint Design Examples
+### 12 Fatores (Twelve-Factor App)
 
-> [!info] REST API Best Practices – REST Endpoint Design Examples  
-> In Web Development, REST APIs play an important role in ensuring smooth communication between the client and the server.  
-> [https://www.freecodecamp.org/news/rest-api-best-practices-rest-endpoint-design-examples/](https://www.freecodecamp.org/news/rest-api-best-practices-rest-endpoint-design-examples/)  
+Metodologia para construir aplicações SaaS modernas. Os mais relevantes para entrevistas:
 
-## HTTP PUT vs HTTP PATCH in a REST API
+1. **Codebase:** um repo, muitos deploys (staging, prod)
+2. **Dependencies:** declare e isole (Maven, npm, Docker)
+3. **Config:** configuração via variáveis de ambiente, nunca no código
+4. **Backing services:** trate banco, cache, filas como recursos anexáveis
+5. **Build, release, run:** etapas separadas e imutáveis
+6. **Processes:** stateless — estado vai em backing services (Redis, DB)
+7. **Port binding:** exporte serviço via porta (embedded server)
+8. **Concurrency:** escale por processos (horizontal scaling)
+9. **Disposability:** start rápido, shutdown graceful
+10. **Dev/prod parity:** ambientes o mais similares possível (Docker!)
+11. **Logs:** trate como event streams (stdout → coletado externamente)
+12. **Admin processes:** tarefas pontuais rodam como processos (migrations, scripts)
 
-> [!info] HTTP PUT vs HTTP PATCH in a REST API | Baeldung  
-> Learn about the difference between PUT and PATCH HTTP methods, and their implications when building your Spring API.  
-> [https://www.baeldung.com/http-put-patch-difference-spring](https://www.baeldung.com/http-put-patch-difference-spring)  
+### Clean Code
 
-## Using JSON Patch in Spring REST APIs
+Código que é fácil de ler, entender e modificar:
 
-> [!info] Using JSON Patch in Spring REST APIs | Baeldung  
-> Learn how to use the HTTP PATCH method along with the JSON Patch document format to apply partial updates to RESTful resources  
-> [https://www.baeldung.com/spring-rest-json-patch#use-case](https://www.baeldung.com/spring-rest-json-patch#use-case)  
+- **Nomes significativos:** variáveis e funções autoexplicativas
+- **Funções pequenas:** fazem uma coisa só
+- **DRY (Don't Repeat Yourself):** evitar duplicação de lógica
+- **KISS (Keep It Simple):** a solução mais simples que funciona
+- **Boy Scout Rule:** deixe o código melhor do que encontrou
 
-## **Padronização de Respostas de Erro em APIs com RFC-9457**
+## DDD (Domain-Driven Design)
 
-### **Padronização de Respostas de Erro em APIs com RFC-9457: Implementando no Spring Framework**
+Abordagem que coloca o domínio do negócio no centro do design:
 
-> [!info] Padronização de Respostas de Erro em APIs com RFC-9457: Implementando no Spring Framework  
-> No desenvolvimento de APIs, a clareza e consistência na comunicação de erros são cruciais para a.  
-> [https://dev.to/diegobrandao/padronizacao-de-respostas-de-erro-em-apis-com-rfc-9457-implementando-no-spring-framework-4kk0](https://dev.to/diegobrandao/padronizacao-de-respostas-de-erro-em-apis-com-rfc-9457-implementando-no-spring-framework-4kk0)  
+### Conceitos táticos
 
-### **RFC 9457 Problem Details for HTTP APIs**
+- **Entity:** objeto com identidade (Patient, Order)
+- **Value Object:** objeto definido por seus atributos, sem identidade (Money, Address)
+- **Aggregate:** cluster de entidades com uma raiz (Order → OrderItems)
+- **Repository:** abstração para persistência de aggregates
+- **Domain Service:** lógica que não pertence a nenhuma entidade
+- **Domain Event:** fato que aconteceu no domínio ("OrderPlaced")
 
-> [!info] RFC 9457: Problem Details for HTTP APIs  
-> This document defines a "problem detail" to carry machine-readable details of errors in HTTP response content to avoid the need to define new error response formats for HTTP APIs.  
-> [https://www.rfc-editor.org/rfc/rfc9457.html](https://www.rfc-editor.org/rfc/rfc9457.html)  
+### Conceitos estratégicos
 
-# Clean Architecture
+- **Bounded Context:** limite onde um modelo é consistente. Cada microserviço geralmente é um bounded context.
+- **Ubiquitous Language:** linguagem compartilhada entre devs e negócio
+- **Context Map:** como bounded contexts se relacionam
 
-## **The Clean Code Blog**
+**Na prática:** DDD é valioso para domínios complexos. Para CRUD simples, é overhead. O [[Event Storming]] é uma técnica para descobrir bounded contexts.
 
-> [!info] Clean Coder Blog  
->  
-> [https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)  
+## Microserviços
 
-## **Descomplicando a Clean Architecture**
+Estilo arquitetural onde a aplicação é uma coleção de serviços pequenos, independentemente deployáveis e loosely coupled.
 
-> [!info] Descomplicando a Clean Architecture  
-> Objetivo: O objetivo é mostrar que podemos adequar qualquer design de software mantendo seus princípios para chegar em uma solução que…  
-> [https://medium.com/luizalabs/descomplicando-a-clean-architecture-cf4dfc4a1ac6](https://medium.com/luizalabs/descomplicando-a-clean-architecture-cf4dfc4a1ac6)  
+### Quando migrar de monolito
 
-## **Clean Architecture: descubra o que é e onde aplicar Arquitetura Limpa**
+- Equipe cresceu e o monolito virou gargalo
+- Partes do sistema precisam escalar independentemente
+- Deploy do monolito ficou lento ou arriscado
+- **Não migre prematuramente:** um monolito modular bem feito é melhor que microserviços mal feitos
 
-> [!info] Clean Architecture: descubra o que é e onde aplicar Arquitetura Limpa | Zup  
-> Conheça o que é Clean Architecture, ou Arquitetura Limpa, principais conceitos, vantagens e desafios dessa arquitetura de software.  
-> [https://www.zup.com.br/blog/clean-architecture-arquitetura-limpa](https://www.zup.com.br/blog/clean-architecture-arquitetura-limpa)  
+### Padrões essenciais
 
-# Arquitetura Hexagonal
+| Padrão | O que resolve |
+| --- | --- |
+| API Gateway | Ponto de entrada único, routing, auth |
+| Service Discovery | Encontrar serviços dinamicamente |
+| Circuit Breaker | Evitar cascata de falhas |
+| Saga | Transações distribuídas sem 2PC |
+| Strangler Fig | Migração gradual de monolito |
+| Sidecar | Cross-cutting concerns (logging, tracing) |
 
-[https://medium.com/ssense-tech/hexagonal-architecture-there-are-always-two-sides-to-every-story-bc0780ed7d9c](https://medium.com/ssense-tech/hexagonal-architecture-there-are-always-two-sides-to-every-story-bc0780ed7d9c)
+### Anti-patterns
 
-## **How to Implement a Hexagonal Architecture**
+- **Distributed Monolith:** microserviços acoplados que precisam ser deployados juntos
+- **Shared Database:** vários serviços acessando o mesmo banco
+- **Chatty Services:** muitas chamadas síncronas entre serviços
 
-> [!info] How to Implement a Hexagonal Architecture  
-> A hexagonal  architecture simplifies deferring or changing technology decisions.  
-> [https://www.freecodecamp.org/news/implementing-a-hexagonal-architecture/](https://www.freecodecamp.org/news/implementing-a-hexagonal-architecture/)  
+## Documentação de Arquitetura
 
-  
+### C4 Model
 
-> [!info] DDD, Hexagonal, Onion, Clean, CQRS, … How I put it all together  
-> In my last posts I’ve been writing about many of the concepts and principles that I’ve learned and a bit about how I reason about them.  
-> [http://herbertograca.com/2017/11/16/explicit-architecture-01-ddd-hexagonal-onion-clean-cqrs-how-i-put-it-all-together/](http://herbertograca.com/2017/11/16/explicit-architecture-01-ddd-hexagonal-onion-clean-cqrs-how-i-put-it-all-together/)  
+Abordagem hierárquica para diagramar arquitetura em 4 níveis:
 
-# Tomato Architecture
+1. **System Context:** o sistema e suas interações externas (para stakeholders)
+2. **Container:** componentes técnicos — apps, bancos, filas (para arquitetos)
+3. **Component:** estrutura interna de cada container (para devs)
+4. **Code:** classes e funções (raramente necessário)
 
-https://github.com/sivaprasadreddy/tomato-architecture-spring-boot-demo
+**Regra:** comece pelo contexto (mais abstrato) e desça conforme a necessidade de detalhe.
 
-  
+### ADRs (Architectural Decision Records)
 
-https://github.com/sivaprasadreddy/tomato-architecture
+Documentar decisões arquiteturais com: contexto, decisão, consequências e status. Versionados junto ao código.
 
-  
+```markdown
+# ADR-001: Usar PostgreSQL como banco principal
 
-> [!info] Tomato Architecture - A Pragmatic Approach to Software Design  
-> After a couple of years into software development, I wanted to improve my skills by learning more about Software Architecture and Design.  
-> [https://www.sivalabs.in/tomato-architecture-pragmatic-approach-to-software-design/](https://www.sivalabs.in/tomato-architecture-pragmatic-approach-to-software-design/)  
+## Status: Accepted
 
-  
+## Contexto
+Precisamos de banco relacional com suporte a JSONB, 
+full-text search, e maturidade operacional.
 
-> [!info] Package by Feature  
-> Package by feature to create self-contained and independent packages that are easy to understand and less error-prone  
-> [https://phauer.com/2020/package-by-feature/](https://phauer.com/2020/package-by-feature/)  
+## Decisão
+PostgreSQL 16 como banco principal.
 
-# Clean Code
+## Consequências
++ Suporte nativo a JSONB reduz necessidade de MongoDB
++ Ecossistema maduro de ferramentas
+- Equipe precisa aprender features específicas do PG
+```
 
-# DDD
+## Observabilidade
 
-> [!info] DDD do jeito certo  
->  
-> [https://www.youtube.com/playlist?list=PLkpjQs-GfEMN8CHp7tIQqg6JFowrIX9ve](https://www.youtube.com/playlist?list=PLkpjQs-GfEMN8CHp7tIQqg6JFowrIX9ve)  
+Os três pilares para entender o que acontece em produção:
 
-# SOLID
+- **Logs:** eventos discretos (o que aconteceu). Structured logging (JSON) para facilitar busca.
+- **Metrics:** números ao longo do tempo (RED: Rate, Errors, Duration). Prometheus + Grafana.
+- **Traces:** caminho de uma requisição através de múltiplos serviços. OpenTelemetry.
 
-### Solid e DDD
+**Na prática:** Spring Boot Actuator + Micrometer exportam métricas. OpenTelemetry coleta traces distribuídos. Logs estruturados com correlation IDs permitem rastrear uma requisição do frontend ao banco.
 
-> [!info] SOLID e DDD na prática  
-> As matrículas do Curso Full Cycle estão oficialmente abertas.  
-> [https://www.youtube.com/live/oKpZvWWning?si=DXKlNFNjNgYuowx1](https://www.youtube.com/live/oKpZvWWning?si=DXKlNFNjNgYuowx1)  
+## Armadilhas comuns
 
-# System Design
+- **Astronaut Architecture:** abstrações demais, código de menos. Ship first, refactor later.
+- **Resume-Driven Development:** escolher tecnologia pra enfeitar o currículo, não pra resolver o problema.
+- **Premature Distribution:** microserviços antes de ter um monolito modular funcionando.
+- **Ignorar o contexto:** a "melhor" arquitetura depende da equipe, escala, prazo e domínio.
 
-> [!info] SYSTEM DESIGN: ALÉM DA ENTREVISTA  
-> Assim como no mundo real, existem muitas diferenças e variações possíveis para um sistema.  
-> [https://www.youtube.com/live/-8tdjn30SSw?si=kcvd_nTLIYMNIrM6](https://www.youtube.com/live/-8tdjn30SSw?si=kcvd_nTLIYMNIrM6)  
+## Na prática (da minha experiência)
 
-  
+> Na Muvz, apliquei Hexagonal Architecture com DDD para migrar um monolito Java EJB para 5 microserviços Spring Boot. Usei Event Storming para mapear bounded contexts e definir os limites dos serviços. Kafka como event broker entre eles. A decisão de não usar Clean Architecture "pura" foi pragmática — a equipe era pequena e a cerimônia completa reduziria a velocidade sem benefício proporcional. No MedEspecialista, comecei a reescrita do backend Node.js usando Clean Architecture (Domain/Application/Infrastructure) como preparação para futura migração para NestJS + TypeScript.
 
-> [!info] 18 System Design Concepts Every Engineer Must Know Before the Interview.  
-> Acing System Design Interviews: Key Principles for Software Engineers  
-> [https://www.designgurus.io/blog/system-design-interview-fundamentals](https://www.designgurus.io/blog/system-design-interview-fundamentals)  
+## How to explain in English
 
-> [!info] System Design Basics - Load Balancing Algorithms  
-> 8 Load Balancing Algorithms Software Engineers Must Know for System Design interviews  
-> [https://dev.to/somadevtoo/system-design-basics-load-balancing-algorithms-2559](https://dev.to/somadevtoo/system-design-basics-load-balancing-algorithms-2559)  
+"Software architecture is about making structural decisions that are hard to change later. My approach is pragmatic: I choose the simplest architecture that meets the current requirements, with clear boundaries that allow evolution.
 
-# Microservices
+For most projects, I start with a modular monolith using Hexagonal Architecture principles — the domain logic depends on interfaces (ports), and infrastructure provides the implementations (adapters). This gives me the isolation benefits of Clean Architecture without the overhead of strict layering.
 
-> [!info] Microservices  
-> Defining the microservices architectural style by describing their nine common characteristics  
-> [https://martinfowler.com/articles/microservices.html](https://martinfowler.com/articles/microservices.html)  
+When I need to split into microservices, I use Domain-Driven Design to identify bounded contexts through Event Storming workshops. Each microservice owns its data and communicates through events (Kafka) or APIs. I follow the Strangler Fig pattern for gradual migration rather than big-bang rewrites.
 
-  
+For documentation, I use C4 diagrams to communicate at the right level of abstraction and ADRs to record architectural decisions with their context and trade-offs. This creates a searchable history of why the system is shaped the way it is."
 
-> [!info] What are microservices?  
-> Microservices - also known as the microservice architecture - is an architectural style that structures an application as a collection of loosely coupled services, which implement business capabilities.  
-> [https://microservices.io/index.html](https://microservices.io/index.html)  
+### Key vocabulary
 
-[https://aws.amazon.com/pt/blogs/architecture/exponential-backoff-and-jitter/](https://aws.amazon.com/pt/blogs/architecture/exponential-backoff-and-jitter/)
+- estilo arquitetural → architectural style
+- arquitetura hexagonal → hexagonal architecture / ports and adapters
+- contexto delimitado → bounded context (DDD)
+- linguagem ubíqua → ubiquitous language
+- registro de decisão arquitetural → architectural decision record (ADR)
+- observabilidade → observability
+- monolito modular → modular monolith
+- padrão estrangulador → strangler fig pattern
 
-[https://www.digitalocean.com/community/tech-talks/building-an-api-gateway-to-get-out-of-the-monoliths](https://www.digitalocean.com/community/tech-talks/building-an-api-gateway-to-get-out-of-the-monoliths)
+## Recursos
 
-- A place you should start from - Microservices Guide by **Martin Fowler and James Lewis** <[CLICK](https://softwaremill.us2.list-manage.com/track/click?u=ba834c562d82d9aba5eaf90ba&id=d2e157134a&e=7d74b628eb)>
+### Cursos em vídeo
 
-- **A simple guide** to understanding microservices and figuring out if they fit into your architecture <[CLICK](https://softwaremill.us2.list-manage.com/track/click?u=ba834c562d82d9aba5eaf90ba&id=76cf1b8e6b&e=7d74b628eb)>
+> [!info] Fundamentos de Arquitetura de Software
+> [https://www.youtube.com/playlist?list=PLkpjQs-GfEMPzOzinFrqfkkfZy2DpwpBh](https://www.youtube.com/playlist?list=PLkpjQs-GfEMPzOzinFrqfkkfZy2DpwpBh)
 
-- There is no one best way to build microservices architecture, however, there are **popular approaches**. These are the skills you’ll probably need for your next microservices project <[CLICK](https://softwaremill.us2.list-manage.com/track/click?u=ba834c562d82d9aba5eaf90ba&id=73b50623c4&e=7d74b628eb)>
+> [!info] Arquitetura de Software - Primeira Temporada
+> [https://www.youtube.com/playlist?list=PLkpjQs-GfEMNcWDlIck2I5TGBSSRCK39L](https://www.youtube.com/playlist?list=PLkpjQs-GfEMNcWDlIck2I5TGBSSRCK39L)
 
-- How to build **microservices on the AWS Cloud** <[CLICK](https://docs.aws.amazon.com/pdfs/whitepapers/latest/microservices-on-aws/microservices-on-aws.pdf)>
+> [!info] Padrões Arquiteturais
+> [https://www.youtube.com/playlist?list=PLkpjQs-GfEMMoh78fnnHtrhK1iWe-ZSJ5](https://www.youtube.com/playlist?list=PLkpjQs-GfEMMoh78fnnHtrhK1iWe-ZSJ5)
 
-- 10 signs of **a mature delivery pipeline** that let your developers be as much productive as possible and meet clients' needs rapidly <[CLICK](https://softwaremill.us2.list-manage.com/track/click?u=ba834c562d82d9aba5eaf90ba&id=84477bc885&e=7d74b628eb)>
+> [!info] Escalabilidade e Performance
+> [https://www.youtube.com/playlist?list=PLkpjQs-GfEMOqjfVgNktbKoJ7dcEiuYyl](https://www.youtube.com/playlist?list=PLkpjQs-GfEMOqjfVgNktbKoJ7dcEiuYyl)
 
-- Microservices and Serverless continue to be two of the most hyped terms in the software industry. **Sam Newman** explains just why **serverless technology** is so powerful and how it fits in with microservices. <[CLICK](https://softwaremill.us2.list-manage.com/track/click?u=ba834c562d82d9aba5eaf90ba&id=ecd9550ddb&e=7d74b628eb)>
+> [!info] DDD do jeito certo
+> [https://www.youtube.com/playlist?list=PLkpjQs-GfEMN8CHp7tIQqg6JFowrIX9ve](https://www.youtube.com/playlist?list=PLkpjQs-GfEMN8CHp7tIQqg6JFowrIX9ve)
 
-- **Awesome Microservices** repository on GitHub <[CLICK](https://softwaremill.us2.list-manage.com/track/click?u=ba834c562d82d9aba5eaf90ba&id=1a6cc6852e&e=7d74b628eb)>.
+> [!info] SOLID e DDD na prática
+> [https://www.youtube.com/live/oKpZvWWning?si=DXKlNFNjNgYuowx1](https://www.youtube.com/live/oKpZvWWning?si=DXKlNFNjNgYuowx1)
 
-- https://blog.bitsrc.io/10-microservice-anti-patterns-278bcb7f385d
+> [!info] A Forma Ideal de Projetos Web - Os 12 Fatores
+> [https://youtu.be/gpJgtED36U4?si=W3QxIMU54P2xiF_p](https://youtu.be/gpJgtED36U4?si=W3QxIMU54P2xiF_p)
 
-  
+> [!info] SOLID fica FÁCIL com Essas Ilustrações
+> [https://www.youtube.com/watch?v=6SfrO3D4dHM](https://www.youtube.com/watch?v=6SfrO3D4dHM)
 
-> [!info] RETRY - Padrões de resiliência para Microsserviços - Melhor algoritmo e como se proteger  
-> Você tem alguma historia de tragédia para compartilhar, envolvendo RETRY?  
-> [https://www.youtube.com/watch?v=1MkPpKPyBps](https://www.youtube.com/watch?v=1MkPpKPyBps)  
+> [!info] CQS: encapsulamento em POO
+> [https://youtu.be/7NVbDGIMHjo?si=M2eGO4kZr0Vzs3uU](https://youtu.be/7NVbDGIMHjo?si=M2eGO4kZr0Vzs3uU)
 
-# Command Query Separation
+> [!info] RETRY - Padrões de resiliência para Microsserviços
+> [https://www.youtube.com/watch?v=1MkPpKPyBps](https://www.youtube.com/watch?v=1MkPpKPyBps)
 
-> [!info] 219 - Command Query Separation (CQS): encapsulamento em POO | theWiseDev OO Design  
-> 🚨 Livro Arquitetura Limpa na Prática: https://www.  
-> [https://youtu.be/7NVbDGIMHjo?si=M2eGO4kZr0Vzs3uU](https://youtu.be/7NVbDGIMHjo?si=M2eGO4kZr0Vzs3uU)  
+### Artigos e referências
 
-# **Technology Radar | Thoughtworks**
+- [Architecture Antipatterns](https://architecture-antipatterns.tech/)
+- [Google Engineering Practices](https://google.github.io/eng-practices/)
+- [The S.O.L.I.D Principles in Pictures](https://medium.com/backticks-tildes/the-s-o-l-i-d-principles-in-pictures-b34ce2f1e898)
+- [Microservices — Martin Fowler](https://martinfowler.com/articles/microservices.html)
+- [Microservices.io](https://microservices.io/index.html) — linguagem de padrões
+- [What do you mean by "Event-Driven"? — Martin Fowler](https://martinfowler.com/articles/201701-event-driven.html)
+- [DDD, Hexagonal, Onion, Clean, CQRS — How I put it all together](https://herbertograca.com/2017/11/16/explicit-architecture-01-ddd-hexagonal-onion-clean-cqrs-how-i-put-it-all-together/)
+- [The Software Architecture Chronicles](https://herbertograca.com/2017/07/03/the-software-architecture-chronicles/)
+- [Documenting Software Architecture](https://herbertograca.com/2019/08/12/documenting-software-architecture/)
+- [Exponential Backoff and Jitter — AWS](https://aws.amazon.com/pt/blogs/architecture/exponential-backoff-and-jitter/)
 
-O "Technology Radar" da Thoughtworks é um guia opinativo que explora o panorama atual das tecnologias. Esta plataforma é uma fonte valiosa de insights e tendências no mundo da tecnologia, oferecendo uma visão aprofundada sobre ferramentas, técnicas, plataformas e linguagens de programação emergentes. É uma leitura essencial para profissionais que desejam se manter atualizados com as mudanças rápidas e as inovações no setor de tecnologia.
+### Clean Architecture
 
-> [!info] Technology Radar | An opinionated guide to today's technology landscape | Thoughtworks  
-> The Technology Radar is an opinionated guide to today's technology landscape.  
-> [https://www.thoughtworks.com/en-br/radar](https://www.thoughtworks.com/en-br/radar)  
+- [Clean Coder Blog — The Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+- [Descomplicando a Clean Architecture](https://medium.com/luizalabs/descomplicando-a-clean-architecture-cf4dfc4a1ac6)
+- [Clean Architecture: descubra o que é e onde aplicar](https://www.zup.com.br/blog/clean-architecture-arquitetura-limpa)
 
-# C4 Model
+### Hexagonal Architecture
 
-## **Curso de C4 Model na prática**
+- [Hexagonal Architecture — There Are Always Two Sides](https://medium.com/ssense-tech/hexagonal-architecture-there-are-always-two-sides-to-every-story-bc0780ed7d9c)
+- [How to Implement a Hexagonal Architecture](https://www.freecodecamp.org/news/implementing-a-hexagonal-architecture/)
 
-> [!info] Curso de C4 Model na prática  
->  
-> [https://www.youtube.com/playlist?list=PLxuFqIk29JL0d_ESgZomFSEOzywPMmAqy](https://www.youtube.com/playlist?list=PLxuFqIk29JL0d_ESgZomFSEOzywPMmAqy)  
+### Tomato Architecture
 
-## **VISUALIZANDO SISTEMAS DE SOFTWARE COM MODELO C4**
+- [Tomato Architecture — A Pragmatic Approach](https://www.sivalabs.in/tomato-architecture-pragmatic-approach-to-software-design/)
+- [Package by Feature](https://phauer.com/2020/package-by-feature/)
+- [Demo — Spring Boot](https://github.com/sivaprasadreddy/tomato-architecture-spring-boot-demo)
 
-> [!info] VISUALIZANDO SISTEMAS DE SOFTWARE COM MODELO C4  
-> Com o C4 Model, você vai aprender mais sobre arquitetura de software.  
-> [https://www.youtube.com/watch?v=f0Dp6Ob2guc](https://www.youtube.com/watch?v=f0Dp6Ob2guc)  
+### C4 Model e Documentação
 
-## **Documentando arquiteturas na prática com C4 model**
+- [C4 Model](https://c4model.com/)
+- [arc42 Documentation](https://arc42.org/documentation/)
+- [ADR GitHub Organization](https://adr.github.io/)
 
-> [!info] Documentando arquiteturas na prática com C4 model  
-> Esse vídeo faz parte da Imersão Full Stack && Full Cycle.  
-> [https://www.youtube.com/watch?v=aJZPKyElP6A](https://www.youtube.com/watch?v=aJZPKyElP6A)  
+> [!info] Curso de C4 Model na prática
+> [https://www.youtube.com/playlist?list=PLxuFqIk29JL0d_ESgZomFSEOzywPMmAqy](https://www.youtube.com/playlist?list=PLxuFqIk29JL0d_ESgZomFSEOzywPMmAqy)
 
-## **arc42 Documentation**
+### Ferramentas
 
-A documentação do arc42 oferece um modelo de documentação para arquitetura de software, proporcionando uma estrutura prática e eficiente para documentar sistemas de software de maneira compreensível. É uma ferramenta essencial para arquitetos de software e desenvolvedores, pois fornece um guia claro para criar documentação arquitetônica que é ao mesmo tempo abrangente e fácil de entender.
+- [LocalStack](https://github.com/localstack/localstack) — simula AWS localmente
+- [OpenTelemetry](https://opentelemetry.io/) — observabilidade unificada
+- [Technology Radar — Thoughtworks](https://www.thoughtworks.com/en-br/radar) — tendências tecnológicas
+- [Architectural Katas](https://www.architecturalkatas.com/) — exercícios práticos
 
-> [!info] arc42 Documentation  
-> The info you need.  
-> [https://arc42.org/documentation/](https://arc42.org/documentation/)  
+## Veja também
 
-## **The C4 model for visualising software architecture**
-
-O modelo C4 para visualização da arquitetura de software é uma metodologia que oferece uma abordagem para desenhar e visualizar a arquitetura de sistemas de software. O modelo se concentra em quatro níveis de abstração - Contexto, Containers, Componentes e Código - facilitando a comunicação e compreensão da arquitetura do software entre todos os stakeholders, desde desenvolvedores técnicos até parceiros de negócios.
-
-> [!info] The C4 model for visualising software architecture  
-> 1.  
-> [https://c4model.com/](https://c4model.com/)  
-
-# **Architectural Katas: Practicing Architecture**
-
-"Architectural Katas" é um site dedicado à prática e ao aprimoramento das habilidades em arquitetura de software. Inspirado nas katas de artes marciais, oferece exercícios práticos e desafios onde os arquitetos de software podem praticar o desenho de arquiteturas para diferentes cenários e problemas. É uma excelente ferramenta para desenvolver e aperfeiçoar habilidades em solução de problemas e design arquitetônico.
-
-> [!info] Architectural Katas: Practicing Architecture  
-> "How do we get great designers?  
-> [https://www.architecturalkatas.com/](https://www.architecturalkatas.com/)  
-
-# **Architectural Decision Records**
-
-## **Architectural Decision Records -** Homepage of the ADR GitHub organization
-
-> [!info] adr.github.io  
-> An Architectural Decision (AD) is a justified design choice that addresses a functional or non-functional requirement that is architecturally significant.  
-> [https://adr.github.io/](https://adr.github.io/)  
-
-# Artigos
-
-**DDD, Hexagonal, Onion, Clean, CQRS, … How I put it all together**
-
-> [!info] DDD, Hexagonal, Onion, Clean, CQRS, … How I put it all together  
-> In my last posts I’ve been writing about many of the concepts and principles that I’ve learned and a bit about how I reason about them.  
-> [https://herbertograca.com/2017/11/16/explicit-architecture-01-ddd-hexagonal-onion-clean-cqrs-how-i-put-it-all-together/](https://herbertograca.com/2017/11/16/explicit-architecture-01-ddd-hexagonal-onion-clean-cqrs-how-i-put-it-all-together/)  
-
-**Documenting Software Architecture**
-
-> [!info] Documenting Software Architecture  
-> Documenting Software Architecture When we need to explain to someone else (new developer, product owner, investor, …) how the application works, we need documentation.  
-> [https://herbertograca.com/2019/08/12/documenting-software-architecture/](https://herbertograca.com/2019/08/12/documenting-software-architecture/)  
-
-**The Software Architecture Chronicles**
-
-> [!info] The Software Architecture Chronicles  
-> This post is the first of a series of posts about Software Architecture.  
-> [https://herbertograca.com/2017/07/03/the-software-architecture-chronicles/](https://herbertograca.com/2017/07/03/the-software-architecture-chronicles/)  
-
-# Observabilidade
-
-> [!info] OpenTelemetry  
-> High-quality, ubiquitous, and portable telemetry to enable effective observability  
-> [https://opentelemetry.io/](https://opentelemetry.io/)
+- [[System Design]]
+- [[Design Patterns]]
+- [[API Design]]
+- [[Orientação a Objetos]]
+- [[Event Storming]]
+- [[Mensageria]]
+- [[Event Streaming]]
+- [[Kafka]]
