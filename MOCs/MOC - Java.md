@@ -8,15 +8,16 @@ publish: true
 
 Ecossistema Java: linguagem, frameworks, ferramentas e boas práticas.
 
-## Aprendizado
+## Core
 
-- [[Trilha Java]]
+- [[Java Fundamentals]]
 - [[What should you do to stand out as a Java-Spring Boot Developer]]
+- [[Trilha Java]]
 
-## Testes
+## Backend
 
+- [[Spring Boot]]
 - [[Testes em Java]]
-- [[Testes]]
 
 ## Mensageria
 

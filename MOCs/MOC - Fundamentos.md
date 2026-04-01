@@ -11,6 +11,7 @@ Conceitos base de ciência da computação e engenharia de software.
 ## Estruturas de Dados e Algoritmos
 
 - [[Algoritmos]]
+- [[Estruturas de Dados]]
 
 ## Banco de Dados
 
@@ -23,6 +24,10 @@ Conceitos base de ciência da computação e engenharia de software.
 ## Qualidade de Software
 
 - [[Testes]]
+
+## Redes e Infraestrutura
+
+- [[Redes e Protocolos]]
 
 ---
 

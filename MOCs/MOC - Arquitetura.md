@@ -12,6 +12,12 @@ Padrões, estilos e práticas de arquitetura de sistemas.
 
 - [[Arquitetura de Software]] — guia abrangente com links e conceitos
 
+## Design de Sistemas
+
+- [[System Design]]
+- [[Design Patterns]]
+- [[API Design]]
+
 ## Modelagem e Design
 
 - [[Event Storming]]
