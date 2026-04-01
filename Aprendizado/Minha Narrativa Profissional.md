@@ -58,6 +58,8 @@ What sets me apart is the combination of deep technical expertise in both Java a
 - Lead time: 2 semanas → 1 semana (MedEspecialista)
 - Trabalho manual: -97% (MedEspecialista)
 - Atraso do projeto: 3 meses eliminados (Muvz)
+- Billing: 2 dias → 3 minutos de processamento (Digidados)
+- Incidentes: resposta de 5 dias → 1 dia útil (Digidados)
 
 ### Liderança técnica sem ser gestor
 
