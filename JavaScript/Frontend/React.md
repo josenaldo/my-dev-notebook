@@ -116,6 +116,163 @@ function usePatients(specialty: string) {
 }
 ```
 
+### Arquitetura de projeto
+
+Estrutura de diretórios recomendada para projetos médios/grandes:
+
+```text
+src/
+├── components/        ← componentes reutilizáveis (Button, Card, Modal)
+│   └── ui/            ← componentes de design system
+├── pages/             ← páginas/views (uma por rota)
+├── hooks/             ← custom hooks reutilizáveis
+├── services/          ← API layer (chamadas HTTP)
+├── stores/            ← state management (Zustand stores)
+├── types/             ← TypeScript types/interfaces compartilhados
+├── utils/             ← funções utilitárias puras
+├── contexts/          ← React contexts (theme, auth, i18n)
+└── assets/            ← imagens, fontes, estilos globais
+```
+
+**Princípios:**
+
+- **Separar server state de client state:** TanStack Query para dados do backend, Zustand/Context para estado de UI
+- **Custom hooks para lógica de negócio:** cada feature tem seu hook (`usePatients`, `useAppointments`)
+- **Múltiplos contexts pequenos:** não um "AppContext" monolítico. Um para auth, outro para theme, etc.
+- **Componentes sem lógica de fetch:** componentes recebem dados via hooks, não fazem fetch internamente
+- **Importações absolutas:** configurar `baseUrl` no tsconfig para evitar `../../../`
+
+> **Fontes:**
+> - [React Architecture Patterns](https://www.etatvasoft.com/blog/react-architecture-patterns/)
+> - [Modularizing React Apps — Martin Fowler](https://martinfowler.com/articles/modularizing-react-apps.html)
+
+### Formulários e Validação
+
+**React Hook Form** — formulários performáticos (uncontrolled por padrão):
+
+```tsx
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+
+const schema = z.object({
+  name: z.string().min(1, "Nome obrigatório"),
+  email: z.string().email("Email inválido"),
+  age: z.number().min(18, "Deve ser maior de idade"),
+});
+
+type FormData = z.infer<typeof schema>;
+
+function PatientForm() {
+  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+    resolver: zodResolver(schema),
+  });
+
+  const onSubmit = (data: FormData) => createPatient(data);
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <input {...register("name")} />
+      {errors.name && <span>{errors.name.message}</span>}
+      <button type="submit">Salvar</button>
+    </form>
+  );
+}
+```
+
+**Bibliotecas de validação:**
+
+| Lib | Estilo | Use case |
+| --- | --- | --- |
+| Zod | Schema-first, TypeScript-native | Preferido com React Hook Form + TS |
+| Yup | Encadeamento fluente | Popular, mais antigo que Zod |
+| Joi | API rica, origin Node.js | Backend-first, também funciona no front |
+
+> **Fontes:**
+> - [React Hook Form](https://react-hook-form.com/)
+> - [TanStack Form](https://tanstack.com/form/latest)
+> - [Zod](https://zod.dev/) — validação TypeScript-first
+> - [Yup](https://github.com/jquense/yup)
+
+### HTTP e API Layer
+
+**Axios** — HTTP client com interceptors, cancel tokens, e configuração global:
+
+```tsx
+// services/api.ts — configuração centralizada
+import axios from "axios";
+
+export const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+  timeout: 10000,
+});
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) redirectToLogin();
+    return Promise.reject(error);
+  }
+);
+```
+
+**TanStack Query + Axios** — o padrão recomendado:
+
+```tsx
+// hooks/usePatients.ts
+export function usePatients(specialty: string) {
+  return useQuery({
+    queryKey: ["patients", specialty],
+    queryFn: () => api.get<Patient[]>(`/patients?specialty=${specialty}`).then(r => r.data),
+    staleTime: 5 * 60 * 1000, // 5 min cache
+  });
+}
+
+// hooks/useCreatePatient.ts
+export function useCreatePatient() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: CreatePatientDTO) => api.post("/patients", data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["patients"] }),
+  });
+}
+```
+
+> **Fontes:**
+> - [TanStack Query](https://tanstack.com/)
+> - [React Query useMutation](https://profy.dev/article/react-query-usemutation)
+> - [React REST API patterns](https://profy.dev/article/react-rest-api)
+
+### Ecossistema e Tooling
+
+| Ferramenta | Categoria | O que faz |
+| --- | --- | --- |
+| Vite | Build tool | Dev server rápido, HMR, build otimizado (substitui CRA) |
+| Next.js | Meta-framework | SSR, SSG, API routes, file-based routing |
+| React Router | Routing | Navegação SPA, nested routes, loaders |
+| TanStack Query | Server state | Fetch, cache, sync, optimistic updates |
+| Zustand | Client state | Estado global minimalista |
+| React Hook Form | Forms | Formulários performáticos |
+| Zod | Validação | Schema validation TypeScript-first |
+| Axios | HTTP | Client HTTP com interceptors |
+| React Admin | Admin panels | CRUD admin out-of-the-box |
+| Tabler Icons | Ícones | Biblioteca de ícones open-source |
+
+**Migração CRA → Vite:** essencial para projetos existentes. Vite é 10-100x mais rápido no dev server.
+
+> **Fontes:**
+> - [Next.js](https://nextjs.org/)
+> - [React Admin](https://marmelab.com/react-admin/)
+> - [Migrar de CRA para Vite](https://dev.to/ajeetraina/how-to-migrate-from-create-react-app-to-vite-3b8m)
+> - [Tabler Icons](https://tabler.io/icons)
+> - [Lightweight Charts (gráficos)](https://www.tradingview.com/lightweight-charts/)
+
 ### Performance
 
 - **`React.memo()`:** evita re-render quando props não mudaram (shallow compare)
@@ -167,9 +324,14 @@ One thing I emphasize is proper data fetching. Using `useEffect` with `useState`
 
 ## Recursos
 
-- [React Docs](https://react.dev/) — documentação oficial (nova)
+- [React Docs](https://react.dev/) — documentação oficial
+- [React Reference](https://react.dev/reference/react) — API reference
 - [TanStack Query](https://tanstack.com/query/) — data fetching
 - [Zustand](https://zustand-demo.pmnd.rs/) — state management
+- [React Hook Form](https://react-hook-form.com/) — formulários
+- [React Components Demystified](https://dev.to/vyan/react-components-demystified-your-ultimate-guide-from-newbie-to-ninja-3l1n)
+- [Frontend Debugging 101](https://lukeberrypi.vercel.app/articles/frontend-debugging-101)
+- [Frontend Design Patterns](https://www.netguru.com/blog/frontend-design-patterns)
 - [[Trilha Frontend]] — trilha de aprendizado
 
 ## Veja também
@@ -177,4 +339,7 @@ One thing I emphasize is proper data fetching. Using `useEffect` with `useState`
 - [[JavaScript Fundamentals]]
 - [[TypeScript]]
 - [[Node.js]]
+- [[HTML e CSS]]
+- [[Material UI]]
+- [[Mantine]]
 - [[API Design]]
