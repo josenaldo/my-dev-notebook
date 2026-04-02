@@ -99,8 +99,12 @@ Padronizar erros com Problem Details (RFC 9457) facilita o consumo por clientes 
 
 - **HATEOAS:** incluir links para ações relacionadas na resposta. Na prática, poucas APIs implementam completamente.
 - **Rate Limiting:** proteger a API com headers `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`.
-- **Idempotency Keys:** para operações POST, permitir que o cliente envie um ID único para evitar duplicação (padrão Stripe).
+- **Idempotency Keys:** para operações POST, o cliente envia um header `Idempotency-Key` (geralmente UUID v4) para evitar duplicação. O servidor armazena o resultado da primeira requisição e retorna o mesmo resultado em retentativas — incluindo erros 500. Padrão popularizado pela Stripe, essencial para pagamentos e criação de recursos. Keys devem ter TTL (Stripe: 24h).
 - **Backward Compatibility:** nunca remover campos ou mudar tipos em versões existentes. Adicionar é safe.
+
+> **Fontes sobre idempotência:**
+> - [Stripe — Idempotent Requests](https://docs.stripe.com/api/idempotent_requests)
+> - [Idempotency in Payment Processing](https://www.computer.org/publications/tech-news/trends/idempotency-in-payment-processing-architecture)
 - **Documentation:** OpenAPI/Swagger para REST, esquema para GraphQL, `.proto` files para gRPC.
 
 ## Quando usar

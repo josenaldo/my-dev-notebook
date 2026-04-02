@@ -269,7 +269,7 @@ class AppointmentServiceIntegrationTest {
 ## Armadilhas comuns
 
 - **LazyInitializationException:** acessar relação lazy fora de transação. Resolver com `@EntityGraph`, `JOIN FETCH`, ou DTO projection.
-- **N+1 queries:** loop de consultas dentro de `@Transactional`. Usar `@EntityGraph` ou `@BatchSize`.
+- **N+1 queries:** ocorre quando 1 query busca N entidades e depois N queries buscam relações de cada uma (total: N+1). Detectar via query logs repetidos ou Hibernate statistics. Soluções: `JOIN FETCH` na JPQL, `@EntityGraph` na interface do repository, `@BatchSize` para lazy loading em lotes, ou DTO projection que já traz os dados necessários em 1 query.
 - **`@Transactional` em private methods:** não funciona! O Spring usa proxies, que só interceptam métodos públicos.
 - **Circular dependencies:** A depende de B que depende de A. Reestruturar com eventos ou extrair interface.
 - **Beans mutáveis singleton:** estado compartilhado em beans singleton causa race conditions.
