@@ -107,6 +107,126 @@ SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 - **`@ConfigurationProperties`:** bind de propriedades para classes Java tipadas
 - **Externalized config:** variáveis de ambiente, Vault, ConfigServer
 
+> **Fontes:**
+> - [Spring Profiles — Baeldung](https://www.baeldung.com/spring-profiles)
+> - [Environment Variables in Properties — Baeldung](https://www.baeldung.com/spring-boot-properties-env-variables)
+> - [@ConfigurationProperties — Baeldung](https://www.baeldung.com/configuration-properties-in-spring-boot)
+> - [Common Application Properties](https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html)
+
+### Bean Validation
+
+Validação declarativa com anotações Jakarta Validation:
+
+```java
+public record CreatePatientRequest(
+    @NotBlank String name,
+    @Email @NotBlank String email,
+    @Past LocalDate birthDate,
+    @Size(min = 11, max = 11) String cpf
+) {}
+
+@RestController
+public class PatientController {
+    @PostMapping("/patients")
+    public ResponseEntity<?> create(@Valid @RequestBody CreatePatientRequest req) {
+        // Se validação falhar, Spring retorna 400 automaticamente
+        return ResponseEntity.created(uri).body(service.create(req));
+    }
+}
+```
+
+**Anotações principais:** `@NotNull`, `@NotBlank`, `@NotEmpty`, `@Size`, `@Email`, `@Min`, `@Max`, `@Past`, `@Future`, `@Pattern`
+
+**`@Valid` vs `@Validated`:** `@Valid` (Jakarta, cascata em objetos aninhados) vs `@Validated` (Spring, suporta validation groups)
+
+**Validador customizado:**
+
+```java
+@Target(ElementType.FIELD)
+@Constraint(validatedBy = CpfValidator.class)
+public @interface ValidCpf {
+    String message() default "CPF inválido";
+}
+```
+
+> **Fontes:**
+> - [Validation in Spring Boot — Baeldung](https://www.baeldung.com/spring-boot-bean-validation)
+> - [Bean Validation Basics — Baeldung](https://www.baeldung.com/java-validation)
+> - [@Valid vs @Validated — Baeldung](https://www.baeldung.com/spring-valid-vs-validated)
+> - [Custom Validator — Baeldung](https://www.baeldung.com/spring-mvc-custom-validator)
+> - [Service Layer Validation — Baeldung](https://www.baeldung.com/spring-service-layer-validation)
+
+### Persistência (JPA, Hibernate, Flyway)
+
+**Spring Data JPA** abstrai JPA/Hibernate. Repositórios geram queries a partir do nome do método:
+
+```java
+public interface PatientRepository extends JpaRepository<Patient, Long> {
+    List<Patient> findBySpecialtyAndActive(String specialty, boolean active);
+
+    @Query("SELECT p FROM Patient p WHERE p.rating > :min")
+    List<Patient> findTopRated(@Param("min") double min);
+}
+```
+
+**HikariCP** — connection pool padrão do Spring Boot. Configurar pool size é crítico:
+- Regra: `connections = (core_count * 2) + spindle_count`
+- Para SSD: geralmente 10-20 conexões bastam
+
+**Flyway** — migrações de schema versionadas:
+
+```text
+resources/db/migration/
+  V1__create_patients.sql
+  V2__add_email_column.sql
+  V3__create_appointments.sql
+```
+
+Cada migração roda uma vez, é rastreada em tabela `flyway_schema_history`. Nunca editar migrações já executadas — criar nova.
+
+**Lombok + JPA — cuidados:**
+- `@Data` em entidades JPA gera `equals`/`hashCode` com todos os campos — perigoso com lazy loading
+- Usar `@Getter @Setter @NoArgsConstructor` separados
+- `@EqualsAndHashCode` deve usar apenas o ID da entidade
+- `@ToString` pode disparar lazy loading — excluir relações
+
+> **Fontes:**
+> - [Spring Data JPA](https://spring.io/projects/spring-data-jpa)
+> - [findById Anti-Pattern](https://vladmihalcea.com/spring-data-jpa-findbyid/)
+> - [HikariCP — About Pool Sizing](https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing)
+> - [Flyway](https://github.com/flyway/flyway) — migrations
+> - [Lombok e JPA — O que pode dar errado?](https://dev.to/eronalves1996/traducao-lombok-e-jpa-o-que-pode-dar-errado-1c6)
+> - [Hibernate Natural IDs — Baeldung](https://www.baeldung.com/spring-boot-hibernate-natural-ids)
+
+### Ferramentas do ecossistema
+
+**MapStruct** — mapeamento entre objetos (Entity ↔ DTO) em compile-time:
+
+```java
+@Mapper(componentModel = "spring")
+public interface PatientMapper {
+    PatientDTO toDto(Patient entity);
+    Patient toEntity(CreatePatientRequest request);
+}
+```
+
+Gera implementação automaticamente. Sem reflection = mais rápido que ModelMapper.
+
+**Spring Cloud OpenFeign** — HTTP client declarativo para comunicação entre microserviços:
+
+```java
+@FeignClient(name = "notification-service", url = "${notification.url}")
+public interface NotificationClient {
+    @PostMapping("/notifications")
+    void send(@RequestBody NotificationRequest request);
+}
+```
+
+> **Fontes:**
+> - [MapStruct](https://mapstruct.org/) — documentação oficial
+> - [Spring Cloud OpenFeign](https://docs.spring.io/spring-cloud-openfeign/docs/current/reference/html/)
+> - [Feign ErrorDecoder — Baeldung](https://www.baeldung.com/feign-retrieve-original-message)
+
 ### Observabilidade
 
 - **Actuator:** endpoints `/health`, `/metrics`, `/info` para monitoramento
@@ -182,8 +302,15 @@ One area where I've seen teams struggle is with JPA's lazy loading. The LazyInit
 ## Recursos
 
 - [Spring Boot Reference](https://docs.spring.io/spring-boot/reference/) — documentação oficial
+- [Spring Framework](https://spring.io/projects/spring-framework)
 - [Spring Initializr](https://start.spring.io/) — gerador de projetos
-- [Baeldung](https://www.baeldung.com/) — tutorials Spring Boot
+- [Spring MVC — Web on Servlet Stack](https://docs.spring.io/spring-framework/reference/web.html)
+- [Spring Security](https://spring.io/projects/spring-security)
+- [Spring Testing](https://docs.spring.io/spring-framework/reference/testing.html)
+- [Baeldung — Start Here](https://www.baeldung.com/start-here) — tutorials Spring Boot
+- [Stop using @Autowired](https://www.linkedin.com/pulse/you-should-stop-using-spring-autowired-felix-coutinho/) — constructor injection
+- [ProblemDetails para tratamento de erros](https://medium.com/@claudionetto/usando-problemdetails-para-facilitar-e-melhorar-o-retorno-de-exce%C3%A7%C3%B5es-5c060a42f637)
+- [Spring @Value — Baeldung](https://www.baeldung.com/spring-value-annotation)
 
 ## Veja também
 
