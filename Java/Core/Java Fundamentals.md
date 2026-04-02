@@ -68,6 +68,20 @@ var topDoctors = doctors.stream()
 - **Parallel streams:** `parallelStream()` — cuidado com shared state e overhead de thread pool
 - **Collectors:** `toList()`, `toMap()`, `groupingBy()`, `joining()`, `partitioningBy()`
 
+**Checklist de performance para Streams:**
+
+1. `collect()` guarda tudo na memória? Pode reduzir em passo único (`sum`, `count`, `max`)?
+2. É possível limitar ou processar em lotes?
+3. Está usando Streams primitivos (`IntStream`, `LongStream`) para evitar boxing?
+4. `sorted()` ou `distinct()` em dados grandes carrega tudo em memória
+5. Os filtros mais seletivos estão no início da pipeline?
+6. Usando operações de curto-circuito (`findFirst`, `limit`, `anyMatch`) quando possível?
+7. `flatMap` pode expandir demais o volume — monitorar
+
+> **Fontes:**
+> - [Java Streams — exemplo prático](https://computaria.gitlab.io/blog/2025/04/27/java-streams-exemplo)
+> - [Java moderno com Peano](https://computaria.gitlab.io/blog/2025/03/10/peano-java-moderno)
+
 ### Concorrência
 
 - **Thread:** unidade de execução. `Thread`, `Runnable`, `Callable`
@@ -77,9 +91,91 @@ var topDoctors = doctors.stream()
 - **Volatile:** garante visibilidade entre threads, mas não atomicidade
 - **Virtual Threads (Java 21):** threads leves gerenciadas pela JVM, não pelo OS. Ideal para I/O-bound.
 
+### Exceções
+
+Hierarquia: `Throwable` → `Error` (sistema) e `Exception` (aplicação). `RuntimeException` são unchecked.
+
+**Checked vs Unchecked:**
+
+- **Checked (Exception):** devem ser tratadas com try-catch ou declaradas com throws. Ex: `IOException`, `SQLException`. Representam situações recuperáveis.
+- **Unchecked (RuntimeException):** erros de programação. Ex: `NullPointerException`, `IllegalArgumentException`. Não requerem tratamento obrigatório.
+
+**Try-with-resources:** fecha recursos automaticamente:
+
+```java
+try (var reader = new BufferedReader(new FileReader("data.csv"))) {
+    return reader.lines().map(this::parseLine).toList();
+} // reader é fechado automaticamente, mesmo com exceção
+```
+
+**Custom exceptions:**
+
+```java
+public class PatientNotFoundException extends RuntimeException {
+    public PatientNotFoundException(Long id) {
+        super("Patient not found: " + id);
+    }
+}
+```
+
+**Boas práticas:**
+- Capturar exceções específicas, nunca `catch (Exception e)` genérico
+- Não silenciar exceções (catch vazio)
+- Usar unchecked para erros de programação, checked para erros recuperáveis de I/O
+- Em APIs REST, traduzir exceções para HTTP status codes via `@ExceptionHandler`
+
+> **Fontes:**
+> - [Java Exceptions — Baeldung](https://www.baeldung.com/java-exceptions)
+> - [Checked vs Unchecked — Baeldung](https://www.baeldung.com/java-checked-unchecked-exceptions)
+> - [Try-with-resources — Baeldung](https://www.baeldung.com/java-try-with-resources)
+> - [Custom Exceptions — Baeldung](https://www.baeldung.com/java-new-custom-exception)
+> - [Pensando nas Exceptions do Java](https://insights.itexto.com.br/pensando-nas-exceptions-do-java-ou-por-que-elas-sao-assim/)
+
+### Optional
+
+Wrapper que representa um valor que pode ou não existir. Substitui `null` de forma segura:
+
+```java
+Optional<Patient> patient = repository.findById(id);
+
+// Bom: encadear operações
+String name = patient
+    .map(Patient::getName)
+    .orElse("Desconhecido");
+
+// Bom: lançar exceção se vazio
+Patient p = patient
+    .orElseThrow(() -> new PatientNotFoundException(id));
+```
+
+**Regras:**
+- Usar como retorno de métodos que podem não ter resultado
+- **Nunca** usar como parâmetro de método ou campo de classe
+- **Nunca** usar `Optional.get()` sem verificar — use `orElse`, `orElseThrow`, `map`, `ifPresent`
+- `Optional.empty()` em vez de retornar `null`
+
+> **Fonte:** [Java Optional](https://computaria.gitlab.io/blog/2025/04/25/java-optional)
+
 ### Features modernas (Java 17+)
 
-- **Records:** classes imutáveis para dados. `record Patient(String name, String email) {}`
+**Records:** classes imutáveis para dados — geram automaticamente construtor, getters, `equals()`, `hashCode()` e `toString()`:
+
+```java
+public record Patient(String name, String email, LocalDate birthDate) {
+    // Compact constructor para validação
+    public Patient {
+        Objects.requireNonNull(name, "Name is required");
+        Objects.requireNonNull(email, "Email is required");
+    }
+}
+```
+
+Ideais para DTOs, respostas de API, value objects. Não usar para entidades JPA (precisam de mutabilidade e construtor vazio).
+
+> **Fonte:** [Beginner-Friendly Guide to Java Records](https://reflectoring.io/beginner-friendly-guide-to-java-records/)
+
+**Outras features:**
+
 - **Sealed classes:** restringe quais classes podem herdar. Útil com pattern matching.
 - **Pattern matching:** `if (obj instanceof String s)` — cast automático
 - **Text blocks:** `""" multiline string """`
@@ -134,6 +230,10 @@ For concurrency, I'm excited about Virtual Threads in Java 21. In traditional Ja
 ## Recursos
 
 - [Java Language Updates](https://docs.oracle.com/en/java/javase/21/language/index.html) — features por versão
+- [JDK 22 Documentation](https://docs.oracle.com/en/java/javase/22/)
+- [Java features desde JDK 8 ao 21](https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-21/)
+- [Java Evolved](https://javaevolved.github.io/) — evolução da linguagem
+- [O que são anotações no Java? (vídeo)](https://www.youtube.com/watch?v=d7oJwcGJWUk)
 - [[Trilha Java]] — trilha de aprendizado completa
 - [[What should you do to stand out as a Java-Spring Boot Developer]]
 
