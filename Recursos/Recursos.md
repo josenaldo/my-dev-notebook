@@ -1,5 +1,5 @@
 ---
-title: "MOC - Recursos"
+title: "Recursos"
 type: moc
 publish: true
 ---

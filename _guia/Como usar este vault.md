@@ -36,11 +36,11 @@ O vault está organizado por **domínios** (pastas) e **stacks** (ecossistemas d
 - **Infraestrutura/** — Docker, Kubernetes, Cloud
 - **Ferramentas/** — Git, IDE, Prompts
 - **Recursos/** — Referências gerais, Brag Document
-- **MOCs/** — Índices (Maps of Content) de cada área
+- Cada pasta tem um arquivo com o nome da pasta (ex: `Java/Java.md`) que serve como índice (MOC)
 
 ## Como navegar
 
-1. **Comece pelos MOCs** (`MOC - ...`) — são os índices de cada área
+1. **Comece pelo índice da pasta** (ex: `Java.md`, `Arquitetura.md`) — são os MOCs de cada área
 2. **Use a [[Trilha Entrevistas]]** — roteiro sequencial para preparação de entrevistas
 3. **Links internos** `[[nota]]` conectam conceitos entre domínios
 

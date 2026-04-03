@@ -107,14 +107,14 @@ Distribui conteúdo estático em servidores geograficamente próximos dos usuár
 
 ### Sistemas clássicos de entrevista
 
-| Sistema | Conceitos-chave |
-| --- | --- |
-| URL Shortener | Hash, base62, banco KV, cache, redirect 301/302 |
-| Twitter Feed | Fan-out on write vs read, timeline cache, pub/sub |
-| Chat System | WebSocket, presence service, message queue, ordenação |
-| Rate Limiter | Token bucket, sliding window, distributed counter |
-| Notification | Multi-channel, template engine, priority queue, retry |
-| File Storage | Chunking, dedup, metadata DB, object storage (S3) |
+| Sistema       | Conceitos-chave                                       |
+| ------------- | ----------------------------------------------------- |
+| URL Shortener | Hash, base62, banco KV, cache, redirect 301/302       |
+| Twitter Feed  | Fan-out on write vs read, timeline cache, pub/sub     |
+| Chat System   | WebSocket, presence service, message queue, ordenação |
+| Rate Limiter  | Token bucket, sliding window, distributed counter     |
+| Notification  | Multi-channel, template engine, priority queue, retry |
+| File Storage  | Chunking, dedup, metadata DB, object storage (S3)     |
 
 ## Quando usar
 

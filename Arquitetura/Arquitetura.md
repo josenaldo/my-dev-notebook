@@ -1,5 +1,5 @@
 ---
-title: "MOC - Arquitetura"
+title: "Arquitetura"
 type: moc
 publish: true
 ---

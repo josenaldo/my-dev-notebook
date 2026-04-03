@@ -40,3 +40,16 @@ https://github.com/ByteByteGoHq/system-design-101/tree/main
 
 https://github.com/microsoft/ai-agents-for-beginners
 https://www.promptingguide.ai/
+
+# Claw code
+https://github.com/ultraworkers/claw-code
+https://github.com/Yeachan-Heo/oh-my-codex
+https://github.com/code-yeongyu/oh-my-openagent
+# Document AI
+https://cloud.google.com/document-ai
+
+# EmDash
+https://lushbinary.com/blog/cloudflare-emdash-developer-guide-setup-plugins-deployment-2026/
+https://github.com/emdash-cms/emdash/
+https://docs.astro.build/en/concepts/why-astro/
+https://blog.cloudflare.com/emdash-wordpress/

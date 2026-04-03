@@ -1,5 +1,5 @@
 ---
-title: "MOC - Java"
+title: "Java"
 type: moc
 publish: true
 ---

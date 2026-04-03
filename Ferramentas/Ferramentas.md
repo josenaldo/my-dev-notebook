@@ -1,5 +1,5 @@
 ---
-title: "MOC - Ferramentas"
+title: "Ferramentas"
 type: moc
 publish: true
 ---

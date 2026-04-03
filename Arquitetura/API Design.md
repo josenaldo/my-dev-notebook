@@ -31,24 +31,24 @@ API Design é o processo de definir como sistemas se comunicam — quais endpoin
 
 **Verbos HTTP corretos:**
 
-| Método | Uso | Idempotente |
-| --- | --- | --- |
-| GET | Buscar recurso(s) | Sim |
-| POST | Criar recurso | Não |
-| PUT | Substituir recurso completo | Sim |
-| PATCH | Atualizar parcialmente | Não* |
-| DELETE | Remover recurso | Sim |
+| Método | Uso                         | Idempotente |
+| ------ | --------------------------- | ----------- |
+| GET    | Buscar recurso(s)           | Sim         |
+| POST   | Criar recurso               | Não         |
+| PUT    | Substituir recurso completo | Sim         |
+| PATCH  | Atualizar parcialmente      | Não*        |
+| DELETE | Remover recurso             | Sim         |
 
 \* PATCH pode ser idempotente dependendo da implementação.
 
 **Status codes semânticos:**
 
-| Range | Significado | Exemplos |
-| --- | --- | --- |
-| 2xx | Sucesso | 200 OK, 201 Created, 204 No Content |
-| 3xx | Redirecionamento | 301 Moved, 304 Not Modified |
-| 4xx | Erro do cliente | 400 Bad Request, 401 Unauthorized, 404 Not Found, 422 Unprocessable |
-| 5xx | Erro do servidor | 500 Internal, 502 Bad Gateway, 503 Unavailable |
+| Range | Significado      | Exemplos                                                            |
+| ----- | ---------------- | ------------------------------------------------------------------- |
+| 2xx   | Sucesso          | 200 OK, 201 Created, 204 No Content                                 |
+| 3xx   | Redirecionamento | 301 Moved, 304 Not Modified                                         |
+| 4xx   | Erro do cliente  | 400 Bad Request, 401 Unauthorized, 404 Not Found, 422 Unprocessable |
+| 5xx   | Erro do servidor | 500 Internal, 502 Bad Gateway, 503 Unavailable                      |
 
 ### Paginação
 
@@ -103,8 +103,10 @@ Padronizar erros com Problem Details (RFC 9457) facilita o consumo por clientes 
 - **Backward Compatibility:** nunca remover campos ou mudar tipos em versões existentes. Adicionar é safe.
 
 > **Fontes sobre idempotência:**
+>
 > - [Stripe — Idempotent Requests](https://docs.stripe.com/api/idempotent_requests)
 > - [Idempotency in Payment Processing](https://www.computer.org/publications/tech-news/trends/idempotency-in-payment-processing-architecture)
+>
 - **Documentation:** OpenAPI/Swagger para REST, esquema para GraphQL, `.proto` files para gRPC.
 
 ## Quando usar

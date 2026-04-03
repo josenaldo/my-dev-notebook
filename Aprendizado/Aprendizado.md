@@ -1,5 +1,5 @@
 ---
-title: "MOC - Aprendizado"
+title: "Aprendizado"
 type: moc
 publish: true
 ---

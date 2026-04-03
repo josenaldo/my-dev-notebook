@@ -1,5 +1,5 @@
 ---
-title: "MOC - IA"
+title: "IA"
 type: moc
 publish: true
 ---

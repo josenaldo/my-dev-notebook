@@ -1,5 +1,5 @@
 ---
-title: "MOC - Fundamentos"
+title: "Fundamentos"
 type: moc
 publish: true
 ---

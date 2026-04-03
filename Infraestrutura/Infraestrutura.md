@@ -1,5 +1,5 @@
 ---
-title: "MOC - Infraestrutura"
+title: "Infraestrutura"
 type: moc
 publish: true
 ---

@@ -73,17 +73,17 @@ class ReportService {
 
 ### Padrões no mundo real
 
-| Padrão | Onde você já usa | Framework |
-| --- | --- | --- |
-| Singleton | Beans do Spring | Spring IoC |
-| Observer | Event listeners | Spring Events, Node EventEmitter |
-| Strategy | Algoritmos intercambiáveis | Comparator em Java, sort callbacks em JS |
-| Builder | Construção de objetos complexos | Lombok @Builder, StringBuilder |
-| Decorator | Middleware, interceptors | Express middleware, Spring AOP |
-| Facade | Service layer | Spring @Service orquestrando repositories |
-| Factory | Criação condicional | Spring FactoryBean, Abstract Factory |
-| Proxy | Lazy loading, caching | JPA proxies, Spring AOP proxies |
-| Repository | Acesso a dados | Spring Data JPA |
+| Padrão     | Onde você já usa                | Framework                                 |
+| ---------- | ------------------------------- | ----------------------------------------- |
+| Singleton  | Beans do Spring                 | Spring IoC                                |
+| Observer   | Event listeners                 | Spring Events, Node EventEmitter          |
+| Strategy   | Algoritmos intercambiáveis      | Comparator em Java, sort callbacks em JS  |
+| Builder    | Construção de objetos complexos | Lombok @Builder, StringBuilder            |
+| Decorator  | Middleware, interceptors        | Express middleware, Spring AOP            |
+| Facade     | Service layer                   | Spring @Service orquestrando repositories |
+| Factory    | Criação condicional             | Spring FactoryBean, Abstract Factory      |
+| Proxy      | Lazy loading, caching           | JPA proxies, Spring AOP proxies           |
+| Repository | Acesso a dados                  | Spring Data JPA                           |
 
 ## Quando usar
 

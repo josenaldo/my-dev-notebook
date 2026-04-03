@@ -1,5 +1,5 @@
 ---
-title: "MOC - JavaScript"
+title: "JavaScript"
 type: moc
 publish: true
 ---

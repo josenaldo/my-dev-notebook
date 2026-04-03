@@ -46,6 +46,7 @@ Proposta por Uncle Bob, organiza o código em camadas concêntricas onde depend�
 **Trade-off:** mais camadas = mais indireção. Para CRUD simples, pode ser over-engineering.
 
 > **Fontes:**
+>
 > - [Clean Coder Blog — The Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
 > - [Descomplicando a Clean Architecture](https://medium.com/luizalabs/descomplicando-a-clean-architecture-cf4dfc4a1ac6)
 > - [Clean Architecture: descubra o que é e onde aplicar](https://www.zup.com.br/blog/clean-architecture-arquitetura-limpa)
@@ -72,6 +73,7 @@ Proposta por Alistair Cockburn. O core da aplicação define **Ports** (interfac
 **Na prática:** em Spring Boot, um `@Service` que depende de uma interface `PatientRepository` (port) implementada por `JpaPatientRepository` (adapter).
 
 > **Fontes:**
+>
 > - [Hexagonal Architecture — There Are Always Two Sides](https://medium.com/ssense-tech/hexagonal-architecture-there-are-always-two-sides-to-every-story-bc0780ed7d9c)
 > - [How to Implement a Hexagonal Architecture](https://www.freecodecamp.org/news/implementing-a-hexagonal-architecture/)
 
@@ -86,6 +88,7 @@ Segundo Herberto Graça, Clean, Hexagonal, Onion e DDD convergem:
 Todas as dependências apontam para o center (domain). O domain nunca importa infrastructure. CQRS separa Commands (escrita) de Queries (leitura) para otimizar cada lado independentemente.
 
 > **Fontes:**
+>
 > - [DDD, Hexagonal, Onion, Clean, CQRS — How I put it all together](https://herbertograca.com/2017/11/16/explicit-architecture-01-ddd-hexagonal-onion-clean-cqrs-how-i-put-it-all-together/)
 > - [The Software Architecture Chronicles](https://herbertograca.com/2017/07/03/the-software-architecture-chronicles/)
 > - [Documenting Software Architecture](https://herbertograca.com/2019/08/12/documenting-software-architecture/)
@@ -102,6 +105,7 @@ Abordagem pragmática para projetos que não precisam da cerimônia completa de 
 **Quando usar:** projetos médios onde Clean Architecture seria over-engineering, mas "jogar tudo no controller" seria under-engineering.
 
 > **Fontes:**
+>
 > - [Tomato Architecture — A Pragmatic Approach](https://www.sivalabs.in/tomato-architecture-pragmatic-approach-to-software-design/)
 > - [Package by Feature](https://phauer.com/2020/package-by-feature/)
 > - [Demo — Spring Boot](https://github.com/sivaprasadreddy/tomato-architecture-spring-boot-demo)
@@ -121,6 +125,7 @@ Ver [[Design Patterns]] e [[Orientação a Objetos]] para detalhes completos. Em
 | Dependency Inversion  | Dependa de abstrações         |
 
 > **Fontes:**
+>
 > - [The S.O.L.I.D Principles in Pictures](https://medium.com/backticks-tildes/the-s-o-l-i-d-principles-in-pictures-b34ce2f1e898)
 > - [SOLID fica FÁCIL com Essas Ilustrações (vídeo)](https://www.youtube.com/watch?v=6SfrO3D4dHM)
 > - [SOLID e Design de Software na prática (vídeo)](https://www.youtube.com/watch?v=4oVByCJJkRI)
@@ -179,6 +184,7 @@ Abordagem que coloca o domínio do negócio no centro do design:
 **Na prática:** DDD é valioso para domínios complexos. Para CRUD simples, é overhead. O [[Event Storming]] é uma técnica para descobrir bounded contexts.
 
 > **Fontes:**
+>
 > - [DDD do jeito certo (playlist)](https://www.youtube.com/playlist?list=PLkpjQs-GfEMN8CHp7tIQqg6JFowrIX9ve)
 > - [CQS: encapsulamento em POO (vídeo)](https://youtu.be/7NVbDGIMHjo?si=M2eGO4kZr0Vzs3uU)
 
@@ -211,6 +217,7 @@ Estilo arquitetural onde a aplicação é uma coleção de serviços pequenos, i
 - **Chatty Services:** muitas chamadas síncronas entre serviços
 
 > **Fontes:**
+>
 > - [Microservices — Martin Fowler](https://martinfowler.com/articles/microservices.html)
 > - [Microservices.io](https://microservices.io/index.html) — linguagem de padrões
 > - [Exponential Backoff and Jitter — AWS](https://aws.amazon.com/pt/blogs/architecture/exponential-backoff-and-jitter/)
@@ -232,6 +239,7 @@ Abordagem hierárquica para diagramar arquitetura em 4 níveis:
 **Regra:** comece pelo contexto (mais abstrato) e desça conforme a necessidade de detalhe.
 
 > **Fontes:**
+>
 > - [C4 Model](https://c4model.com/) — site oficial
 > - [arc42 Documentation](https://arc42.org/documentation/) — template de documentação
 > - [Curso de C4 Model na prática (playlist)](https://www.youtube.com/playlist?list=PLxuFqIk29JL0d_ESgZomFSEOzywPMmAqy)
