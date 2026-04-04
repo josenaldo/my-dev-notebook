@@ -122,6 +122,13 @@ The architecture is straightforward: an LLM as the reasoning engine, a set of to
 
 - [Claude Agent SDK](https://docs.anthropic.com/en/docs/agents) — framework da Anthropic
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — coding agent
+- [Everything Claude Code](https://github.com/affaan-m/everything-claude-code) — curadoria de recursos
+- [Context Lens](https://github.com/TiagoSchr/context-lens) — ferramenta de análise de contexto
+- [Junie — JetBrains AI Agent](https://www.jetbrains.com/guide/ai/article/junie/)
+- [Agentic Engineering — Addy Osmani](https://addyosmani.com/blog/agentic-engineering/)
+- [Factory Model — Addy Osmani](https://addyosmani.com/blog/factory-model/)
+- [The Third Golden Age of Software](https://newsletter.pragmaticengineer.com/p/the-third-golden-age-of-software)
+- [Full Cycle com Agents (playlist)](https://www.youtube.com/playlist?list=PLucm8g_ezqNoAkYKXN_zWupyH6hQCAwxY)
 - [[Skills e Prompting]]
 
 ## Veja também

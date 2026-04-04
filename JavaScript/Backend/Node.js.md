@@ -144,10 +144,47 @@ Error handling in Node.js requires attention — especially with async code. I a
 - gerenciador de pacotes → package manager (npm, pnpm)
 - módulo → module: unidade de código importável
 
+### ORMs
+
+**Sequelize** — ORM para Node.js com suporte a PostgreSQL, MySQL, SQLite:
+
+```typescript
+// Model
+@Table
+class Patient extends Model {
+  @Column declare name: string;
+  @Column declare email: string;
+  @HasMany(() => Appointment) declare appointments: Appointment[];
+}
+
+// Query
+const patients = await Patient.findAll({
+  where: { active: true },
+  include: [Appointment],  // eager loading (evita N+1)
+  limit: 20,
+  offset: 0,
+});
+```
+
+**Cuidados com Sequelize:**
+- Associações mal configuradas causam queries inesperadas
+- Paginação: usar `limit` + `offset` ou cursor-based para datasets grandes
+- Migrations versionadas (similar ao Flyway do Java)
+
+**Alternativas:** Prisma (type-safe, schema-first), TypeORM (decorators, similar ao JPA), Drizzle (lightweight).
+
+> **Fontes:**
+> - [Sequelize](https://sequelize.org/)
+> - [Sequelize Best Practices](https://climbtheladder.com/10-sequelize-js-best-practices/)
+> - [Mastering Pagination in Sequelize](https://medium.com/hexaworks-papers/mastering-pagination-in-sequelize-e50dbc9de01d)
+
 ## Recursos
 
 - [Node.js Docs](https://nodejs.org/docs/latest/api/) — documentação oficial
 - [NestJS Docs](https://docs.nestjs.com/) — framework enterprise
+- [Full Stack Open](https://fullstackopen.com/en/) — curso gratuito de fullstack com Node/React
+- [Clean Code JavaScript](https://github.com/ryanmcdermott/clean-code-javascript) — boas práticas
+- [Mastering Node.js and Express](https://dev.to/hanzla-mirza/mastering-nodejs-and-expressjs-advanced-tips-tricks-and-high-level-insights-183j)
 - [[Trilha JS-TS]] — trilha de aprendizado
 
 ## Veja também

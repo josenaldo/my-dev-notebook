@@ -44,8 +44,15 @@ GitHub Copilot é um assistente de IA para desenvolvimento, integrado diretament
 
 > No MedEspecialista, configurei GitHub Copilot com instructions customizadas (skills e prompts) para o contexto do projeto. Isso permite que o completion entenda nosso design system, padrões de API, e convenções. Para code review, Copilot identifica patterns comuns de bugs e sugere melhorias.
 
+## Recursos
+
+- [Copilot Customization Overview](https://code.visualstudio.com/docs/copilot/customization/overview)
+- [Awesome Copilot](https://github.com/github/awesome-copilot)
+- [Como reduzi em 70% o uso do context window](https://www.linkedin.com/pulse/como-reduzi-em-70-o-uso-do-context-window-github-copilot-lemos-cycnf/)
+
 ## Veja também
 
 - [[Comparativo de LLMs]]
 - [[Claude]]
 - [[Codex]]
+- [[Skills e Prompting]]
