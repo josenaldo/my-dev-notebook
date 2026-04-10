@@ -1,9 +1,9 @@
 ---
 title: "Arquitetura de Software"
 created: 2026-04-01
-updated: 2026-04-01
+updated: 2026-04-10
 type: concept
-status: seedling
+status: evergreen
 tags:
   - arquitetura
   - entrevista
@@ -12,311 +12,943 @@ publish: false
 
 # Arquitetura de Software
 
-Decisões estruturais que definem como um sistema é organizado — estilos, padrões, princípios e documentação.
+Decisões estruturais de alto nível sobre como um sistema é organizado — estilos, padrões, princípios, documentação e evolução. Enquanto [[System Design]] foca em **construir sistemas para atender requisitos de escala**, arquitetura de software foca em **como organizar o código e os times** para que o sistema sobreviva anos de evolução, mudanças de requisitos e rotação de pessoas.
 
 ## O que é
 
-Arquitetura de Software é o conjunto de decisões de alto nível sobre a estrutura de um sistema: como componentes se organizam, comunicam e evoluem. Não existe arquitetura "certa" — existe a mais adequada ao contexto (equipe, escala, prazo, domínio).
+Arquitetura de software é o conjunto de decisões de alto nível que são **caras de mudar depois** — a forma como o sistema é decomposto, como os componentes se comunicam, e os princípios que guiam a evolução. Ralph Johnson disse: "Architecture is the decisions that you wish you could get right early, because they're painful to change later."
+
+Em entrevistas, o que diferencia um senior:
+
+1. **Saber quando NÃO arquitetar** — a arquitetura deve ser proporcional à complexidade do problema. Clean Architecture pura num CRUD de 3 endpoints é over-engineering.
+2. **Conhecer os trade-offs** — toda decisão arquitetural tem custo. Saber articular isso é senioridade.
+3. **Evolução sobre perfeição** — a arquitetura "ideal" raramente sobrevive ao contato com produção. Projetar para **mudar** é mais importante que projetar para estar certo.
+4. **Pensar em times** — Conway's Law é real. A estrutura do software reflete a estrutura da comunicação do time.
+5. **Documentar decisões** — ADRs, C4, diagramas de sequência. O "porquê" importa mais que o "como".
+
+---
 
 ## Estilos arquiteturais
 
+A escolha do estilo arquitetural define a forma do sistema. Os estilos a seguir não são mutuamente exclusivos — projetos reais combinam elementos de vários.
+
+### Layered Architecture (N-tier)
+
+O estilo mais tradicional. Camadas horizontais: Presentation → Application → Domain → Infrastructure.
+
+```
+┌─────────────────────┐
+│   Presentation      │  Controllers, Views
+├─────────────────────┤
+│   Application       │  Services, Use Cases
+├─────────────────────┤
+│   Domain            │  Entities, Business Rules
+├─────────────────────┤
+│   Infrastructure    │  Database, External APIs
+└─────────────────────┘
+```
+
+**Regra:** camada N só conhece a camada N-1 (ou N+1 dependendo da direção).
+
+**Prós:** familiar, fácil de entender, bom ponto de partida.
+
+**Contras:** tende a virar "anemic domain model" — as entities viram estruturas de dados sem comportamento, e toda lógica vai para services. A infraestrutura frequentemente vaza para as camadas de cima.
+
+**Quando usar:** CRUD, projetos simples, equipes iniciantes. É o default razoável quando você não tem certeza do que escolher.
+
+### Hexagonal Architecture (Ports & Adapters)
+
+Proposta por Alistair Cockburn (2005). O core da aplicação é isolado do mundo externo por meio de **Ports** (interfaces) e **Adapters** (implementações).
+
+```
+                 ┌─────── Driving Adapters (entrada) ───────┐
+                 │                                           │
+    HTTP Adapter ────→ Port ─────┐                          │
+    CLI Adapter  ────→ Port ─────┤                          │
+    Event Adapter────→ Port ─────┤                          │
+                                 ↓                          │
+                            ┌──────────┐                    │
+                            │  Domain  │                    │
+                            │  Logic   │                    │
+                            └────┬─────┘                    │
+                                 ↑                          │
+    DB Adapter   ←──── Port ─────┤                          │
+    Email Adapter←──── Port ─────┤                          │
+    Payment API  ←──── Port ─────┘                          │
+                 │                                           │
+                 └──── Driven Adapters (saída) ──────────────┘
+```
+
+- **Driving Ports (entrada, "primary"):** interfaces que o mundo externo usa para acionar a aplicação. Ex.: `CreateOrderUseCase`.
+- **Driven Ports (saída, "secondary"):** interfaces que a aplicação usa para acessar recursos externos. Ex.: `OrderRepository`, `EmailSender`.
+- **Adapters:** implementações concretas. `HttpOrderController` (driving) e `JpaOrderRepository` (driven).
+
+**Na prática (Spring Boot):**
+
+```java
+// Port (driven) — interface no domínio
+public interface PatientRepository {
+    Optional<Patient> findById(PatientId id);
+    void save(Patient patient);
+}
+
+// Adapter — implementação na infraestrutura
+@Repository
+public class JpaPatientRepository implements PatientRepository {
+    private final PatientJpaEntityRepository jpaRepo;
+
+    @Override
+    public Optional<Patient> findById(PatientId id) {
+        return jpaRepo.findById(id.value())
+            .map(this::toDomain);
+    }
+    // ...
+}
+
+// Use case (core) — não sabe que JPA existe
+@Service
+public class ScheduleAppointmentUseCase {
+    private final PatientRepository patients;  // depende da interface
+    private final NotificationPort notifier;
+
+    public ScheduleAppointmentUseCase(PatientRepository patients,
+                                      NotificationPort notifier) {
+        this.patients = patients;
+        this.notifier = notifier;
+    }
+}
+```
+
+**Prós:** isolamento total do domínio; testável sem infraestrutura; fácil trocar implementações (banco, provedor de email).
+
+**Contras:** mais classes e interfaces; aprendizado inicial maior; pode ser over-engineering para CRUD.
+
+### Onion Architecture
+
+Proposta por Jeffrey Palermo (2008). Similar ao Hexagonal, mas com camadas concêntricas explícitas:
+
+```
+            ┌─────────────────────┐
+            │  Infrastructure     │
+            │  ┌───────────────┐  │
+            │  │ Application   │  │
+            │  │  Services     │  │
+            │  │ ┌───────────┐ │  │
+            │  │ │  Domain   │ │  │
+            │  │ │ Services  │ │  │
+            │  │ │┌─────────┐│ │  │
+            │  │ ││ Domain  ││ │  │
+            │  │ ││ Model   ││ │  │
+            │  │ │└─────────┘│ │  │
+            │  │ └───────────┘ │  │
+            │  └───────────────┘  │
+            └─────────────────────┘
+```
+
+**Regra fundamental:** dependências apontam sempre para dentro. O domínio (core) não conhece nada fora dele.
+
 ### Clean Architecture
 
-Proposta por Uncle Bob, organiza o código em camadas concêntricas onde dependências apontam para dentro (Dependency Rule):
+Proposta por Uncle Bob (2012). Síntese de Hexagonal, Onion e outras. Define 4 camadas:
 
-```text
-        ┌─────────────────────────┐
-        │    Frameworks & Drivers │  ← UI, DB, APIs externas
-        │  ┌───────────────────┐  │
-        │  │    Adapters       │  │  ← Controllers, Gateways, Presenters
-        │  │  ┌─────────────┐  │  │
-        │  │  │  Use Cases  │  │  │  ← Application Business Rules
-        │  │  │  ┌────────┐ │  │  │
-        │  │  │  │Entities│ │  │  │  ← Enterprise Business Rules
-        │  │  │  └────────┘ │  │  │
-        │  │  └─────────────┘  │  │
-        │  └───────────────────┘  │
-        └─────────────────────────┘
+```
+       ┌──────────────────────────────┐
+       │ Frameworks & Drivers         │  UI, DB, Web, Devices
+       │  ┌────────────────────────┐  │
+       │  │ Interface Adapters     │  │  Controllers, Gateways,
+       │  │  ┌──────────────────┐  │  │  Presenters
+       │  │  │ Use Cases        │  │  │  Application Business Rules
+       │  │  │  ┌────────────┐  │  │  │
+       │  │  │  │ Entities   │  │  │  │  Enterprise Business Rules
+       │  │  │  └────────────┘  │  │  │
+       │  │  └──────────────────┘  │  │
+       │  └────────────────────────┘  │
+       └──────────────────────────────┘
 ```
 
-**Regra fundamental:** camadas internas não conhecem camadas externas. Entities não sabem que banco de dados existe.
+**Dependency Rule:** nomes de fora podem ser referenciados por código de dentro, nunca o contrário. `Entities` não sabem que `Use Cases` existem; `Use Cases` não sabem que `Controllers` existem.
 
-**Benefícios:** domínio isolado, testável sem infraestrutura, independente de framework.
+**Entities vs Use Cases (distinção sutil):**
+- **Entities** — regras de negócio que existem independentemente da aplicação. "Um pedido com valor negativo é inválido" vale para qualquer sistema.
+- **Use Cases** — regras específicas desta aplicação. "Ao criar um pedido, enviar email de confirmação" é específico deste sistema.
 
-**Trade-off:** mais camadas = mais indireção. Para CRUD simples, pode ser over-engineering.
+### Clean/Hexagonal/Onion: convergência
 
-> **Fontes:**
->
-> - [Clean Coder Blog — The Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
-> - [Descomplicando a Clean Architecture](https://medium.com/luizalabs/descomplicando-a-clean-architecture-cf4dfc4a1ac6)
-> - [Clean Architecture: descubra o que é e onde aplicar](https://www.zup.com.br/blog/clean-architecture-arquitetura-limpa)
+Herberto Graça mostrou que esses três estilos convergem para a mesma ideia: **isolar o domínio da infraestrutura via inversão de dependência**. As diferenças são em grande parte terminológicas.
 
-### Arquitetura Hexagonal (Ports & Adapters)
+| Aspecto | Layered | Hexagonal | Onion | Clean |
+| --- | --- | --- | --- | --- |
+| Proposto por | — (clássico) | Cockburn | Palermo | Uncle Bob |
+| Ano | anos 70 | 2005 | 2008 | 2012 |
+| Ênfase | camadas horizontais | ports/adapters | camadas concêntricas | regras de dependência |
+| Domínio isolado? | não necessariamente | sim | sim | sim |
+| Testável sem infra? | difícil | sim | sim | sim |
+| Curva de aprendizado | baixa | média | média | alta |
 
-Proposta por Alistair Cockburn. O core da aplicação define **Ports** (interfaces) e o mundo externo implementa **Adapters**:
+**Recomendação prática:** aprenda Hexagonal primeiro. É o conceito mais puro e os outros são elaborações dele.
 
-```text
-                    ┌──────────────┐
-    HTTP Adapter ──→│  Port (in)   │
-    CLI Adapter  ──→│              │
-                    │   Domain     │
-                    │   Logic      │
-    DB Adapter   ←──│  Port (out)  │
-    Email Adapter←──│              │
-                    └──────────────┘
+### Tomato Architecture (pragmatismo)
+
+Abordagem pragmática proposta por Siva Prasad Reddy. Reconhece que Clean/Hexagonal estrita pode ser over-engineering e propõe:
+
+- **Package by feature**, não por camada (`/orders`, `/patients`) em vez de (`/controllers`, `/services`)
+- **Business logic pura** dentro do pacote, separada de infraestrutura
+- **Sem cerimônia de interfaces** para tudo — só onde faz sentido (ex.: para mockar em testes)
+- **Refatore para Hexagonal** quando a complexidade justificar
+
+**Quando usar:** projetos médios, equipes pequenas, prazo curto. É o ponto intermediário entre "jogar tudo no controller" e "Clean Architecture pura".
+
+### Event-Driven Architecture
+
+Componentes se comunicam publicando e consumindo eventos, em vez de chamadas diretas.
+
+```
+Order Service → [OrderCreated event] → Message Broker → ┬─→ Inventory Service
+                                                          ├─→ Notification Service
+                                                          └─→ Analytics Service
 ```
 
-- **Driving Ports (entrada):** interfaces que o mundo externo usa para acionar a aplicação (API, CLI, eventos)
-- **Driven Ports (saída):** interfaces que a aplicação usa para acessar o mundo externo (banco, email, APIs)
-- **Adapters:** implementações concretas dos ports
+**Vantagens:**
+- **Desacoplamento temporal** — publisher não espera consumer responder
+- **Desacoplamento espacial** — publisher não precisa saber quem são os consumers
+- **Escalabilidade** — cada consumer escala independentemente
+- **Resiliência** — se um consumer cai, eventos ficam na fila
 
-**Na prática:** em Spring Boot, um `@Service` que depende de uma interface `PatientRepository` (port) implementada por `JpaPatientRepository` (adapter).
+**Desafios:**
+- Debugging mais difícil (fluxo assíncrono entre serviços)
+- Eventual consistency (não é imediato)
+- Schema evolution (mudanças em eventos afetam todos os consumers)
+- Duplicação e ordenação de eventos (consumers devem ser idempotentes)
 
-> **Fontes:**
->
-> - [Hexagonal Architecture — There Are Always Two Sides](https://medium.com/ssense-tech/hexagonal-architecture-there-are-always-two-sides-to-every-story-bc0780ed7d9c)
-> - [How to Implement a Hexagonal Architecture](https://www.freecodecamp.org/news/implementing-a-hexagonal-architecture/)
+→ Para aprofundar: [[Mensageria]], [[Event Streaming]], [[Event Storming]]
 
-### Como tudo se conecta (Explicit Architecture)
+### Serverless / FaaS
 
-Segundo Herberto Graça, Clean, Hexagonal, Onion e DDD convergem:
+Functions-as-a-Service: o código roda em resposta a eventos, sem gerenciamento de servidor.
 
-- **Interface do Usuário** (delivery mechanisms) → controllers, CLI, event listeners
-- **Application Core** (lógica de negócio) → use cases, domain services, entities
-- **Infrastructure** (ferramentas externas) → banco, email, APIs, filas
+**Exemplos:** AWS Lambda, Google Cloud Functions, Azure Functions, Cloudflare Workers.
 
-Todas as dependências apontam para o center (domain). O domain nunca importa infrastructure. CQRS separa Commands (escrita) de Queries (leitura) para otimizar cada lado independentemente.
+**Prós:** paga só pelo uso, escala automaticamente até zero, sem ops de servidor.
 
-> **Fontes:**
->
-> - [DDD, Hexagonal, Onion, Clean, CQRS — How I put it all together](https://herbertograca.com/2017/11/16/explicit-architecture-01-ddd-hexagonal-onion-clean-cqrs-how-i-put-it-all-together/)
-> - [The Software Architecture Chronicles](https://herbertograca.com/2017/07/03/the-software-architecture-chronicles/)
-> - [Documenting Software Architecture](https://herbertograca.com/2019/08/12/documenting-software-architecture/)
+**Contras:** cold start, vendor lock-in, limitações de execução (tempo máximo), estado precisa ir para fora (DynamoDB, S3), debugging complexo.
 
-### Tomato Architecture
+**Quando usar:** workloads esporádicos, event processing, endpoints com tráfego variável, background jobs, edge computing.
 
-Abordagem pragmática para projetos que não precisam da cerimônia completa de Clean/Hexagonal:
+---
 
-- Organização por **feature/domínio** (package by feature), não por camada
-- Separação clara de business logic e infrastructure
-- Menos overhead — ideal para equipes pequenas e projetos que precisam evoluir rápido
-- Quando a complexidade crescer, refatorar para Hexagonal é natural
+## Monolito vs Microserviços
 
-**Quando usar:** projetos médios onde Clean Architecture seria over-engineering, mas "jogar tudo no controller" seria under-engineering.
+A decisão mais discutida (e mal compreendida) em arquitetura moderna.
 
-> **Fontes:**
->
-> - [Tomato Architecture — A Pragmatic Approach](https://www.sivalabs.in/tomato-architecture-pragmatic-approach-to-software-design/)
-> - [Package by Feature](https://phauer.com/2020/package-by-feature/)
-> - [Demo — Spring Boot](https://github.com/sivaprasadreddy/tomato-architecture-spring-boot-demo)
+### O espectro
 
-## Princípios
+```
+   Monolito                Modular                 Microserviços
+   tradicional             Monolith
+   ────────────────────────────────────────────────────────────→
+   "big ball of mud"   "well-bounded modules"  "independently deployable"
+        ↑                      ↑                         ↑
+  acoplamento alto      acoplamento baixo          cada serviço tem
+  1 único deploy        1 único deploy            deploy independente
+                        módulos isolados
+```
 
-### SOLID
+### Modular Monolith
 
-Ver [[Design Patterns]] e [[Orientação a Objetos]] para detalhes completos. Em resumo:
+O ponto intermediário frequentemente esquecido. Um único processo/deploy, mas organizado em módulos com fronteiras bem definidas.
 
-| Princípio             | Essência                      |
-| --------------------- | ----------------------------- |
-| Single Responsibility | Uma razão para mudar          |
-| Open/Closed           | Extender sem modificar        |
-| Liskov Substitution   | Subtipos são substituíveis    |
-| Interface Segregation | Interfaces pequenas e focadas |
-| Dependency Inversion  | Dependa de abstrações         |
+**Princípios:**
+- Módulos por domínio (não por camada técnica)
+- Comunicação entre módulos via interfaces públicas, não acesso direto a tabelas
+- Cada módulo tem seu próprio schema no banco (mesmo que no mesmo banco físico)
+- Proibir import cruzado entre módulos via ArchUnit ou Java Modules
 
-> **Fontes:**
->
-> - [The S.O.L.I.D Principles in Pictures](https://medium.com/backticks-tildes/the-s-o-l-i-d-principles-in-pictures-b34ce2f1e898)
-> - [SOLID fica FÁCIL com Essas Ilustrações (vídeo)](https://www.youtube.com/watch?v=6SfrO3D4dHM)
-> - [SOLID e Design de Software na prática (vídeo)](https://www.youtube.com/watch?v=4oVByCJJkRI)
-> - [Aprofundando os princípios SOLID (playlist)](https://www.youtube.com/playlist?list=PLVHlvMRWE0Y7fBV0wUdIAMKYJvDewQ6Yl)
-> - [SOLID e DDD na prática (live)](https://www.youtube.com/live/oKpZvWWning?si=DXKlNFNjNgYuowx1)
-> - [SOLID (live)](https://www.youtube.com/live/RdOx2Pndc74?si=QBNfOVmYZKVd-qPx)
+**Vantagens:**
+- **Simplicidade operacional** do monolito (1 deploy, 1 log, 1 banco)
+- **Evolução gradual** — um módulo pode virar microserviço quando justificar
+- **Refactoring fácil** — mover código entre módulos é trivial comparado a microserviços
+- **Performance** — chamadas in-process em vez de rede
 
-### 12 Fatores (Twelve-Factor App)
+**Quando escolher:** **quase sempre**, como ponto de partida. Martin Fowler e Sam Newman defendem "monolith first" — só migre para microserviços quando o monolito modular virar um gargalo real.
 
-Metodologia para construir aplicações SaaS modernas. Os mais relevantes para entrevistas:
+### Quando migrar para microserviços
 
-1. **Codebase:** um repo, muitos deploys (staging, prod)
-2. **Dependencies:** declare e isole (Maven, npm, Docker)
-3. **Config:** configuração via variáveis de ambiente, nunca no código
-4. **Backing services:** trate banco, cache, filas como recursos anexáveis
-5. **Build, release, run:** etapas separadas e imutáveis
-6. **Processes:** stateless — estado vai em backing services (Redis, DB)
-7. **Port binding:** exporte serviço via porta (embedded server)
-8. **Concurrency:** escale por processos (horizontal scaling)
-9. **Disposability:** start rápido, shutdown graceful
-10. **Dev/prod parity:** ambientes o mais similares possível (Docker!)
-11. **Logs:** trate como event streams (stdout → coletado externamente)
-12. **Admin processes:** tarefas pontuais rodam como processos (migrations, scripts)
+Justifique cada uma com uma dor concreta antes de migrar:
 
-> **Fonte:** [A Forma Ideal de Projetos Web — Os 12 Fatores (vídeo)](https://youtu.be/gpJgtED36U4?si=W3QxIMU54P2xiF_p)
+1. **Escala heterogênea** — parte do sistema precisa escalar 10x mais que o resto
+2. **Time cresceu demais para 1 deploy** — múltiplos times pisando no pé uns dos outros
+3. **Domínios com tecnologias diferentes** — um módulo precisa de ML Python, outro de Go para performance
+4. **Isolamento de falhas crítico** — você não pode deixar o módulo X derrubar o sistema todo
+5. **Deploy velocity** — times precisam fazer deploys independentes e frequentes
 
-### Clean Code
+**Sinais de que você NÃO deveria migrar:**
+- "É a tendência do mercado"
+- "Currículo fica melhor"
+- "O time quer aprender Kubernetes"
+- "Netflix faz assim"
 
-Código que é fácil de ler, entender e modificar:
+### Custos dos microserviços
 
-- **Nomes significativos:** variáveis e funções autoexplicativas
-- **Funções pequenas:** fazem uma coisa só
-- **DRY (Don't Repeat Yourself):** evitar duplicação de lógica
-- **KISS (Keep It Simple):** a solução mais simples que funciona
-- **Boy Scout Rule:** deixe o código melhor do que encontrou
+| Custo | Impacto |
+| --- | --- |
+| Complexidade operacional | Observabilidade, service mesh, deploy coordenado |
+| Latência de rede | Cada chamada cross-service adiciona ms |
+| Consistência distribuída | Sagas, eventual consistency, compensating transactions |
+| Debugging | Distributed tracing obrigatório |
+| Testing | Integration tests cross-service são frágeis |
+| Versionamento de APIs | Breaking changes afetam múltiplos consumers |
+| Custo de infraestrutura | Múltiplos processos, cada um com overhead fixo |
 
-## DDD (Domain-Driven Design)
+**Regra de ouro (Sam Newman):** se você está tendo dificuldade com um monolito bem projetado, terá muito mais dificuldade com microserviços.
 
-Abordagem que coloca o domínio do negócio no centro do design:
+### Padrões de migração
 
-### Conceitos táticos
+**Strangler Fig Pattern (Martin Fowler):** migrar gradualmente, roteando tráfego do monolito para novos serviços aos poucos, até o monolito "morrer".
 
-- **Entity:** objeto com identidade (Patient, Order)
-- **Value Object:** objeto definido por seus atributos, sem identidade (Money, Address)
-- **Aggregate:** cluster de entidades com uma raiz (Order → OrderItems)
-- **Repository:** abstração para persistência de aggregates
-- **Domain Service:** lógica que não pertence a nenhuma entidade
-- **Domain Event:** fato que aconteceu no domínio ("OrderPlaced")
+```
+Fase 1: [Monolith]
+Fase 2: [Monolith] ← Proxy → [New Service (parte do trabalho)]
+Fase 3: [Monolith (diminuindo)] ← Proxy → [Services (crescendo)]
+Fase 4: [Services (tudo migrado)]
+```
 
-### Conceitos estratégicos
+**Quando NÃO fazer big-bang rewrite:**
+- Você perde features durante a migração
+- Enquanto o novo está sendo construído, o antigo continua mudando
+- Risco alto, validação só no final
+- Joel Spolsky: "the single worst strategic mistake"
 
-- **Bounded Context:** limite onde um modelo é consistente. Cada microserviço geralmente é um bounded context.
-- **Ubiquitous Language:** linguagem compartilhada entre devs e negócio
-- **Context Map:** como bounded contexts se relacionam
+### Padrões essenciais de microserviços
 
-**Na prática:** DDD é valioso para domínios complexos. Para CRUD simples, é overhead. O [[Event Storming]] é uma técnica para descobrir bounded contexts.
+| Padrão | O que resolve |
+| --- | --- |
+| API Gateway | Ponto de entrada único, routing, auth, rate limiting |
+| Service Discovery | Encontrar serviços dinamicamente (Consul, Eureka) |
+| Circuit Breaker | Evitar cascata de falhas (Resilience4j) |
+| Saga | Transações distribuídas sem 2PC (orquestração ou coreografia) |
+| Strangler Fig | Migração gradual de monolito |
+| Sidecar | Cross-cutting concerns via proxy (service mesh: Istio, Linkerd) |
+| Backends for Frontends (BFF) | API específica por tipo de cliente (web, mobile) |
+| Outbox Pattern | Garantir publicação de evento junto com transação de banco |
+| CQRS | Separar modelo de escrita do modelo de leitura |
+| Event Sourcing | Estado derivado de eventos imutáveis |
 
-> **Fontes:**
->
-> - [DDD do jeito certo (playlist)](https://www.youtube.com/playlist?list=PLkpjQs-GfEMN8CHp7tIQqg6JFowrIX9ve)
-> - [CQS: encapsulamento em POO (vídeo)](https://youtu.be/7NVbDGIMHjo?si=M2eGO4kZr0Vzs3uU)
-
-## Microserviços
-
-Estilo arquitetural onde a aplicação é uma coleção de serviços pequenos, independentemente deployáveis e loosely coupled.
-
-### Quando migrar de monolito
-
-- Equipe cresceu e o monolito virou gargalo
-- Partes do sistema precisam escalar independentemente
-- Deploy do monolito ficou lento ou arriscado
-- **Não migre prematuramente:** um monolito modular bem feito é melhor que microserviços mal feitos
-
-### Padrões essenciais
-
-| Padrão            | O que resolve                             |
-| ----------------- | ----------------------------------------- |
-| API Gateway       | Ponto de entrada único, routing, auth     |
-| Service Discovery | Encontrar serviços dinamicamente          |
-| Circuit Breaker   | Evitar cascata de falhas                  |
-| Saga              | Transações distribuídas sem 2PC           |
-| Strangler Fig     | Migração gradual de monolito              |
-| Sidecar           | Cross-cutting concerns (logging, tracing) |
+→ Para deep dive em alguns deles: [[System Design]]
 
 ### Anti-patterns
 
-- **Distributed Monolith:** microserviços acoplados que precisam ser deployados juntos
-- **Shared Database:** vários serviços acessando o mesmo banco
-- **Chatty Services:** muitas chamadas síncronas entre serviços
+- **Distributed Monolith** — serviços que precisam ser deployados juntos para funcionar. Pior que um monolito (tem os custos de ambos sem os benefícios).
+- **Shared Database** — múltiplos serviços lendo/escrevendo nas mesmas tabelas. Acopla via schema, mudanças viram coordenação complexa.
+- **Chatty Services** — um request do cliente vira 50 chamadas internas. Latência e acoplamento alto.
+- **God Service** — um serviço que conhece todos os outros. Gargalo arquitetural.
+- **Versioning Hell** — breaking changes sem coordenação. Consumers ficam presos em versões antigas.
 
-> **Fontes:**
->
-> - [Microservices — Martin Fowler](https://martinfowler.com/articles/microservices.html)
-> - [Microservices.io](https://microservices.io/index.html) — linguagem de padrões
-> - [Exponential Backoff and Jitter — AWS](https://aws.amazon.com/pt/blogs/architecture/exponential-backoff-and-jitter/)
-> - [Building an API Gateway to Get Out of the Monoliths](https://www.digitalocean.com/community/tech-talks/building-an-api-gateway-to-get-out-of-the-monoliths)
-> - [10 Microservice Anti-Patterns](https://blog.bitsrc.io/10-microservice-anti-patterns-278bcb7f385d)
-> - [RETRY — Padrões de resiliência (vídeo)](https://www.youtube.com/watch?v=1MkPpKPyBps)
+---
 
-## Documentação de Arquitetura
+## Domain-Driven Design (DDD)
+
+Abordagem proposta por Eric Evans (2003) para lidar com a complexidade de domínios de negócio. Coloca o modelo de domínio no centro do design, e a linguagem do negócio no centro do código.
+
+### Por que DDD importa
+
+A maior fonte de bugs em software enterprise não é técnica — é **entender o domínio errado**. DDD força uma colaboração profunda entre devs e especialistas de negócio para construir um modelo compartilhado.
+
+**Quando DDD vale a pena:**
+- Domínios complexos com regras de negócio ricas (financeiro, saúde, logística, seguros)
+- Sistemas que evoluem por anos
+- Equipes onde há especialistas de negócio disponíveis
+
+**Quando DDD é overkill:**
+- CRUD simples
+- MVPs e prototipagem
+- Aplicações com pouca lógica de negócio (content management, dashboards)
+
+### Conceitos estratégicos (big picture)
+
+**Ubiquitous Language (Linguagem Ubíqua):**
+A mesma terminologia entre devs, POs, negócio, documentação e código. Se o negócio chama de "consulta", o código tem `class Consulta`, não `class Appointment`. Se há ambiguidade ("cliente" significa paciente pro médico e empresa pro financeiro), isso é um sinal de bounded contexts diferentes.
+
+**Bounded Context:**
+Fronteira onde um modelo de domínio é consistente. O mesmo conceito ("cliente", "produto", "pedido") pode ter significados diferentes em contextos diferentes.
+
+```
+Contexto de Vendas:          Contexto de Faturamento:
+  Cliente                       Cliente
+  - nome                        - razão social
+  - email                       - CNPJ
+  - histórico de compras        - endereço fiscal
+  - preferências                - regime tributário
+```
+
+Mesma palavra, modelos diferentes. Cada bounded context idealmente tem seu próprio modelo, seu próprio código, e pode virar seu próprio microserviço (ou módulo num monolito modular).
+
+**Context Map:**
+Diagrama de como os bounded contexts se relacionam. Relacionamentos possíveis:
+
+| Relacionamento | Descrição |
+| --- | --- |
+| Shared Kernel | Pedaço de modelo compartilhado (frágil — evitar) |
+| Customer/Supplier | Upstream define, downstream consome (negociação) |
+| Conformist | Downstream se conforma ao upstream sem influência |
+| Anti-Corruption Layer | Tradução para isolar o modelo local de um externo ruim |
+| Open Host Service | Upstream publica API genérica para múltiplos consumers |
+| Published Language | Schema público bem definido (ex.: eventos em Kafka) |
+| Separate Ways | Contextos completamente independentes |
+
+**Core Domain vs Supporting vs Generic:**
+- **Core Domain** — o que é único e estratégico para o negócio. Invista o melhor time aqui.
+- **Supporting Subdomain** — importante mas não diferenciador (ex.: billing, gestão de usuários). Pode ter solução mais simples.
+- **Generic Subdomain** — comoditizado (ex.: autenticação, email). Use off-the-shelf (Auth0, SendGrid).
+
+**Erro comum:** tratar tudo como core. O resultado é over-engineering onde não importa e subinvestimento onde importa.
+
+### Conceitos táticos (como modelar)
+
+**Entity:**
+Objeto com identidade que persiste ao longo do tempo. Duas entities são iguais se têm o mesmo ID, mesmo que outros atributos mudem.
+
+```java
+public class Patient {
+    private final PatientId id;  // identidade imutável
+    private Name name;
+    private Email email;
+    private LocalDate birthDate;
+
+    public void changeEmail(Email newEmail) {
+        // regra de negócio: email não pode ser o mesmo
+        if (this.email.equals(newEmail)) {
+            throw new SameEmailException();
+        }
+        this.email = newEmail;
+        // publicar domain event
+    }
+}
+```
+
+**Value Object:**
+Definido pelos atributos, sem identidade. Dois value objects são iguais se todos os atributos forem iguais. Devem ser **imutáveis**.
+
+```java
+public record Money(BigDecimal amount, Currency currency) {
+    public Money add(Money other) {
+        if (!this.currency.equals(other.currency)) {
+            throw new CurrencyMismatchException();
+        }
+        return new Money(this.amount.add(other.amount), this.currency);
+    }
+}
+```
+
+**Aggregate:**
+Cluster de entities e value objects que mudam juntos. Tem uma **Aggregate Root** — a única forma de acessar os membros internos.
+
+```java
+public class Order {  // Aggregate Root
+    private final OrderId id;
+    private final List<OrderItem> items;  // entities internas
+    private Money total;
+    private OrderStatus status;
+
+    // acesso aos items só via métodos da root
+    public void addItem(Product product, int quantity) {
+        if (status != OrderStatus.DRAFT) {
+            throw new CannotModifyConfirmedOrderException();
+        }
+        items.add(new OrderItem(product, quantity));
+        recalculateTotal();
+    }
+}
+```
+
+**Regras de aggregate:**
+1. Uma transação = uma aggregate. Não modifique múltiplas aggregates atomicamente.
+2. Comunicação entre aggregates via **eventual consistency** (domain events).
+3. Mantenha aggregates **pequenas** — só o que precisa de consistência imediata.
+4. Referencie outras aggregates por ID, não por referência direta.
+
+**Repository:**
+Abstração para persistir e recuperar aggregates. Retorna aggregates completas.
+
+```java
+public interface OrderRepository {
+    Optional<Order> findById(OrderId id);
+    void save(Order order);
+    List<Order> findByCustomerId(CustomerId customerId);
+}
+```
+
+**Domain Service:**
+Lógica que não pertence naturalmente a nenhuma entity ou value object. Use com parcimônia — se tudo está virando service, seu modelo está anemic.
+
+```java
+// Transferência de dinheiro envolve 2 contas — não pertence a uma só
+public class MoneyTransferService {
+    public void transfer(Account from, Account to, Money amount) {
+        from.withdraw(amount);
+        to.deposit(amount);
+    }
+}
+```
+
+**Domain Event:**
+Fato que aconteceu no domínio, relevante para o negócio. Passado, imutável, linguagem de negócio.
+
+```java
+public record OrderPlaced(
+    OrderId orderId,
+    CustomerId customerId,
+    Money total,
+    Instant occurredOn
+) implements DomainEvent {}
+```
+
+Events são o mecanismo para comunicação entre aggregates (e entre bounded contexts) sem acoplamento.
+
+### Anemic Domain Model (anti-pattern)
+
+Modelo onde as entities são só getters/setters sem comportamento, e toda lógica fica nos services. Martin Fowler chama isso de anti-pattern porque perde o ponto principal de OOP: encapsulamento.
+
+```java
+// RUIM — anemic
+public class Order {
+    private BigDecimal total;
+    public void setTotal(BigDecimal t) { this.total = t; }
+    public BigDecimal getTotal() { return total; }
+}
+
+public class OrderService {
+    public void addItem(Order order, Product p, int qty) {
+        BigDecimal newTotal = order.getTotal().add(p.getPrice().multiply(BigDecimal.valueOf(qty)));
+        order.setTotal(newTotal);  // lógica no service, não no objeto
+    }
+}
+
+// BOM — rico
+public class Order {
+    private Money total;
+
+    public void addItem(Product product, int quantity) {
+        // lógica e validação no próprio objeto
+        if (status != DRAFT) throw new ...
+        items.add(new OrderItem(product, quantity));
+        this.total = calculateTotal();
+    }
+}
+```
+
+→ Para aprofundar: [[Event Storming]]
+
+---
+
+## SOLID aplicado à arquitetura
+
+Os princípios SOLID são normalmente discutidos em nível de classe, mas Uncle Bob mostrou que eles se aplicam em nível de **componentes/módulos** também.
+
+| Princípio | Nível de classe | Nível arquitetural |
+| --- | --- | --- |
+| **SRP** — Single Responsibility | Uma classe, uma razão para mudar | Um módulo, um motivo de deploy |
+| **OCP** — Open/Closed | Extender sem modificar | Adicionar features criando novos módulos, não mudando existentes |
+| **LSP** — Liskov Substitution | Subtipos substituíveis | Versões de API devem ser compatíveis |
+| **ISP** — Interface Segregation | Interfaces focadas | Microserviços não dependem de métodos que não usam |
+| **DIP** — Dependency Inversion | Depender de abstrações | Core depende de interfaces; infra implementa |
+
+→ Para deep dive em SOLID: [[Design Patterns]], [[Orientação a Objetos]]
+
+### Dependency Inversion Principle em detalhe
+
+O princípio mais importante para arquitetura. Define a direção das dependências.
+
+```
+// RUIM — domain depende de infrastructure
+[Domain] → [Database (Postgres specific)]
+
+// BOM — ambos dependem de abstração, e a abstração é propriedade do domain
+[Domain] → [IRepository interface] ← [PostgresRepository]
+            (no domain package)        (no infra package)
+```
+
+Isso é o que permite:
+- Trocar o banco sem mexer no domain
+- Testar o domain sem banco real
+- Domain compilar sem depender de driver do Postgres
+
+---
+
+## Conway's Law e Team Topologies
+
+> "Organizations which design systems are constrained to produce designs which are copies of the communication structures of these organizations." — Melvin Conway, 1967
+
+**Consequência prática:** a arquitetura do software reflete a estrutura de comunicação dos times. Se você tem 3 times, você provavelmente vai acabar com 3 sistemas (mesmo que você queira 2 ou 4).
+
+### Inverse Conway Maneuver
+
+Se Conway's Law é inevitável, use-a **proativamente**: desenhe os times conforme a arquitetura que você quer. Quer 5 microserviços? Forme 5 times autônomos alinhados aos serviços.
+
+### Team Topologies (Skelton & Pais)
+
+Framework moderno que define 4 tipos de times e 3 modos de interação:
+
+**Tipos de times:**
+
+| Tipo | Papel |
+| --- | --- |
+| Stream-aligned | Time end-to-end por fluxo de valor (ex.: time de Agendamentos) |
+| Enabling | Ajuda stream-aligned a adotar novas práticas (ex.: DevOps enablers) |
+| Complicated Subsystem | Especialistas em áreas complexas (ex.: ML, criptografia) |
+| Platform | Fornece plataforma interna (CI/CD, observabilidade, bancos) para stream-aligned |
+
+**Modos de interação:**
+- **Collaboration** — times trabalham juntos em um problema novo (alto custo, curto prazo)
+- **X-as-a-Service** — um time consome o serviço do outro via API (baixo custo, longo prazo)
+- **Facilitating** — um time ajuda o outro a aprender algo
+
+**Na prática:** um microserviço deve ser "propriedade" de um único time stream-aligned. Se dois times precisam mudar o mesmo serviço, é um sinal de que as fronteiras estão erradas.
+
+---
+
+## Evolutionary Architecture
+
+Proposta por Ford, Parsons, Kua (2017). Reconhece que a arquitetura **muda** — o desafio não é acertar no dia 1, mas suportar mudanças ao longo do tempo.
+
+### Fitness Functions
+
+Testes automatizados para propriedades arquiteturais (não funcionais). Roda no CI para impedir regressões arquiteturais.
+
+**Exemplos:**
+
+```java
+// ArchUnit — garante que controllers não acessam repositories diretamente
+@ArchTest
+static ArchRule controllers_should_not_depend_on_repositories =
+    noClasses().that().resideInAPackage("..controllers..")
+        .should().dependOnClassesThat().resideInAPackage("..repositories..");
+
+// Métrica de performance — testa que endpoint responde < 200ms p95
+@Test
+void searchEndpointP95ShouldBeBelow200ms() {
+    var result = runLoadTest("/search?q=cardio", 1000);
+    assertThat(result.p95()).isLessThan(Duration.ofMillis(200));
+}
+
+// Acoplamento — um módulo não pode importar de outro sem passar pela API pública
+@ArchTest
+static ArchRule modules_communicate_only_via_public_api =
+    slices().matching("com.app.(*)..")
+        .should().notDependOnEachOther()
+        .ignoreDependency(resideInAPackage("..api.."), alwaysTrue());
+```
+
+**Tipos de fitness functions:**
+- **Atomic** — testa uma dimensão (latência, acoplamento)
+- **Holistic** — testa combinação (latência + segurança, etc.)
+- **Triggered** — roda no CI
+- **Continual** — roda em produção (observability)
+
+### Princípios de evolução
+
+- **Last Responsible Moment** — adie decisões arquiteturais até ter informação suficiente
+- **Reversibility** — prefira decisões reversíveis a irreversíveis
+- **Incremental change** — mude em pequenos passos, valide, continue
+- **Architectural characteristics** como first-class citizens — performance, scalability, security são testáveis como features
+
+---
+
+## Documentação de arquitetura
+
+Código se explica (em boa parte). Arquitetura precisa de documentação explícita, porque captura o **"por quê"** que o código não mostra.
 
 ### C4 Model
 
-Abordagem hierárquica para diagramar arquitetura em 4 níveis:
+Abordagem hierárquica de diagramação em 4 níveis (Simon Brown):
 
-1. **System Context:** o sistema e suas interações externas (para stakeholders)
-2. **Container:** componentes técnicos — apps, bancos, filas (para arquitetos)
-3. **Component:** estrutura interna de cada container (para devs)
-4. **Code:** classes e funções (raramente necessário)
+**1. System Context Diagram** — o sistema no centro, usuários e sistemas externos ao redor. **Audiência:** stakeholders não-técnicos.
 
-**Regra:** comece pelo contexto (mais abstrato) e desça conforme a necessidade de detalhe.
+```
+[Paciente] ──→ [MedEspecialista] ──→ [Gateway de Pagamento]
+                      ↓
+                      ↓ ──→ [Sistema de Clínicas Parceiras]
+                [Médico]
+```
 
-> **Fontes:**
->
-> - [C4 Model](https://c4model.com/) — site oficial
-> - [arc42 Documentation](https://arc42.org/documentation/) — template de documentação
-> - [Curso de C4 Model na prática (playlist)](https://www.youtube.com/playlist?list=PLxuFqIk29JL0d_ESgZomFSEOzywPMmAqy)
-> - [Visualizando Sistemas de Software com C4 (vídeo)](https://www.youtube.com/watch?v=f0Dp6Ob2guc)
-> - [Documentando arquiteturas com C4 (vídeo)](https://www.youtube.com/watch?v=aJZPKyElP6A)
+**2. Container Diagram** — os containers (apps, bancos, filas) que compõem o sistema. **Audiência:** arquitetos, devs senior.
+
+```
+[Web App (React)] → [API (Spring Boot)] → [PostgreSQL]
+                          ↓
+                    [Kafka] → [Notification Worker]
+                          ↓
+                     [Redis Cache]
+```
+
+**3. Component Diagram** — a estrutura interna de cada container. **Audiência:** devs do time.
+
+```
+Dentro da API:
+[AuthController] → [AuthService] → [JwtService]
+                        ↓
+                  [UserRepository] → [PostgreSQL]
+```
+
+**4. Code Diagram** — classes, funções (opcional, raramente necessário). **Audiência:** devs mexendo naquele código.
+
+**Regra:** comece no nível mais alto (context) e desça conforme necessário. A maioria das discussões arquiteturais mora no nível 2 (container).
+
+**Ferramentas:** Structurizr (oficial), Mermaid C4, PlantUML, draw.io.
 
 ### ADRs (Architectural Decision Records)
 
-Documentar decisões arquiteturais com: contexto, decisão, consequências e status. Versionados junto ao código.
+Documento curto que captura uma decisão arquitetural significativa: **contexto, decisão, consequências, status**. Vive no repositório (versionado) junto ao código.
 
 ```markdown
-# ADR-001: Usar PostgreSQL como banco principal
+# ADR-007: Usar Kafka como event broker principal
 
-## Status: Accepted
+## Status
+Accepted (2026-02-15)
 
 ## Contexto
-Precisamos de banco relacional com suporte a JSONB, 
-full-text search, e maturidade operacional.
+Precisamos de mecanismo de comunicação assíncrona entre microserviços
+para suportar event-driven architecture. Requisitos:
+- Retenção de eventos para replay (auditoria + recuperação)
+- Throughput alto (prevemos 100K eventos/s em 2 anos)
+- Ordenação por chave (events de uma mesma consulta na ordem)
+- Consumer groups para paralelizar processamento
+
+Alternativas consideradas:
+1. RabbitMQ — maduro, mas modelo de queue dificulta replay e throughput
+2. AWS SQS + SNS — managed, mas sem retenção longa nem ordenação forte
+3. Kafka — alto throughput, retenção, ordenação por partition
 
 ## Decisão
-PostgreSQL 16 como banco principal.
+Usar Apache Kafka (via Confluent Cloud) como broker de eventos.
+Todos os serviços publicam domain events em tópicos e consomem via
+consumer groups nomeados por serviço.
 
 ## Consequências
-+ Suporte nativo a JSONB reduz necessidade de MongoDB
-+ Ecossistema maduro de ferramentas
-- Equipe precisa aprender features específicas do PG
+
+Positivas:
++ Suporta os requisitos de throughput e retenção
++ Permite replay para novos consumers ou recuperação
++ Ecossistema maduro (Schema Registry, Kafka Connect, ksqlDB)
+
+Negativas:
+- Curva de aprendizado maior que RabbitMQ para o time
+- Custo operacional (vamos com Confluent Cloud para mitigar)
+- Não serve bem para filas de tarefas tradicionais (RPC-like) —
+  mantemos RabbitMQ para isso em serviços específicos
+
+## Referências
+- [[Kafka]]
+- [Designing Event-Driven Systems (Stopford)](https://...)
 ```
 
-> **Fonte:** [ADR GitHub Organization](https://adr.github.io/)
+**Regras:**
+- Curto (1-2 páginas)
+- Escrito no momento da decisão, não depois
+- Status: Proposed → Accepted → Deprecated → Superseded
+- Nunca edite ADRs aceitos — crie um novo que substitui
+
+---
 
 ## Observabilidade
 
-Os três pilares para entender o que acontece em produção:
+Os 3 pilares para entender o que acontece em produção:
 
-- **Logs:** eventos discretos (o que aconteceu). Structured logging (JSON) para facilitar busca.
-- **Metrics:** números ao longo do tempo (RED: Rate, Errors, Duration). Prometheus + Grafana.
-- **Traces:** caminho de uma requisição através de múltiplos serviços. OpenTelemetry.
+### 1. Logs
 
-**Na prática:** Spring Boot Actuator + Micrometer exportam métricas. OpenTelemetry coleta traces distribuídos. Logs estruturados com correlation IDs permitem rastrear uma requisição do frontend ao banco.
+Eventos discretos com contexto. **Structured logging** (JSON) é mandatório — permite query e análise.
 
-> **Fonte:** [OpenTelemetry](https://opentelemetry.io/) — observabilidade unificada
+```json
+{
+  "timestamp": "2026-04-10T14:23:11Z",
+  "level": "ERROR",
+  "service": "appointment-service",
+  "traceId": "abc123",
+  "userId": "user-42",
+  "message": "Failed to create appointment",
+  "error": "Doctor not available at requested time",
+  "doctorId": "doc-7",
+  "requestedTime": "2026-04-11T10:00Z"
+}
+```
+
+**Boas práticas:**
+- Nunca logar dados sensíveis (senhas, tokens, dados pessoais não mascarados)
+- Sempre incluir `traceId` para correlacionar entre serviços
+- Níveis: DEBUG (dev), INFO (eventos importantes), WARN (situação anômala), ERROR (falha), FATAL (sistema caiu)
+- Agregação: ELK (Elasticsearch + Logstash + Kibana), Loki + Grafana, Datadog
+
+### 2. Metrics
+
+Números agregados ao longo do tempo. Responder: "qual é a taxa?", "qual é a distribuição?".
+
+**RED method (para serviços):**
+- **R**ate — requests por segundo
+- **E**rrors — taxa de erros
+- **D**uration — latência (p50, p95, p99)
+
+**USE method (para recursos):**
+- **U**tilization — % de uso
+- **S**aturation — trabalho em fila
+- **E**rrors — erros do recurso
+
+**Ferramentas:** Prometheus + Grafana, Datadog, New Relic, CloudWatch.
+
+**Na prática Spring Boot:**
+
+```java
+// Actuator + Micrometer exportam métricas automaticamente
+management.endpoints.web.exposure.include=health,metrics,prometheus
+management.metrics.export.prometheus.enabled=true
+
+// Métricas customizadas
+@Component
+public class AppointmentMetrics {
+    private final Counter appointmentsCreated;
+
+    public AppointmentMetrics(MeterRegistry registry) {
+        this.appointmentsCreated = Counter.builder("appointments.created")
+            .tag("service", "appointment")
+            .register(registry);
+    }
+
+    public void recordAppointmentCreated(String specialty) {
+        appointmentsCreated.tag("specialty", specialty).increment();
+    }
+}
+```
+
+### 3. Traces
+
+O caminho de uma única request através de múltiplos serviços. Essencial em microserviços.
+
+```
+[Client] → API Gateway (2ms) → Order Service (50ms)
+                                    ↓
+                              Payment Service (200ms) ← gargalo!
+                                    ↓
+                              Email Service (15ms)
+```
+
+Cada "span" é uma operação. Trace ID é propagado via headers HTTP e logs estruturados, permitindo reconstruir o fluxo completo.
+
+**Ferramentas:** OpenTelemetry (padrão), Jaeger, Zipkin, Datadog APM.
+
+### Princípios
+
+- **Observability ≠ monitoring.** Monitoring = "eu sei quais perguntas fazer" (dashboards de métricas conhecidas). Observability = "eu posso responder perguntas novas" (drill down em logs e traces).
+- **Alertas baseados em SLOs, não em CPU.** Alerte quando o usuário está sendo afetado, não quando uma máquina está em 80% de CPU.
+- **Dashboards acionáveis.** Todo gráfico deve responder "e daí? o que eu faço?".
+
+---
 
 ## Armadilhas comuns
 
-- **Astronaut Architecture:** abstrações demais, código de menos. Ship first, refactor later.
-- **Resume-Driven Development:** escolher tecnologia pra enfeitar o currículo, não pra resolver o problema.
-- **Premature Distribution:** microserviços antes de ter um monolito modular funcionando.
-- **Ignorar o contexto:** a "melhor" arquitetura depende da equipe, escala, prazo e domínio.
+- **Astronaut Architecture** — abstrações demais, código de menos. Interfaces para tudo "caso mude um dia". Ship first, refactor when needed.
+- **Resume-Driven Development** — escolher tecnologia para enfeitar currículo, não para resolver o problema. "Vamos usar Kubernetes porque é o que tá no mercado" não é um argumento arquitetural.
+- **Premature Distribution** — migrar para microserviços antes de ter um monolito modular funcionando. "We're Netflix" — you're not.
+- **Ignore the Context** — aplicar a "melhor prática" sem entender o contexto. Clean Architecture num script de 200 linhas é over-engineering. Monolito num sistema com 50 times é under-engineering.
+- **Anemic Domain Model** — entities sem comportamento. Resultado: toda lógica vai para services, modelo não representa o domínio, negócio fica difícil de entender.
+- **Shared Database entre microserviços** — destrói o isolamento. Mudar uma tabela vira coordenação entre times. Se você vai compartilhar banco, provavelmente devia ser um monolito modular.
+- **Transactional boundaries erradas** — tentar atomicidade cross-service com 2PC em vez de saga. O sistema fica lento e frágil.
+- **Documentação que envelhece** — ADRs escritos meses após a decisão são ficção. C4 diagrams desatualizados são mentira.
+- **Refatoração de big-bang** — reescrever o sistema do zero em vez de migrar gradualmente. Quase sempre falha (ver Joel Spolsky, Netscape 6).
+- **Fitness functions ausentes** — sem testes automatizados de propriedades arquiteturais, a arquitetura erode naturalmente. Cada PR traz um pouquinho de dívida.
+- **Tooling sobre princípios** — discutir "Spring vs Quarkus" antes de discutir bounded contexts é colocar a carroça na frente dos bois.
 
-> **Fonte:** [Architecture Antipatterns](https://architecture-antipatterns.tech/)
+---
 
 ## Na prática (da minha experiência)
 
-> Na Muvz, apliquei Hexagonal Architecture com DDD para migrar um monolito Java EJB para 5 microserviços Spring Boot. Usei Event Storming para mapear bounded contexts e definir os limites dos serviços. Kafka como event broker entre eles. A decisão de não usar Clean Architecture "pura" foi pragmática — a equipe era pequena e a cerimônia completa reduziria a velocidade sem benefício proporcional. No MedEspecialista, comecei a reescrita do backend Node.js usando Clean Architecture (Domain/Application/Infrastructure) como preparação para futura migração para NestJS + TypeScript.
+> **Muvz — migração de monolito para microserviços (Java EJB → Spring Boot):**
+> Apliquei Hexagonal Architecture com DDD. Começamos com **Event Storming** com o pessoal de negócio para mapear bounded contexts — acabamos com 5 contextos bem definidos, que viraram 5 microserviços Spring Boot. Kafka como event broker principal (ADR documentando o porquê). Strangler Fig para migrar gradualmente, colocando o Kong como proxy roteando tráfego entre o monolito EJB legado e os novos serviços. A migração durou ~8 meses, sem big-bang, sem downtime significativo.
+>
+> **O que deu certo:** começar pela descoberta de domínio (Event Storming) antes de discutir tecnologia. Os bounded contexts ficaram estáveis e os serviços hoje ainda refletem essas fronteiras.
+>
+> **O que eu faria diferente:** Investiria mais cedo em observabilidade (tracing distribuído). Durante os primeiros meses, debuggar fluxos cross-service era doloroso. Hoje, OpenTelemetry é o primeiro a entrar no projeto.
+>
+> **MedEspecialista — decisão consciente de ficar em monolito modular:**
+> O backend Spring Boot é um **modular monolith**, não microserviços. Cada bounded context é um módulo com seu próprio pacote Java (verificado por ArchUnit que impede imports cruzados). Uma única base de dados PostgreSQL, mas com schemas separados por módulo. Se precisarmos extrair um serviço no futuro, o módulo já está isolado — é uma refatoração, não uma reescrita.
+>
+> **Por que não microserviços?** A equipe tem 5 pessoas. A escala atual (~10K DAU) cabe folgada num monolito bem projetado. O custo operacional de microserviços (observabilidade, deploys coordenados, consistência distribuída) não seria justificado. O ADR-003 documenta essa decisão e revalidaremos em 2027 ou quando a escala/equipe justificar.
+>
+> **ADRs como memória institucional:** Todo PR com mudança arquitetural significativa tem um ADR associado. Isso evita o problema clássico de "por que isso está assim?" 2 anos depois. Quando alguém novo entra no time, eu aponto para a pasta `docs/adr/` — é a história das decisões em ordem cronológica.
+>
+> **A lição principal:** a melhor arquitetura é a que permite **mudar de ideia** depois. Bounded contexts claros, fitness functions automatizadas, ADRs documentando o "por quê". O código vai mudar. As fronteiras são o que importa.
+
+---
 
 ## How to explain in English
 
-"Software architecture is about making structural decisions that are hard to change later. My approach is pragmatic: I choose the simplest architecture that meets the current requirements, with clear boundaries that allow evolution.
+> "My approach to software architecture is pragmatic and evolutionary. I don't believe in choosing 'the perfect architecture' upfront — I believe in starting simple, making the boundaries right, and evolving as the system grows.
+>
+> For most projects, I start with a modular monolith using Hexagonal Architecture principles: the domain logic depends on interfaces (ports), and infrastructure provides the implementations (adapters). This gives me the testability and isolation benefits of Clean Architecture without the overhead of microservices. I use tools like ArchUnit to enforce module boundaries automatically — fitness functions that fail the build if someone imports across modules incorrectly.
+>
+> When it comes to Domain-Driven Design, I focus on the strategic concepts first: identifying bounded contexts through Event Storming workshops with business stakeholders, defining the ubiquitous language, and mapping how contexts relate. The tactical patterns — entities, aggregates, value objects — come naturally once you have the strategic foundation right.
+>
+> I'm cautious about microservices. I've migrated a monolith to microservices at one company and consciously chose to stay with a modular monolith at another, because the scale and team size didn't justify the operational cost. The Strangler Fig pattern is my preferred migration strategy when microservices are needed — gradual, reversible, with continuous delivery the whole way through.
+>
+> For documentation, I use the C4 model to communicate at the right level of abstraction, and ADRs to capture architectural decisions with their context. ADRs are the institutional memory of why the system is shaped the way it is. When a new engineer joins, the ADR folder tells the story of every significant decision, in chronological order."
 
-For most projects, I start with a modular monolith using Hexagonal Architecture principles — the domain logic depends on interfaces (ports), and infrastructure provides the implementations (adapters). This gives me the isolation benefits of Clean Architecture without the overhead of strict layering.
+### Frases úteis em entrevista
 
-When I need to split into microservices, I use Domain-Driven Design to identify bounded contexts through Event Storming workshops. Each microservice owns its data and communicates through events (Kafka) or APIs. I follow the Strangler Fig pattern for gradual migration rather than big-bang rewrites.
-
-For documentation, I use C4 diagrams to communicate at the right level of abstraction and ADRs to record architectural decisions with their context and trade-offs. This creates a searchable history of why the system is shaped the way it is."
+- "I'd start with a modular monolith and extract services only when the monolith becomes the bottleneck."
+- "The most important thing in DDD is getting the bounded contexts right — the tactical patterns flow from there."
+- "I use Event Storming to map bounded contexts collaboratively with business stakeholders."
+- "I follow the Strangler Fig pattern for migrations — gradual is safer than big-bang."
+- "Fitness functions let me encode architectural rules as tests — ArchUnit is great for this on the JVM."
+- "Conway's Law is real. If you want a certain architecture, you need the team structure to match."
+- "The best architecture is the one that allows you to change your mind later."
+- "ADRs are my institutional memory — they capture the why, not just the what."
+- "Observability is a first-class architectural concern, not an afterthought."
 
 ### Key vocabulary
 
 - estilo arquitetural → architectural style
+- monolito modular → modular monolith
 - arquitetura hexagonal → hexagonal architecture / ports and adapters
 - contexto delimitado → bounded context (DDD)
 - linguagem ubíqua → ubiquitous language
+- mapeamento de contextos → context mapping
+- agregação / raiz de agregação → aggregate / aggregate root
+- objeto de valor → value object
+- evento de domínio → domain event
 - registro de decisão arquitetural → architectural decision record (ADR)
-- observabilidade → observability
-- monolito modular → modular monolith
+- inversão de dependência → dependency inversion
+- camada anticorrupção → anti-corruption layer
 - padrão estrangulador → strangler fig pattern
+- função de fitness → fitness function
+- topologia de equipes → team topologies
+- lei de Conway → Conway's law
+- arquitetura evolutiva → evolutionary architecture
+- observabilidade → observability
+- rastreamento distribuído → distributed tracing
 
-## Recursos gerais
+---
+
+## Recursos
+
+### Livros essenciais
+
+- *Domain-Driven Design* — Eric Evans (o livro original; denso mas fundamental)
+- *Implementing Domain-Driven Design* — Vaughn Vernon (mais prático que o Evans)
+- *Clean Architecture* — Robert C. Martin (síntese de Hexagonal/Onion)
+- *Building Evolutionary Architectures* — Ford, Parsons, Kua (fitness functions, arquitetura que muda)
+- *Team Topologies* — Skelton & Pais (como organizar times para suportar arquitetura)
+- *Monolith to Microservices* — Sam Newman (guia de migração, Strangler Fig)
+- *Fundamentals of Software Architecture* — Mark Richards & Neal Ford (visão panorâmica)
+- *Software Architecture: The Hard Parts* — Richards & Ford (trade-offs difíceis em arquitetura distribuída)
+
+### Online
+
+- [Martin Fowler's blog](https://martinfowler.com/) — CQRS, DDD, microservices, refactoring
+- [Herberto Graça — Software Architecture Chronicles](https://herbertograca.com/2017/07/03/the-software-architecture-chronicles/) — história e síntese dos estilos
+- [C4 Model](https://c4model.com/) — site oficial de Simon Brown
+- [ADR GitHub Organization](https://adr.github.io/) — templates e exemplos
+- [Microservices.io](https://microservices.io/) — linguagem de padrões por Chris Richardson
+- [arc42](https://arc42.org/) — template de documentação de arquitetura
+- [ArchUnit](https://www.archunit.org/) — fitness functions para Java
+
+### Vídeos e playlists
 
 > [!info] Fundamentos de Arquitetura de Software
 > [https://www.youtube.com/playlist?list=PLkpjQs-GfEMPzOzinFrqfkkfZy2DpwpBh](https://www.youtube.com/playlist?list=PLkpjQs-GfEMPzOzinFrqfkkfZy2DpwpBh)
@@ -327,22 +959,33 @@ For documentation, I use C4 diagrams to communicate at the right level of abstra
 > [!info] Padrões Arquiteturais
 > [https://www.youtube.com/playlist?list=PLkpjQs-GfEMMoh78fnnHtrhK1iWe-ZSJ5](https://www.youtube.com/playlist?list=PLkpjQs-GfEMMoh78fnnHtrhK1iWe-ZSJ5)
 
-> [!info] Escalabilidade e Performance
-> [https://www.youtube.com/playlist?list=PLkpjQs-GfEMOqjfVgNktbKoJ7dcEiuYyl](https://www.youtube.com/playlist?list=PLkpjQs-GfEMOqjfVgNktbKoJ7dcEiuYyl)
+> [!info] DDD do jeito certo
+> [https://www.youtube.com/playlist?list=PLkpjQs-GfEMN8CHp7tIQqg6JFowrIX9ve](https://www.youtube.com/playlist?list=PLkpjQs-GfEMN8CHp7tIQqg6JFowrIX9ve)
 
-- [Google Engineering Practices](https://google.github.io/eng-practices/)
-- [Technology Radar — Thoughtworks](https://www.thoughtworks.com/en-br/radar)
-- [Architectural Katas](https://www.architecturalkatas.com/) — exercícios práticos
-- [LocalStack](https://github.com/localstack/localstack) — simula AWS localmente
-- [What do you mean by "Event-Driven"? — Martin Fowler](https://martinfowler.com/articles/201701-event-driven.html)
+### Artigos específicos
+
+- [The Clean Architecture — Uncle Bob](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+- [Hexagonal Architecture — Alistair Cockburn](https://alistair.cockburn.us/hexagonal-architecture/)
+- [Microservices — Martin Fowler](https://martinfowler.com/articles/microservices.html)
+- [Strangler Fig Application — Martin Fowler](https://martinfowler.com/bliki/StranglerFigApplication.html)
+- [What do you mean by "Event-Driven"? — Fowler](https://martinfowler.com/articles/201701-event-driven.html)
+- [Tomato Architecture — Siva Prasad Reddy](https://www.sivalabs.in/tomato-architecture-pragmatic-approach-to-software-design/)
+- [Package by Feature — Philipp Hauer](https://phauer.com/2020/package-by-feature/)
+- [Architecture Antipatterns](https://architecture-antipatterns.tech/)
+
+---
 
 ## Veja também
 
-- [[System Design]]
-- [[Design Patterns]]
-- [[API Design]]
-- [[Orientação a Objetos]]
-- [[Event Storming]]
-- [[Mensageria]]
-- [[Event Streaming]]
-- [[Kafka]]
+- [[System Design]] — building blocks, walkthroughs, escala e performance
+- [[Design Patterns]] — SOLID, GoF, patterns de código
+- [[API Design]] — contratos entre serviços, REST/GraphQL/gRPC
+- [[Orientação a Objetos]] — fundamentos OOP que sustentam DDD
+- [[Event Storming]] — workshop para descobrir bounded contexts
+- [[Mensageria]] — comunicação assíncrona
+- [[Event Streaming]] — eventos como fonte de verdade
+- [[Kafka]] — event broker mais usado
+- [[RabbitMQ]] — message queuing tradicional
+- [[Banco de dados]] — persistência, transações, consistência
+- [[Redes e Protocolos]] — comunicação entre serviços
+- [[Spring Boot]] — implementação prática na stack Java
