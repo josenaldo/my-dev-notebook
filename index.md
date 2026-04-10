@@ -40,6 +40,16 @@ Caderno digital de desenvolvimento de software. Anotações, referências e guia
 - **Backend:** [[Node.js]]
 - **Frontend:** [[React]] · [[HTML e CSS]] · [[Bootstrap]] · [[Material UI]] · [[Mantine]]
 
+## Python
+
+- [[Python]]
+- **Backend:** [[Python Backend]]
+
+## Go
+
+- [[Go]]
+- **Backend:** [[Go Backend]] · [[gRPC e Go]]
+
 ## Inteligência Artificial
 
 - [[IA]]

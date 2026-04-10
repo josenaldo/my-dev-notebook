@@ -1,7 +1,7 @@
 ---
 title: "Node.js"
 created: 2026-04-01
-updated: 2026-04-01
+updated: 2026-04-10
 type: concept
 status: seedling
 tags:
@@ -178,6 +178,203 @@ const patients = await Patient.findAll({
 > - [Sequelize Best Practices](https://climbtheladder.com/10-sequelize-js-best-practices/)
 > - [Mastering Pagination in Sequelize](https://medium.com/hexaworks-papers/mastering-pagination-in-sequelize-e50dbc9de01d)
 
+## Troubleshooting em produção
+
+Problemas recorrentes em aplicações Node.js — equivalentes aos problemas de Java/Spring Boot, mas com soluções idiomáticas do ecossistema Node.
+
+### Connection pool exausto
+
+**Sintoma:** requests travam, timeout no banco de dados.
+
+**Com knex/pg-pool:**
+
+```typescript
+// knexfile.ts
+export default {
+  pool: {
+    min: 2,
+    max: 10,
+    acquireTimeoutMillis: 30000,  // timeout para adquirir conexão
+    idleTimeoutMillis: 10000,     // liberar idle connections
+  },
+  // Detectar leaks (dev)
+  afterCreate: (conn, done) => {
+    console.log('Connection created');
+    done(null, conn);
+  }
+};
+```
+
+**Com Prisma:**
+
+```typescript
+// schema.prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // connection_limit é via URL: ?connection_limit=10&pool_timeout=30
+}
+```
+
+**Causa comum em Node:** não fechar transações. Diferente de Java (que tem `@Transactional`), em Node você gerencia manualmente:
+
+```typescript
+// RUIM — conexão nunca devolvida se der erro
+const trx = await knex.transaction();
+await trx('patients').insert(data);
+// se der throw aqui, trx nunca fecha
+
+// BOM — try/catch com rollback
+const trx = await knex.transaction();
+try {
+  await trx('patients').insert(data);
+  await trx.commit();
+} catch (err) {
+  await trx.rollback();
+  throw err;
+}
+```
+
+### N+1 queries
+
+**Com Sequelize:**
+
+```typescript
+// RUIM — N+1
+const doctors = await Doctor.findAll();
+for (const d of doctors) {
+  const appointments = await d.getAppointments();  // 1 query por doctor
+}
+
+// BOM — eager loading
+const doctors = await Doctor.findAll({
+  include: [{ model: Appointment }],  // JOIN
+});
+
+// BOM — DataLoader pattern (GraphQL)
+const appointmentLoader = new DataLoader(async (doctorIds) => {
+  const appointments = await Appointment.findAll({
+    where: { doctorId: doctorIds },
+  });
+  return doctorIds.map(id => appointments.filter(a => a.doctorId === id));
+});
+```
+
+**Com Prisma:**
+
+```typescript
+// BOM — include (eager)
+const doctors = await prisma.doctor.findMany({
+  include: { appointments: true },
+});
+
+// BOM — select (projection)
+const doctors = await prisma.doctor.findMany({
+  select: { name: true, _count: { select: { appointments: true } } },
+});
+```
+
+### Event loop blocking
+
+**Sintoma:** latência de todas as requests sobe; o servidor "trava" por instantes.
+
+**Causa:** operação CPU-intensive na thread principal (JSON.parse de payload grande, crypto sync, regex complexa).
+
+**Diagnóstico:**
+
+```typescript
+// Detectar event loop lag
+import { monitorEventLoopDelay } from 'perf_hooks';
+
+const h = monitorEventLoopDelay({ resolution: 50 });
+h.enable();
+
+// Exportar para métricas
+setInterval(() => {
+  console.log(`Event loop p99: ${h.percentile(99) / 1e6}ms`);
+  h.reset();
+}, 10000);
+```
+
+**Soluções:**
+- `Worker Threads` para CPU-bound tasks
+- `child_process.fork()` para processos isolados
+- Cluster mode (`pm2`, `node cluster`) para usar múltiplos cores
+- Streaming para processar dados grandes em chunks
+
+### Memory leak
+
+**Diagnóstico:**
+
+```bash
+# Iniciar com inspector
+node --inspect app.js
+
+# Chrome DevTools → chrome://inspect → Heap Snapshot
+# Comparar 2 snapshots separados por tempo → objetos que só crescem
+
+# Ou via CLI
+node --expose-gc -e "global.gc(); console.log(process.memoryUsage())"
+```
+
+**Causas comuns:**
+- Event listeners não removidos (`emitter.on` sem `emitter.off`)
+- Closures que capturam objetos grandes
+- Cache em memória sem TTL (`Map` que só cresce)
+- Timers não limpos (`setInterval` sem `clearInterval`)
+
+```typescript
+// RUIM — leak clássico
+const cache = new Map();  // cresce para sempre
+
+// BOM — com TTL
+import { LRUCache } from 'lru-cache';
+const cache = new LRUCache({ max: 1000, ttl: 1000 * 60 * 5 }); // 5 min
+```
+
+### Graceful shutdown
+
+```typescript
+// Express
+const server = app.listen(3000);
+
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received, draining...');
+  server.close(() => {  // para de aceitar novas, espera em andamento
+    // fechar conexões de banco, Redis, etc.
+    prisma.$disconnect();
+    process.exit(0);
+  });
+
+  // força saída após timeout
+  setTimeout(() => process.exit(1), 30000);
+});
+
+// NestJS — built-in
+app.enableShutdownHooks();  // dispara onModuleDestroy nos providers
+```
+
+### Circuit breaker
+
+```typescript
+// Com opossum
+import CircuitBreaker from 'opossum';
+
+const breaker = new CircuitBreaker(callExternalService, {
+  timeout: 3000,           // timeout de 3s
+  errorThresholdPercentage: 50,  // abre após 50% de falhas
+  resetTimeout: 30000,     // tenta half-open após 30s
+});
+
+breaker.fallback(() => ({ cached: true, data: getCachedData() }));
+
+breaker.on('open', () => metrics.increment('circuit.open'));
+
+const result = await breaker.fire(requestData);
+```
+
+→ Para comparação cross-stack: [[System Design]] (seção Problemas comuns em produção)
+
 ## Recursos
 
 - [Node.js Docs](https://nodejs.org/docs/latest/api/) — documentação oficial
@@ -193,3 +390,4 @@ const patients = await Patient.findAll({
 - [[TypeScript]]
 - [[React]]
 - [[API Design]]
+- [[System Design]] — troubleshooting cross-stack, building blocks
