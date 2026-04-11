@@ -13,6 +13,7 @@ Ecossistema Java: linguagem, frameworks, ferramentas e boas práticas.
 - [[Java Fundamentals]] — linguagem, JVM, Collections, Streams, features modernas
 - [[Java Concurrency]] — Memory Model, locks, CompletableFuture, Virtual Threads
 - [[Certificação Java OCP]] — guia da prova OCP Java SE 21
+- [[Helsinki MOOC - Guia de Revisão]] — resumo em pt-BR do curso da Universidade de Helsinki (iniciantes)
 - [[What should you do to stand out as a Java-Spring Boot Developer]]
 - [[Trilha Java]]
 
