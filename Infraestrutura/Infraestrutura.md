@@ -8,20 +8,27 @@ publish: true
 
 Docker, Kubernetes, WSL, cloud e configuração de ambientes.
 
-## Docker e Kubernetes
+## Containers e Orquestração
 
-- [[Docker]] · [[Kubernetes]]
+- [[Docker]] — containers, Dockerfile, Compose, multi-stage, security
+- [[Kubernetes]] — orquestração, objetos core, GitOps, production patterns
 - [[WSL, Docker e Kubernetes]]
 - [[Comandos Docker e WSL]]
 - [[Docker credential helpers]]
 
 ## Web Servers
 
-- [[Nginx]]
+- [[Nginx]] — reverse proxy, load balancing, TLS, caching, rate limiting
+
+## DevOps
+
+- [[CI-CD]] — pipelines, GitHub Actions, GitOps, security, deployment strategies
+- [[Observabilidade]] — logs, metrics, traces, SLOs, OpenTelemetry, Prometheus, Grafana
 
 ## Ambiente de Desenvolvimento
 
-- [[Linux]] · [[Terminal]]
+- [[Linux]] — shell, permissions, systemd, networking, debugging
+- [[Terminal]]
 - [[Configurando Ambiente Linux no WSL]]
 
 ## Cloud
