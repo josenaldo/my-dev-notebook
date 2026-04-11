@@ -6,23 +6,36 @@ publish: true
 
 # Inteligência Artificial
 
-IA para desenvolvedores: conceitos, LLMs, ferramentas e agents.
+IA para desenvolvedores: conceitos, LLMs, RAG, agents, MCP e ferramentas. Trilha estruturada do zero ao domínio operacional.
 
-## Conceitos
+## Comece por aqui
 
-- [[Inteligência Artificial]] — visão geral, ML, DL, GenAI
-- [[LLMs]] — como funcionam, API, limitações
+- [[Trilha IA]] — roadmap estruturado zero → domínio em 9-12 meses
+
+## Fundamentos
+
+- [[Inteligência Artificial]] — visão geral, ML, DL, GenAI, trilha de aprendizado
+- [[LLMs]] — arquitetura, API, parâmetros, limitações, produção
+- [[Skills e Prompting]] — prompt engineering, context engineering, agent skills
+
+## Construção
+
 - [[Agents]] — sistemas autônomos com LLM + ferramentas
-- [[Skills e Prompting]] — prompt engineering, context engineering
+- [[RAG e Vector Databases]] — retrieval-augmented generation
+- [[MCP]] — Model Context Protocol, o "USB-C para agents"
 
 ## Ferramentas
 
-- [[Claude]] · [[GitHub Copilot]] · [[Codex]] · [[Gemini]]
-- [[Comparativo de LLMs]] — quando usar cada um
+- [[Claude]] — Anthropic: Claude Code, API, Agent SDK, MCP
+- [[GitHub Copilot]] — completions no IDE, chat, agent mode
+- [[Codex]] — agent cloud da OpenAI
+- [[Gemini]] — multimodal do Google
+- [[Comparativo de LLMs]] — qual usar quando
 
 ## Trilhas relacionadas
 
 - [[Trilha IA]]
+- [[Trilha Entrevistas]]
 
 ---
 
