@@ -1,9 +1,9 @@
 ---
 title: "Java Fundamentals"
 created: 2026-04-01
-updated: 2026-04-01
+updated: 2026-04-10
 type: concept
-status: seedling
+status: evergreen
 tags:
   - java
   - entrevista
@@ -12,23 +12,206 @@ publish: false
 
 # Java Fundamentals
 
-Guia completo da linguagem Java — do básico ao moderno (Java 8 → 21+).
+Guia comprehensive da linguagem Java — do básico ao moderno (Java 8 → 25). Para um senior em entrevista internacional, o que importa não é decorar sintaxe — é **entender a JVM**, **dominar Collections e Streams**, **saber quando usar cada feature** e **reconhecer as armadilhas clássicas**. Para deep dive em concorrência (Memory Model, locks, Virtual Threads), veja [[Java Concurrency]].
 
 ## O que é
 
-Java é uma linguagem orientada a objetos, fortemente tipada, com garbage collection automático e o princípio "write once, run anywhere" via JVM. Criada em 1995 pela Sun Microsystems, hoje mantida pela Oracle. Usada massivamente em sistemas enterprise, microserviços, Android, e big data.
+Java é uma linguagem **orientada a objetos**, **fortemente e estaticamente tipada**, **compilada para bytecode**, **garbage-collected**, e projetada em torno do princípio **"write once, run anywhere"** via JVM. Criada em 1995 por James Gosling na Sun Microsystems (hoje Oracle), é a espinha dorsal de sistemas enterprise, microserviços backend, Android (até recentemente), big data (Hadoop, Spark, Kafka), e de toda a stack Spring.
+
+Em entrevistas, o que diferencia um senior em Java:
+
+1. **Entender a JVM** — memória, GC, JIT, classloader — não apenas usar como caixa preta
+2. **Dominar Collections** — saber escolher `ArrayList` vs `LinkedList` vs `ArrayDeque` com argumentos
+3. **Streams com parcimônia** — saber quando Stream adiciona clareza e quando for-loop é melhor
+4. **Concorrência** — Memory Model, happens-before, quando usar `synchronized` vs `Lock` vs atômicos
+5. **Modern Java** — Records, pattern matching, sealed classes, Virtual Threads
+6. **Pitfalls** — autoboxing em loops, `==` em Strings, mutação acidental, exceptions mal tratadas
 
 ---
 
 ## JVM (Java Virtual Machine)
 
-- **Compilação:** `.java` → `javac` → `.class` (bytecode) → JVM interpreta/JIT compila
-- **Memory areas:**
-  - **Heap:** objetos e arrays. Gerenciado pelo GC.
-  - **Stack:** variáveis locais e chamadas de método. Uma stack por thread.
-  - **Metaspace:** metadata de classes (substituiu PermGen no Java 8)
-- **Garbage Collection:** G1 (default Java 9+), ZGC (baixa latência, Java 15+), Shenandoah
-- **JIT Compiler:** bytecode → código nativo em runtime. Otimiza hot paths (C1 para startup, C2 para pico)
+A JVM é o ambiente de execução que faz Java portátil. Entender como ela funciona é o que diferencia um senior de um junior.
+
+### Pipeline de compilação e execução
+
+```
+Código fonte              Bytecode              Código nativo
+(.java)          javac    (.class)              (arquitetura específica)
+   │    ─────────────►       │      JIT (runtime)       │
+   │                         │    ─────────────────►    │
+   │                         │                          │
+  texto                 instruções JVM              instruções da CPU
+                        (stack-based)                  (x86, ARM)
+```
+
+1. **`javac`** compila `.java` → `.class` (bytecode JVM). O bytecode é independente de plataforma.
+2. **Classloader** carrega as classes sob demanda na JVM.
+3. **Bytecode verifier** valida que o bytecode é seguro (sem violar tipagem, sem corromper stack).
+4. **Interpreter** executa o bytecode inicialmente, instrução por instrução.
+5. **JIT (Just-In-Time) Compiler** monitora código quente (hot paths) e compila para código nativo otimizado.
+6. **Garbage Collector** gerencia memória automaticamente.
+
+### Bytecode — uma olhada
+
+```java
+public int sum(int a, int b) { return a + b; }
+```
+
+Compila para:
+
+```
+public int sum(int, int);
+  Code:
+     0: iload_1      // push a
+     1: iload_2      // push b
+     2: iadd         // pop 2, add, push result
+     3: ireturn      // return
+```
+
+A JVM é **stack-based** (não register-based como x86). Operações trabalham sobre uma pilha de operandos. Isso simplifica o bytecode e torna-o portátil. Você pode inspecionar bytecode com `javap -c ClassName`.
+
+### Memory areas
+
+A JVM divide memória em regiões com propósitos distintos:
+
+```
+┌───────────────────────────────────────────────────────┐
+│ JVM Memory                                            │
+│                                                       │
+│  ┌─────────────────────────────────────────┐          │
+│  │ Heap (compartilhada entre threads)      │          │
+│  │  ┌────────────┐  ┌──────────────────┐   │          │
+│  │  │ Young Gen  │  │ Old Gen (Tenured)│   │          │
+│  │  │ ┌────┐     │  │                  │   │          │
+│  │  │ │Eden│ S0 S1  │                  │   │          │
+│  │  │ └────┘     │  │                  │   │          │
+│  │  └────────────┘  └──────────────────┘   │          │
+│  └─────────────────────────────────────────┘          │
+│                                                       │
+│  ┌─────────────────────────────────────────┐          │
+│  │ Metaspace (metadata de classes)         │          │
+│  │ (fora do heap, em memória nativa)       │          │
+│  └─────────────────────────────────────────┘          │
+│                                                       │
+│  Por thread:                                          │
+│  ┌──────────┐  ┌──────────┐  ┌────────────────┐      │
+│  │ Stack    │  │ PC Reg   │  │ Native Method  │      │
+│  │ (frames) │  │          │  │ Stack          │      │
+│  └──────────┘  └──────────┘  └────────────────┘      │
+└───────────────────────────────────────────────────────┘
+```
+
+**Heap** — onde objetos e arrays vivem. Compartilhada entre threads. Gerenciada pelo GC.
+- **Young Generation** — objetos novos. Subdividida em **Eden** (alocação inicial) e 2 **Survivor spaces** (S0, S1). A maioria dos objetos morre jovem (weak generational hypothesis).
+- **Old Generation (Tenured)** — objetos que sobreviveram múltiplos ciclos de GC no Young. Coletados menos frequentemente.
+- **Humongous objects** (G1) — objetos > 50% do tamanho de uma region vão direto para o Old.
+
+**Metaspace** (Java 8+) — metadata de classes carregadas (substituiu **PermGen**, que tinha tamanho fixo e gerava `OutOfMemoryError: PermGen space`). Metaspace cresce dinamicamente em memória nativa.
+
+**Stack** — uma por thread. Contém stack frames (um por chamada de método), com variáveis locais, operandos e referências. `StackOverflowError` acontece quando a stack enche (recursão infinita).
+
+**PC Register** — program counter, por thread. Aponta para a próxima instrução bytecode.
+
+**Native Method Stack** — stack para código nativo (JNI).
+
+**Code Cache** — área onde o JIT armazena código nativo compilado.
+
+### Garbage Collection
+
+O GC libera memória de objetos não mais referenciáveis. Java tem vários algoritmos disponíveis:
+
+| GC | Introduzido | Pausas | Throughput | Uso ideal |
+| --- | --- | --- | --- | --- |
+| **Serial** | sempre | Altas (stop-the-world) | Baixo | Single-thread, apps pequenos |
+| **Parallel** | Java 5 | Altas | Alto | Batch processing, throughput-first |
+| **CMS** (deprecated) | Java 5 | Médias | Médio | Latência — substituído por G1 |
+| **G1** (default) | Java 9 | Previsíveis (configuráveis) | Bom | **Default moderno, uso geral** |
+| **ZGC** | Java 15 | **< 1ms** | Bom | Low-latency, heaps grandes (TB) |
+| **Shenandoah** | Java 12 (Red Hat) | < 10ms | Bom | Low-latency, alternativa a ZGC |
+| **Epsilon** | Java 11 | N/A (não coleta) | Máximo | Testing, short-lived apps |
+
+**G1 GC (default):**
+- Divide o heap em **regions** (1-32 MB)
+- Coleta incrementalmente as regions "mais lucrativas" (mais lixo por tempo gasto)
+- Tenta atingir um **pause time target** configurável (`-XX:MaxGCPauseMillis=200`)
+- Mistura Young e Old collections (mixed GC)
+
+**ZGC (Java 15+):**
+- **Concurrent** — faz quase tudo em paralelo com a aplicação
+- Pausas consistentemente **< 1ms** mesmo em heaps de TB
+- Custo: mais overhead de CPU e memória que G1
+- Uso: sistemas de baixa latência (trading, real-time)
+
+### Como escolher GC
+
+**Regras práticas:**
+- **Default:** G1 — cobre a maioria dos casos
+- **Latência crítica (p99.9 < 10ms):** ZGC ou Shenandoah
+- **Batch / throughput:** Parallel GC
+- **Heap pequeno (< 512 MB):** Serial pode ser suficiente
+
+**Flags úteis:**
+
+```bash
+# G1 com pause target de 200ms
+java -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -jar app.jar
+
+# ZGC
+java -XX:+UseZGC -jar app.jar
+
+# Heap size
+java -Xms512m -Xmx4g -jar app.jar
+
+# Log de GC (diagnóstico)
+java -Xlog:gc*:file=gc.log:time,level,tags -jar app.jar
+
+# Heap dump em OOM
+java -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp/ -jar app.jar
+```
+
+### JIT Compiler
+
+A JVM HotSpot combina interpretação com compilação JIT:
+
+- **C1 (Client compiler)** — compila rápido, otimizações leves. Usado para startup rápido.
+- **C2 (Server compiler)** — compila mais devagar, otimizações agressivas. Usado após identificar código quente.
+- **Tiered compilation** (default) — começa interpretando, promove para C1, depois C2 quando o código aquece.
+
+**Otimizações comuns do C2:**
+- **Inlining** — substitui chamada de método pelo corpo (se pequeno e chamado frequentemente)
+- **Escape analysis** — se um objeto não "escapa" do método, pode ser alocado na stack (não no heap)
+- **Dead code elimination**
+- **Loop unrolling**
+- **Lock elision** — remove `synchronized` desnecessário
+- **Branch prediction** — otimiza para o caminho mais frequente
+
+**Implicação prática:** benchmarks ingênuos mentem. Sempre use **JMH** (Java Microbenchmark Harness) para medir código Java — ele lida com warmup, dead code elimination, e outros artefatos do JIT.
+
+### Classloader
+
+Carrega `.class` files na JVM sob demanda. Hierarquia padrão:
+
+```
+Bootstrap ClassLoader  → carrega rt.jar (java.lang, java.util, etc.)
+    ↑
+Platform ClassLoader   → carrega APIs da plataforma
+    ↑
+Application ClassLoader → carrega classpath da aplicação
+    ↑
+Custom ClassLoaders    → WARs em Tomcat, plugins, etc.
+```
+
+**Parent delegation:** quando um classloader recebe um pedido para carregar uma classe, delega primeiro ao parent. Isso evita que código de usuário sobrescreva classes core (ex.: definir seu próprio `java.lang.String`).
+
+**Custom classloaders** são usados por:
+- Servers de aplicação (isolar WARs)
+- Frameworks de plugins (carregar módulos dinamicamente)
+- Hot reload (recarregar classes alteradas)
+
+### Project Loom e Virtual Threads
+
+→ Detalhes em [[Java Concurrency]]. Em resumo: Virtual Threads (Java 21) são threads leves gerenciadas pela JVM, não pelo OS. Permitem milhões de threads concorrentes, ideais para I/O-bound.
 
 ---
 
@@ -354,6 +537,265 @@ public enum OrderStatus {
 OrderStatus status = OrderStatus.PENDING;
 OrderStatus.valueOf("PENDING");    // parse de String
 OrderStatus.values();              // todos os valores
+```
+
+---
+
+## Records (Java 16+)
+
+Classes imutáveis para dados — elimina boilerplate de equals/hashCode/toString/getters. **Feature essencial do Java moderno.**
+
+### Declaração
+
+```java
+// Um record define componentes imutáveis em uma linha
+public record Patient(Long id, String name, LocalDate birthDate, String email) {}
+
+// O compilador gera automaticamente:
+// - Construtor canônico: public Patient(Long id, String name, LocalDate birthDate, String email)
+// - Accessors: id(), name(), birthDate(), email() (sem "get" prefix!)
+// - equals() e hashCode() baseados em todos os componentes
+// - toString(): "Patient[id=42, name=Maria, birthDate=1985-03-15, email=...]"
+```
+
+### Validação no construtor compacto
+
+```java
+public record Patient(Long id, String name, LocalDate birthDate, String email) {
+    // Compact constructor — valida ou normaliza antes do assignment automático
+    public Patient {
+        Objects.requireNonNull(id, "id is required");
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("name is required");
+        }
+        if (birthDate != null && birthDate.isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("birthDate cannot be in the future");
+        }
+        // Normalização — reassign é permitido no compact constructor
+        name = name.strip();
+        email = email != null ? email.toLowerCase() : null;
+    }
+}
+```
+
+### Métodos adicionais
+
+```java
+public record Money(BigDecimal amount, Currency currency) {
+    // Construtor secundário
+    public Money(double amount, String currencyCode) {
+        this(BigDecimal.valueOf(amount), Currency.getInstance(currencyCode));
+    }
+
+    // Métodos de negócio
+    public Money add(Money other) {
+        if (!this.currency.equals(other.currency)) {
+            throw new IllegalArgumentException("currency mismatch");
+        }
+        return new Money(this.amount.add(other.amount), this.currency);
+    }
+
+    public boolean isZero() {
+        return amount.compareTo(BigDecimal.ZERO) == 0;
+    }
+
+    // Static factory
+    public static Money zero(Currency currency) {
+        return new Money(BigDecimal.ZERO, currency);
+    }
+}
+```
+
+### Records implementam interfaces
+
+```java
+public interface Identifiable {
+    Long id();
+}
+
+public record Patient(Long id, String name) implements Identifiable {}
+// Record já implementa id() pelo accessor automático
+```
+
+### Record patterns (Java 21+)
+
+```java
+// Pattern matching desestruturando o record
+record Point(int x, int y) {}
+record Circle(Point center, double radius) {}
+
+Object shape = new Circle(new Point(0, 0), 5);
+
+// Desestruturação aninhada
+if (shape instanceof Circle(Point(int x, int y), double r)) {
+    System.out.println("Circle at (" + x + "," + y + ") radius " + r);
+}
+
+// Em switch
+String describe(Object obj) {
+    return switch (obj) {
+        case Circle(Point(int x, int y), double r)
+            when r > 10 -> "Big circle at " + x + "," + y;
+        case Circle(Point p, double r) -> "Small circle";
+        case Point(int x, int y) -> "Point at " + x + "," + y;
+        case null -> "nothing";
+        default -> "unknown";
+    };
+}
+```
+
+### Quando usar records
+
+**Ideais para:**
+- **DTOs** — request/response em APIs REST (elimina classes anêmicas)
+- **Value Objects (DDD)** — `Money`, `Email`, `CPF`, `Coordinates`
+- **Tuplas** — retornos multi-valor sem criar classe
+- **Projections** — em Spring Data JPA (`SELECT new Record(...)`)
+- **Dados imutáveis** em geral
+
+**NÃO são ideais quando:**
+- Você precisa de herança (records são `final`)
+- A classe tem lógica mutável
+- Você precisa de JavaBean convention (`getName()` em vez de `name()`) — alguns frameworks antigos assumem isso
+
+### Records em Spring Boot
+
+```java
+// DTO de request
+public record CreatePatientRequest(
+    @NotBlank String name,
+    @Email @NotBlank String email,
+    @Past @NotNull LocalDate birthDate
+) {}
+
+// DTO de response
+public record PatientResponse(Long id, String name, String email, int age) {
+    public static PatientResponse from(Patient patient) {
+        return new PatientResponse(
+            patient.getId(),
+            patient.getName(),
+            patient.getEmail(),
+            Period.between(patient.getBirthDate(), LocalDate.now()).getYears()
+        );
+    }
+}
+
+// Controller
+@PostMapping("/patients")
+public PatientResponse create(@Valid @RequestBody CreatePatientRequest req) {
+    Patient saved = service.create(req);
+    return PatientResponse.from(saved);
+}
+```
+
+---
+
+## Sealed Classes (Java 17+)
+
+Controla **quem pode estender** uma classe/interface. Permite o compilador saber o conjunto **exaustivo** de subtipos.
+
+```java
+public sealed interface Shape permits Circle, Rectangle, Triangle {}
+
+public record Circle(double radius) implements Shape {}
+public record Rectangle(double width, double height) implements Shape {}
+public record Triangle(double base, double height) implements Shape {}
+
+// Exhaustive pattern matching — compilador exige tratar todos os casos
+double area(Shape shape) {
+    return switch (shape) {
+        case Circle c     -> Math.PI * c.radius() * c.radius();
+        case Rectangle r  -> r.width() * r.height();
+        case Triangle t   -> 0.5 * t.base() * t.height();
+        // Sem default! Compilador garante exaustividade
+    };
+}
+```
+
+**Modificadores dos subtipos:**
+- `final` — não pode ser estendido
+- `sealed` — só pode ser estendido pelo `permits` declarado
+- `non-sealed` — volta a ser aberto (qualquer um pode estender)
+
+**Uso prático:**
+- Algebraic Data Types (ADTs) no Java — hierarquias fechadas (`Result<T> = Success<T> | Failure`)
+- Domain modeling — "um pedido é um de {Draft, Confirmed, Shipped, Delivered, Cancelled}"
+- API design — garantir que subtipos sejam controlados
+
+```java
+// Result type usando sealed + records
+public sealed interface Result<T> permits Success, Failure {
+    record Success<T>(T value) implements Result<T> {}
+    record Failure<T>(String error) implements Result<T> {}
+
+    static <T> Result<T> ok(T value) { return new Success<>(value); }
+    static <T> Result<T> fail(String error) { return new Failure<>(error); }
+}
+
+// Uso com pattern matching
+Result<User> result = fetchUser(id);
+String message = switch (result) {
+    case Success<User>(User u) -> "Got " + u.name();
+    case Failure<User>(String err) -> "Error: " + err;
+};
+```
+
+---
+
+## Pattern Matching
+
+Evoluiu em várias versões. Hoje (Java 21+) é um dos pontos fortes do Java moderno.
+
+### instanceof pattern (Java 16)
+
+```java
+// Antes
+if (obj instanceof String) {
+    String s = (String) obj;
+    System.out.println(s.length());
+}
+
+// Com pattern
+if (obj instanceof String s) {
+    System.out.println(s.length());
+}
+
+// Em condição
+if (obj instanceof String s && !s.isBlank()) {
+    process(s);
+}
+```
+
+### Switch patterns (Java 21)
+
+```java
+String describe(Object obj) {
+    return switch (obj) {
+        case null            -> "null";
+        case Integer i when i < 0  -> "negative int: " + i;
+        case Integer i       -> "int: " + i;
+        case String s        -> "string of length " + s.length();
+        case int[] arr       -> "int array of length " + arr.length;
+        case List<?> list    -> "list with " + list.size() + " elements";
+        default              -> "something else";
+    };
+}
+```
+
+### Record patterns (Java 21)
+
+Ver seção [Records](#records-java-16) acima.
+
+### Primitive patterns (Java 23+)
+
+```java
+// Preview
+Object o = 42;
+switch (o) {
+    case int i  -> System.out.println("int: " + i);
+    case long l -> System.out.println("long: " + l);
+    // ...
+}
 ```
 
 ---
@@ -772,41 +1214,167 @@ Hierarquia: `Throwable` → `Error` (sistema, não tratar) e `Exception` (aplica
 
 ```text
 Throwable
-  ├── Error (OutOfMemoryError, StackOverflowError) — não capturar
+  ├── Error (OutOfMemoryError, StackOverflowError, VirtualMachineError)
+  │   → não capturar — sistema está em estado inconsistente
   └── Exception
-       ├── IOException, SQLException — checked (deve tratar)
+       ├── IOException, SQLException, InterruptedException, ...
+       │   → CHECKED — compilador obriga a tratar
        └── RuntimeException
             ├── NullPointerException
             ├── IllegalArgumentException
             ├── IllegalStateException
-            └── IndexOutOfBoundsException — unchecked
+            ├── IndexOutOfBoundsException
+            ├── ClassCastException
+            ├── ArithmeticException
+            └── ... → UNCHECKED — não precisa declarar
 ```
 
-**Checked vs Unchecked:**
-- **Checked:** o compilador obriga a tratar (try-catch ou throws). Para erros recuperáveis de I/O.
-- **Unchecked (RuntimeException):** erros de programação. Não precisa declarar.
+### Checked vs Unchecked: o debate eterno
 
-**Custom exceptions:**
+**Checked exceptions** foram uma inovação do Java que hoje é vista como erro de design por muitos (incluindo Rod Johnson, criador do Spring). Problemas:
+
+- **Poluição de assinatura** — `throws IOException, SQLException, ...` em toda a chain
+- **Vazam implementação** — interface de alto nível herda detalhes do DAO
+- **Difíceis em lambdas e streams** — `Consumer<T>` não declara checked exceptions
+- **Frequentemente ignoradas** — `catch (Exception e) {}` vazio para silenciar o compilador
+
+**Tendência moderna:** maioria das bibliotecas modernas (Spring, JPA, Reactor) usam **unchecked**. O próprio Java evoluiu — `java.io` em NIO.2 lança `UncheckedIOException` onde faz sentido.
+
+**Regra prática:**
+- **Checked** — apenas se o caller pode e deve recuperar da falha (raro)
+- **Unchecked** — default para tudo o mais
+
+### Try-catch-finally e try-with-resources
 
 ```java
-public class PatientNotFoundException extends RuntimeException {
-    public PatientNotFoundException(Long id) {
-        super("Patient not found: " + id);
+// Try-with-resources — fecha automaticamente recursos que implementam AutoCloseable
+try (var reader = Files.newBufferedReader(Path.of("data.txt"));
+     var writer = Files.newBufferedWriter(Path.of("out.txt"))) {
+    String line;
+    while ((line = reader.readLine()) != null) {
+        writer.write(process(line));
+        writer.newLine();
     }
+} catch (IOException e) {
+    log.error("Failed to process file", e);
+    throw new ProcessingException("File processing failed", e);  // preserva cause
+}
+// Recursos fechados automaticamente, mesmo em exceção
+```
+
+**Suppressed exceptions:** se o `close()` do recurso lançar durante cleanup após outra exceção, a segunda é **suprimida** (não substitui a original). Acessível via `throwable.getSuppressed()`.
+
+### Custom exceptions: boas práticas
+
+```java
+// Exceção de domínio com contexto rico
+public class PatientNotFoundException extends RuntimeException {
+    private final Long patientId;
+
+    public PatientNotFoundException(Long id) {
+        super("Patient not found: id=" + id);
+        this.patientId = id;
+    }
+
+    public Long getPatientId() { return patientId; }
+}
+
+// Exception chaining — preserve a causa original
+public class ServiceException extends RuntimeException {
+    public ServiceException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}
+
+try {
+    repository.save(patient);
+} catch (DataAccessException e) {
+    throw new ServiceException("Failed to save patient " + patient.getId(), e);
 }
 ```
 
-**Boas práticas:**
-- Capturar exceções específicas, nunca `catch (Exception e)` genérico
-- Não silenciar exceções (catch vazio)
-- Usar try-with-resources para qualquer `AutoCloseable`
-- Em APIs REST, traduzir exceções para HTTP status codes via `@ExceptionHandler`
-- Preservar a causa original: `throw new ServiceException("msg", originalException)`
+**Regras:**
+- **Herdar de `RuntimeException`** para unchecked
+- **Mensagens úteis** — incluam o dado relevante (`id=42`, não apenas "not found")
+- **Preservar a cause** — nunca `throw new X("...")` descartando a original
+- **Exceções de domínio** no package do domínio, não em `util.exceptions`
+
+### Anti-patterns
+
+```java
+// RUIM — silenciar exceção
+try {
+    doSomething();
+} catch (Exception e) { }  // Swallow — bug escondido
+
+// RUIM — logar e throw
+try {
+    doSomething();
+} catch (Exception e) {
+    log.error("Error", e);
+    throw e;  // Loga 2x (aqui e em cima na stack)
+}
+// → Escolha: logar OU throw, não ambos. Se tratar, log. Se propagar, não log.
+
+// RUIM — catch genérico
+try {
+    doSomething();
+} catch (Throwable t) { ... }  // Captura Error também, muito amplo
+
+// RUIM — perder a cause
+try {
+    doSomething();
+} catch (IOException e) {
+    throw new RuntimeException("Failed");  // Cause perdida!
+}
+// BOM
+throw new RuntimeException("Failed", e);
+
+// RUIM — exception para controle de fluxo
+try {
+    Integer.parseInt(str);
+    return true;
+} catch (NumberFormatException e) {
+    return false;
+}
+// MELHOR
+return str.chars().allMatch(Character::isDigit);  // ou regex
+// (exceções são caras — o JIT não otimiza bem around them)
+```
+
+### Exceções em lambdas
+
+```java
+// RUIM — lambda com checked exception não compila
+list.forEach(f -> Files.readString(f));  // IOException não tratada
+
+// Workaround 1 — wrap em unchecked
+list.forEach(f -> {
+    try { return Files.readString(f); }
+    catch (IOException e) { throw new UncheckedIOException(e); }
+});
+
+// Workaround 2 — helper
+static <T, R> Function<T, R> unchecked(ThrowingFunction<T, R> fn) {
+    return t -> {
+        try { return fn.apply(t); }
+        catch (Exception e) { throw new RuntimeException(e); }
+    };
+}
+list.stream().map(unchecked(Files::readString)).toList();
+```
+
+### Em APIs REST
+
+Traduzir exceções de domínio para HTTP status codes via `@RestControllerAdvice`. Detalhes em [[API Design]] (RFC 9457 Problem Details) e [[Spring Boot]].
 
 > **Fontes:**
 > - [Java Exceptions — Baeldung](https://www.baeldung.com/java-exceptions)
 > - [Checked vs Unchecked — Baeldung](https://www.baeldung.com/java-checked-unchecked-exceptions)
 > - [Try-with-resources — Baeldung](https://www.baeldung.com/java-try-with-resources)
+> - [Sneaky throws — Baeldung](https://www.baeldung.com/java-sneaky-throws)
+> - [Chained exceptions — Baeldung](https://www.baeldung.com/java-chained-exceptions)
+> - [Exceptions performance — Baeldung](https://www.baeldung.com/java-exceptions-performance)
 > - [Pensando nas Exceptions do Java](https://insights.itexto.com.br/pensando-nas-exceptions-do-java-ou-por-que-elas-sao-assim/)
 
 ---
@@ -863,46 +1431,66 @@ List<? super Integer> sink;      // escrita (consumer) — pode ser List<Integer
 
 ---
 
-## Concorrência
+## Concorrência (visão geral)
+
+> **Deep dive:** [[Java Concurrency]] — Memory Model, happens-before, locks avançados, java.util.concurrent, Virtual Threads, Structured Concurrency, patterns e pitfalls.
+
+### Primitivas essenciais
 
 ```java
-// Thread básica
+// Thread básica (raramente criada diretamente em código moderno)
 Thread thread = new Thread(() -> System.out.println("Running"));
 thread.start();
 
-// ExecutorService — pool gerenciado
-ExecutorService executor = Executors.newFixedThreadPool(4);
-Future<String> future = executor.submit(() -> fetchData());
-String result = future.get(); // bloqueia até completar
+// ExecutorService — pool gerenciado (preferido para código tradicional)
+try (ExecutorService executor = Executors.newFixedThreadPool(4)) {
+    Future<String> future = executor.submit(() -> fetchData());
+    String result = future.get();  // bloqueia até completar
+}  // executor fechado automaticamente (Java 19+)
 
-// CompletableFuture — composição assíncrona (Java 8+)
+// CompletableFuture — composição assíncrona declarativa
 CompletableFuture.supplyAsync(() -> fetchUser(id))
     .thenApply(user -> enrichWithOrders(user))
     .thenAccept(user -> sendNotification(user))
     .exceptionally(ex -> { log.error("Failed", ex); return null; });
 
-// Executar em paralelo
-CompletableFuture<User> userFuture = CompletableFuture.supplyAsync(() -> fetchUser(id));
-CompletableFuture<List<Order>> ordersFuture = CompletableFuture.supplyAsync(() -> fetchOrders(id));
+// Paralelismo com múltiplos CompletableFutures
+var userFuture = CompletableFuture.supplyAsync(() -> fetchUser(id));
+var ordersFuture = CompletableFuture.supplyAsync(() -> fetchOrders(id));
 CompletableFuture.allOf(userFuture, ordersFuture).join();
+User user = userFuture.join();
+List<Order> orders = ordersFuture.join();
 ```
 
-**Synchronized vs Lock:**
-- `synchronized` — implícito, simples, automático. Suficiente para a maioria dos casos.
-- `ReentrantLock` — explícito, tryLock com timeout, interruptible. Para cenários avançados.
+### Sincronização
 
-**Volatile:** garante visibilidade entre threads, mas não atomicidade. Para flags simples.
+- **`synchronized`** — implícito, mais simples, monitor intrínseco do objeto. Default para a maioria dos casos.
+- **`ReentrantLock`** — explícito, `tryLock` com timeout, interruptível, fair mode. Para cenários avançados.
+- **`volatile`** — garante **visibilidade** entre threads, mas não atomicidade. Para flags e publicação segura.
+- **`java.util.concurrent.atomic`** — `AtomicInteger`, `AtomicReference`, `LongAdder` para operações atômicas lock-free.
 
-**Virtual Threads (Java 21):** threads leves gerenciadas pela JVM. Ideais para I/O-bound.
+### Virtual Threads (Java 21)
+
+Threads leves gerenciadas pela JVM (não pelo OS). Ideais para **I/O-bound**.
 
 ```java
 // Virtual threads — milhões de threads sem overhead
 try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
     IntStream.range(0, 100_000).forEach(i ->
-        executor.submit(() -> fetchData(i))
+        executor.submit(() -> {
+            var data = httpClient.send(request, bodyHandler);  // bloqueia, mas barato
+            return process(data);
+        })
     );
 }
 ```
+
+**Quando usar:**
+- I/O-bound (HTTP, DB, fila) — ganho enorme
+- CPU-bound — **não** ajuda (use platform threads)
+- Código que já depende de ThreadLocal — pode não performar bem (use Scoped Values)
+
+→ Para detalhes e patterns, ver [[Java Concurrency]]
 
 ---
 
@@ -949,13 +1537,41 @@ try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
 - **Sequenced Collections** — `SequencedCollection`, `SequencedMap` com `getFirst()`, `getLast()`
 - **String templates** (preview) — `STR."Hello \{name}"`
 
-### Java 22-25+ (2024-2026)
+### Java 22 (2024)
 
-- **Unnamed variables** — `_` para variáveis não usadas (Java 22)
-- **Statements before super()** (Java 22) — validar antes de chamar construtor pai
-- **Structured Concurrency** (preview) — gerenciar grupo de tarefas como unidade
+- **Unnamed variables and patterns** — `_` para variáveis/patterns não usados
+- **Statements before super()** — validar argumentos antes de chamar construtor pai
+- **Stream Gatherers** (preview) — operações intermediárias customizadas no Stream
+- **String templates** (preview revisto) — `STR."Hello \{name}"`
+- **Structured Concurrency** (preview) — grupo de tarefas como unidade atômica
 - **Scoped Values** (preview) — alternativa thread-safe a ThreadLocal
-- **Stream Gatherers** (Java 22) — operações intermediárias customizadas
+- **Class-File API** (preview) — ler/escrever bytecode via API Java
+
+### Java 23 (Setembro 2024)
+
+- **Primitive types in patterns** (preview) — `case int i` em switch
+- **Module import declarations** (preview) — `import module java.base`
+- **Markdown em Javadoc** — blocos de código em Markdown nativamente
+- **Implicitly declared classes e main methods** (preview) — scripts Java sem `public class Main { ... }`
+- **Flexible Constructor Bodies** — evolução de "statements before super()"
+
+### Java 24 (Março 2025)
+
+- **Stream Gatherers** (final)
+- **Scoped Values** (final) — substitui ThreadLocal em Virtual Threads
+- **Ahead-of-Time Class Loading & Linking** (preview) — startup mais rápido
+- **Compact Object Headers** (experimental) — menos memória por objeto
+- **Generational Shenandoah GC** (experimental)
+
+### Java 25 (Setembro 2025, LTS)
+
+- **Structured Concurrency** (final)
+- **Primitive Patterns** (final)
+- **Module import declarations** (final)
+- **Compact Source Files and Instance Main Methods** (final) — Java para scripting
+- **PEM Encodings of Cryptographic Objects** — API moderna para keys/certs
+- **Stable Values** (preview) — imutabilidade deferred
+- Consolida vários previews acumulados desde Java 21
 
 > **Fontes:**
 > - [Java features desde JDK 8 ao 21](https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-21/)
