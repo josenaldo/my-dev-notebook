@@ -1,58 +1,487 @@
 ---
 title: "GitHub Copilot"
 created: 2026-04-01
-updated: 2026-04-01
+updated: 2026-04-11
 type: concept
-status: seedling
+status: evergreen
 tags:
   - ia
   - llm
   - ferramentas
-publish: false
+  - copilot
+publish: true
 ---
 
 # GitHub Copilot
 
-Assistente de código integrado ao IDE — code completion, chat, e agent mode.
+> Copilot foi o primeiro coding assistant de IA que um dev normal podia usar em produção. Lançado em 2021, em 2026 virou um ecossistema completo: completions no editor, chat contextual, agent mode, workspace para features multi-arquivo, integração nativa com Pull Requests, GitHub Actions, e Issues. Se você vive no GitHub, Copilot é onde a IA aparece sem você precisar trocar de janela. Esta nota cobre as capabilities, como configurar bem (skills, instructions, chat modes), workflows reais, e quando usar Copilot em vez de (ou junto com) Claude Code. Para fundamentos de LLMs ver [[LLMs]]; para comparação geral ver [[Comparativo de LLMs]].
 
 ## O que é
 
-GitHub Copilot é um assistente de IA para desenvolvimento, integrado diretamente em VS Code, JetBrains e outros IDEs. Usa modelos da OpenAI (GPT-4, Codex) e Anthropic (Claude) para code completion em tempo real, chat contextual, e recentemente agent mode para tarefas multi-step.
+**GitHub Copilot** é o assistente de IA oficial do GitHub (Microsoft), integrado em VS Code, Visual Studio, JetBrains IDEs, Neovim, Xcode (beta), e na própria plataforma web do GitHub. Usa **múltiplos modelos** por baixo — em 2026, o usuário pode escolher entre GPT (OpenAI), Claude (Anthropic) e Gemini (Google), dependendo do plano e da tarefa.
 
-## Funcionalidades
+Copilot evoluiu de "autocompletar inteligente" para um ecossistema com múltiplos modos:
 
-- **Code Completion:** sugestões inline enquanto digita (ghost text)
-- **Copilot Chat:** conversa no IDE com contexto do código aberto
-- **Copilot Agent Mode:** executa tarefas multi-step (editar, rodar, testar)
-- **Copilot for PRs:** resume mudanças, sugere reviewers
-- **Custom instructions:** personalizar comportamento por projeto
+1. **Code Completion (ghost text)** — sugestões inline enquanto você digita.
+2. **Chat** — conversa contextual dentro do IDE, com acesso ao código aberto.
+3. **Edit mode** — mudanças em múltiplos arquivos guiadas por instrução.
+4. **Agent mode** — agent autônomo que itera em tasks multi-step (equivalente ao Claude Code / Cursor).
+5. **Copilot Workspace** — planejar e implementar features no nível do repositório.
+6. **Copilot for PRs** — resumo de mudanças, revisão automática, sugestões de reviewer.
+7. **Copilot CLI** — assistente no terminal para shell, git, operacional.
+8. **Copilot in GitHub.com** — chat sobre issues, PRs, docs do repo.
 
-## Diferenciais
+Para um senior dev em um ambiente centrado em GitHub, **Copilot é a ferramenta menos atrítica**: você não sai do IDE, não troca de ferramenta, e o contexto (arquivos abertos, projeto, issues) aparece naturalmente.
 
-- **Integração nativa no IDE:** menor friction que copiar/colar de chat
-- **Contexto automático:** usa arquivos abertos, imports, e projeto como contexto
-- **Velocidade:** completions em milissegundos
-- **Ecossistema GitHub:** integração com Issues, PRs, Actions
+## O que diferencia um senior usando Copilot
 
-## Quando usar
+1. **Configura `.github/copilot-instructions.md` para cada projeto** — equivalente ao CLAUDE.md para Claude Code. Maior ROI.
+2. **Usa chat modes customizados** para workflows recorrentes (code review, write tests, document).
+3. **Escolhe o modelo certo** (GPT para completions rápidas, Claude para raciocínio, Gemini para multimodal).
+4. **Conhece e usa `/slash commands`:** `/fix`, `/tests`, `/explain`, `/doc`, `/optimize`.
+5. **Sabe referenciar contexto com `#file`, `#folder`, `#problem`** em chat.
+6. **Domina agent mode e sabe quando usar vs chat tradicional.**
+7. **Integra com GitHub Actions e PRs** para automation.
+8. **Mantém skills compartilhadas no repositório** (`.github/chatmodes/`, `.github/prompts/`).
+9. **Desabilita completions em arquivos sensíveis** (secrets, config) via `.copilotignore`.
+10. **Mede impacto** — tempo economizado, acceptance rate, mudanças nos hábitos.
 
-- **Code completion:** código repetitivo, boilerplate, patterns conhecidos
-- **Chat:** explicar código, debugging, gerar testes
-- **Agent mode:** implementar features com múltiplas mudanças de arquivos
+## Modos de operação em detalhe
+
+### 1. Code Completion (ghost text)
+
+A experiência original do Copilot. Sugestões inline à medida que você digita, geralmente 1-20 linhas. Você aceita com `Tab`.
+
+**O que funciona bem:**
+
+- Boilerplate (getters, setters, migrations, imports)
+- Padrões claros (filter/map/reduce, loops comuns)
+- Sintaxe de libraries conhecidas
+- Testes unitários triviais
+
+**O que falha:**
+
+- Lógica de negócio não-trivial
+- Algoritmos com requisitos específicos
+- Código em áreas do projeto sem contexto nos arquivos abertos
+
+**Acceptance rate** é a métrica clássica. Acima de 30% significa que está ajudando. Abaixo de 15% indica problema (completions ruins ou contexto insuficiente).
+
+### 2. Chat
+
+Painel lateral para conversar sobre o código. Aceita referências explícitas a arquivos, pastas, problemas, e comandos.
+
+**Referências de contexto:**
+
+- `#file:src/auth.ts` — um arquivo
+- `#folder:src/components` — uma pasta
+- `#problem:42` — um erro/warning do VS Code
+- `#selection` — código selecionado no editor
+
+**Slash commands:**
+
+- `/explain` — explicar código selecionado
+- `/fix` — sugerir correção para erro
+- `/tests` — gerar testes
+- `/doc` — gerar documentação
+- `/new` — scaffold de projeto/arquivo
+- `/optimize` — propor otimizações
+
+Chat é onde a maior parte do uso diário acontece para tasks não-triviais.
+
+### 3. Edit mode
+
+Você descreve uma mudança, Copilot aplica em múltiplos arquivos com diff preview. Você aprova ou rejeita por arquivo.
+
+**Use case:** "Adicione validação Zod nos endpoints em src/api/, retornando 400 em caso de erro". Copilot identifica os arquivos, propõe os diffs.
+
+### 4. Agent mode
+
+Modo mais autônomo. Copilot itera em uma task — lê código, edita, roda comandos, vê output, ajusta. Similar a Claude Code e Cursor Agent.
+
+**Quando usar:**
+
+- Features multi-arquivo que cruzam camadas
+- Refactors amplos
+- Bug fixes que exigem investigação
+
+**Guardrails:** confirmação antes de ações destrutivas, auto-approve configurável por comando, `max_steps` implícito.
+
+### 5. Copilot Workspace
+
+Planejamento no nível de repositório. Dado uma issue ou descrição, Copilot:
+
+1. Explora o repo
+2. Propõe plano em seções
+3. Você revisa/ajusta
+4. Copilot implementa
+5. Abre PR
+
+Mais ambicioso que agent mode. Útil para features onde o escopo é grande mas bem definido.
+
+### 6. Copilot for PRs
+
+Integração nativa com Pull Requests:
+
+- **PR summary** automático
+- **Review sugerido** com inline comments
+- **Reviewer suggestion** baseado em código tocado
+- **Q&A sobre o PR** em chat lateral
+
+Útil especialmente quando revisando PRs grandes que você não escreveu.
+
+### 7. Copilot CLI
+
+Assistente no terminal:
+
+```bash
+gh copilot suggest "find all TODO comments in TypeScript files"
+gh copilot explain "git rebase -i HEAD~5"
+```
+
+Útil quando você esquece syntax de `find`, `awk`, `jq`.
+
+### 8. Copilot no GitHub.com
+
+Chat sobre:
+
+- Um repositório (architecture, onde está X)
+- Uma PR (o que mudou, por quê)
+- Uma issue (contexto)
+- Seus repos em geral
+
+Acessível via interface web, sem precisar clonar.
+
+## Configuração — onde o senior gasta tempo
+
+### `.github/copilot-instructions.md`
+
+**O arquivo mais importante.** Lido automaticamente e injetado em todas as interações com Copilot em chat, edit e agent mode. Use para:
+
+- Descrever a arquitetura
+- Convenções de código
+- Comandos de build/test
+- Stack tecnológica
+- Patterns a seguir / antipatterns
+
+Formato simples, markdown livre. Similar ao CLAUDE.md.
+
+```markdown
+# Project instructions for Copilot
+
+This is a Next.js 15 app with Server Components, Prisma, and Zod.
+
+## Conventions
+- TypeScript strict
+- Zod at every boundary (API inputs, external responses)
+- Server components by default, "use client" only when needed
+- Tailwind + shadcn/ui for UI
+
+## Architecture
+- `src/app/` — App Router routes
+- `src/lib/` — utilities and integrations
+- `src/components/` — shared UI
+- `src/db/` — Prisma schema and migrations
+
+## Testing
+- Vitest for unit tests
+- Playwright for e2e
+- Run: `pnpm test`, `pnpm test:e2e`
+```
+
+Eu reviso este arquivo ao adicionar feature grande ou refactor. Desatualizado = Copilot ruim.
+
+### Chat modes customizados
+
+Em `.github/chatmodes/`, cada arquivo define um "mode" — conjunto de instruções + prompt base que você invoca em chat.
+
+```markdown
+---
+name: security-review
+description: Review code for security issues
+---
+
+You are a senior security engineer reviewing code for:
+- Injection (SQL, XSS, command)
+- Authentication/authorization flaws
+- PII exposure
+- Insecure deserialization
+- Race conditions
+
+For each issue, cite OWASP and provide severity (critical/high/medium/low).
+```
+
+Você invoca com `@security-review` no chat.
+
+### Prompts customizados
+
+Em `.github/prompts/`, prompts parametrizados reutilizáveis:
+
+```markdown
+---
+name: write-test
+description: Write test for selected function
+---
+
+Write a Vitest test for the selected function. Cover:
+- Happy path
+- Edge cases
+- Error handling
+
+Follow our test conventions in #file:src/test-helpers.ts
+```
+
+### `.copilotignore`
+
+Arquivos excluídos de contexto/completion. Crítico para secrets, configs sensíveis, dados.
+
+```text
+.env*
+secrets/**
+*.pem
+*.key
+prisma/seed-data/**
+```
+
+### User settings
+
+- **Model selection:** GPT-4.1, GPT-4o, Claude Sonnet 4.x, Gemini 2.5 — disponível em planos pagos.
+- **Suggestions on/off por linguagem**
+- **Telemetry** — opt-out respeitado
+- **Public code filter** — evita sugestões que matchem código público conhecido (importante para licensing)
+
+## Workflows reais — dia a dia de um senior
+
+### Dev de feature
+
+1. **Issue no GitHub descreve o feature.**
+2. Abro no VS Code, chat @workspace: "explore #file:issue-description e proponha plano"
+3. Reviso e ajusto o plano.
+4. Chat em edit mode: "implemente o plano"
+5. Copilot aplica diffs, eu reviso.
+6. Rodo testes localmente.
+7. PR automatizado com summary gerado pelo Copilot.
+8. Review automático + humano.
+
+### Bug fix
+
+1. Erro no log de produção.
+2. Chat: "`#file:error-log.txt` mostra esse erro. Procure em `#folder:src/` onde pode acontecer"
+3. Copilot aponta suspeitos.
+4. `/fix` no arquivo problemático.
+5. `/tests` para adicionar regression test.
+
+### Code review automation
+
+1. GitHub Actions roda Copilot review automaticamente em toda PR.
+2. Copilot deixa comentários inline com sugestões.
+3. Reviewers humanos focam no arquitetural e trade-offs.
+
+### CLI rápido
+
+```bash
+gh copilot suggest "docker compose up but only the api service with logs"
+# → docker-compose up api --no-log-prefix
+```
+
+## Planos (2026)
+
+| Plano | Preço | Features principais |
+| --- | --- | --- |
+| **Free** | $0 | Completions limitadas, chat limitado |
+| **Individual (Pro)** | ~$10/mês | Completions ilimitadas, chat, edit, agent, models básicos |
+| **Pro+** | ~$19/mês | Modelos premium (Claude Sonnet, Opus, Gemini Pro), workspace |
+| **Business** | ~$19/user/mês | Admin controls, compliance, audit log |
+| **Enterprise** | ~$39/user/mês | Customização da organização, private fine-tuning, SSO |
+
+Estudantes verificados e manutenedores de projetos OSS populares têm acesso gratuito.
+
+## Diferenciais vs Claude Code / Cursor
+
+### Onde Copilot ganha
+
+- **Integração nativa com GitHub:** Issues, PRs, Actions, GH.com.
+- **Multi-IDE:** VS Code, JetBrains, Visual Studio, Xcode, Neovim.
+- **Sem friction de setup:** instala extensão, pronto.
+- **PR workflow automation:** review, summary, suggest.
+- **Copilot Workspace:** planejamento no nível de repositório com UI específica.
+- **Gratuito/barato** para muitos casos.
+
+### Onde Claude Code/Cursor ganham
+
+- **Profundidade de raciocínio em tarefas longas** (Claude Opus vs models default do Copilot).
+- **Customização profunda** (skills, subagents, hooks, memory).
+- **CLI puro** para workflows terminal-first.
+- **Worktrees e isolation** nativas (Claude Code).
+- **Controle fino sobre contexto** (MCP servers, context management).
+
+### Minha stack atual
+
+Uso **os dois juntos:**
+
+- **Copilot** para completions inline (muito bom, sempre ativo), review de PR, e chat rápido sobre arquivos abertos.
+- **Claude Code** para tasks não-triviais, refactors, debugging profundo, workflows customizados via skills.
+
+Não é "ou Copilot ou Claude Code". São complementares.
+
+## Integração com GitHub Actions
+
+Copilot pode ser invocado em workflows para automation:
+
+```yaml
+name: AI Review
+on: pull_request
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/copilot-review-action@v1
+        with:
+          chatmode: security-review
+          focus: "changed files only"
+```
+
+Útil para:
+
+- Review automático de PRs antes de humanos
+- Geração de release notes
+- Tagging de issues
+- Triagem automática
+
+## Armadilhas comuns
+
+### 1. Sem `copilot-instructions.md`
+
+Copilot adivinha arquitetura → sugestões genéricas. **Fix:** escrever uma instruções decente.
+
+### 2. Aceitar sugestões sem ler
+
+Ghost text bonito com bug sutil. **Fix:** leia antes de `Tab`.
+
+### 3. Chat sem contexto
+
+Chat sem `#file` ou `#folder` = respostas genéricas. **Fix:** sempre ancorar em arquivos.
+
+### 4. Public code filter desligado
+
+Risco de licensing em código público. **Fix:** manter ligado em projetos comerciais.
+
+### 5. Sem `.copilotignore`
+
+Secrets vazando em prompts. **Fix:** ignorar env, keys, dados.
+
+### 6. Agent mode em projetos desconhecidos
+
+Agent faz changes em larga escala sem entender convenções. **Fix:** usar em projeto com instructions bem feita.
+
+### 7. Modelo errado para a tarefa
+
+GPT rápido onde Claude longo seria melhor. **Fix:** escolher modelo conscientemente quando o plano permite.
+
+### 8. Ignorar hooks do Git / pre-commit
+
+Copilot comita código que falha no linter. **Fix:** rodar lint/test local antes de commit; hooks não-bypass.
+
+### 9. Workspace para tasks pequenas
+
+Overhead desnecessário. **Fix:** chat/edit para tasks pequenas; workspace para features médias a grandes.
+
+### 10. Sem revisar `.github/chatmodes/` do time
+
+Skills viram legacy desatualizado. **Fix:** review trimestral.
 
 ## Na prática (da minha experiência)
 
-> No MedEspecialista, configurei GitHub Copilot com instructions customizadas (skills e prompts) para o contexto do projeto. Isso permite que o completion entenda nosso design system, padrões de API, e convenções. Para code review, Copilot identifica patterns comuns de bugs e sugere melhorias.
+No MedEspecialista, Copilot entrou em 2022 (gh beta) e ficou como fundação para produtividade diária:
+
+**2022-2023 — completion only.** Apenas ghost text. Ganho claro mas limitado — bom pra boilerplate, fraco em lógica de negócio.
+
+**2024 — chat + GPT-4.** Chat contextual mudou o jogo. Comecei a usar como debugging/explain buddy. Reduzi busca no Stack Overflow drasticamente.
+
+**2025 — agent mode + workspace + chat modes.** Investi em `.github/copilot-instructions.md` por projeto e chat modes customizados. Ganho em onboarding de devs novos (eles usam os mesmos chatmodes que eu).
+
+**2026 — Copilot + Claude Code como stack dupla.** Copilot para o dia a dia dentro do IDE; Claude Code para tarefas complexas em sessão dedicada. CI roda Copilot review automático em todo PR.
+
+**Lições:**
+
+- **Completions são substrato:** sempre ligados, mas não o principal benefício em 2026.
+- **Chat contextual é onde está o ganho real.** `#file`, `#folder`, `#problem` são fundamentais.
+- **Instructions bem feitas são 60% do valor.** Sem elas, Copilot é um GPT com menos contexto.
+- **Public code filter ligado.** Não vale o risco licensing.
+- **Pair Copilot + Claude Code** é mais forte do que escolher um.
+
+**Incidente memorável:** um dev aceitou completion do Copilot que gerava uma query SQL com concat de string (injeção SQL). Code review pegou antes do merge, mas foi wake-up call. Adicionamos chatmode de security-review rodando automaticamente em PRs que tocam em DB. Desde então: 0 incidentes similares.
+
+**Outro incidente:** Copilot sugeriu código que era cópia quase literal de um pacote OSS sob GPL. Filter estava desligado por engano (config antiga). Identificamos via `detekt`/OSSRH scan, removemos, relicenciamos a função. Lição: filter ligado sempre, scanning automático em CI.
+
+## How to explain in English
+
+### Short pitch
+
+"GitHub Copilot is where AI meets the GitHub-native developer. Completions in the editor, chat with project context, agent mode for multi-step tasks, PR integration, and Workspace for repo-level planning. I use it alongside Claude Code — Copilot for the always-on inline completions and PR automation, Claude Code for the heavier, customized workflows. The highest-leverage config is `.github/copilot-instructions.md` — basically CLAUDE.md for Copilot."
+
+### Deeper version
+
+"Copilot in 2026 is an ecosystem, not just completions. The capabilities that matter for me: inline ghost text for speed, chat with file/folder/problem references for focused questions, edit mode for targeted multi-file changes, agent mode for autonomous iteration, and PR-level automation — summaries, review comments, reviewer suggestions. I also use Copilot CLI for the kinds of shell commands I otherwise google.
+
+Configuration is where seniors separate from juniors. I maintain `.github/copilot-instructions.md` with architecture, conventions, and commands. I keep `.github/chatmodes/` with workflows like security review and test writing, and `.github/prompts/` with parameterized prompt templates. `.copilotignore` keeps secrets out of the context. Model selection — GPT, Claude, or Gemini — I pick based on what the task needs.
+
+I pair Copilot with Claude Code rather than replacing one with the other. Copilot is low-friction and always on in the IDE, great for daily work. Claude Code is where I go for hard refactors, deep debugging, and customized skill-driven workflows. The two complement each other."
+
+### Phrases
+
+- "Instructions file is higher ROI than any prompt engineering."
+- "Chat with `#file` beats chat without context, every time."
+- "Public code filter stays on. License risk isn't worth it."
+- "Copilot plus Claude Code, not Copilot or Claude Code."
+- "Agent mode is great in well-configured projects, risky in unknown ones."
+
+### Key vocabulary
+
+- completação de código → code completion
+- texto fantasma → ghost text
+- sugestão inline → inline suggestion
+- modo chat → chat mode
+- modo de edição → edit mode
+- modo agente → agent mode
+- espaço de trabalho → workspace
+- instruções do projeto → project instructions
+- referência de arquivo → file reference
+- comando de barra → slash command
 
 ## Recursos
 
+### Documentação
+
+- [GitHub Copilot Docs](https://docs.github.com/en/copilot)
 - [Copilot Customization Overview](https://code.visualstudio.com/docs/copilot/customization/overview)
-- [Awesome Copilot](https://github.com/github/awesome-copilot)
-- [Como reduzi em 70% o uso do context window](https://www.linkedin.com/pulse/como-reduzi-em-70-o-uso-do-context-window-github-copilot-lemos-cycnf/)
+- [Copilot Chat Cheat Sheet](https://docs.github.com/en/copilot/using-github-copilot/copilot-chat/github-copilot-chat-cheat-sheet)
+- [Copilot Workspace](https://github.com/features/preview/copilot-workspace)
+
+### Skills e instructions
+
+- [Awesome Copilot](https://github.com/github/awesome-copilot) — curadoria oficial
+- [Awesome Copilot Skills](https://github.com/github/awesome-copilot/tree/main/skills)
+- [CopilotSkills](https://github.com/Oxilith/CopilotSkills)
+- [Complete Guide to AGENTS.md](https://www.aihero.dev/a-complete-guide-to-agents-md)
+- [Como reduzi em 70% o uso do context window no Copilot](https://www.linkedin.com/pulse/como-reduzi-em-70-o-uso-do-context-window-github-copilot-lemos-cycnf/)
+
+### Blog e updates
+
+- [GitHub Blog — Copilot tag](https://github.blog/tag/github-copilot/)
+- [GitHub Next](https://githubnext.com/) — experimentos e features em preview
 
 ## Veja também
 
-- [[Comparativo de LLMs]]
+- [[LLMs]]
+- [[Skills e Prompting]]
+- [[Agents]]
 - [[Claude]]
 - [[Codex]]
-- [[Skills e Prompting]]
+- [[Gemini]]
+- [[Comparativo de LLMs]]
+- [[Inteligência Artificial]]
+- [[MCP]]
+- [[Trilha IA]]

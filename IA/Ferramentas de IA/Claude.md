@@ -1,59 +1,711 @@
 ---
 title: "Claude"
 created: 2026-04-01
-updated: 2026-04-01
+updated: 2026-04-11
 type: concept
-status: seedling
+status: evergreen
 tags:
   - ia
   - llm
   - ferramentas
-publish: false
+  - claude
+publish: true
 ---
 
 # Claude
 
-LLM da Anthropic — forte em raciocínio, código, análise longa, e segurança.
+> Claude é minha ferramenta principal de IA para desenvolvimento em 2026. Não é uma escolha leve — testei GPT, Gemini, Cursor, Copilot, e voltei para Claude Code + Anthropic API como stack principal por motivos concretos: qualidade de raciocínio em tarefas longas, tool use mais confiável, contexto de 1M tokens que funciona de verdade (não só no benchmark), Claude Agent SDK limpo, e ecossistema maduro de MCP, skills e subagents. Esta nota é a trilha completa: modelos, API, ferramentas (Claude Code, Desktop, web), como operar em produção, e como adotar progressivamente. Para fundamentos de LLMs em geral ver [[LLMs]]; para comparação com outros modelos ver [[Comparativo de LLMs]].
 
 ## O que é
 
-Claude é a família de LLMs da Anthropic. Destaca-se por: raciocínio profundo, context window grande (até 1M tokens), forte em código e análise, e foco em segurança (Constitutional AI). Disponível como API, web (claude.ai), e CLI (Claude Code).
+**Claude** é a família de Large Language Models da **Anthropic** — empresa fundada em 2021 por ex-pesquisadores da OpenAI (Dario e Daniela Amodei entre os fundadores). Anthropic se posiciona como "AI safety company": treina modelos com foco em **Constitutional AI** (alinhamento via princípios escritos) e investe pesado em evaluation, red-teaming e research sobre comportamento de LLMs.
 
-## Modelos
+Em 2026, Claude é reconhecido como um dos top 2-3 LLMs no mundo, especialmente forte em:
 
-| Modelo | Força | Context | Use case |
-| --- | --- | --- | --- |
-| Claude Opus 4 | Mais capaz, raciocínio complexo | 1M tokens | Arquitetura, análise profunda, coding complexo |
-| Claude Sonnet 4 | Equilíbrio performance/custo | 200K tokens | Coding diário, code review, análise |
-| Claude Haiku 3.5 | Rápido e barato | 200K tokens | Classificação, extração, tarefas simples |
+- **Raciocínio complexo** e seguir instruções longas
+- **Código** — escrita, review, refactor, debugging
+- **Contexto longo** — processar codebases inteiras, livros, contratos
+- **Tool use** — chamar funções com inputs corretos
+- **Honestidade** — admitir não saber, evitar alucinação
+- **Safety** — recusar requisições prejudiciais sem ser chato
 
-## Ferramentas do ecossistema
+O ecossistema Claude em 2026 tem cinco superfícies principais:
 
-- **Claude.ai:** interface web e mobile
-- **Claude Code:** CLI/IDE para coding assistido. Edita arquivos, roda testes, faz commits.
-- **Claude API:** integração programática via SDK (Python, TypeScript)
-- **Claude Agent SDK:** framework para construir agents customizados
-- **MCP (Model Context Protocol):** protocolo para conectar Claude a fontes de dados externas
+1. **Claude.ai** — interface web e mobile para conversar.
+2. **Claude API (Messages)** — integração programática.
+3. **Claude Code** — CLI/IDE para coding assistido.
+4. **Claude Desktop** — app desktop com MCP nativo.
+5. **Claude Agent SDK** — framework para construir agents próprios.
 
-## Diferenciais
+## O que diferencia um senior usando Claude
 
-- **Context window 1M:** pode processar codebases inteiros, documentos longos
-- **Tool Use nativo:** o modelo decide quando e como usar ferramentas
-- **Extended Thinking:** raciocínio step-by-step antes de responder (similar a CoT)
-- **Artifacts:** geração de documentos, código, diagramas na interface web
-- **Constitutional AI:** treinado para ser útil, honesto e inofensivo
+1. **Escolhe o modelo certo por task** (Opus para complexo, Sonnet para diário, Haiku para bulk).
+2. **Usa prompt caching em system prompts grandes** — economia típica de 50-90%.
+3. **Pin versioning em produção** (`claude-sonnet-4-6-20260315`), não alias.
+4. **Extended thinking conscientemente** — sabe quando o overhead vale a pena.
+5. **Tool use com schemas rigorosos** e fallback para re-ask em erro.
+6. **Claude Code com CLAUDE.md bem feito** e skills customizadas por projeto.
+7. **MCP servers locais** (filesystem, git, postgres) configurados no Claude Desktop.
+8. **Mede custo por feature** via console da Anthropic ou Langfuse.
+9. **Conhece guardrails:** constitutional AI, trust & safety, refuse patterns.
+10. **Usa Agent SDK para automação complexa**, não reinventa a roda com LangChain.
+
+## Modelos Claude — família 4 e 4.6
+
+Em 2026 (abril), a família ativa é **Claude 4.x**, com atualizações incrementais ("4.5", "4.6") trazendo melhorias sem major version bump. A hierarquia clássica permanece:
+
+| Modelo | Força | Context | Velocidade | Custo (input/output por 1M tokens) | Use case |
+| --- | --- | --- | --- | --- | --- |
+| **Claude Opus 4.x** | Mais capaz, raciocínio profundo | 1M tokens | Lento | ~$15 / $75 | Arquitetura, análise densa, coding complexo |
+| **Claude Sonnet 4.6** | Equilíbrio capacidade/custo | 1M tokens | Rápido | ~$3 / $15 | Coding diário, code review, chatbots |
+| **Claude Haiku 4.5** | Rápido e barato | 200K tokens | Muito rápido | ~$0.80 / $4 | Classificação, extração, triagem |
+
+**Convenção de nomes:** `claude-{family}-{tier}-{YYYYMMDD}` para versões pinadas, ou alias (`claude-sonnet-4-6`) para "last stable".
+
+### Quando usar qual
+
+**Opus** — quando a tarefa exige:
+
+- Raciocínio em várias etapas com decisões sutis.
+- Design de arquitetura, refactor grande, migração.
+- Análise densa de textos longos (contratos, codebases).
+- Debugging de problemas não-triviais.
+- Situações onde errar custa mais que o token.
+
+**Sonnet** — default para 90% das tasks:
+
+- Coding assistido no dia a dia.
+- Code review automatizado.
+- Chatbots e assistentes em produção.
+- Sumarização, extração estruturada.
+- Tool use em agents.
+
+**Haiku** — otimização de custo/latência:
+
+- Classificação em volume (triagem de tickets, moderação).
+- Extração em batch.
+- Pré-filtragem antes de escalar para Sonnet/Opus.
+- Respostas curtas em apps de alto tráfego.
+
+**Padrão real de produção:** tiering. Haiku faz triagem/classificação → se confiança < 0.85 escala para Sonnet → se Sonnet ainda indeciso escala para Opus. Reduz custo em 5-10x sem perda de qualidade em produção.
+
+### Extended Thinking
+
+Claude 4.x tem **extended thinking mode**: o modelo produz um "bloco de raciocínio" privado antes da resposta final, similar ao o1/o3 da OpenAI mas mais transparente (você recebe os tokens de thinking na resposta, mesmo não enviando ao usuário).
+
+```python
+response = client.messages.create(
+    model="claude-opus-4-6",
+    max_tokens=8000,
+    thinking={"type": "enabled", "budget_tokens": 10000},
+    messages=[{"role": "user", "content": "Analyze this legal contract..."}]
+)
+# response.content contains both thinking blocks and text blocks
+```
+
+**Quando usar:**
+
+- Problemas de raciocínio matemático/lógico.
+- Trade-offs de design complexos.
+- Análise de código longo.
+- Tasks onde "pensar antes" claramente ajuda.
+
+**Quando NÃO usar:**
+
+- Tarefas curtas e diretas (desperdício).
+- Tasks de formato estruturado (thinking pode ser ruído).
+- Custos sensíveis (tokens de thinking são cobrados).
+
+## Claude API — a Messages API
+
+### Estrutura básica
+
+```python
+from anthropic import Anthropic
+
+client = Anthropic()  # ANTHROPIC_API_KEY env var
+
+response = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=1024,
+    system="You are a concise senior Python developer.",
+    messages=[
+        {"role": "user", "content": "Explique generators vs iterators"}
+    ]
+)
+print(response.content[0].text)
+```
+
+### Parâmetros importantes
+
+- **`model`** — sempre pin em produção
+- **`max_tokens`** — teto de output; sempre defina
+- **`system`** — string ou lista (para caching)
+- **`messages`** — user/assistant alternados, primeiro sempre user
+- **`temperature`** — 0-1, default 1.0 (não recomendado)
+- **`top_p`** — use no lugar de temperature para estabilidade
+- **`stop_sequences`** — sequências que param a geração
+- **`stream`** — SSE para tokens em streaming
+- **`tools`** — tool use / function calling
+- **`tool_choice`** — `auto`, `any`, força uma específica
+- **`thinking`** — extended thinking config
+- **`metadata`** — user_id, etc para audit/debugging
+
+### Streaming
+
+```python
+with client.messages.stream(
+    model="claude-sonnet-4-6",
+    max_tokens=2048,
+    messages=[{"role": "user", "content": "Write an essay about..."}]
+) as stream:
+    for text in stream.text_stream:
+        print(text, end="", flush=True)
+    # Acesso à resposta completa:
+    final = stream.get_final_message()
+```
+
+Streaming é obrigatório para UX conversacional (chat) e recomendado para respostas longas (latência percebida).
+
+### Tool use
+
+O padrão-ouro para tool calling. Claude é particularmente bom em escolher a ferramenta certa e formatar inputs corretamente.
+
+```python
+tools = [{
+    "name": "get_weather",
+    "description": "Get current weather for a city. Use when user asks about weather, temperature, or forecast.",
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "city": {"type": "string", "description": "City name"},
+            "units": {"type": "string", "enum": ["celsius", "fahrenheit"], "default": "celsius"}
+        },
+        "required": ["city"]
+    }
+}]
+
+response = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=1024,
+    tools=tools,
+    messages=[{"role": "user", "content": "Como está o tempo em SP hoje?"}]
+)
+
+# response.stop_reason == "tool_use"
+# response.content contém blocos de tipo "tool_use" com name + input
+```
+
+**Tool choice options:**
+
+- `{"type": "auto"}` — modelo decide se usa tool
+- `{"type": "any"}` — força usar alguma tool
+- `{"type": "tool", "name": "X"}` — força tool específica (útil para structured outputs)
+
+### Prompt caching — a otimização essencial
+
+Anthropic suporta caching de partes do prompt. Você marca blocos com `cache_control: ephemeral`, e chamadas subsequentes com o mesmo prefixo têm **~90% desconto** no custo desses tokens e latência muito menor.
+
+```python
+response = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=1024,
+    system=[
+        {
+            "type": "text",
+            "text": HUGE_INSTRUCTIONS  # 5000+ tokens de system prompt
+        },
+        {
+            "type": "text",
+            "text": FEW_SHOT_EXAMPLES,  # Few-shot examples estáticos
+            "cache_control": {"type": "ephemeral"}
+        }
+    ],
+    messages=[{"role": "user", "content": user_input}]
+)
+```
+
+Regras importantes:
+
+- **Cache tem TTL** de ~5 minutos; uso recente renova.
+- **Mínimo 1024 tokens** para cache valer.
+- **Até 4 blocos cacheados** por request.
+- **Ordenação estável** — cache funciona por prefixo exato.
+
+**Impacto real:** no MedEspecialista, caching do system prompt de sumarização (5K tokens) reduziu custo do feature em ~85% e TTFT em ~40%.
+
+### Structured outputs via tool use
+
+Claude não tem "JSON mode" explícito, mas tool use forçado tem função análoga e é mais flexível.
+
+```python
+tools = [{
+    "name": "classify_ticket",
+    "description": "Classify a support ticket",
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "category": {"type": "string", "enum": ["bug", "feature", "question"]},
+            "priority": {"type": "string", "enum": ["low", "medium", "high", "critical"]},
+            "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+            "reasoning": {"type": "string"}
+        },
+        "required": ["category", "priority", "confidence", "reasoning"]
+    }
+}]
+
+response = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=1024,
+    tools=tools,
+    tool_choice={"type": "tool", "name": "classify_ticket"},
+    messages=[{"role": "user", "content": ticket_text}]
+)
+
+# Extração garantida do JSON validado
+result = response.content[0].input  # dict com category, priority, etc.
+```
+
+Benefícios:
+
+- Schema validado no servidor.
+- Saída estruturada e parseável.
+- Integra com Pydantic/Zod para validação local extra.
+
+### Batch API
+
+Para tasks não-urgentes em volume, Batch API processa até 50% mais barato com latência de minutos a horas.
+
+```python
+batch = client.messages.batches.create(
+    requests=[
+        {
+            "custom_id": f"doc-{i}",
+            "params": {
+                "model": "claude-haiku-4-5",
+                "max_tokens": 500,
+                "messages": [{"role": "user", "content": doc}]
+            }
+        }
+        for i, doc in enumerate(documents)
+    ]
+)
+# Polling até batch.status == "ended"
+```
+
+Use cases: processamento offline, geração de embeddings de base, sumarização em massa.
+
+## Claude Code — o coding agent
+
+**Claude Code** é um CLI/IDE assistant oficial da Anthropic. Interativo, lê/edita arquivos locais, roda comandos, faz commits, tudo guiado por conversa em linguagem natural.
+
+### Por que Claude Code
+
+- **Interação nativa com Claude Opus/Sonnet** — sem intermediário.
+- **MCP nativo** — conecta filesystem, git, postgres, github etc.
+- **Skills customizáveis** via `.claude/skills/` e `~/.claude/skills/`.
+- **CLAUDE.md** do projeto como contexto permanente.
+- **Sub-agents** para workflows complexos.
+- **Hooks** que executam comandos em eventos (pre/post tool use).
+- **Worktrees** para isolar mudanças.
+- **Memory persistente** via `memory/` do projeto.
+- **Integrações IDE** (VS Code, JetBrains via plugins).
+
+### Workflow típico
+
+```text
+$ claude
+> Refatore o módulo auth/ para usar JWT em vez de session cookies.
+  Mantenha backwards compatibility por 1 release.
+```
+
+Claude:
+
+1. Lê estrutura do projeto (via CLAUDE.md e filesystem).
+2. Explora módulo auth atual.
+3. Propõe plano em markdown.
+4. **Espera confirmação** antes de tocar código.
+5. Executa em stages, commitando progresso.
+6. Roda testes após cada mudança.
+7. Reporta resultado final.
+
+### CLAUDE.md — a alavanca principal
+
+Arquivo markdown na raiz do projeto que o Claude Code lê automaticamente. Define:
+
+- Arquitetura e módulos principais
+- Convenções de código
+- Comandos essenciais (test, build, lint, deploy)
+- Antipatterns a evitar
+- Patterns a seguir
+- Como rodar testes
+- Deploy process
+
+**Uma boa CLAUDE.md é o maior ROI que você pode ter com Claude Code.** Eu reservo 1-2h no início de um projeto para escrever e iteração regular quando noto comportamento ruim.
+
+Exemplo esquelético:
+
+```markdown
+# Projeto X
+
+## Stack
+- Backend: Node.js + TypeScript + Fastify + Prisma (PostgreSQL)
+- Frontend: Next.js 15 + React 19 + Tailwind + shadcn/ui
+- Testes: Vitest (unit) + Playwright (e2e)
+
+## Estrutura
+- `src/app/` — Next.js app router
+- `src/api/` — rotas Fastify
+- `src/lib/` — utilitários e integrações
+- `src/db/` — schemas Prisma + migrations
+
+## Convenções
+- TypeScript strict, sem `any`
+- Zod para validação em todas as bordas
+- Error handling via Result<T, E> pattern
+- Nunca fazer commit direto em main
+
+## Comandos
+- `pnpm dev` — roda dev server
+- `pnpm test` — unit tests
+- `pnpm test:e2e` — end-to-end
+- `pnpm lint` — eslint + prettier
+
+## Antipatterns
+- Nunca console.log em código de produção (use logger)
+- Nunca catch sem log ou rethrow
+- Nunca alterar migration já aplicada
+```
+
+### Skills em Claude Code
+
+Skills são pacotes de instruções reutilizáveis. Ver [[Skills e Prompting]] para conceito. No Claude Code:
+
+```text
+.claude/skills/
+├── code-review/SKILL.md
+├── write-tests/SKILL.md
+├── refactor/SKILL.md
+└── debug/SKILL.md
+
+~/.claude/skills/  # skills globais do usuário
+├── commit/SKILL.md
+└── brainstorming/SKILL.md
+```
+
+Cada `SKILL.md` tem frontmatter com `name` e `description`. Claude carrega descrições como menu e o conteúdo completo quando decide usar.
+
+### Sub-agents
+
+Claude Code suporta sub-agents: agents especializados invocados pelo agent principal. Útil para tasks paralelas ou que precisam de contexto isolado.
+
+Exemplos comuns:
+
+- **Explorer** (Haiku) — explora codebase rapidamente
+- **Planner** (Opus) — propõe arquitetura
+- **Implementer** (Sonnet) — escreve código
+- **Reviewer** (Opus) — revisa antes de commit
+
+### Hooks
+
+Configure comandos que executam em eventos do Claude Code:
+
+- `PostToolUse:Write` — rodar linter ao escrever arquivo
+- `PreToolUse:Bash` — validar comando antes de executar
+- `SessionStart` — carregar contexto customizado
+
+Via `settings.json`:
+
+```json
+{
+  "hooks": {
+    "PostToolUse": {
+      "Write": "prettier --write $CLAUDE_FILE"
+    }
+  }
+}
+```
+
+### Instalação
+
+```bash
+# Via Anthropic
+curl -fsSL https://claude.ai/install.sh | bash
+
+# Via brew
+brew install anthropic/claude/claude
+
+# Rodar
+claude
+```
+
+### Fluxo completo real — uma feature
+
+Como uso Claude Code para uma feature não-trivial:
+
+1. **Setup:** `cd` no projeto com CLAUDE.md atualizada.
+2. **Brainstorming:** "Preciso adicionar notificações via email para eventos X. Explora o código atual de email e proponha abordagem".
+3. **Plano em markdown:** Claude escreve plano. Eu reviso, ajusto.
+4. **Execução em stages:** "Execute stage 1 do plano, commite, espere."
+5. **Validação:** rodo testes, reviso diff.
+6. **Iteração:** "Ajuste X, Y."
+7. **Final review:** `/review` (skill customizada) antes do PR.
+
+Raramente deixo Claude rodar 30 min sem checkpoint. É onde as coisas dão errado.
+
+## Claude Desktop — o hub local
+
+App desktop (macOS, Windows) para conversar com Claude fora do browser. Diferenciais:
+
+- **MCP nativo:** configura servers em `claude_desktop_config.json`.
+- **Attachments:** arquivos, imagens, PDFs.
+- **Artifacts:** geração de HTML, React, markdown, SVG inline.
+- **Projects:** organiza conversas e contexto por projeto.
+- **Operator mode** (em alguns pacotes): controla browser/computador com supervisão.
+
+Uso típico: tarefas que não são coding (research, writing, análise) onde quero contexto persistente de um projeto + acesso a filesystem/DB via MCP.
+
+## Claude.ai — a interface web
+
+- Disponível gratuito com limites e pagos (Pro, Max, Team, Enterprise).
+- Projects, memory, artifacts.
+- Computer use (em Max/Enterprise).
+- Mobile app (iOS/Android).
+
+Para devs, mais útil como fallback ou para sharing rápido de conversas. Para trabalho sério, API + Claude Code.
+
+## Claude Agent SDK
+
+Framework oficial para construir agents customizados com Claude. Alternativa a LangChain quando você quer integração nativa e menos abstrações.
+
+```python
+from claude_agent_sdk import Agent, Tool
+
+agent = Agent(
+    model="claude-sonnet-4-6",
+    system="You are a research agent...",
+    tools=[
+        Tool(name="web_search", ...),
+        Tool(name="read_url", ...)
+    ],
+    max_steps=15
+)
+
+result = agent.run("Research recent papers on context engineering")
+```
+
+Vantagens:
+
+- Integração nativa com Anthropic API.
+- Suporte nativo a MCP (conecta servers sem código extra).
+- Observabilidade built-in.
+- Sub-agents e parallel execution.
+
+[Docs do Claude Agent SDK](https://docs.anthropic.com/en/docs/agents).
+
+## Diferenciais técnicos de Claude
+
+### 1. Context window 1M que funciona
+
+Opus/Sonnet 4.x têm 1M tokens. Diferente de outros fornecedores, Anthropic tem publicado benchmarks mostrando boa retenção ao longo do contexto, não só "raw window". Isso destrava uso como: carregar codebase inteira, processar livro inteiro, análise de todo histórico de prontuário.
+
+**Mas atenção:** ainda há context rot acima de ~200K em tasks difíceis. Não confie cegamente. Teste seu caso.
+
+### 2. Constitutional AI e safety
+
+Claude é treinado com Constitutional AI — um conjunto de princípios escritos que guia o próprio modelo a auto-avaliar respostas durante RLHF. Resultado:
+
+- Recusa de requisições danosas com explicação clara.
+- Menos bajulação que GPT em muitos benchmarks.
+- Mais consistente em admitir não saber.
+- Menos suscetível a jailbreaks simples (mas não imune).
+
+**Trade-off:** ocasionalmente recusa tasks legítimas por excesso de cautela. System prompt claro sobre contexto resolve 95% dos casos.
+
+### 3. Tool use de alta qualidade
+
+Claude consistentemente escolhe tools corretamente e formata inputs em JSON válido. Anthropic investiu pesado em RLHF específico para tool use. Em benchmarks, Claude lidera ou empata com GPT-4 em tool calling.
+
+### 4. Extended Thinking transparente
+
+Diferente do o1 da OpenAI (que esconde thinking), Claude expõe os tokens de raciocínio. Você pode:
+
+- Ler o pensamento do modelo (debugging, confiança).
+- Decidir mostrar ao usuário ou não.
+- Medir custo de thinking separadamente.
+
+### 5. MCP nativo
+
+Anthropic criou MCP. Claude Desktop, Claude Code e Agent SDK suportam nativamente. É onde o protocolo tem integração mais madura.
+
+### 6. Artifacts
+
+Na interface web e Desktop, Claude pode gerar "artifacts" — documentos, código, React components, SVG, markdown — renderizados e editáveis ao vivo na UI. Útil para prototipagem rápida.
+
+## Quando NÃO usar Claude
+
+- **Multimodal com áudio/vídeo nativo:** Gemini ou GPT-4o.
+- **Geração de imagem:** DALL-E, Midjourney, Stable Diffusion.
+- **Máximo de velocidade em cada chamada:** Haiku é rápido mas Gemini Flash ainda é mais.
+- **Integração específica com Azure/Microsoft:** GPT-4 via Azure OpenAI.
+- **Budget muito apertado em alta escala:** Haiku é competitivo, mas para tarefas muito simples modelos menores open-source podem ser mais baratos self-host.
+
+## Armadilhas comuns
+
+### 1. Usar alias em produção
+
+`claude-sonnet-4-6` vs `claude-sonnet-4-6-20260315`. Alias muda quando Anthropic atualiza. **Fix:** pin version em produção.
+
+### 2. Não usar prompt caching
+
+System prompts grandes em toda chamada = dinheiro na mesa. **Fix:** marcar com `cache_control`.
+
+### 3. Tool descriptions vagas
+
+"search — searches" → modelo não sabe quando usar. **Fix:** descrição clara + when-to-use.
+
+### 4. Ignorar refuse patterns
+
+Prompt sem contexto → Claude recusa tasks legítimas. **Fix:** system prompt explicando contexto profissional.
+
+### 5. CLAUDE.md desatualizada
+
+Projeto mudou, CLAUDE.md não. Claude trabalha com info errada. **Fix:** revisar CLAUDE.md mensalmente ou após refactor grande.
+
+### 6. Extended thinking em tudo
+
+Thinking em tasks simples = custo desnecessário. **Fix:** só onde claramente ajuda.
+
+### 7. Context dump sem RAG
+
+"Vou jogar 500K tokens e deixar Claude virar." Context rot real, custo alto. **Fix:** RAG filtrado.
+
+### 8. Sem observabilidade
+
+Anthropic console mostra uso geral mas não por feature. **Fix:** Langfuse ou metadata `user_id` + análise.
+
+### 9. Claude Code sem max_steps
+
+Agent entra em loop. **Fix:** sempre configure limites; revise diff antes de commitar.
+
+### 10. MCP servers community sem review
+
+Malicioso ou buggy. **Fix:** review antes de instalar; least privilege.
 
 ## Na prática (da minha experiência)
 
-> Uso Claude Code diariamente como pair programmer. Para tarefas complexas como refatoração de arquitetura ou design de APIs, Claude Opus com contexto longo é essencial — consigo carregar toda a codebase relevante. Para tarefas rotineiras de código, Sonnet oferece o melhor equilíbrio de qualidade e velocidade.
+No MedEspecialista, Claude é minha ferramenta principal desde 2023. Evolução:
+
+**2023 — Claude 2 via API:** ainda era GPT-3.5 era equivalente. Claude 2 começou a chamar minha atenção pela qualidade em análises longas (prontuários).
+
+**2024 — Claude 3 + Claude Code beta:** primeira vez que um LLM era "coding pair programmer" real. Comecei a usar Claude Code em features e produtividade deu salto. Migrei vários workflows do Copilot para Claude Code.
+
+**2025 — Claude 4 + MCP + skills:** ecosystem maduro. Investi pesado em CLAUDE.md, skills customizadas, MCP servers. Hoje todo projeto sério tem CLAUDE.md bem feita + `.claude/skills/` do projeto + subagents.
+
+**2026 — Claude 4.6 + agent SDK:** para workflows automatizados não-coding (análise de tickets, sumarização em batch) passei a usar Agent SDK em vez de montar pipeline próprio.
+
+**Lições:**
+
+- **CLAUDE.md é 10x ROI.** 2h escrevendo economiza 20h em interações.
+- **Prompt caching em system prompts grandes virou default.**
+- **Tool use de Claude é consistentemente melhor que alternativas** em workflows complexos.
+- **Context 1M é útil** mas uso RAG sempre que possível — melhor qualidade + custo.
+- **Claude Code > Cursor para trabalho sério em projeto conhecido.** Cursor ganha em exploração rápida.
+
+**Incidentes memoráveis:**
+
+1. **Context rot:** tentei processar prontuário de 400K tokens em uma chamada. Claude perdia info de ~180K até ~280K. Migrei para pipeline RAG + chunking, qualidade subiu.
+
+2. **Alias em produção:** um dia uma feature de extração começou a falhar em ~8% dos casos. Investigação: Anthropic atualizou Sonnet silenciosamente, e meu prompt era sensível a diferenças sutis. Fix: pin version + golden set automatizado em CI.
+
+3. **MCP server community malicioso:** instalei um "task tracker" MCP server do GitHub que logava prompts no servidor do autor. Descobri via requests HTTP inesperados. Removido, issue reportado, lição aprendida. **Sempre review source code antes.**
+
+4. **Cost spike:** um dev habilitou extended thinking em toda chamada de feature de triagem. Custo diário subiu de $50 para $400. Alerta no Langfuse pegou em 6h. **Fix:** budget alert + review em cada PR que mexe em prompt.
+
+## How to explain in English
+
+### Elevator pitch
+
+"Claude is my primary AI tool in 2026. I use Claude Code daily for pair programming, the Anthropic API for production features, and MCP servers to connect Claude to internal systems. I chose it over GPT-based tools for three reasons: stronger reasoning on long tasks, more reliable tool use, and a 1M-token context that actually works in practice. I maintain a CLAUDE.md in every serious project — that's the single highest ROI investment with Claude Code."
+
+### Deeper version
+
+"Anthropic has three tiers: Opus for deep reasoning, Sonnet for daily work, Haiku for cheap/fast tasks. In production I tier aggressively — Haiku handles triage, Sonnet does the heavy lifting, Opus only gets invoked for cases Sonnet flags uncertain. That alone cut costs 5-10x on several features.
+
+The API essentials I always use: prompt caching on any system prompt over 1K tokens (often 80% savings), tool use for structured outputs, streaming for user-facing features, and pinned model versions in production so silent provider updates don't blow up my golden set.
+
+On the tooling side, Claude Code is where I spend most of my time. It's an agent with access to my filesystem, git, and MCP servers. The tricks that matter are a well-maintained CLAUDE.md as project context, custom skills for recurring workflows, and sub-agents for tasks that benefit from context isolation. I also enforce max_steps, human-in-the-loop for destructive actions, and a review step before merging any agent-produced change."
+
+### Talking points
+
+- "Tier your models. Haiku for triage, Sonnet for daily, Opus for when it matters."
+- "Prompt caching pays for itself on day one for any system prompt over a thousand tokens."
+- "Pin model versions in production. Aliases move under you."
+- "CLAUDE.md is the highest-leverage file in a Claude Code project."
+- "MCP makes Claude integrate with anything, but audit every community server."
+
+### Key vocabulary
+
+- modelo → model
+- contexto estendido → extended context
+- raciocínio estendido → extended thinking
+- cache de prompt → prompt caching
+- versão fixada → pinned version
+- chamada de ferramenta → tool use
+- escolha de ferramenta → tool choice
+- fluxo de trabalho → workflow
+- custo por recurso → cost per feature
+- nível de modelo → model tier
 
 ## Recursos
 
-- [Claude Docs](https://docs.anthropic.com/) — documentação oficial
-- [Claude Code](https://docs.anthropic.com/en/docs/claude-code)
+### Documentação oficial
+
+- [Anthropic Docs](https://docs.anthropic.com/)
+- [Messages API reference](https://docs.anthropic.com/en/api/messages)
+- [Prompt caching](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching)
+- [Extended thinking](https://docs.anthropic.com/en/docs/build-with-claude/extended-thinking)
+- [Tool use](https://docs.anthropic.com/en/docs/build-with-claude/tool-use)
+- [Claude Code docs](https://docs.anthropic.com/en/docs/claude-code)
+- [Claude Agent SDK](https://docs.anthropic.com/en/docs/agents)
+- [MCP docs](https://modelcontextprotocol.io/)
+
+### Prompting e engineering
+
+- [Anthropic Prompting Guide](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview)
+- [Effective Context Engineering](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)
+- [Building Effective Agents](https://www.anthropic.com/research/building-effective-agents)
+- [Contextual Retrieval](https://www.anthropic.com/news/contextual-retrieval)
+
+### Comunidade e exemplos
+
+- [Anthropic Cookbook](https://github.com/anthropics/anthropic-cookbook)
+- [Anthropic Skills](https://github.com/anthropics/skills)
+- [Everything Claude Code](https://github.com/affaan-m/everything-claude-code)
+- [Context Lens](https://github.com/TiagoSchr/context-lens)
+- [Awesome MCP Servers](https://github.com/punkpeye/awesome-mcp-servers)
+
+### Console e billing
+
+- [Anthropic Console](https://console.anthropic.com/) — API keys, usage, billing
+- [claude.ai](https://claude.ai/) — interface web
+
+### Aprender
+
+- [Anthropic Academy](https://www.anthropic.com/learn)
+- [Claude Course (Alan Nichols)](https://www.youtube.com/watch?v=WLZqPonSrK0)
+- [[Claude Course]]
 
 ## Veja também
 
-- [[Comparativo de LLMs]]
-- [[Agents]]
-- [[LLMs]]
+- [[LLMs]] — fundamentos de LLMs
+- [[Skills e Prompting]] — prompt/context engineering
+- [[Agents]] — construção de agents
+- [[RAG e Vector Databases]]
+- [[MCP]] — protocolo criado pela Anthropic
+- [[GitHub Copilot]]
+- [[Codex]]
+- [[Gemini]]
+- [[Comparativo de LLMs]] — Claude vs alternativas
+- [[Inteligência Artificial]]
+- [[Trilha IA]]
