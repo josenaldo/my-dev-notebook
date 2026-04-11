@@ -10,16 +10,21 @@ Ecossistema JavaScript e TypeScript: linguagem, Node.js no backend, React no fro
 
 ## Core
 
-- [[JavaScript Fundamentals]]
-- [[TypeScript]]
+- [[JavaScript Fundamentals]] — linguagem, event loop, closures, async, ES2026
+- [[TypeScript]] — sistema de tipos, generics, utility types, runtime validation
+- [[Testes em JavaScript]] — Vitest, Testing Library, MSW, Playwright
+
+## Guias
+
+- [[Full Stack Open - Guia de Revisão]] — resumo do curso da Universidade de Helsinki (pt-BR)
 
 ## Backend
 
-- [[Node.js]]
+- [[Node.js]] — runtime, troubleshooting, patterns
 
 ## Frontend
 
-- [[React]]
+- [[React]] — hooks, patterns, performance
 - [[HTML e CSS]] · [[Bootstrap]] · [[Material UI]] · [[Mantine]]
 
 ## Trilhas relacionadas
