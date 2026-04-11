@@ -19,8 +19,10 @@ Ecossistema Java: linguagem, frameworks, ferramentas e boas práticas.
 
 ## Backend
 
-- [[Spring Boot]]
-- [[Testes em Java]]
+- [[Spring Boot]] — IoC, AOP, transações, MVC, Actuator, Cloud
+- [[Spring Data JPA]] — JPA, Hibernate, fetch strategies, N+1, transações
+- [[Spring Security]] — autenticação, autorização, JWT, OAuth2, CSRF, CORS
+- [[Testes em Java]] — JUnit 5, Mockito, AssertJ, Testcontainers
 
 ## Mensageria
 

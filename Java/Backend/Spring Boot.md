@@ -1,9 +1,9 @@
 ---
 title: "Spring Boot"
 created: 2026-04-01
-updated: 2026-04-10
+updated: 2026-04-11
 type: concept
-status: seedling
+status: evergreen
 tags:
   - java
   - backend
@@ -13,105 +13,1321 @@ publish: false
 
 # Spring Boot
 
-O framework Java mais usado para microserviços e aplicações web — autoconfiguração, dependency injection, e ecossistema maduro.
+O framework Java dominante para microserviços e aplicações web. Spring Boot é construído sobre o **Spring Framework**, adicionando **autoconfiguração**, **servidor embarcado**, **starters** de dependências, e **production-ready features** (Actuator, métricas). Para deep dive em persistência, ver [[Spring Data JPA]]. Para segurança, ver [[Spring Security]]. Para deep dive em testes, ver [[Testes em Java]].
 
 ## O que é
 
-Spring Boot é uma extensão do Spring Framework que simplifica a configuração e o deployment de aplicações Java. Ele fornece autoconfiguração, servidor embarcado (Tomcat/Netty), e um ecossistema de módulos (Spring Data, Spring Security, Spring Cloud) que cobrem praticamente todas as necessidades de um backend moderno.
+Spring Boot (lançado em 2014 por Pivotal/VMware, hoje Broadcom) simplifica radicalmente o Spring — elimina XML de configuração, gera projetos com `start.spring.io`, e permite executar uma aplicação web completa com `java -jar app.jar`. É o framework Java de facto para backend moderno.
 
-## Como funciona
+O stack canônico Spring:
 
-### Conceitos core
+```
+┌──────────────────────────────────────────────────────────────┐
+│                    Spring Boot                                │
+│  (autoconfig, starters, Actuator, embedded server, CLI)       │
+├──────────────────────────────────────────────────────────────┤
+│                    Spring Framework                           │
+│  (IoC container, AOP, Transaction management, Spring MVC,     │
+│   Spring WebFlux, Spring Expression Language, JDBC template)  │
+├──────────────────────────────────────────────────────────────┤
+│  Spring Data  │  Spring Security  │  Spring Cloud  │ ...      │
+│  (projetos modulares adicionando features específicas)        │
+└──────────────────────────────────────────────────────────────┘
+```
 
-**Dependency Injection (DI):** o Spring IoC Container gerencia o ciclo de vida dos objetos (beans) e injeta dependências automaticamente.
+Em entrevistas, o que diferencia um senior em Spring Boot:
+
+1. **Entender o IoC container** — como beans são criados, lifecycle, BeanPostProcessor
+2. **Dominar AOP e proxies** — como `@Transactional`, `@Async`, `@Cacheable` funcionam por baixo
+3. **Transações** — propagation, isolation, rollback rules, pitfalls de self-invocation
+4. **Spring MVC pipeline** — DispatcherServlet, HandlerMapping, HandlerAdapter, ViewResolver
+5. **Profiles e Configuration** — hierarquia, binding para classes tipadas, ConditionalOnProperty
+6. **Actuator e observabilidade** — endpoints, custom health indicators, Micrometer
+7. **Testing** — slices (`@WebMvcTest`, `@DataJpaTest`), Testcontainers
+8. **Spring Boot internals** — auto-configuration, `@ConditionalOnClass`, Conditional evaluation
+
+## Spring IoC Container — deep dive
+
+O coração do Spring. Entender o IoC container é entender Spring.
+
+### BeanFactory vs ApplicationContext
+
+**`BeanFactory`** — interface básica, lazy init, usada raramente diretamente.
+
+**`ApplicationContext`** — estende BeanFactory com features enterprise: event publication, internationalization, environment abstraction, resource loading. **O que você usa na prática.**
+
+Em Spring Boot, o `ApplicationContext` concreto é:
+
+- **`AnnotationConfigApplicationContext`** — para apps standalone
+- **`AnnotationConfigServletWebServerApplicationContext`** — para web apps servlet-based (Spring MVC)
+- **`AnnotationConfigReactiveWebServerApplicationContext`** — para apps reactive (Spring WebFlux)
+
+Você raramente interage com o ApplicationContext diretamente, mas pode injetá-lo:
+
+```java
+@Service
+public class MeuServico {
+    private final ApplicationContext context;
+
+    public MeuServico(ApplicationContext context) {
+        this.context = context;
+    }
+
+    public void exemplo() {
+        String[] names = context.getBeanDefinitionNames();
+        MeuBean b = context.getBean(MeuBean.class);
+    }
+}
+```
+
+### Inversão de Controle (IoC) e Dependency Injection (DI)
+
+**Inversão de Controle** é o princípio: o framework controla a criação e wiring de objetos, não o seu código.
+
+**Dependency Injection** é uma forma de implementar IoC: o framework **injeta** dependências no objeto, em vez do objeto criá-las.
+
+**Antes (sem DI):**
+
+```java
+public class AppointmentService {
+    private PatientRepository repo = new JdbcPatientRepository();  // acoplado!
+}
+```
+
+**Com DI:**
 
 ```java
 @Service
 public class AppointmentService {
-    private final PatientRepository patientRepo;
+    private final PatientRepository repo;
+
+    public AppointmentService(PatientRepository repo) {
+        this.repo = repo;  // Spring injeta qualquer implementação
+    }
+}
+```
+
+### Tipos de injeção
+
+**Constructor injection (recomendado):**
+
+```java
+@Service
+public class AppointmentService {
+    private final PatientRepository repo;
     private final NotificationSender notifier;
 
-    // Constructor injection (recomendado)
-    public AppointmentService(PatientRepository patientRepo,
-                              NotificationSender notifier) {
-        this.patientRepo = patientRepo;
+    public AppointmentService(PatientRepository repo, NotificationSender notifier) {
+        this.repo = repo;
         this.notifier = notifier;
     }
 }
 ```
 
-**Bean Scopes:**
+**Vantagens:**
 
-| Scope | Descrição |
-| --- | --- |
-| singleton | Uma instância por contexto (default) |
-| prototype | Nova instância a cada injeção |
-| request | Uma por HTTP request (web) |
-| session | Uma por HTTP session (web) |
+- Dependências explícitas e imutáveis (`final`)
+- Fácil de testar (new MeuServico(mockRepo, mockNotifier))
+- Falha na inicialização se dependência faltar (fail-fast)
+- Previne dependências circulares silenciosas
 
-**Autoconfiguração:** Spring Boot detecta dependências no classpath e configura automaticamente. `spring-boot-starter-data-jpa` no pom.xml → DataSource, EntityManager, TransactionManager configurados.
+**Setter injection:** usado raramente, útil para dependências opcionais.
 
-### Camadas típicas
-
-```text
-Controller (@RestController)
-    ↓ DTO
-Service (@Service)
-    ↓ Entity
-Repository (@Repository / Spring Data JPA)
-    ↓ SQL
-Database
+```java
+@Autowired
+public void setCache(Optional<Cache> cache) {
+    this.cache = cache.orElse(null);
+}
 ```
 
-### Spring Data JPA
+**Field injection (`@Autowired` em campo):** **evite.**
+
+```java
+// RUIM
+@Autowired
+private PatientRepository repo;
+```
+
+Problemas:
+
+- Difícil testar (precisa de reflection ou Spring test context)
+- Esconde dependências
+- Não permite `final`
+- Permite dependências circulares silenciosas
+
+**Spring Boot 2.6+:** dependências circulares são **proibidas** por default. Você precisa `spring.main.allow-circular-references=true` — o que é um sinal claro de design ruim.
+
+### Bean lifecycle
+
+```
+1. Instantiation           (new SeuBean())
+2. Populate properties     (@Autowired, setters)
+3. BeanNameAware.setBeanName
+4. BeanFactoryAware.setBeanFactory
+5. ApplicationContextAware.setApplicationContext
+6. BeanPostProcessor.postProcessBeforeInitialization
+7. @PostConstruct / InitializingBean.afterPropertiesSet / init-method
+8. BeanPostProcessor.postProcessAfterInitialization   ← aqui é onde proxies são criados (AOP)
+9. Bean pronto para uso
+   ...
+10. @PreDestroy / DisposableBean.destroy / destroy-method (em shutdown)
+```
+
+**Hooks úteis:**
+
+```java
+@Service
+public class MeuServico {
+
+    @PostConstruct
+    public void inicializar() {
+        // executado após DI completar
+    }
+
+    @PreDestroy
+    public void cleanup() {
+        // executado no shutdown graceful
+    }
+}
+```
+
+### Bean scopes
+
+| Scope | Descrição | Uso |
+| --- | --- | --- |
+| **`singleton`** (default) | Uma instância por ApplicationContext | 99% dos casos |
+| **`prototype`** | Nova instância a cada `getBean()` ou injeção | Beans stateful raros |
+| **`request`** | Uma por HTTP request | Web apps, state por request |
+| **`session`** | Uma por HTTP session | Web apps, state por usuário |
+| **`application`** | Uma por ServletContext | Web apps globais |
+| **`websocket`** | Uma por WebSocket | Apps WebSocket |
+
+**Cuidado:** injetar **prototype** em **singleton** não funciona ingenuamente — o singleton recebe uma única instância do prototype. Soluções:
+
+- `@Lookup` method injection
+- `ObjectProvider<T>` ou `Provider<T>`
+- `@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)` no prototype
+
+```java
+@Service
+public class SingletonServico {
+
+    @Autowired
+    private ObjectProvider<ProtoypeBean> proto;
+
+    public void usar() {
+        ProtoypeBean novo = proto.getObject();  // nova instância a cada chamada
+    }
+}
+```
+
+### BeanPostProcessor — o poder oculto
+
+`BeanPostProcessor` é o hook que permite ao Spring **modificar** ou **envolver** beans após a criação. É como AOP, `@Async`, `@Transactional`, `@EventListener` funcionam: todos têm BeanPostProcessors que envolvem seus beans em proxies.
+
+```java
+@Component
+public class MeuBPP implements BeanPostProcessor {
+
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName) {
+        if (bean instanceof MeuTipo) {
+            // Pode retornar proxy, wrapper, ou o próprio bean
+            return Proxy.newProxyInstance(...);
+        }
+        return bean;
+    }
+}
+```
+
+Raramente você precisa escrever um. Mas entender que existem explica muita "mágica" do Spring.
+
+### @Component vs @Service vs @Repository vs @Controller
+
+Tecnicamente, **os 4 fazem a mesma coisa**: registram a classe como bean. A diferença é semântica + alguns comportamentos específicos:
+
+- **`@Component`** — genérico, qualquer bean gerenciado
+- **`@Service`** — camada de lógica de negócio (sem comportamento extra)
+- **`@Repository`** — camada de persistência. **Adiciona tradução de exceções** de persistência para `DataAccessException`
+- **`@Controller`** / **`@RestController`** — handler de HTTP requests. Spring MVC usa para mapping
+
+**Regra prática:** use a anotação semântica (`@Service`, `@Repository`, `@Controller`). Isso documenta intenção e permite scanning específico.
+
+### Configuração com @Configuration e @Bean
+
+Além de component scanning, você pode declarar beans explicitamente:
+
+```java
+@Configuration
+public class MinhaConfig {
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean  // só cria se não existe outro
+    public MeuCache cache() {
+        return new InMemoryCache();
+    }
+}
+```
+
+**Uso típico:** beans de bibliotecas externas (que você não pode anotar), beans complexos que exigem lógica de construção, overrides condicionais.
+
+### Conditional beans
+
+```java
+@Configuration
+public class CacheConfig {
+
+    @Bean
+    @ConditionalOnProperty(name = "cache.type", havingValue = "redis")
+    public CacheManager redisCache() { ... }
+
+    @Bean
+    @ConditionalOnProperty(name = "cache.type", havingValue = "caffeine", matchIfMissing = true)
+    public CacheManager caffeineCache() { ... }
+
+    @Bean
+    @ConditionalOnClass(name = "com.hazelcast.core.HazelcastInstance")
+    public CacheManager hazelcastCache() { ... }
+
+    @Bean
+    @ConditionalOnMissingBean(CacheManager.class)
+    public CacheManager fallbackCache() { ... }
+}
+```
+
+Isso é exatamente como a **autoconfiguração** do Spring Boot funciona internamente.
+
+---
+
+## AOP e proxies — a mágica por baixo
+
+**Aspect-Oriented Programming (AOP)** permite modularizar cross-cutting concerns (logging, transações, segurança, cache) separados da lógica de negócio.
+
+Anotações como `@Transactional`, `@Async`, `@Cacheable`, `@PreAuthorize` são **implementadas via AOP**. Entender isso explica várias armadilhas.
+
+### Como funciona: proxies
+
+Spring cria um **proxy** ao redor do bean. Quando você chama um método anotado, a chamada passa pelo proxy, que executa o "advice" (código do aspecto) antes/depois do método real.
+
+```
+Client code
+    ↓
+  Proxy (Spring-generated)       ← intercepta a chamada
+    ↓ (advice antes, ex.: begin transaction)
+    ↓
+  Real Bean                      ← método real
+    ↓
+  Proxy                          ← advice depois, ex.: commit / rollback
+    ↓
+Client code
+```
+
+### JDK Dynamic Proxy vs CGLIB
+
+Spring usa dois tipos de proxy:
+
+**JDK Dynamic Proxy** — proxy baseado em interface. Só funciona se o bean implementa interface.
+
+```java
+public interface PatientService { void save(Patient p); }
+
+@Service
+public class PatientServiceImpl implements PatientService {
+    @Transactional
+    public void save(Patient p) { ... }
+}
+// Spring cria JDK proxy que implementa PatientService
+```
+
+**CGLIB Proxy** — cria subclasse em runtime via bytecode manipulation. Funciona mesmo sem interface.
+
+```java
+@Service
+public class PatientService {  // sem interface
+    @Transactional
+    public void save(Patient p) { ... }
+}
+// Spring cria CGLIB proxy que estende PatientService
+```
+
+**Default em Spring Boot 2.x+:** CGLIB (`spring.aop.proxy-target-class=true`). Antes era JDK.
+
+**Limitações CGLIB:**
+
+- Classes `final` não podem ser proxadas (CGLIB precisa estender)
+- Métodos `final` não são interceptados (não pode sobrescrever)
+- Métodos `private` não são interceptados (não são visíveis para subclass)
+- Construtor é chamado 2x (uma para superclass, uma para subclass proxy)
+
+### Self-invocation: a armadilha clássica
+
+A chamada interna **não passa pelo proxy** — bypassa o AOP.
+
+```java
+@Service
+public class OrderService {
+
+    public void createOrder(OrderRequest req) {
+        validateOrder(req);
+        sendConfirmation(req);  // ← chamada interna, NÃO passa pelo proxy
+    }
+
+    @Transactional
+    public void sendConfirmation(OrderRequest req) {
+        // @Transactional IGNORADO quando chamado internamente!
+    }
+}
+```
+
+**Por quê:** `this.sendConfirmation(req)` é uma chamada direta ao objeto, não ao proxy. O proxy só intercepta chamadas externas.
+
+**Soluções:**
+
+1. **Extrair para outro bean** (mais limpa):
+
+```java
+@Service
+@RequiredArgsConstructor
+public class OrderService {
+    private final ConfirmationService confirmationService;
+
+    public void createOrder(OrderRequest req) {
+        validateOrder(req);
+        confirmationService.sendConfirmation(req);  // passa pelo proxy
+    }
+}
+```
+
+2. **Self-injection** (funciona, mas feio):
+
+```java
+@Service
+public class OrderService {
+
+    @Autowired
+    private OrderService self;  // auto-injeta via proxy
+
+    public void createOrder(OrderRequest req) {
+        self.sendConfirmation(req);  // passa pelo proxy
+    }
+}
+```
+
+3. **`@Transactional` no método público** — se o método público é o único ponto de entrada, anote ele:
+
+```java
+@Transactional
+public void createOrder(OrderRequest req) {
+    validateOrder(req);
+    sendConfirmation(req);
+}
+```
+
+### @Transactional em métodos private ou final
+
+- **`private`** — proxy CGLIB não intercepta. `@Transactional` é **ignorado sem warning**.
+- **`final`** — CGLIB não pode sobrescrever. `@Transactional` é ignorado.
+
+**Regra:** para anotações AOP funcionarem, o método deve ser `public` e não-`final`.
+
+### Advice types
+
+Tipos de advice que você pode declarar (raro escrever à mão, mas útil conhecer):
+
+- **`@Before`** — antes do método
+- **`@After`** — depois (sempre)
+- **`@AfterReturning`** — após sucesso
+- **`@AfterThrowing`** — após exceção
+- **`@Around`** — envolve a chamada (mais poderoso, pode decidir se executa)
+
+**Exemplo de aspect customizado — logging:**
+
+```java
+@Aspect
+@Component
+@Slf4j
+public class LoggingAspect {
+
+    @Around("@annotation(loggable)")
+    public Object logExecution(ProceedingJoinPoint pjp, Loggable loggable) throws Throwable {
+        long start = System.currentTimeMillis();
+        String method = pjp.getSignature().toShortString();
+
+        log.info("Entering {}", method);
+        try {
+            Object result = pjp.proceed();
+            log.info("{} completed in {}ms", method, System.currentTimeMillis() - start);
+            return result;
+        } catch (Exception e) {
+            log.error("{} failed: {}", method, e.getMessage());
+            throw e;
+        }
+    }
+}
+
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Loggable {}
+
+// Uso
+@Service
+public class MeuServico {
+    @Loggable
+    public void processar() { ... }
+}
+```
+
+### Pointcut expressions
+
+Linguagem para selecionar onde o advice se aplica.
+
+```java
+// Todos os métodos de uma classe
+@Pointcut("execution(* com.app.service.PatientService.*(..))")
+
+// Todos os métodos de um package
+@Pointcut("execution(* com.app.service..*.*(..))")
+
+// Métodos anotados com @Transactional
+@Pointcut("@annotation(org.springframework.transaction.annotation.Transactional)")
+
+// Classes anotadas com @Service
+@Pointcut("within(@org.springframework.stereotype.Service *)")
+
+// Combinando com AND/OR/NOT
+@Pointcut("execution(* com.app..*.*(..)) && @annotation(Loggable)")
+```
+
+---
+
+## Gerenciamento de transações — @Transactional deep dive
+
+Uma das features mais usadas e mal compreendidas do Spring.
+
+### O básico
+
+```java
+@Service
+public class TransferenciaService {
+
+    @Transactional
+    public void transferir(Account origem, Account destino, Money valor) {
+        origem.debitar(valor);
+        contaRepo.save(origem);
+        destino.creditar(valor);
+        contaRepo.save(destino);
+        // Se qualquer operação lançar RuntimeException, tudo faz rollback
+    }
+}
+```
+
+Por baixo: Spring cria proxy → ao entrar no método, chama `PlatformTransactionManager.getTransaction()` → commit ou rollback ao sair.
+
+### Propagation
+
+Como transações se comportam quando uma chama outra.
+
+| Propagation | Comportamento |
+| --- | --- |
+| **`REQUIRED`** (default) | Usa tx existente ou cria nova |
+| **`REQUIRES_NEW`** | Suspende tx atual e cria nova (independente) |
+| **`SUPPORTS`** | Usa tx se existir, caso contrário sem tx |
+| **`NOT_SUPPORTED`** | Suspende tx atual, executa sem tx |
+| **`MANDATORY`** | Exige tx existente, lança se não houver |
+| **`NEVER`** | Lança se houver tx em andamento |
+| **`NESTED`** | Savepoint dentro da tx atual (se suportado) |
+
+**Uso prático de `REQUIRES_NEW`:** auditoria que deve commitar mesmo se a tx principal falhar.
+
+```java
+@Service
+public class AuditoriaService {
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void registrar(Evento e) {
+        auditoriaRepo.save(e);
+        // Mesmo se a tx externa rollback, esta aqui commita
+    }
+}
+```
+
+### Isolation levels
+
+Controla visibilidade entre transações concorrentes. Ver [[Banco de dados]] para teoria completa.
+
+| Isolation | Dirty read | Non-repeatable read | Phantom read |
+| --- | --- | --- | --- |
+| `READ_UNCOMMITTED` | ✓ possível | ✓ possível | ✓ possível |
+| `READ_COMMITTED` (default PostgreSQL) | ✗ | ✓ possível | ✓ possível |
+| `REPEATABLE_READ` (default MySQL) | ✗ | ✗ | ✓ possível |
+| `SERIALIZABLE` | ✗ | ✗ | ✗ |
+
+```java
+@Transactional(isolation = Isolation.SERIALIZABLE)
+public void operacaoCritica() { ... }
+```
+
+**Na prática:** `READ_COMMITTED` resolve a maioria dos casos. `SERIALIZABLE` tem custo de performance.
+
+### Rollback rules
+
+**Regra default:** rollback **apenas** em `RuntimeException` (unchecked) e `Error`. Checked exceptions **não fazem rollback**.
+
+```java
+@Transactional
+public void transferir(...) throws InsufficientFundsException {
+    // Se InsufficientFundsException (checked) for lançada, a tx COMMITA!
+}
+
+// Correção
+@Transactional(rollbackFor = InsufficientFundsException.class)
+public void transferir(...) throws InsufficientFundsException { ... }
+
+// Ou rollback para qualquer exceção
+@Transactional(rollbackFor = Exception.class)
+public void transferir(...) throws Exception { ... }
+```
+
+**Rollback manual:**
+
+```java
+@Transactional
+public void minhaOperacao() {
+    try {
+        repo.save(entidade);
+    } catch (Exception e) {
+        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        throw e;
+    }
+}
+```
+
+### Read-only
+
+Otimização — o Spring e o banco podem pular overhead se souber que é só leitura.
+
+```java
+@Transactional(readOnly = true)
+public Page<Patient> listarPacientes(Pageable pageable) {
+    return repo.findAll(pageable);
+}
+```
+
+**Hibernate benefit:** desabilita dirty checking automático (não verifica mudanças no final).
+
+### Timeout
+
+```java
+@Transactional(timeout = 30)  // segundos
+public void operacaoLenta() { ... }
+```
+
+Lança `TransactionTimedOutException` se passar.
+
+### Padrão arquitetural: transações na camada Service
+
+**Regra:** `@Transactional` na **camada Service**, não no Controller nem no Repository.
+
+**Razões:**
+
+- Service define as **fronteiras do caso de uso**
+- Controller não deve saber de persistência
+- Repository é muito granular (cada call vira uma tx, ineficiente)
+
+```java
+// BOM
+@Service
+public class OrderService {
+    @Transactional
+    public Order createOrder(OrderRequest req) {
+        // valida, salva, dispara eventos — tudo em uma tx
+    }
+}
+
+// RUIM — @Transactional no Repository
+public interface OrderRepository extends JpaRepository<Order, Long> {
+    // cada save é uma tx separada
+}
+```
+
+→ Para deep dive em JPA, transações, N+1: ver [[Spring Data JPA]]
+
+---
+
+## Spring MVC pipeline
+
+Entender como um HTTP request vira uma resposta é essencial.
+
+### O pipeline
+
+```
+HTTP Request
+    ↓
+Tomcat (servlet container)
+    ↓
+Filter chain (FilterRegistrationBean)
+    ↓  CharacterEncodingFilter, security filters, etc.
+    ↓
+DispatcherServlet (o "front controller" do Spring MVC)
+    ↓
+HandlerMapping (resolve request → controller method)
+    ↓
+HandlerInterceptor.preHandle
+    ↓
+HandlerAdapter
+    ↓  invoca o método do Controller
+    ↓
+@Controller method (ou @RestController)
+    ↓  executa lógica, retorna ModelAndView ou @ResponseBody
+    ↓
+HandlerInterceptor.postHandle
+    ↓
+HttpMessageConverter (serializa @ResponseBody → JSON via Jackson)
+    ↓
+HandlerInterceptor.afterCompletion
+    ↓
+Filter chain (saída)
+    ↓
+HTTP Response
+```
+
+### DispatcherServlet
+
+O "Front Controller" — recebe todos os requests e delega. Registrado automaticamente pelo Spring Boot em `/` (ou `server.servlet.context-path`).
+
+### HandlerMapping
+
+Resolve "qual controller trata este request". O principal é `RequestMappingHandlerMapping` que lê anotações `@RequestMapping`, `@GetMapping`, `@PostMapping`, etc.
+
+### HandlerAdapter
+
+Executa o handler. Traduz argumentos do método (via `HandlerMethodArgumentResolver`): `@RequestBody`, `@PathVariable`, `@RequestParam`, `@RequestHeader`, `HttpServletRequest`, etc.
+
+### HttpMessageConverter
+
+Converte body do request ↔ objetos Java. `MappingJackson2HttpMessageConverter` é o principal (JSON via Jackson). Você pode customizar:
+
+```java
+@Configuration
+public class WebMvcConfig implements WebMvcConfigurer {
+
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        converters.add(customConverter());
+    }
+
+    @Bean
+    public Jackson2ObjectMapperBuilderCustomizer jacksonCustomizer() {
+        return builder -> builder
+            .modulesToInstall(new JavaTimeModule())
+            .failOnUnknownProperties(false);
+    }
+}
+```
+
+### Interceptors vs Filters
+
+- **Filter** (javax/jakarta.servlet) — nível servlet. Executa **antes** do DispatcherServlet. Usado para auth cross-cutting, encoding, CORS.
+- **Interceptor** (Spring MVC) — executa dentro do pipeline Spring MVC. Tem acesso ao handler method. Usado para logging de business-specific, validação.
+
+```java
+@Component
+public class LoggingInterceptor implements HandlerInterceptor {
+
+    @Override
+    public boolean preHandle(HttpServletRequest req, HttpServletResponse resp, Object handler) {
+        MDC.put("traceId", UUID.randomUUID().toString());
+        return true;
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest req, HttpServletResponse resp, Object handler, Exception ex) {
+        MDC.clear();
+    }
+}
+
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
+
+    @Autowired
+    private LoggingInterceptor loggingInterceptor;
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(loggingInterceptor);
+    }
+}
+```
+
+### Exception Handling
+
+**`@ExceptionHandler`** dentro do controller:
+
+```java
+@RestController
+public class PatientController {
+
+    @ExceptionHandler(PatientNotFoundException.class)
+    public ResponseEntity<ProblemDetail> handle(PatientNotFoundException e) {
+        var problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
+        return ResponseEntity.of(problem).build();
+    }
+}
+```
+
+**`@RestControllerAdvice`** para handlers globais (padrão recomendado):
+
+```java
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(PatientNotFoundException.class)
+    public ResponseEntity<ProblemDetail> handleNotFound(PatientNotFoundException e) {
+        var problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
+        problem.setType(URI.create("https://api.example.com/errors/not-found"));
+        problem.setProperty("trace_id", MDC.get("traceId"));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problem);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ProblemDetail> handleValidation(MethodArgumentNotValidException e) {
+        List<Map<String, String>> errors = e.getBindingResult().getFieldErrors().stream()
+            .map(f -> Map.of("field", f.getField(), "code", f.getCode(), "message", f.getDefaultMessage()))
+            .toList();
+
+        var problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, "Validation failed");
+        problem.setProperty("errors", errors);
+        return ResponseEntity.unprocessableEntity().body(problem);
+    }
+}
+```
+
+→ Para RFC 9457 Problem Details completo, ver [[API Design]]
+
+---
+
+## Configuração e Profiles — deep dive
+
+### Hierarquia de configuração
+
+Spring Boot lê propriedades de múltiplas fontes, na ordem (maior precedência vence):
+
+1. **Devtools global config**
+2. **`@TestPropertySource`** em tests
+3. **Command line arguments** (`--server.port=8080`)
+4. **`SPRING_APPLICATION_JSON`** environment variable
+5. **ServletConfig init parameters**
+6. **ServletContext init parameters**
+7. **JNDI attributes**
+8. **Java System properties** (`-D`)
+9. **OS environment variables**
+10. **RandomValuePropertySource** (`random.*`)
+11. **Profile-specific `application-{profile}.yml`**
+12. **`application.yml`** (main)
+13. **`@PropertySource`** in `@Configuration`
+14. **Default properties**
+
+**Regra prática:** defina defaults em `application.yml`, sobrescreva com `application-prod.yml`, e use **env variables** para secrets em produção.
+
+### Profiles
+
+Agrupa configurações por ambiente (dev, staging, prod).
+
+```yaml
+# application.yml — default
+spring:
+  application:
+    name: medespecialista
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+# application-dev.yml
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/meddev
+logging:
+  level:
+    com.medespecialista: DEBUG
+
+# application-prod.yml
+spring:
+  datasource:
+    url: ${DATABASE_URL}
+    hikari:
+      maximum-pool-size: 20
+logging:
+  level:
+    root: INFO
+```
+
+**Ativar profile:**
+
+```bash
+# Via env variable (preferido em produção)
+SPRING_PROFILES_ACTIVE=prod java -jar app.jar
+
+# Via argument
+java -jar app.jar --spring.profiles.active=prod
+
+# Via código
+@SpringBootApplication
+public class App {
+    public static void main(String[] args) {
+        SpringApplication app = new SpringApplication(App.class);
+        app.setAdditionalProfiles("prod");
+        app.run(args);
+    }
+}
+```
+
+**Profile-specific beans:**
+
+```java
+@Service
+@Profile("dev")
+public class MockEmailSender implements EmailSender { ... }
+
+@Service
+@Profile("!dev")  // qualquer profile exceto dev
+public class RealEmailSender implements EmailSender { ... }
+
+@Service
+@Profile({"prod", "staging"})
+public class CloudEmailSender implements EmailSender { ... }
+```
+
+### @ConfigurationProperties — binding tipado
+
+Em vez de usar `@Value` espalhado, agrupe configuração em classes tipadas:
+
+```java
+@ConfigurationProperties(prefix = "app.notifications")
+@Validated
+public record NotificationProperties(
+    @NotBlank String emailFrom,
+    @NotNull Duration timeout,
+    @NotNull @Valid SmsProperties sms,
+    List<String> channels
+) {
+    public record SmsProperties(
+        @NotBlank String provider,
+        @NotBlank String apiKey,
+        int maxRetries
+    ) {}
+}
+```
+
+```yaml
+app:
+  notifications:
+    email-from: noreply@example.com
+    timeout: PT30S
+    sms:
+      provider: twilio
+      api-key: ${TWILIO_API_KEY}
+      max-retries: 3
+    channels:
+      - email
+      - push
+      - sms
+```
+
+```java
+@SpringBootApplication
+@ConfigurationPropertiesScan
+public class App { }
+
+// Injetar
+@Service
+public class NotificationService {
+    private final NotificationProperties props;
+
+    public NotificationService(NotificationProperties props) {
+        this.props = props;
+    }
+}
+```
+
+**Vantagens sobre `@Value`:**
+
+- Validação Jakarta Bean Validation
+- IDE support (autocomplete em YAML)
+- Documentação automática via `spring-boot-configuration-processor`
+- Refactoring seguro
+- Agrupamento lógico
+
+### @Value para casos pontuais
+
+```java
+@Value("${app.max-retries:3}")  // default 3
+private int maxRetries;
+
+@Value("#{systemProperties['user.timezone']}")  // SpEL
+private String timezone;
+```
+
+---
+
+## Actuator — production-ready features
+
+`spring-boot-starter-actuator` expõe endpoints de monitoramento e gerenciamento.
+
+### Endpoints principais
+
+| Endpoint | O que expõe |
+| --- | --- |
+| `/actuator/health` | Status da aplicação (UP/DOWN/OUT_OF_SERVICE) |
+| `/actuator/info` | Informações gerais (build, git) |
+| `/actuator/metrics` | Métricas (Micrometer) |
+| `/actuator/prometheus` | Métricas em formato Prometheus |
+| `/actuator/env` | Propriedades de ambiente |
+| `/actuator/configprops` | `@ConfigurationProperties` beans |
+| `/actuator/beans` | Lista todos os beans do contexto |
+| `/actuator/mappings` | Mapeamentos de endpoints |
+| `/actuator/loggers` | Visualizar e **alterar** níveis de log em runtime |
+| `/actuator/threaddump` | Thread dump |
+| `/actuator/heapdump` | Heap dump |
+| `/actuator/httpexchanges` | Últimos HTTP requests |
+| `/actuator/scheduledtasks` | Tasks do `@Scheduled` |
+
+### Configuração
+
+```yaml
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,loggers
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+      probes:
+        enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      percentiles:
+        http.server.requests: 0.5, 0.9, 0.95, 0.99
+```
+
+**Segurança:** por default, só `/health` é exposto. Em produção, **sempre** proteja Actuator com auth:
+
+```java
+http.securityMatcher(EndpointRequest.toAnyEndpoint())
+    .authorizeHttpRequests(auth -> auth
+        .requestMatchers(EndpointRequest.to("health", "info")).permitAll()
+        .anyRequest().hasRole("ADMIN"));
+```
+
+### Custom Health Indicator
+
+```java
+@Component
+public class ExternalApiHealthIndicator implements HealthIndicator {
+
+    private final ExternalApiClient client;
+
+    @Override
+    public Health health() {
+        try {
+            var response = client.ping();
+            return Health.up()
+                .withDetail("latency", response.latencyMs())
+                .withDetail("version", response.version())
+                .build();
+        } catch (Exception e) {
+            return Health.down()
+                .withDetail("error", e.getMessage())
+                .build();
+        }
+    }
+}
+```
+
+### Kubernetes probes
+
+Spring Boot 2.3+ suporta liveness e readiness built-in:
+
+```yaml
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+```
+
+Expõe:
+
+- `/actuator/health/liveness` — app está viva? (Kubernetes reinicia se DOWN)
+- `/actuator/health/readiness` — app pronta para receber tráfego? (Kubernetes tira do load balancer)
+
+```yaml
+# Kubernetes manifest
+livenessProbe:
+  httpGet:
+    path: /actuator/health/liveness
+    port: 8080
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /actuator/health/readiness
+    port: 8080
+  initialDelaySeconds: 5
+  periodSeconds: 5
+```
+
+### Micrometer — métricas
+
+Micrometer é a abstração de métricas de Spring Boot. Suporta Prometheus, Datadog, New Relic, CloudWatch, e outros.
+
+**Métricas built-in:**
+
+- JVM (GC, memory, threads, classloader)
+- HTTP (latency, count, errors) — `http.server.requests`
+- DataSource (HikariCP pool)
+- Tomcat / Jetty / Netty
+- Logback (log rate)
+- Cache (Caffeine, Ehcache)
+
+**Métricas customizadas:**
+
+```java
+@Service
+public class OrderService {
+
+    private final Counter ordersCreated;
+    private final Timer processingTime;
+
+    public OrderService(MeterRegistry registry) {
+        this.ordersCreated = registry.counter("orders.created");
+        this.processingTime = registry.timer("orders.processing.time");
+    }
+
+    public Order create(OrderRequest req) {
+        return processingTime.record(() -> {
+            Order order = doCreate(req);
+            ordersCreated.increment();
+            return order;
+        });
+    }
+}
+```
+
+**Com tags (labels Prometheus):**
+
+```java
+Counter errors = Counter.builder("api.errors")
+    .tag("endpoint", "/patients")
+    .tag("method", "POST")
+    .register(registry);
+```
+
+---
+
+## Spring WebFlux — visão geral
+
+Alternativa reativa ao Spring MVC. Usa Project Reactor (Mono, Flux) em vez de servlet API.
+
+**Quando usar:**
+
+- Alta concorrência I/O-bound (antes de Virtual Threads)
+- Streaming (SSE, WebSocket)
+- Stack já reactive (Reactor Kafka, R2DBC)
+
+**Quando NÃO usar:**
+
+- CRUD tradicional — Spring MVC é mais simples
+- Equipe sem experiência com reactive programming
+- Java 21+ disponível — Virtual Threads tornam WebFlux menos necessário
+
+```java
+@RestController
+public class ReactiveController {
+
+    @GetMapping("/users/{id}")
+    public Mono<User> getUser(@PathVariable String id) {
+        return userRepository.findById(id);
+    }
+
+    @GetMapping("/users")
+    public Flux<User> listUsers() {
+        return userRepository.findAll();
+    }
+}
+```
+
+**Não cobrimos em profundidade aqui** — WebFlux merece sua própria nota se virar relevante.
+
+---
+
+## Spring Cloud — visão geral
+
+Conjunto de projetos para microserviços distribuídos.
+
+| Projeto | O que faz |
+| --- | --- |
+| **Spring Cloud Config** | Configuração centralizada (Git, Vault) |
+| **Spring Cloud Netflix Eureka** | Service Discovery (deprecado, hoje usa-se Kubernetes) |
+| **Spring Cloud LoadBalancer** | Client-side load balancing |
+| **Spring Cloud OpenFeign** | HTTP client declarativo |
+| **Spring Cloud Gateway** | API Gateway (substitui Zuul) |
+| **Spring Cloud Sleuth** (deprecated) / **Micrometer Tracing** | Distributed tracing |
+| **Spring Cloud Stream** | Abstração de messaging (Kafka, RabbitMQ) |
+| **Spring Cloud Bus** | Eventos via broker para sincronizar configs |
+| **Spring Cloud Circuit Breaker** | Abstração sobre Resilience4j / Sentinel |
+
+### OpenFeign — HTTP client declarativo
+
+Popular para chamadas entre microserviços:
+
+```java
+@FeignClient(name = "notification-service", url = "${notification.url}")
+public interface NotificationClient {
+
+    @PostMapping("/notifications")
+    void send(@RequestBody NotificationRequest req);
+
+    @GetMapping("/notifications/{id}")
+    NotificationStatus getStatus(@PathVariable String id);
+}
+
+// Habilitar
+@SpringBootApplication
+@EnableFeignClients
+public class App { }
+
+// Usar
+@Service
+@RequiredArgsConstructor
+public class OrderService {
+    private final NotificationClient notifications;
+
+    public void createOrder(Order o) {
+        // ...
+        notifications.send(new NotificationRequest(o.getUserId(), "Pedido criado"));
+    }
+}
+```
+
+**Configuração:**
+
+```yaml
+spring:
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            connect-timeout: 5000
+            read-timeout: 10000
+          notification-service:
+            read-timeout: 30000
+```
+
+### Alternativa moderna
+
+Em 2026, muitas equipes preferem:
+
+- **Kubernetes Service Discovery** em vez de Eureka
+- **Envoy / Istio** em vez de Spring Cloud Gateway
+- **HashiCorp Vault** direto em vez de Spring Cloud Config
+- **OpenTelemetry** em vez de Sleuth
+
+Spring Cloud ainda é relevante, mas o mundo se moveu para infraestrutura declarativa.
+
+---
+
+## Camadas típicas de uma aplicação Spring Boot
+
+A arquitetura em camadas canônica:
+
+```text
+┌─────────────────────────────────────────┐
+│  Controller (@RestController)           │  ← HTTP, validação, @Valid
+│    ↕ DTO                                │
+├─────────────────────────────────────────┤
+│  Service (@Service)                     │  ← Lógica de negócio, @Transactional
+│    ↕ Entity / Domain object             │
+├─────────────────────────────────────────┤
+│  Repository (@Repository / JpaRepository)│ ← Persistência
+│    ↕ SQL / JPQL                         │
+├─────────────────────────────────────────┤
+│  Database (PostgreSQL, MySQL, ...)      │
+└─────────────────────────────────────────┘
+```
+
+**Responsabilidades:**
+
+- **Controller** — mapeia HTTP, valida input, delega ao service, serializa response. **Sem lógica de negócio.**
+- **Service** — lógica de negócio, coordenação de repositories, transações. **Sem HTTP nem JPA direto.**
+- **Repository** — persistência pura. Spring Data JPA cuida do básico, queries customizadas via `@Query` ou Specifications.
+- **Domain** — entidades ou records representando conceitos de negócio.
+
+Para projetos maiores, considere Hexagonal/Clean Architecture com DDD — ver [[Arquitetura de Software]].
+
+### Persistência (Spring Data JPA + Hibernate)
+
+Deep dive em [[Spring Data JPA]] — JPA/Hibernate, JPQL, Criteria, projections, fetch strategies, transações, N+1, caching (L1/L2), batch operations.
+
+**Resumo rápido:**
 
 ```java
 public interface PatientRepository extends JpaRepository<Patient, Long> {
-    // Query derivada do nome do método
     List<Patient> findBySpecialtyAndActive(String specialty, boolean active);
 
-    // JPQL custom
     @Query("SELECT p FROM Patient p WHERE p.rating > :min ORDER BY p.rating DESC")
     List<Patient> findTopRated(@Param("min") double min);
+
+    @EntityGraph(attributePaths = {"appointments"})
+    Optional<Patient> findWithAppointmentsById(Long id);
 }
 ```
-
-- **Derived queries:** o Spring gera SQL a partir do nome do método
-- **Pagination:** `Pageable` como parâmetro → retorna `Page<T>`
-- **Specifications:** queries dinâmicas com Criteria API
-- **Projections:** interfaces/DTOs para retornar apenas campos necessários
 
 ### Spring Security
 
-- **Authentication:** quem é o usuário (JWT, OAuth2, Basic Auth)
-- **Authorization:** o que o usuário pode fazer (`@PreAuthorize`, roles)
-- **Security Filter Chain:** pipeline de filtros que interceptam requisições
+Deep dive em [[Spring Security]] — filter chain, authentication, JWT, OAuth2/OIDC, method security, CSRF, CORS.
+
+**Resumo rápido:**
 
 ```java
-@Bean
-SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    return http
-        .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/public/**").permitAll()
-            .requestMatchers("/api/admin/**").hasRole("ADMIN")
-            .anyRequest().authenticated()
-        )
-        .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
-        .build();
+@Configuration
+@EnableMethodSecurity
+public class SecurityConfig {
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/public/**").permitAll()
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                .anyRequest().authenticated()
+            )
+            .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
+            .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .csrf(csrf -> csrf.disable())  // APIs stateless
+            .build();
+    }
 }
 ```
-
-### Profiles e Configuration
-
-- **Profiles:** `application-dev.yml`, `application-prod.yml` — configurações por ambiente
-- **`@ConfigurationProperties`:** bind de propriedades para classes Java tipadas
-- **Externalized config:** variáveis de ambiente, Vault, ConfigServer
-
-> **Fontes:**
-> - [Spring Profiles — Baeldung](https://www.baeldung.com/spring-profiles)
-> - [Environment Variables in Properties — Baeldung](https://www.baeldung.com/spring-boot-properties-env-variables)
-> - [@ConfigurationProperties — Baeldung](https://www.baeldung.com/configuration-properties-in-spring-boot)
-> - [Common Application Properties](https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html)
 
 ### Bean Validation
 
@@ -156,51 +1372,9 @@ public @interface ValidCpf {
 > - [Custom Validator — Baeldung](https://www.baeldung.com/spring-mvc-custom-validator)
 > - [Service Layer Validation — Baeldung](https://www.baeldung.com/spring-service-layer-validation)
 
-### Persistência (JPA, Hibernate, Flyway)
-
-**Spring Data JPA** abstrai JPA/Hibernate. Repositórios geram queries a partir do nome do método:
-
-```java
-public interface PatientRepository extends JpaRepository<Patient, Long> {
-    List<Patient> findBySpecialtyAndActive(String specialty, boolean active);
-
-    @Query("SELECT p FROM Patient p WHERE p.rating > :min")
-    List<Patient> findTopRated(@Param("min") double min);
-}
-```
-
-**HikariCP** — connection pool padrão do Spring Boot. Configurar pool size é crítico:
-- Regra: `connections = (core_count * 2) + spindle_count`
-- Para SSD: geralmente 10-20 conexões bastam
-
-**Flyway** — migrações de schema versionadas:
-
-```text
-resources/db/migration/
-  V1__create_patients.sql
-  V2__add_email_column.sql
-  V3__create_appointments.sql
-```
-
-Cada migração roda uma vez, é rastreada em tabela `flyway_schema_history`. Nunca editar migrações já executadas — criar nova.
-
-**Lombok + JPA — cuidados:**
-- `@Data` em entidades JPA gera `equals`/`hashCode` com todos os campos — perigoso com lazy loading
-- Usar `@Getter @Setter @NoArgsConstructor` separados
-- `@EqualsAndHashCode` deve usar apenas o ID da entidade
-- `@ToString` pode disparar lazy loading — excluir relações
-
-> **Fontes:**
-> - [Spring Data JPA](https://spring.io/projects/spring-data-jpa)
-> - [findById Anti-Pattern](https://vladmihalcea.com/spring-data-jpa-findbyid/)
-> - [HikariCP — About Pool Sizing](https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing)
-> - [Flyway](https://github.com/flyway/flyway) — migrations
-> - [Lombok e JPA — O que pode dar errado?](https://dev.to/eronalves1996/traducao-lombok-e-jpa-o-que-pode-dar-errado-1c6)
-> - [Hibernate Natural IDs — Baeldung](https://www.baeldung.com/spring-boot-hibernate-natural-ids)
-
 ### Ferramentas do ecossistema
 
-**MapStruct** — mapeamento entre objetos (Entity ↔ DTO) em compile-time:
+**MapStruct** — mapeamento entre objetos (Entity ↔ DTO) em compile-time. Sem reflection, mais rápido que ModelMapper.
 
 ```java
 @Mapper(componentModel = "spring")
@@ -210,28 +1384,26 @@ public interface PatientMapper {
 }
 ```
 
-Gera implementação automaticamente. Sem reflection = mais rápido que ModelMapper.
+**Lombok** — elimina boilerplate (getters, setters, constructors). **Cuidado com JPA:** `@Data` gera equals/hashCode com todos os campos, causando `LazyInitializationException` e loops infinitos com relações. Use `@Getter @Setter @NoArgsConstructor` separados e implemente equals/hashCode manualmente (ou use Records).
 
-**Spring Cloud OpenFeign** — HTTP client declarativo para comunicação entre microserviços:
+**SpringDoc OpenAPI** — gera OpenAPI 3 + Swagger UI automaticamente a partir dos controllers.
 
 ```java
-@FeignClient(name = "notification-service", url = "${notification.url}")
-public interface NotificationClient {
-    @PostMapping("/notifications")
-    void send(@RequestBody NotificationRequest request);
-}
+// build.gradle
+implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+// Acesse /swagger-ui.html
 ```
 
-> **Fontes:**
-> - [MapStruct](https://mapstruct.org/) — documentação oficial
-> - [Spring Cloud OpenFeign](https://docs.spring.io/spring-cloud-openfeign/docs/current/reference/html/)
-> - [Feign ErrorDecoder — Baeldung](https://www.baeldung.com/feign-retrieve-original-message)
+**Flyway** / **Liquibase** — versionamento de schema de banco. Flyway é mais simples (SQL puro), Liquibase mais poderoso (XML/YAML/JSON/SQL, rollback).
 
-### Observabilidade
+```text
+resources/db/migration/
+  V1__create_patients.sql
+  V2__add_email_column.sql
+  V3__create_appointments.sql
+```
 
-- **Actuator:** endpoints `/health`, `/metrics`, `/info` para monitoramento
-- **Micrometer:** métricas exportadas para Prometheus, Grafana, Datadog
-- **OpenTelemetry:** tracing distribuído entre microserviços
+→ Deep dive em migrations seguras: seção Troubleshooting mais abaixo.
 
 ### Testing em Spring Boot
 
@@ -663,9 +1835,13 @@ One area where I've seen teams struggle is with JPA's lazy loading. The LazyInit
 
 ## Veja também
 
-- [[Java Fundamentals]]
-- [[Testes em Java]]
-- [[Testes]]
-- [[API Design]]
-- [[Kafka]]
+- [[Java Fundamentals]] — a linguagem
+- [[Java Concurrency]] — concorrência, Virtual Threads, ThreadPools
+- [[Spring Data JPA]] — deep dive em persistência
+- [[Spring Security]] — deep dive em autenticação e autorização
+- [[Testes em Java]] — JUnit 5, Mockito, Testcontainers, slices
+- [[Testes]] — fundamentos gerais
+- [[API Design]] — REST, RFC 9457 Problem Details
+- [[Kafka]] — event streaming com Spring Kafka
 - [[System Design]] — troubleshooting cross-stack, building blocks
+- [[Arquitetura de Software]] — Hexagonal, DDD, Clean Architecture
