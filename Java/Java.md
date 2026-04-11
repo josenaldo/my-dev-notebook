@@ -10,7 +10,9 @@ Ecossistema Java: linguagem, frameworks, ferramentas e boas práticas.
 
 ## Core
 
-- [[Java Fundamentals]]
+- [[Java Fundamentals]] — linguagem, JVM, Collections, Streams, features modernas
+- [[Java Concurrency]] — Memory Model, locks, CompletableFuture, Virtual Threads
+- [[Certificação Java OCP]] — guia da prova OCP Java SE 21
 - [[What should you do to stand out as a Java-Spring Boot Developer]]
 - [[Trilha Java]]
 
