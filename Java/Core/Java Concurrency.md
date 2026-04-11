@@ -89,6 +89,7 @@ kill -3 <pid>  # SIGQUIT → stderr
 ```
 
 Analise por:
+
 - **Deadlocks** — `jstack` marca explicitamente
 - **Muitas threads em BLOCKED** no mesmo monitor → contention
 - **Threads em WAITING** em I/O → pool mal dimensionado
@@ -116,6 +117,7 @@ if (flag) {        // (c)
 ```
 
 Sem sincronização:
+
 - CPU pode reordenar (b) antes de (a)
 - Cache de CPU pode manter (a) em cache local sem flush
 - Thread 2 pode ver `flag=true` e `x=0`
@@ -256,6 +258,7 @@ public class AccountService {
 ```
 
 **Por que usar objeto explícito em vez de `synchronized(this)`:**
+
 - Não expõe o lock publicamente (evita interferência externa)
 - Pode ter múltiplos locks para operações diferentes
 - Protege contra `synchronized(instance)` feito por código cliente
@@ -320,6 +323,7 @@ synchronized (lock) {
 ```
 
 **Regras:**
+
 - `wait()`, `notify()`, `notifyAll()` só podem ser chamados **segurando o monitor**
 - Sempre `wait()` dentro de loop verificando a condição (spurious wakeups)
 - Prefira `notifyAll()` — `notify()` acorda uma thread arbitrária
@@ -544,6 +548,7 @@ Task t = queue.poll();     // retorna null se vazia
 ```
 
 **Implementações:**
+
 - **`ArrayBlockingQueue`** — capacidade fixa, array circular, fair mode opcional
 - **`LinkedBlockingQueue`** — opcional unbounded, dois locks (put e take), mais throughput
 - **`PriorityBlockingQueue`** — prioridade, unbounded, baseado em heap
@@ -614,6 +619,7 @@ ThreadPoolExecutor executor = new ThreadPoolExecutor(
 ```
 
 **Rejection policies:**
+
 - `AbortPolicy` — lança `RejectedExecutionException` (default)
 - `CallerRunsPolicy` — executa na thread que submeteu (backpressure natural)
 - `DiscardPolicy` — descarta silenciosamente
@@ -772,6 +778,7 @@ future.completeOnTimeout(defaultValue, 5, TimeUnit.SECONDS);  // valor default e
 ### Async vs sync variants
 
 Cada método tem 3 versões:
+
 - `thenApply(fn)` — executa na mesma thread (ou na thread que completou o future)
 - `thenApplyAsync(fn)` — executa no ForkJoinPool.commonPool()
 - `thenApplyAsync(fn, executor)` — executa em executor customizado
@@ -830,6 +837,7 @@ for (int i = 0; i < 3; i++) {
 ```
 
 **Diferença do CountDownLatch:**
+
 - CyclicBarrier pode ser **reutilizado** após `reset()`
 - CountDownLatch: uma thread espera N eventos; CyclicBarrier: N threads esperam umas às outras
 
@@ -946,12 +954,14 @@ long sum = list.parallelStream()
 ```
 
 **Quando usar:**
+
 - **Dados grandes** (milhares+ elementos)
 - **Operação CPU-intensive** por elemento
 - **Operação associativa e sem side effects**
 - **Fonte particionável** (ArrayList ✅, LinkedList ❌)
 
 **Quando NÃO usar:**
+
 - Poucos elementos (overhead > ganho)
 - I/O-bound (common pool fica bloqueado — use `CompletableFuture`)
 - Operações com ordem sequencial importante
@@ -983,6 +993,7 @@ O maior avanço em concorrência Java em décadas. **Project Loom**.
 Platform threads são caras (~1 MB stack, kernel overhead). Em sistemas I/O-bound, você fica limitado por número de threads bloqueadas em I/O, não por CPU.
 
 **Abordagens tradicionais para contornar:**
+
 - **Thread pools** — reutiliza threads, mas pool cheio = requests esperando
 - **Async/Reactive** — callback hell ou código "colorido" (CompletableFuture/Reactor)
 
@@ -1025,11 +1036,13 @@ try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
 ### Quando usar
 
 **✅ Use virtual threads para:**
+
 - **I/O-bound** — HTTP clients, database, file I/O, sockets
 - **Alto fan-out** — agregar dados de muitos serviços
 - **Substituir pools grandes** — antes, `newFixedThreadPool(500)` era comum para Tomcat
 
 **❌ NÃO use para:**
+
 - **CPU-bound** — não traz benefício, overhead de scheduling
 - **Código com muito `synchronized`** — causa **pinning** (virtual thread pinned no carrier)
 - **ThreadLocal heavy** — cada virtual thread tem seus próprios ThreadLocals, consumindo memória
@@ -1054,17 +1067,18 @@ java -Djdk.tracePinnedThreads=full -jar app.jar
 
 Reactive (Reactor, RxJava) foi a resposta para escala de I/O na era pré-Loom. **Virtual threads tornam Reactive menos necessário em muitos casos:**
 
-| Aspecto | Virtual Threads | Reactive |
-| --- | --- | --- |
-| Modelo | Síncrono (imperativo) | Async (declarativo) |
-| Código | Simples, igual a blocking | Complexo, operadores |
-| Debugging | Stack trace normal | Difícil |
-| Backpressure | Não nativo | Nativo |
-| Compat com libs blocking | Sim | Não (precisa adapter) |
-| Performance I/O | Equivalente | Equivalente ou melhor |
-| Performance CPU | Piora | Piora |
+| Aspecto                  | Virtual Threads           | Reactive              |
+| ------------------------ | ------------------------- | --------------------- |
+| Modelo                   | Síncrono (imperativo)     | Async (declarativo)   |
+| Código                   | Simples, igual a blocking | Complexo, operadores  |
+| Debugging                | Stack trace normal        | Difícil               |
+| Backpressure             | Não nativo                | Nativo                |
+| Compat com libs blocking | Sim                       | Não (precisa adapter) |
+| Performance I/O          | Equivalente               | Equivalente ou melhor |
+| Performance CPU          | Piora                     | Piora                 |
 
 **Quando ainda usar Reactive:**
+
 - Backpressure explícito é requisito
 - Streaming com operadores complexos (window, buffer, merge)
 - Stack já é Reactive (Spring WebFlux, Project Reactor em bibliotecas)
@@ -1105,6 +1119,7 @@ try (var scope = StructuredTaskScope.<Object>open()) {
 ```
 
 **Vantagens:**
+
 - **Cancelamento automático** — se uma task falha, as outras são canceladas
 - **Visibilidade de relações** — scope deixa explícito o grupo de tasks
 - **Error handling unificado** — exceções propagam para o escopo
@@ -1153,6 +1168,7 @@ ScopedValue.where(CURRENT_USER, user).run(() -> {
 ```
 
 **Vantagens:**
+
 - Imutável dentro do escopo (mais seguro)
 - Sem leaks (lifecycle claro)
 - Eficiente com virtual threads (sem copies)
@@ -1197,6 +1213,7 @@ synchronized (lockB) {
 ```
 
 **Prevenção:**
+
 - **Ordem consistente de locks** — sempre adquirir na mesma ordem global
 - **`tryLock` com timeout** — fallback e retry
 - **Menos locks** — combinar recursos sob um único lock
@@ -1270,6 +1287,7 @@ public record Point(int x, int y) {}
 ```
 
 **Regras para imutabilidade:**
+
 1. Todos os campos `final`
 2. Sem setters
 3. Classe `final` (ou construtor privado + factory)
@@ -1315,6 +1333,7 @@ String formatted = FORMAT.get().format(date);
 ```
 
 **Cuidados:**
+
 - **Leaks** — remover com `ThreadLocal.remove()` em pools de thread
 - **Virtual threads** — evite, prefira Scoped Values
 
@@ -1367,6 +1386,7 @@ java -XX:StartFlightRecording=duration=60s,filename=profile.jfr -jar app.jar
 ```
 
 **Eventos relevantes para concorrência:**
+
 - Thread state changes
 - Lock contention
 - Monitor wait

@@ -103,6 +103,7 @@ A JVM divide memória em regiões com propósitos distintos:
 ```
 
 **Heap** — onde objetos e arrays vivem. Compartilhada entre threads. Gerenciada pelo GC.
+
 - **Young Generation** — objetos novos. Subdividida em **Eden** (alocação inicial) e 2 **Survivor spaces** (S0, S1). A maioria dos objetos morre jovem (weak generational hypothesis).
 - **Old Generation (Tenured)** — objetos que sobreviveram múltiplos ciclos de GC no Young. Coletados menos frequentemente.
 - **Humongous objects** (G1) — objetos > 50% do tamanho de uma region vão direto para o Old.
@@ -121,23 +122,25 @@ A JVM divide memória em regiões com propósitos distintos:
 
 O GC libera memória de objetos não mais referenciáveis. Java tem vários algoritmos disponíveis:
 
-| GC | Introduzido | Pausas | Throughput | Uso ideal |
-| --- | --- | --- | --- | --- |
-| **Serial** | sempre | Altas (stop-the-world) | Baixo | Single-thread, apps pequenos |
-| **Parallel** | Java 5 | Altas | Alto | Batch processing, throughput-first |
-| **CMS** (deprecated) | Java 5 | Médias | Médio | Latência — substituído por G1 |
-| **G1** (default) | Java 9 | Previsíveis (configuráveis) | Bom | **Default moderno, uso geral** |
-| **ZGC** | Java 15 | **< 1ms** | Bom | Low-latency, heaps grandes (TB) |
-| **Shenandoah** | Java 12 (Red Hat) | < 10ms | Bom | Low-latency, alternativa a ZGC |
-| **Epsilon** | Java 11 | N/A (não coleta) | Máximo | Testing, short-lived apps |
+| GC                   | Introduzido       | Pausas                      | Throughput | Uso ideal                          |
+| -------------------- | ----------------- | --------------------------- | ---------- | ---------------------------------- |
+| **Serial**           | sempre            | Altas (stop-the-world)      | Baixo      | Single-thread, apps pequenos       |
+| **Parallel**         | Java 5            | Altas                       | Alto       | Batch processing, throughput-first |
+| **CMS** (deprecated) | Java 5            | Médias                      | Médio      | Latência — substituído por G1      |
+| **G1** (default)     | Java 9            | Previsíveis (configuráveis) | Bom        | **Default moderno, uso geral**     |
+| **ZGC**              | Java 15           | **< 1ms**                   | Bom        | Low-latency, heaps grandes (TB)    |
+| **Shenandoah**       | Java 12 (Red Hat) | < 10ms                      | Bom        | Low-latency, alternativa a ZGC     |
+| **Epsilon**          | Java 11           | N/A (não coleta)            | Máximo     | Testing, short-lived apps          |
 
 **G1 GC (default):**
+
 - Divide o heap em **regions** (1-32 MB)
 - Coleta incrementalmente as regions "mais lucrativas" (mais lixo por tempo gasto)
 - Tenta atingir um **pause time target** configurável (`-XX:MaxGCPauseMillis=200`)
 - Mistura Young e Old collections (mixed GC)
 
 **ZGC (Java 15+):**
+
 - **Concurrent** — faz quase tudo em paralelo com a aplicação
 - Pausas consistentemente **< 1ms** mesmo em heaps de TB
 - Custo: mais overhead de CPU e memória que G1
@@ -146,6 +149,7 @@ O GC libera memória de objetos não mais referenciáveis. Java tem vários algo
 ### Como escolher GC
 
 **Regras práticas:**
+
 - **Default:** G1 — cobre a maioria dos casos
 - **Latência crítica (p99.9 < 10ms):** ZGC ou Shenandoah
 - **Batch / throughput:** Parallel GC
@@ -179,6 +183,7 @@ A JVM HotSpot combina interpretação com compilação JIT:
 - **Tiered compilation** (default) — começa interpretando, promove para C1, depois C2 quando o código aquece.
 
 **Otimizações comuns do C2:**
+
 - **Inlining** — substitui chamada de método pelo corpo (se pequeno e chamado frequentemente)
 - **Escape analysis** — se um objeto não "escapa" do método, pode ser alocado na stack (não no heap)
 - **Dead code elimination**
@@ -205,6 +210,7 @@ Custom ClassLoaders    → WARs em Tomcat, plugins, etc.
 **Parent delegation:** quando um classloader recebe um pedido para carregar uma classe, delega primeiro ao parent. Isso evita que código de usuário sobrescreva classes core (ex.: definir seu próprio `java.lang.String`).
 
 **Custom classloaders** são usados por:
+
 - Servers de aplicação (isolar WARs)
 - Frameworks de plugins (carregar módulos dinamicamente)
 - Hot reload (recarregar classes alteradas)
@@ -219,16 +225,16 @@ Custom ClassLoaders    → WARs em Tomcat, plugins, etc.
 
 ### Tipos primitivos
 
-| Tipo | Tamanho | Range | Wrapper | Default |
-| --- | --- | --- | --- | --- |
-| `byte` | 8 bits | -128 a 127 | `Byte` | 0 |
-| `short` | 16 bits | -32K a 32K | `Short` | 0 |
-| `int` | 32 bits | -2B a 2B | `Integer` | 0 |
-| `long` | 64 bits | ±9.2×10¹⁸ | `Long` | 0L |
-| `float` | 32 bits | ±3.4×10³⁸ | `Float` | 0.0f |
-| `double` | 64 bits | ±1.7×10³⁰⁸ | `Double` | 0.0 |
-| `char` | 16 bits | Unicode | `Character` | '\u0000' |
-| `boolean` | 1 bit | true/false | `Boolean` | false |
+| Tipo      | Tamanho | Range      | Wrapper     | Default  |
+| --------- | ------- | ---------- | ----------- | -------- |
+| `byte`    | 8 bits  | -128 a 127 | `Byte`      | 0        |
+| `short`   | 16 bits | -32K a 32K | `Short`     | 0        |
+| `int`     | 32 bits | -2B a 2B   | `Integer`   | 0        |
+| `long`    | 64 bits | ±9.2×10¹⁸  | `Long`      | 0L       |
+| `float`   | 32 bits | ±3.4×10³⁸  | `Float`     | 0.0f     |
+| `double`  | 64 bits | ±1.7×10³⁰⁸ | `Double`    | 0.0      |
+| `char`    | 16 bits | Unicode    | `Character` | '\u0000' |
+| `boolean` | 1 bit   | true/false | `Boolean`   | false    |
 
 **Autoboxing:** conversão automática entre primitivo e wrapper. Cuidado em loops (cria objetos).
 
@@ -421,11 +427,11 @@ public class Patient {
 ### Modificadores de acesso
 
 | Modificador | Classe | Package | Subclass | Mundo |
-| --- | --- | --- | --- | --- |
-| `public` | ✅ | ✅ | ✅ | ✅ |
-| `protected` | ✅ | ✅ | ✅ | ❌ |
-| (default) | ✅ | ✅ | ❌ | ❌ |
-| `private` | ✅ | ❌ | ❌ | ❌ |
+| ----------- | ------ | ------- | -------- | ----- |
+| `public`    | ✅      | ✅       | ✅        | ✅     |
+| `protected` | ✅      | ✅       | ✅        | ❌     |
+| (default)   | ✅      | ✅       | ❌        | ❌     |
+| `private`   | ✅      | ❌       | ❌        | ❌     |
 
 ### Herança
 
@@ -446,21 +452,22 @@ public class Doctor extends Patient {
 ```
 
 **Regras de herança:**
+
 - Java suporta herança simples (uma superclass). Múltipla apenas via interfaces.
 - `final class` não pode ser estendida. `final method` não pode ser sobrescrito.
 - Construtores não são herdados — subclass deve chamar `super()`.
 
 ### Overriding vs Overloading
 
-| Aspecto | Overriding (sobrescrita) | Overloading (sobrecarga) |
-| --- | --- | --- |
-| Onde | Subclass redefine método da superclass | Mesma classe, métodos com mesmo nome |
-| Assinatura | Mesma assinatura | Parâmetros diferentes (tipo ou quantidade) |
-| Retorno | Mesmo tipo ou covariante (subtipo) | Pode ser diferente |
-| Acesso | Igual ou mais permissivo | Qualquer |
-| `@Override` | Obrigatório (por convenção) | Não se aplica |
-| Binding | Runtime (dynamic dispatch) | Compile-time (static) |
-| `static` | Não pode ser sobrescrito (hidden) | Pode ser sobrecarregado |
+| Aspecto     | Overriding (sobrescrita)               | Overloading (sobrecarga)                   |
+| ----------- | -------------------------------------- | ------------------------------------------ |
+| Onde        | Subclass redefine método da superclass | Mesma classe, métodos com mesmo nome       |
+| Assinatura  | Mesma assinatura                       | Parâmetros diferentes (tipo ou quantidade) |
+| Retorno     | Mesmo tipo ou covariante (subtipo)     | Pode ser diferente                         |
+| Acesso      | Igual ou mais permissivo               | Qualquer                                   |
+| `@Override` | Obrigatório (por convenção)            | Não se aplica                              |
+| Binding     | Runtime (dynamic dispatch)             | Compile-time (static)                      |
+| `static`    | Não pode ser sobrescrito (hidden)      | Pode ser sobrecarregado                    |
 
 ```java
 // Overloading — mesmo nome, parâmetros diferentes
@@ -508,6 +515,7 @@ public interface Sendable {
 ```
 
 **Quando usar:**
+
 - **Interface:** definir contrato. Uma classe pode implementar N interfaces.
 - **Classe abstrata:** compartilhar estado e implementação entre subclasses. Herança simples.
 
@@ -647,6 +655,7 @@ String describe(Object obj) {
 ### Quando usar records
 
 **Ideais para:**
+
 - **DTOs** — request/response em APIs REST (elimina classes anêmicas)
 - **Value Objects (DDD)** — `Money`, `Email`, `CPF`, `Coordinates`
 - **Tuplas** — retornos multi-valor sem criar classe
@@ -654,6 +663,7 @@ String describe(Object obj) {
 - **Dados imutáveis** em geral
 
 **NÃO são ideais quando:**
+
 - Você precisa de herança (records são `final`)
 - A classe tem lógica mutável
 - Você precisa de JavaBean convention (`getName()` em vez de `name()`) — alguns frameworks antigos assumem isso
@@ -713,11 +723,13 @@ double area(Shape shape) {
 ```
 
 **Modificadores dos subtipos:**
+
 - `final` — não pode ser estendido
 - `sealed` — só pode ser estendido pelo `permits` declarado
 - `non-sealed` — volta a ser aberto (qualquer um pode estender)
 
 **Uso prático:**
+
 - Algebraic Data Types (ADTs) no Java — hierarquias fechadas (`Result<T> = Success<T> | Failure`)
 - Domain modeling — "um pedido é um de {Draft, Confirmed, Shipped, Delivered, Cancelled}"
 - API design — garantir que subtipos sejam controlados
@@ -842,19 +854,19 @@ Map (não é Collection)
 
 ### Comparativo detalhado
 
-| Interface | Impl | Estrutura interna | Ordenado | Duplicatas | Null | Thread-safe | Quando usar |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| List | ArrayList | Array dinâmico | Inserção | Sim | Sim | Não | Default para listas |
-| List | LinkedList | Lista duplamente ligada | Inserção | Sim | Sim | Não | Inserção/remoção no início |
-| Set | HashSet | HashMap interno | Não | Não | 1 null | Não | Deduplicação |
-| Set | LinkedHashSet | HashMap + lista ligada | Inserção | Não | 1 null | Não | Dedup mantendo ordem |
-| Set | TreeSet | Red-Black tree | Natural/Comparator | Não | Não | Não | Conjunto ordenado |
-| Map | HashMap | Array de buckets + lista/árvore | Não | Keys únicas | 1 null key | Não | Default para mapas |
-| Map | LinkedHashMap | HashMap + lista ligada | Inserção ou acesso | Keys únicas | 1 null key | Não | Cache LRU |
-| Map | TreeMap | Red-Black tree | Natural/Comparator | Keys únicas | Não | Não | Mapa ordenado |
-| Map | ConcurrentHashMap | Segments com locks | Não | Keys únicas | Não | Sim | Concorrência |
-| Queue | PriorityQueue | Binary heap | Por prioridade | Sim | Não | Não | Top-K, scheduling |
-| Queue | ArrayDeque | Array circular | FIFO/LIFO | Sim | Não | Não | Stack ou Queue |
+| Interface | Impl              | Estrutura interna               | Ordenado           | Duplicatas  | Null       | Thread-safe | Quando usar                |
+| --------- | ----------------- | ------------------------------- | ------------------ | ----------- | ---------- | ----------- | -------------------------- |
+| List      | ArrayList         | Array dinâmico                  | Inserção           | Sim         | Sim        | Não         | Default para listas        |
+| List      | LinkedList        | Lista duplamente ligada         | Inserção           | Sim         | Sim        | Não         | Inserção/remoção no início |
+| Set       | HashSet           | HashMap interno                 | Não                | Não         | 1 null     | Não         | Deduplicação               |
+| Set       | LinkedHashSet     | HashMap + lista ligada          | Inserção           | Não         | 1 null     | Não         | Dedup mantendo ordem       |
+| Set       | TreeSet           | Red-Black tree                  | Natural/Comparator | Não         | Não        | Não         | Conjunto ordenado          |
+| Map       | HashMap           | Array de buckets + lista/árvore | Não                | Keys únicas | 1 null key | Não         | Default para mapas         |
+| Map       | LinkedHashMap     | HashMap + lista ligada          | Inserção ou acesso | Keys únicas | 1 null key | Não         | Cache LRU                  |
+| Map       | TreeMap           | Red-Black tree                  | Natural/Comparator | Keys únicas | Não        | Não         | Mapa ordenado              |
+| Map       | ConcurrentHashMap | Segments com locks              | Não                | Keys únicas | Não        | Sim         | Concorrência               |
+| Queue     | PriorityQueue     | Binary heap                     | Por prioridade     | Sim         | Não        | Não         | Top-K, scheduling          |
+| Queue     | ArrayDeque        | Array circular                  | FIFO/LIFO          | Sim         | Não        | Não         | Stack ou Queue             |
 
 ### Operações comuns
 
@@ -959,15 +971,15 @@ Comparator<String> comp = Comparator.comparingInt(String::length);
 
 ### Interfaces funcionais do `java.util.function`
 
-| Interface | Assinatura | Uso |
-| --- | --- | --- |
-| `Function<T,R>` | `R apply(T t)` | Transformar T em R |
-| `Predicate<T>` | `boolean test(T t)` | Filtrar/testar condição |
-| `Consumer<T>` | `void accept(T t)` | Ação sem retorno (forEach) |
-| `Supplier<T>` | `T get()` | Factory, lazy evaluation |
-| `UnaryOperator<T>` | `T apply(T t)` | Transformar mantendo tipo |
-| `BiFunction<T,U,R>` | `R apply(T t, U u)` | Transformar dois argumentos |
-| `BiPredicate<T,U>` | `boolean test(T t, U u)` | Testar com dois argumentos |
+| Interface           | Assinatura               | Uso                         |
+| ------------------- | ------------------------ | --------------------------- |
+| `Function<T,R>`     | `R apply(T t)`           | Transformar T em R          |
+| `Predicate<T>`      | `boolean test(T t)`      | Filtrar/testar condição     |
+| `Consumer<T>`       | `void accept(T t)`       | Ação sem retorno (forEach)  |
+| `Supplier<T>`       | `T get()`                | Factory, lazy evaluation    |
+| `UnaryOperator<T>`  | `T apply(T t)`           | Transformar mantendo tipo   |
+| `BiFunction<T,U,R>` | `R apply(T t, U u)`      | Transformar dois argumentos |
+| `BiPredicate<T,U>`  | `boolean test(T t, U u)` | Testar com dois argumentos  |
 
 ### Method references
 
@@ -1110,6 +1122,7 @@ Map<String, Long> topSpecialties = patients.stream()
 7. `flatMap` pode expandir demais o volume — monitorar
 
 > **Fontes:**
+>
 > - [Java Streams — exemplo prático](https://computaria.gitlab.io/blog/2025/04/27/java-streams-exemplo)
 > - [Java moderno com Peano](https://computaria.gitlab.io/blog/2025/03/10/peano-java-moderno)
 
@@ -1153,6 +1166,7 @@ LocalDate firstDayOfMonth = today.withDayOfMonth(1);
 ```
 
 **Regra prática:**
+
 - `LocalDate` / `LocalTime` / `LocalDateTime` — quando timezone não importa
 - `ZonedDateTime` — quando precisa de timezone (agendamentos internacionais)
 - `Instant` — para persistência e cálculos de duração (sempre UTC)
@@ -1241,6 +1255,7 @@ Throwable
 **Tendência moderna:** maioria das bibliotecas modernas (Spring, JPA, Reactor) usam **unchecked**. O próprio Java evoluiu — `java.io` em NIO.2 lança `UncheckedIOException` onde faz sentido.
 
 **Regra prática:**
+
 - **Checked** — apenas se o caller pode e deve recuperar da falha (raro)
 - **Unchecked** — default para tudo o mais
 
@@ -1294,6 +1309,7 @@ try {
 ```
 
 **Regras:**
+
 - **Herdar de `RuntimeException`** para unchecked
 - **Mensagens úteis** — incluam o dado relevante (`id=42`, não apenas "not found")
 - **Preservar a cause** — nunca `throw new X("...")` descartando a original
@@ -1369,6 +1385,7 @@ list.stream().map(unchecked(Files::readString)).toList();
 Traduzir exceções de domínio para HTTP status codes via `@RestControllerAdvice`. Detalhes em [[API Design]] (RFC 9457 Problem Details) e [[Spring Boot]].
 
 > **Fontes:**
+>
 > - [Java Exceptions — Baeldung](https://www.baeldung.com/java-exceptions)
 > - [Checked vs Unchecked — Baeldung](https://www.baeldung.com/java-checked-unchecked-exceptions)
 > - [Try-with-resources — Baeldung](https://www.baeldung.com/java-try-with-resources)
@@ -1392,6 +1409,7 @@ patient.ifPresent(pat -> sendWelcomeEmail(pat));
 ```
 
 **Regras:**
+
 - Usar como retorno de métodos que podem não ter resultado
 - **Nunca** como parâmetro de método ou campo de classe
 - **Nunca** usar `Optional.get()` sem verificar
@@ -1486,6 +1504,7 @@ try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
 ```
 
 **Quando usar:**
+
 - I/O-bound (HTTP, DB, fila) — ganho enorme
 - CPU-bound — **não** ajuda (use platform threads)
 - Código que já depende de ThreadLocal — pode não performar bem (use Scoped Values)
@@ -1574,6 +1593,7 @@ try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
 - Consolida vários previews acumulados desde Java 21
 
 > **Fontes:**
+>
 > - [Java features desde JDK 8 ao 21](https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-21/)
 > - [Java Language Updates](https://docs.oracle.com/en/java/javase/21/language/index.html)
 > - [Java Evolved](https://javaevolved.github.io/)

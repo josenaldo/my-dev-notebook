@@ -132,13 +132,13 @@ char letra = 'A';         // caractere único
 
 **Tipos primitivos mais usados:**
 
-| Tipo | O que guarda | Exemplo |
-| --- | --- | --- |
-| `int` | Inteiros | `42`, `-7`, `0` |
-| `double` | Decimais | `3.14`, `-0.5` |
-| `boolean` | Verdadeiro/falso | `true`, `false` |
-| `char` | 1 caractere | `'A'`, `'%'` |
-| `String` | Texto | `"Maria"` (na verdade é classe, não primitivo) |
+| Tipo      | O que guarda     | Exemplo                                        |
+| --------- | ---------------- | ---------------------------------------------- |
+| `int`     | Inteiros         | `42`, `-7`, `0`                                |
+| `double`  | Decimais         | `3.14`, `-0.5`                                 |
+| `boolean` | Verdadeiro/falso | `true`, `false`                                |
+| `char`    | 1 caractere      | `'A'`, `'%'`                                   |
+| `String`  | Texto            | `"Maria"` (na verdade é classe, não primitivo) |
 
 **Nomes de variáveis:** `camelCase`, começando com letra minúscula, descritivos. `idadeDoPaciente`, não `x` ou `ip`.
 
@@ -411,17 +411,17 @@ for (String nome : nomes) {
 
 **Métodos comuns de `ArrayList`:**
 
-| Método | O que faz |
-| --- | --- |
-| `add(elem)` | Adiciona no final |
-| `get(índice)` | Retorna elemento no índice |
-| `set(índice, elem)` | Substitui elemento |
-| `remove(elem)` ou `remove(índice)` | Remove |
-| `size()` | Tamanho da lista |
-| `contains(elem)` | Verifica se contém |
-| `indexOf(elem)` | Índice do elemento |
-| `isEmpty()` | Lista vazia? |
-| `clear()` | Remove tudo |
+| Método                             | O que faz                  |
+| ---------------------------------- | -------------------------- |
+| `add(elem)`                        | Adiciona no final          |
+| `get(índice)`                      | Retorna elemento no índice |
+| `set(índice, elem)`                | Substitui elemento         |
+| `remove(elem)` ou `remove(índice)` | Remove                     |
+| `size()`                           | Tamanho da lista           |
+| `contains(elem)`                   | Verifica se contém         |
+| `indexOf(elem)`                    | Índice do elemento         |
+| `isEmpty()`                        | Lista vazia?               |
+| `clear()`                          | Remove tudo                |
 
 **`<String>` é o tipo parametrizado** — diz que a lista só aceita Strings. Mais sobre isso na Parte 12.
 
@@ -1042,14 +1042,14 @@ Arrays.sort(arr);  // {1, 2, 5, 8, 9}
 
 Forma de comparar a **eficiência** de algoritmos.
 
-| Notação | Exemplo | Crescimento |
-| --- | --- | --- |
-| `O(1)` | Acessar array por índice | Constante |
-| `O(log n)` | Busca binária | Logarítmico |
-| `O(n)` | Busca linear | Linear |
-| `O(n log n)` | Merge sort, quick sort | Linear × log |
-| `O(n²)` | Bubble sort | Quadrático |
-| `O(2^n)` | Fibonacci recursivo | Exponencial |
+| Notação      | Exemplo                  | Crescimento  |
+| ------------ | ------------------------ | ------------ |
+| `O(1)`       | Acessar array por índice | Constante    |
+| `O(log n)`   | Busca binária            | Logarítmico  |
+| `O(n)`       | Busca linear             | Linear       |
+| `O(n log n)` | Merge sort, quick sort   | Linear × log |
+| `O(n²)`      | Bubble sort              | Quadrático   |
+| `O(2^n)`     | Fibonacci recursivo      | Exponencial  |
 
 Para deep dive, ver [[Algoritmos]] e [[Estruturas de Dados]].
 
@@ -1102,17 +1102,17 @@ for (Map.Entry<String, Integer> entry : idades.entrySet()) {
 
 **Métodos principais:**
 
-| Método | O que faz |
-| --- | --- |
-| `put(chave, valor)` | Adiciona/atualiza |
-| `get(chave)` | Retorna valor (ou `null` se não existe) |
-| `containsKey(chave)` | Verifica se chave existe |
-| `remove(chave)` | Remove entrada |
-| `size()` | Número de entradas |
-| `keySet()` | Conjunto de chaves |
-| `values()` | Coleção de valores |
-| `entrySet()` | Conjunto de entradas (chave+valor) |
-| `getOrDefault(chave, default)` | Retorna valor ou default se não existe |
+| Método                         | O que faz                               |
+| ------------------------------ | --------------------------------------- |
+| `put(chave, valor)`            | Adiciona/atualiza                       |
+| `get(chave)`                   | Retorna valor (ou `null` se não existe) |
+| `containsKey(chave)`           | Verifica se chave existe                |
+| `remove(chave)`                | Remove entrada                          |
+| `size()`                       | Número de entradas                      |
+| `keySet()`                     | Conjunto de chaves                      |
+| `values()`                     | Coleção de valores                      |
+| `entrySet()`                   | Conjunto de entradas (chave+valor)      |
+| `getOrDefault(chave, default)` | Retorna valor ou default se não existe  |
 
 ### 8.3 Igualdade de objetos
 
