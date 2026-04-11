@@ -1,9 +1,9 @@
 ---
 title: "Node.js"
 created: 2026-04-01
-updated: 2026-04-10
+updated: 2026-04-11
 type: concept
-status: seedling
+status: evergreen
 tags:
   - javascript
   - backend
@@ -13,31 +13,206 @@ publish: false
 
 # Node.js
 
-Runtime JavaScript para backend — event-driven, non-blocking I/O, e o ecossistema npm.
+Deep dive em **Node.js** como runtime JavaScript para backend — event-driven, non-blocking I/O, ecossistema npm. Para fundamentos da linguagem (event loop, closures, async), ver [[JavaScript Fundamentals]]. Para TypeScript, ver [[TypeScript]]. Para testes, ver [[Testes em JavaScript]].
 
 ## O que é
 
-Node.js é um runtime JavaScript baseado no V8 engine do Chrome, projetado para I/O assíncrono e non-blocking. Ideal para APIs, real-time apps, e microserviços I/O-bound. Para entrevistas, o foco é em: event loop, streams, error handling, e quando Node é (ou não) a escolha certa.
+Node.js é um runtime JavaScript criado por Ryan Dahl em 2009, baseado no **V8 engine** do Chrome com **libuv** para I/O assíncrono. Projetado para servidores I/O-bound de alta concorrência, é a base da maioria dos backends JavaScript modernos, ferramentas (build tools, CLIs) e package management.
+
+**Em 2026:**
+
+- **Node 22 LTS** é o current stable, Node 24 iteration current
+- **Suporte nativo a TypeScript** via `--experimental-strip-types` (22.18+), estável em 24+
+- **ESM é default** para novos projetos
+- **Bun** (agora da Anthropic) e **Deno** são concorrentes sérios
+- **Virtual Threads na JVM** e Go tornaram Node menos dominante em I/O-bound puro, mas ecossistema npm continua imbatível
+- **test runner nativo** (`node --test`) ganhou features, competitivo com Vitest
+- **watch mode nativo** (`node --watch`) substitui nodemon
+
+Em entrevistas, o que diferencia um senior em Node.js:
+
+1. **Event loop phases (libuv)** — timers, pending, poll, check, close
+2. **Streams** — Readable, Writable, Transform, Duplex, backpressure
+3. **Error handling** — unhandledRejection, uncaughtException, domain (deprecated)
+4. **Cluster vs Worker Threads vs child_process** — quando cada um
+5. **Frameworks** — Express, Fastify, NestJS, Hono — trade-offs
+6. **Performance** — profiling, --inspect, clinic.js, autocannon
+7. **Security** — npm audit, supply chain, secrets, input validation
+8. **Moderno** — ESM, TypeScript nativo, built-in test runner, watch mode
+9. **Integrações** — Postgres, Redis, Kafka, gRPC, GraphQL
 
 ## Como funciona
 
 ### Arquitetura
 
 ```text
-JavaScript Code
-    ↓
-V8 Engine (compila JS → código nativo)
-    ↓
-Node.js Bindings (C++)
-    ↓
-libuv (event loop, thread pool para I/O)
-    ↓
-OS (network, filesystem, etc.)
+┌──────────────────────────────────┐
+│    Seu código JavaScript         │
+├──────────────────────────────────┤
+│    Node.js APIs (fs, http, ...)  │
+├──────────────────────────────────┤
+│    Node Bindings (C++)           │
+├──────────────────────────────────┤
+│    V8 Engine   │   libuv          │
+│    (JS → ASM)  │   (event loop,  │
+│                │    I/O, threads) │
+├──────────────────────────────────┤
+│    OS (Linux, macOS, Windows)    │
+└──────────────────────────────────┘
 ```
 
-- **Single-threaded:** o event loop roda em uma thread. I/O é delegado ao OS ou thread pool do libuv.
-- **Worker Threads:** para CPU-bound tasks (parsing, criptografia). Não para I/O.
-- **Cluster:** múltiplos processos Node compartilhando a mesma porta. Usa todos os cores.
+- **V8** — engine JavaScript do Chrome. Compila JS para código nativo via JIT.
+- **libuv** — biblioteca C que provê event loop, thread pool, file I/O, networking, timers cross-platform.
+- **Node bindings** — pontes C++ entre JS e APIs do OS.
+- **Single-threaded event loop** — seu código JS roda em uma thread. I/O é delegado.
+- **Thread pool (libuv)** — 4 threads default (configurável via `UV_THREADPOOL_SIZE`). Usada para filesystem, DNS, crypto, compression.
+
+### Single-threaded com non-blocking I/O
+
+**Chave do modelo Node:** I/O **não bloqueia** a thread JS. O Node delega ao OS (via libuv) e registra um callback. Quando o I/O completa, o callback é enfileirado no event loop.
+
+```javascript
+// Thread 1 (main) executa isso
+fs.readFile('big.txt', (err, data) => {
+    console.log('done');  // callback quando I/O completar
+});
+console.log('continuando');  // imprime ANTES de "done"
+```
+
+**Consequência:** uma única thread pode gerenciar milhares de conexões simultâneas — o que seria custoso com um modelo thread-per-request tradicional.
+
+### Event loop phases — detalhado
+
+Ver também [[JavaScript Fundamentals]] (seção event loop). Resumo das fases do libuv:
+
+```
+   ┌───────────────────────────┐
+┌─►│           timers          │  setTimeout, setInterval
+│  └─────────────┬─────────────┘
+│  ┌─────────────┴─────────────┐
+│  │     pending callbacks     │  I/O errors retidos
+│  └─────────────┬─────────────┘
+│  ┌─────────────┴─────────────┐
+│  │       idle, prepare       │  interno
+│  └─────────────┬─────────────┘    ┌───────────────┐
+│  ┌─────────────┴─────────────┐    │   incoming:   │
+│  │           poll            │◄───┤ connections,  │
+│  └─────────────┬─────────────┘    │   data, etc.  │
+│  ┌─────────────┴─────────────┐    └───────────────┘
+│  │           check           │  setImmediate
+│  └─────────────┬─────────────┘
+│  ┌─────────────┴─────────────┐
+└──┤      close callbacks      │  'close' events
+   └───────────────────────────┘
+```
+
+**Entre cada fase** — microtasks: `process.nextTick` (prioridade máxima), depois Promise callbacks.
+
+**`setImmediate` vs `setTimeout(fn, 0)`:**
+
+```javascript
+// Em contexto I/O, setImmediate roda primeiro
+fs.readFile('file', () => {
+    setTimeout(() => console.log('timeout'), 0);
+    setImmediate(() => console.log('immediate'));
+    // → 'immediate' primeiro (próxima fase após poll)
+});
+
+// Fora de I/O, ordem é imprevisível
+setTimeout(() => console.log('timeout'), 0);
+setImmediate(() => console.log('immediate'));
+```
+
+**`process.nextTick` vs `queueMicrotask` vs `setImmediate`:**
+
+| Função | Quando roda |
+| --- | --- |
+| `process.nextTick` | **Antes** do próximo event loop iteration. Prioridade máxima. |
+| `queueMicrotask` | Após código síncrono, entre fases. Como Promise.then. |
+| `setImmediate` | Na fase `check` do próximo iteration. |
+| `setTimeout(fn, 0)` | Na fase `timers` quando o tempo passar (>= 1ms). |
+
+**Cuidado com `process.nextTick`:** recursão em `nextTick` pode **bloquear o event loop** (nunca avança para próxima fase).
+
+### Worker Threads, cluster, child_process — as 3 formas de paralelismo
+
+| | Worker Threads | Cluster | child_process |
+| --- | --- | --- | --- |
+| **Uso** | CPU-bound tasks | Escalar HTTP server por CPU | Executar processo externo |
+| **Memória** | Separada, mensagens via postMessage | Separada, IPC | Separada, stdio |
+| **Criação** | Rápida (~ms) | Lenta (novo processo) | Lenta (novo processo) |
+| **Compartilhamento** | SharedArrayBuffer | Via IPC | Via stdio/IPC |
+| **Use case** | Image processing, crypto, ML | Servidor web escalado | Rodar comando shell |
+
+**Worker Threads — para CPU-bound:**
+
+```typescript
+// worker.ts
+import { parentPort, workerData } from 'node:worker_threads';
+
+const result = heavyComputation(workerData);
+parentPort?.postMessage(result);
+
+// main.ts
+import { Worker } from 'node:worker_threads';
+
+function runWorker(data: any) {
+    return new Promise((resolve, reject) => {
+        const worker = new Worker('./worker.js', { workerData: data });
+        worker.on('message', resolve);
+        worker.on('error', reject);
+        worker.on('exit', code => {
+            if (code !== 0) reject(new Error(`Worker stopped with code ${code}`));
+        });
+    });
+}
+
+const result = await runWorker({ input: 'heavy' });
+```
+
+**Cluster — para escalar HTTP:**
+
+```typescript
+import cluster from 'node:cluster';
+import os from 'node:os';
+
+if (cluster.isPrimary) {
+    const numCPUs = os.cpus().length;
+    for (let i = 0; i < numCPUs; i++) {
+        cluster.fork();
+    }
+    cluster.on('exit', (worker) => {
+        console.log(`Worker ${worker.process.pid} died, restarting`);
+        cluster.fork();
+    });
+} else {
+    // Worker process
+    startServer();
+}
+```
+
+**Em produção moderna:** cluster nativo é menos usado. Orchestradores (Kubernetes, PM2) fazem melhor: restart automático, rolling updates, health checks.
+
+**`child_process` — executar comandos:**
+
+```typescript
+import { exec, spawn, fork } from 'node:child_process';
+import { promisify } from 'node:util';
+
+// exec — buffer completo do output
+const execP = promisify(exec);
+const { stdout } = await execP('git log --oneline -5');
+
+// spawn — streaming
+const proc = spawn('ffmpeg', ['-i', 'input.mp4', 'output.webm']);
+proc.stdout.on('data', chunk => process.stdout.write(chunk));
+proc.on('close', code => console.log(`exited ${code}`));
+
+// fork — child Node.js com IPC
+const child = fork('./worker.js');
+child.send({ type: 'work', data: ... });
+child.on('message', msg => console.log(msg));
+```
 
 ### Frameworks
 
@@ -76,26 +251,157 @@ app.get("/users/:id", asyncHandler(async (req, res) => {
 }));
 ```
 
-### Streams
+### Streams — deep dive
 
-Processar dados em chunks sem carregar tudo em memória.
+Streams são a **abstração fundamental** de Node.js para processar dados em chunks, sem carregar tudo em memória. Essencial para arquivos grandes, network, stdout/stdin.
+
+**4 tipos de streams:**
+
+| Tipo | Uso | Exemplo |
+| --- | --- | --- |
+| **Readable** | Fonte de dados | `fs.createReadStream`, `process.stdin`, HTTP response |
+| **Writable** | Destino de dados | `fs.createWriteStream`, `process.stdout`, HTTP request |
+| **Duplex** | Ambos (separados) | TCP socket |
+| **Transform** | Duplex que transforma | zlib, crypto, parsers |
+
+**API moderna — `stream/promises` + `pipeline`:**
 
 ```typescript
-import { createReadStream, createWriteStream } from "fs";
-import { pipeline } from "stream/promises";
-import { Transform } from "stream";
+import { createReadStream, createWriteStream } from 'node:fs';
+import { pipeline } from 'node:stream/promises';
+import { Transform } from 'node:stream';
 
-// Processar arquivo grande linha por linha
+// Pipeline correto — fecha tudo, propaga erros
 await pipeline(
-  createReadStream("input.csv"),
-  new Transform({
-    transform(chunk, encoding, callback) {
-      const processed = processChunk(chunk.toString());
-      callback(null, processed);
-    }
-  }),
-  createWriteStream("output.csv")
+    createReadStream('input.csv'),
+    new Transform({
+        transform(chunk, encoding, callback) {
+            const processed = processChunk(chunk.toString());
+            callback(null, processed);
+        }
+    }),
+    createWriteStream('output.csv')
 );
+// Se qualquer stream errar, pipeline propaga e fecha tudo
+```
+
+**Por que `pipeline` e não `.pipe()`:**
+
+```typescript
+// RUIM — .pipe() não propaga erros
+source.pipe(transform).pipe(destination);
+// se transform falha, destination fica aberto, vazamento
+
+// BOM — pipeline lida com cleanup e errors
+await pipeline(source, transform, destination);
+```
+
+### Backpressure
+
+Quando o consumer é mais lento que o producer, o buffer enche. Streams do Node gerenciam isso automaticamente se você usa `pipe`/`pipeline` ou respeita `drain`:
+
+```typescript
+// Manual — respeitar drain
+function writeMany(writable: NodeJS.WritableStream) {
+    let i = 1_000_000;
+    function write() {
+        let ok = true;
+        while (i > 0 && ok) {
+            ok = writable.write(`${i}\n`);
+            i--;
+        }
+        if (i > 0) {
+            writable.once('drain', write);  // retoma quando buffer esvaziar
+        } else {
+            writable.end();
+        }
+    }
+    write();
+}
+```
+
+### Web Streams vs Node streams
+
+Node suporta **Web Streams** (padrão universal) desde v18:
+
+```typescript
+import { Readable } from 'node:stream';
+
+// Web Stream → Node Stream
+const webStream = new ReadableStream({ start(controller) { /* ... */ } });
+const nodeStream = Readable.fromWeb(webStream);
+
+// Node Stream → Web Stream
+const web = Readable.toWeb(nodeReadable);
+
+// Fetch retorna Web Stream
+const response = await fetch('https://example.com/big.json');
+const reader = response.body!.getReader();
+while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    process(value);
+}
+```
+
+**Em 2026:** Web Streams são mais portáveis (funcionam em browser, Deno, Bun, Cloudflare Workers). Use quando possível.
+
+### Stream patterns
+
+**Transform stream — line parser:**
+
+```typescript
+import { Transform } from 'node:stream';
+
+class LineParser extends Transform {
+    private buffer = '';
+
+    _transform(chunk: Buffer, encoding: string, callback: Function) {
+        this.buffer += chunk.toString();
+        const lines = this.buffer.split('\n');
+        this.buffer = lines.pop() || '';  // última linha pode estar incompleta
+        for (const line of lines) {
+            this.push(line);
+        }
+        callback();
+    }
+
+    _flush(callback: Function) {
+        if (this.buffer) this.push(this.buffer);
+        callback();
+    }
+}
+
+await pipeline(
+    createReadStream('big.csv'),
+    new LineParser(),
+    new Transform({
+        objectMode: true,
+        transform(line, enc, cb) {
+            const parsed = parseCSV(line);
+            cb(null, JSON.stringify(parsed) + '\n');
+        }
+    }),
+    createWriteStream('out.jsonl')
+);
+```
+
+**Async iteration de streams:**
+
+```typescript
+// Modern — for await of
+async function processLines(path: string) {
+    const stream = createReadStream(path, { encoding: 'utf8' });
+    let buffer = '';
+    for await (const chunk of stream) {
+        buffer += chunk;
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+        for (const line of lines) {
+            await processLine(line);  // processa sequencialmente
+        }
+    }
+}
 ```
 
 ### npm e Package Management
@@ -103,7 +409,81 @@ await pipeline(
 - **package.json:** dependências, scripts, metadata
 - **package-lock.json:** lock de versões exatas (comitar no git!)
 - **Semantic versioning:** `^1.2.3` = compatível com 1.x.x, `~1.2.3` = compatível com 1.2.x
-- **npm vs yarn vs pnpm:** pnpm é mais eficiente (hard links), npm é o padrão
+- **npm vs yarn vs pnpm vs bun:** em 2026, **pnpm é o mais eficiente** (hard links), **bun** tem instalação mais rápida, **npm** é o padrão default
+
+### Node moderno — features que você deveria usar
+
+**TypeScript nativo (Node 22.18+):**
+
+```bash
+node --experimental-strip-types app.ts
+# Node 24+ estável
+```
+
+Sem precisar de `tsx`, `ts-node`, `swc-node`. Type stripping — remove tipos, roda JS puro.
+
+**Built-in test runner:**
+
+```typescript
+// test.ts
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
+
+describe('math', () => {
+    test('add', () => {
+        assert.equal(2 + 2, 4);
+    });
+
+    test('divide', (t) => {
+        t.skip('wip');
+    });
+});
+```
+
+```bash
+node --test
+node --test --watch
+node --test-reporter=spec
+```
+
+Competitivo com Vitest para projetos simples. Para Testing Library, ainda use Vitest/Jest. Ver [[Testes em JavaScript]].
+
+**Watch mode nativo:**
+
+```bash
+node --watch app.js
+# substitui nodemon
+```
+
+**Env file loading:**
+
+```bash
+node --env-file=.env app.js
+# carrega .env automaticamente, sem dotenv
+```
+
+**`--import` para pré-carregamento:**
+
+```bash
+node --import ./register-hooks.mjs app.mjs
+```
+
+**Sea (Single Executable Apps):**
+
+```bash
+node --experimental-sea-config sea-config.json
+# compila seu app em um único binário standalone
+```
+
+**`fs/promises`, `stream/promises`, `timers/promises`:** versões Promise-based dos módulos core.
+
+```typescript
+import { readFile } from 'node:fs/promises';
+import { setTimeout } from 'node:timers/promises';
+
+const data = await readFile('file.txt', 'utf8');
+await setTimeout(1000);  // delay
+```
 
 ## Quando usar
 
@@ -386,8 +766,13 @@ const result = await breaker.fire(requestData);
 
 ## Veja também
 
-- [[JavaScript Fundamentals]]
-- [[TypeScript]]
-- [[React]]
-- [[API Design]]
+- [[JavaScript Fundamentals]] — linguagem, event loop, async
+- [[TypeScript]] — tipagem em Node
+- [[Testes em JavaScript]] — Vitest, MSW, built-in test runner
+- [[React]] — frontend companion
+- [[API Design]] — REST, JWT, contratos
+- [[Full Stack Open - Guia de Revisão]] — partes 3, 4 sobre Node + Express
 - [[System Design]] — troubleshooting cross-stack, building blocks
+- [[Kafka]] — Node.js com Kafka
+- [[BullMQ]] — job queue em Node.js
+- [[Arquitetura de Software]] — Clean Architecture em Node

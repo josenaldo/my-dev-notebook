@@ -1,9 +1,9 @@
 ---
 title: "React"
 created: 2026-04-01
-updated: 2026-04-01
+updated: 2026-04-11
 type: concept
-status: seedling
+status: evergreen
 tags:
   - javascript
   - frontend
@@ -13,333 +13,1633 @@ publish: false
 
 # React
 
-Biblioteca JavaScript para construir interfaces de usuário declarativas e componentizadas.
+Deep dive em **React** — biblioteca para construção de interfaces via componentes declarativos. Foco em React 19+ (2026), Hooks, state management, performance e patterns modernos. Para JavaScript base, ver [[JavaScript Fundamentals]]. Para TypeScript com React, ver [[TypeScript]]. Para testes de componentes, ver [[Testes em JavaScript]]. Para HTML/CSS, ver [[HTML e CSS]].
 
 ## O que é
 
-React é uma biblioteca (não framework) para UI, baseada em componentes, virtual DOM, e fluxo de dados unidirecional. Para entrevistas, o foco é em: hooks, state management, rendering behavior, performance, e patterns de composição.
+React é uma **biblioteca JavaScript** (não framework) criada pelo Facebook (2013) para construir UIs através de **componentes compostos**. Em 2026, é a base da maioria dos sistemas web modernos, e **React 19** trouxe mudanças significativas: **React Compiler**, **Server Components**, **Server Actions**, e mudanças em APIs legacy.
 
-## Como funciona
+**Em 2026:**
 
-### Componentes e JSX
+- **React 19** é o mainstream, com React Compiler opcional
+- **Next.js 16** com Turbopack por default é o meta-framework dominante
+- **TanStack Router + React Router 7** convergem
+- **Vite 8** é o bundler padrão para SPAs
+- **Server Components** mudam fundamentalmente o modelo mental
+
+Em entrevistas, o que diferencia um senior em React:
+
+1. **Entender reconciliation** — como React decide o que re-renderizar
+2. **Hooks profundamente** — dependency arrays, closures stale, rules of hooks
+3. **State management** — quando useState, quando Context, quando Zustand/Redux, quando server state
+4. **Performance** — memo, useMemo, useCallback, React Compiler, Profiler
+5. **Server vs Client Components** — RSC, boundaries, "use client"
+6. **Forms avançados** — react-hook-form, validation, controlled vs uncontrolled
+7. **Data fetching moderno** — React Query, Suspense, streaming SSR
+8. **Testing** — Testing Library philosophy, user-centric
+9. **Arquitetura** — feature-based, containers vs presenters, hooks custom
+
+---
+
+## React 19 — o que mudou
+
+### React Compiler
+
+Compilador opt-in que **automatiza memoization**. Não precisa mais de `useMemo`, `useCallback`, `memo()` na maioria dos casos — o compilador descobre.
 
 ```tsx
-interface PatientCardProps {
-  patient: Patient;
-  onSelect: (id: string) => void;
-}
+// Sem React Compiler — memoization manual
+const MemoChild = memo(Child);
+const handleClick = useCallback(() => doStuff(id), [id]);
+const filtered = useMemo(() => items.filter(x => x.active), [items]);
 
-function PatientCard({ patient, onSelect }: PatientCardProps) {
-  return (
-    <div className="card" onClick={() => onSelect(patient.id)}>
-      <h3>{patient.name}</h3>
-      <span>{patient.specialty}</span>
-    </div>
-  );
+// Com React Compiler — nada disso, compilador otimiza
+const handleClick = () => doStuff(id);
+const filtered = items.filter(x => x.active);
+// Compilador gera memoization onde necessário
+```
+
+**Como ativar:**
+
+```javascript
+// vite.config.ts
+import react from '@vitejs/plugin-react';
+import { compilerPlugin } from 'babel-plugin-react-compiler';
+
+export default {
+    plugins: [react({ babel: { plugins: ['babel-plugin-react-compiler'] } })]
+};
+```
+
+**Cuidados:**
+
+- Compilador assume código obedecendo **Rules of React** (sem mutação, sem side effects em render)
+- ESLint plugin `eslint-plugin-react-compiler` detecta violações
+- Ainda experimental em 2026, mas ganhando adoção rápida
+
+### Server Components e Server Actions
+
+**Server Components (RSC)** — componentes que rodam **apenas no servidor**, retornam markup, não vão ao client JS bundle.
+
+```tsx
+// app/page.tsx — Server Component por default em Next.js 13+
+async function BlogList() {
+    const posts = await db.posts.findMany();  // direto do DB, sem API
+    return (
+        <ul>
+            {posts.map(p => <li key={p.id}>{p.title}</li>)}
+        </ul>
+    );
 }
 ```
 
-- **Function components:** padrão atual. Class components são legados.
-- **JSX:** syntax extension que compila para `React.createElement()`.
-- **Props:** dados passados do pai para o filho (imutáveis).
+**Benefícios:**
 
-### Hooks essenciais
+- Acesso direto a dados server-side (DB, filesystem)
+- Zero JavaScript no client para esses componentes
+- SEO e performance iniciais excelentes
+
+**Limitações:**
+
+- Sem `useState`, `useEffect`, event handlers — são Server, não Client
+- Não podem usar browser APIs
+
+### Client Components
+
+Para interatividade, use `'use client'` no topo do arquivo:
 
 ```tsx
-// Estado local
+'use client';
+
+import { useState } from 'react';
+
+export default function Counter() {
+    const [count, setCount] = useState(0);
+    return <button onClick={() => setCount(count + 1)}>{count}</button>;
+}
+```
+
+**Regra:** comece com Server Components, adicione `'use client'` só quando precisar de interatividade.
+
+### Server Actions
+
+Mutações diretas do servidor, sem API layer:
+
+```tsx
+// app/actions.ts
+'use server';
+
+export async function createPost(formData: FormData) {
+    const title = formData.get('title') as string;
+    await db.posts.create({ data: { title } });
+    revalidatePath('/blog');
+}
+
+// app/page.tsx
+import { createPost } from './actions';
+
+export default function NewPostForm() {
+    return (
+        <form action={createPost}>
+            <input name="title" />
+            <button type="submit">Create</button>
+        </form>
+    );
+}
+```
+
+### Novos hooks do React 19
+
+**`use()`** — unwrap Promise ou Context dentro de componentes:
+
+```tsx
+function UserProfile({ userPromise }) {
+    const user = use(userPromise);  // suspende até resolver
+    return <h1>{user.name}</h1>;
+}
+```
+
+**`useActionState()`** — gerencia state de actions:
+
+```tsx
+function Form() {
+    const [state, formAction, isPending] = useActionState(createPost, { error: null });
+
+    return (
+        <form action={formAction}>
+            <input name="title" />
+            {state.error && <p>{state.error}</p>}
+            <button disabled={isPending}>Create</button>
+        </form>
+    );
+}
+```
+
+**`useOptimistic()`** — updates otimistas enquanto aguarda server:
+
+```tsx
+function Comments({ initial }) {
+    const [optimistic, addOptimistic] = useOptimistic(
+        initial,
+        (state, newComment) => [...state, newComment]
+    );
+
+    async function submit(formData) {
+        addOptimistic({ text: formData.get('text'), pending: true });
+        await createComment(formData);
+    }
+
+    return (
+        <>
+            {optimistic.map(c => <li>{c.text}</li>)}
+            <form action={submit}>...</form>
+        </>
+    );
+}
+```
+
+**`useFormStatus()`** — status do form pai:
+
+```tsx
+function SubmitButton() {
+    const { pending } = useFormStatus();
+    return <button disabled={pending}>{pending ? 'Saving...' : 'Save'}</button>;
+}
+```
+
+### Depreciações em React 19
+
+- **`PropTypes`** — removido, use TypeScript
+- **`defaultProps` em function components** — use defaults de destructuring
+- **`contextTypes` / `childContextTypes`** — removidos
+- **`forwardRef` menos necessário** — refs agora passam como prop normal
+- **`string refs`** — removidos
+
+---
+
+## Componentes e JSX
+
+### Function components
+
+```tsx
+type ButtonProps = {
+    onClick: () => void;
+    variant?: 'primary' | 'secondary';
+    disabled?: boolean;
+    children: React.ReactNode;
+};
+
+export function Button({ onClick, variant = 'primary', disabled, children }: ButtonProps) {
+    return (
+        <button
+            onClick={onClick}
+            className={`btn btn-${variant}`}
+            disabled={disabled}
+        >
+            {children}
+        </button>
+    );
+}
+```
+
+### Class components (legacy)
+
+```tsx
+// Raramente usado em código novo. Hooks substituíram.
+class Counter extends React.Component<{}, { count: number }> {
+    state = { count: 0 };
+
+    increment = () => this.setState({ count: this.state.count + 1 });
+
+    render() {
+        return <button onClick={this.increment}>{this.state.count}</button>;
+    }
+}
+```
+
+**Em 2026, class components são legacy.** Manter por compatibilidade, mas escreva function components com hooks.
+
+### JSX — syntactic sugar
+
+```tsx
+const element = <h1 className="title">Hello, {name}</h1>;
+
+// Compila para
+const element = React.createElement('h1', { className: 'title' }, 'Hello, ', name);
+```
+
+**Regras:**
+
+- Tags minúsculas → elementos HTML (`<div>`, `<span>`)
+- Tags maiúsculas → componentes React (`<Button>`, `<UserCard>`)
+- Atributos camelCase (`className`, não `class`; `onClick`, não `onclick`)
+- Self-closing para tags vazias (`<br />`, não `<br>`)
+- JavaScript expressions em `{}`
+
+### Fragments
+
+```tsx
+// Em vez de wrapper desnecessário
+return (
+    <>
+        <h1>Title</h1>
+        <p>Content</p>
+    </>
+);
+
+// Com key (para loops)
+return items.map(item => (
+    <React.Fragment key={item.id}>
+        <dt>{item.term}</dt>
+        <dd>{item.description}</dd>
+    </React.Fragment>
+));
+```
+
+### Conditional rendering
+
+```tsx
+// Ternário
+{isLoggedIn ? <Dashboard /> : <LoginForm />}
+
+// &&
+{hasError && <ErrorMessage />}
+
+// Short-circuit — CUIDADO
+{count && <Badge count={count} />}  // se count === 0, renderiza '0' (!)
+{count > 0 && <Badge count={count} />}  // melhor
+
+// Null para nada
+{condition ? <Component /> : null}
+```
+
+### Listas e keys
+
+```tsx
+{users.map(user => (
+    <UserCard key={user.id} user={user} />
+))}
+```
+
+**Regras de key:**
+
+- **Única entre irmãos** (não globalmente)
+- **Estável** (não mude entre renders)
+- **Previsível** (não use `Math.random()`)
+- **Prefira ID do domínio**, não índice do array
+
+**Por que index como key é problema:**
+
+```tsx
+// RUIM — ao remover item no meio, React confunde estado
+{items.map((item, i) => <Input key={i} defaultValue={item} />)}
+
+// Se remover o primeiro:
+// Antes:  key=0 "a", key=1 "b", key=2 "c"
+// Depois: key=0 "b", key=1 "c"
+// React reutiliza DOM mas com valor errado
+```
+
+---
+
+## Hooks essenciais
+
+Regras universais:
+
+1. **Só chame hooks no top level** — nunca em condições, loops, nested functions
+2. **Só chame hooks de componentes React ou hooks customizados**
+3. **Nome deve começar com `use`** para hooks customizados
+
+ESLint plugin `eslint-plugin-react-hooks` verifica estas regras.
+
+### useState
+
+```tsx
 const [count, setCount] = useState(0);
+const [user, setUser] = useState<User | null>(null);
 
-// Side effects
+// Lazy initialization — função só roda 1x
+const [state, setState] = useState(() => expensiveInit());
+
+// Updater function — use quando o novo state depende do anterior
+setCount(prev => prev + 1);
+setCount(c => c + 1);  // equivalente
+
+// Múltiplos updates na mesma função — batched em React 18+
+setCount(c => c + 1);
+setCount(c => c + 1);  // final: count + 2
+```
+
+### useEffect
+
+Executa side effects após o render.
+
+```tsx
+// Sem dependency — roda após CADA render
 useEffect(() => {
-  const sub = api.subscribe(handler);
-  return () => sub.unsubscribe(); // cleanup
-}, [dependency]); // re-executa quando dependency muda
+    console.log('runs on every render');
+});
 
-// Referência mutável (não causa re-render)
-const inputRef = useRef<HTMLInputElement>(null);
+// Array vazio — roda uma vez (mount)
+useEffect(() => {
+    console.log('runs on mount');
+    return () => console.log('runs on unmount');
+}, []);
 
-// Memoization
-const expensive = useMemo(() => computeValue(data), [data]);
-const stableCallback = useCallback((id: string) => fetch(id), []);
+// Com dependências — roda quando dependency muda
+useEffect(() => {
+    fetch(`/api/users/${id}`).then(...);
+}, [id]);
 
-// Context
-const theme = useContext(ThemeContext);
+// Cleanup
+useEffect(() => {
+    const controller = new AbortController();
+
+    fetch('/api/data', { signal: controller.signal })
+        .then(r => r.json())
+        .then(setData)
+        .catch(err => {
+            if (err.name !== 'AbortError') throw err;
+        });
+
+    return () => controller.abort();
+}, []);
 ```
 
-### Rendering e Reconciliation
-
-1. State/props mudam → React re-renderiza o componente
-2. Virtual DOM diff compara árvore antiga com nova
-3. Apenas mudanças reais são aplicadas ao DOM
-
-**Re-render ≠ DOM update.** Re-render é barato; DOM updates são caros. React otimiza minimizando DOM updates.
-
-### State Management
-
-| Abordagem | Quando usar |
-| --- | --- |
-| `useState` | Estado local de um componente |
-| `useReducer` | Estado complexo com múltiplas transições |
-| Context + `useReducer` | Estado compartilhado em árvore pequena |
-| TanStack Query | Server state (cache, loading, error, refetch) |
-| Zustand | Client state global simples |
-| Redux Toolkit | Client state global complexo (legado em muitos projetos) |
-
-**Distinção crítica:** **server state** (dados do backend — cache, sync) vs **client state** (UI state — modais, filtros). TanStack Query para server state, Zustand/Context para client state.
-
-### Patterns
-
-**Composition over configuration:**
+**Armadilhas clássicas:**
 
 ```tsx
-// Ruim: prop drilling e configuração via props
-<DataTable columns={[...]} sortable filterable paginated />
+// BUG — stale closure
+function Counter() {
+    const [count, setCount] = useState(0);
 
-// Bom: composição de componentes
-<DataTable data={patients}>
-  <DataTable.Header>
-    <SortableColumn field="name" />
-    <FilterableColumn field="specialty" />
-  </DataTable.Header>
-  <DataTable.Pagination pageSize={20} />
-</DataTable>
+    useEffect(() => {
+        const id = setInterval(() => setCount(count + 1), 1000);
+        return () => clearInterval(id);
+    }, []);  // count nunca atualiza — closure captura count=0
+
+    return <div>{count}</div>;
+}
+
+// FIX — updater function
+useEffect(() => {
+    const id = setInterval(() => setCount(c => c + 1), 1000);
+    return () => clearInterval(id);
+}, []);  // não precisa de count no deps
 ```
 
-**Custom hooks:** extrair lógica reutilizável.
+**`useEffect` em Strict Mode:** React 18+ em strict mode roda effects **2x** em dev para detectar effects com side effects. Se seu effect quebra quando roda 2x, tem bug (falta de cleanup).
+
+### useReducer
+
+Alternativa a `useState` para lógica complexa.
 
 ```tsx
-function usePatients(specialty: string) {
-  return useQuery({
-    queryKey: ["patients", specialty],
-    queryFn: () => api.getPatients({ specialty }),
-  });
+type State = { count: number; step: number };
+type Action =
+    | { type: 'increment' }
+    | { type: 'decrement' }
+    | { type: 'setStep'; step: number };
+
+function reducer(state: State, action: Action): State {
+    switch (action.type) {
+        case 'increment': return { ...state, count: state.count + state.step };
+        case 'decrement': return { ...state, count: state.count - state.step };
+        case 'setStep':   return { ...state, step: action.step };
+    }
+}
+
+function Counter() {
+    const [state, dispatch] = useReducer(reducer, { count: 0, step: 1 });
+
+    return (
+        <>
+            <p>{state.count}</p>
+            <button onClick={() => dispatch({ type: 'increment' })}>+</button>
+        </>
+    );
 }
 ```
 
-### Arquitetura de projeto
+**Quando usar useReducer vs useState:**
 
-Estrutura de diretórios recomendada para projetos médios/grandes:
+- **useState** — state simples, 1-2 valores, transições simples
+- **useReducer** — múltiplos valores relacionados, transições complexas, testabilidade
 
-```text
-src/
-├── components/        ← componentes reutilizáveis (Button, Card, Modal)
-│   └── ui/            ← componentes de design system
-├── pages/             ← páginas/views (uma por rota)
-├── hooks/             ← custom hooks reutilizáveis
-├── services/          ← API layer (chamadas HTTP)
-├── stores/            ← state management (Zustand stores)
-├── types/             ← TypeScript types/interfaces compartilhados
-├── utils/             ← funções utilitárias puras
-├── contexts/          ← React contexts (theme, auth, i18n)
-└── assets/            ← imagens, fontes, estilos globais
-```
+### useContext
 
-**Princípios:**
-
-- **Separar server state de client state:** TanStack Query para dados do backend, Zustand/Context para estado de UI
-- **Custom hooks para lógica de negócio:** cada feature tem seu hook (`usePatients`, `useAppointments`)
-- **Múltiplos contexts pequenos:** não um "AppContext" monolítico. Um para auth, outro para theme, etc.
-- **Componentes sem lógica de fetch:** componentes recebem dados via hooks, não fazem fetch internamente
-- **Importações absolutas:** configurar `baseUrl` no tsconfig para evitar `../../../`
-
-> **Fontes:**
-> - [React Architecture Patterns](https://www.etatvasoft.com/blog/react-architecture-patterns/)
-> - [Modularizing React Apps — Martin Fowler](https://martinfowler.com/articles/modularizing-react-apps.html)
-
-### Formulários e Validação
-
-**React Hook Form** — formulários performáticos (uncontrolled por padrão):
+Compartilha dados entre componentes sem prop drilling.
 
 ```tsx
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+// Criar o context
+const ThemeContext = createContext<'light' | 'dark'>('light');
+
+// Provider
+function App() {
+    const [theme, setTheme] = useState<'light' | 'dark'>('light');
+    return (
+        <ThemeContext.Provider value={theme}>
+            <Toolbar />
+        </ThemeContext.Provider>
+    );
+}
+
+// Consumer
+function Toolbar() {
+    const theme = useContext(ThemeContext);
+    return <div className={theme}>...</div>;
+}
+```
+
+**Cuidado:** Context re-renderiza TODOS os consumers quando o value muda. Não coloque estado que muda muito.
+
+**Patterns:**
+
+- **Split contexts** — user, theme, settings em contexts separados
+- **Provider + custom hook:**
+
+    ```tsx
+    function useTheme() {
+        const ctx = useContext(ThemeContext);
+        if (!ctx) throw new Error('useTheme must be inside ThemeProvider');
+        return ctx;
+    }
+    ```
+
+### useRef
+
+Referência mutável que não causa re-render.
+
+```tsx
+// Referência a elemento DOM
+function TextInput() {
+    const ref = useRef<HTMLInputElement>(null);
+
+    const focus = () => ref.current?.focus();
+
+    return <input ref={ref} />;
+}
+
+// Valor mutável sem re-render
+function Timer() {
+    const intervalRef = useRef<number | null>(null);
+
+    useEffect(() => {
+        intervalRef.current = setInterval(() => { ... }, 1000);
+        return () => {
+            if (intervalRef.current) clearInterval(intervalRef.current);
+        };
+    }, []);
+}
+```
+
+### useMemo e useCallback
+
+Memoization para evitar recálculos/recriação desnecessários.
+
+```tsx
+// useMemo — memoize valor computado
+const filteredItems = useMemo(
+    () => items.filter(item => item.active),
+    [items]
+);
+
+// useCallback — memoize função
+const handleClick = useCallback(() => {
+    console.log(id);
+}, [id]);
+```
+
+**Quando usar:**
+
+- Cálculos caros
+- Props estáveis para componentes memoized (React.memo)
+- Dependencies de outros hooks
+
+**Cuidado:** memoization tem custo. Aplicar em tudo deixa o código mais complicado **sem ganho**. Meça primeiro.
+
+**Em React 19 com Compiler:** largely obsolete — compilador faz automaticamente.
+
+### useLayoutEffect
+
+Como useEffect, mas roda **sincronamente** após DOM update, antes do browser pintar. Use para medições de DOM.
+
+```tsx
+useLayoutEffect(() => {
+    const rect = elementRef.current?.getBoundingClientRect();
+    setHeight(rect?.height ?? 0);
+}, []);
+```
+
+**Cuidado:** bloqueia o paint. Use com parcimônia.
+
+### useTransition (React 18+)
+
+Marca updates como "não urgentes".
+
+```tsx
+function SearchResults() {
+    const [query, setQuery] = useState('');
+    const [results, setResults] = useState([]);
+    const [isPending, startTransition] = useTransition();
+
+    const handleChange = (e) => {
+        setQuery(e.target.value);  // urgente
+        startTransition(() => {
+            setResults(expensiveSearch(e.target.value));  // não urgente
+        });
+    };
+
+    return (
+        <>
+            <input value={query} onChange={handleChange} />
+            {isPending && <Spinner />}
+            <ResultsList results={results} />
+        </>
+    );
+}
+```
+
+### useDeferredValue
+
+Valor "atrasado" para filtros/searches pesados.
+
+```tsx
+function Search() {
+    const [query, setQuery] = useState('');
+    const deferredQuery = useDeferredValue(query);
+
+    return (
+        <>
+            <input value={query} onChange={e => setQuery(e.target.value)} />
+            <HeavyList query={deferredQuery} />
+        </>
+    );
+}
+```
+
+### Custom hooks
+
+Extraia lógica reutilizável em hooks custom. Convenção: começam com `use`.
+
+```tsx
+function useDebounce<T>(value: T, delay: number): T {
+    const [debounced, setDebounced] = useState(value);
+
+    useEffect(() => {
+        const timer = setTimeout(() => setDebounced(value), delay);
+        return () => clearTimeout(timer);
+    }, [value, delay]);
+
+    return debounced;
+}
+
+// Uso
+function Search() {
+    const [query, setQuery] = useState('');
+    const debouncedQuery = useDebounce(query, 300);
+
+    useEffect(() => {
+        if (debouncedQuery) searchAPI(debouncedQuery);
+    }, [debouncedQuery]);
+
+    return <input value={query} onChange={e => setQuery(e.target.value)} />;
+}
+```
+
+**Patterns comuns:**
+
+- `useLocalStorage` — state persistido no localStorage
+- `useMediaQuery` — responder a media queries
+- `useFetch` — fetch com loading/error (melhor: React Query)
+- `useClickOutside` — detectar clique fora de elemento
+- `useKeyPress` — atalhos de teclado
+- `useIntersectionObserver` — lazy loading, infinite scroll
+- `useWindowSize` — dimensões da window
+
+---
+
+## State management
+
+### Decisão — onde colocar o state
+
+```
+Escopo do state     →  Onde colocar
+──────────────────────────────────────────
+1 componente        →  useState local
+Alguns componentes  →  lift state up
+Vários componentes  →  Context (se não muda muito)
+Global              →  Zustand / Redux / Jotai
+Server state        →  React Query / SWR / tRPC
+URL state           →  React Router / searchParams
+Form state          →  React Hook Form
+```
+
+**Regra fundamental:** **server state não é client state**. Dados do servidor são cache local, não "estado" da aplicação.
+
+### Lift state up
+
+```tsx
+// Compartilha state entre siblings pelo pai comum
+function Parent() {
+    const [filter, setFilter] = useState('');
+
+    return (
+        <>
+            <SearchBar filter={filter} onChange={setFilter} />
+            <ResultsList filter={filter} />
+        </>
+    );
+}
+```
+
+### Zustand — state global simples
+
+```tsx
+import { create } from 'zustand';
+
+interface CartStore {
+    items: CartItem[];
+    addItem: (item: CartItem) => void;
+    removeItem: (id: string) => void;
+    clear: () => void;
+}
+
+const useCart = create<CartStore>((set) => ({
+    items: [],
+    addItem: (item) => set((state) => ({ items: [...state.items, item] })),
+    removeItem: (id) => set((state) => ({
+        items: state.items.filter(i => i.id !== id)
+    })),
+    clear: () => set({ items: [] })
+}));
+
+// Uso
+function Cart() {
+    const items = useCart(state => state.items);
+    const removeItem = useCart(state => state.removeItem);
+
+    return (
+        <ul>
+            {items.map(item => (
+                <li key={item.id}>
+                    {item.name}
+                    <button onClick={() => removeItem(item.id)}>Remove</button>
+                </li>
+            ))}
+        </ul>
+    );
+}
+```
+
+**Por que Zustand em vez de Redux em 2026:**
+
+- API minimalista, sem boilerplate (actions, reducers, selectors)
+- Sem provider wrapping (opcional)
+- TypeScript first-class
+- Bundle pequeno (~1KB)
+- Compatível com devtools
+
+### Redux (legacy, ainda comum)
+
+```tsx
+// Redux Toolkit (forma moderna)
+import { createSlice, configureStore } from '@reduxjs/toolkit';
+
+const cartSlice = createSlice({
+    name: 'cart',
+    initialState: { items: [] },
+    reducers: {
+        addItem: (state, action) => {
+            state.items.push(action.payload);  // Immer permite "mutação"
+        },
+        removeItem: (state, action) => {
+            state.items = state.items.filter(i => i.id !== action.payload);
+        }
+    }
+});
+
+const store = configureStore({
+    reducer: { cart: cartSlice.reducer }
+});
+
+// Uso em componentes
+const items = useSelector(state => state.cart.items);
+const dispatch = useDispatch();
+dispatch(cartSlice.actions.addItem(item));
+```
+
+Em 2026, Redux ainda é comum em projetos legacy. Para novo código, **Zustand é mais simples**.
+
+### Jotai — atomic state
+
+```tsx
+import { atom, useAtom } from 'jotai';
+
+const countAtom = atom(0);
+
+function Counter() {
+    const [count, setCount] = useAtom(countAtom);
+    return <button onClick={() => setCount(c => c + 1)}>{count}</button>;
+}
+
+// Derived atoms
+const doubleCountAtom = atom(get => get(countAtom) * 2);
+```
+
+**Quando usar:** state com muita derivação, granular reactivity.
+
+---
+
+## Server state — React Query
+
+**O maior ganho de produtividade em React dos últimos anos.** React Query (agora `@tanstack/react-query`) gerencia cache, refetch, invalidation, background updates — tudo que você faria manualmente.
+
+```tsx
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+
+function UserProfile({ id }) {
+    const { data: user, isLoading, error } = useQuery({
+        queryKey: ['user', id],
+        queryFn: () => fetch(`/api/users/${id}`).then(r => r.json()),
+        staleTime: 5 * 60 * 1000,  // 5 minutos
+        gcTime: 10 * 60 * 1000     // 10 minutos em cache
+    });
+
+    if (isLoading) return <Spinner />;
+    if (error) return <ErrorMessage />;
+
+    return <h1>{user.name}</h1>;
+}
+```
+
+### Mutations
+
+```tsx
+function EditUser({ user }) {
+    const queryClient = useQueryClient();
+
+    const mutation = useMutation({
+        mutationFn: (updated) => fetch(`/api/users/${user.id}`, {
+            method: 'PUT',
+            body: JSON.stringify(updated)
+        }),
+        onSuccess: () => {
+            // Invalida cache, força refetch
+            queryClient.invalidateQueries({ queryKey: ['user', user.id] });
+        }
+    });
+
+    return (
+        <form onSubmit={(e) => {
+            e.preventDefault();
+            mutation.mutate({ name: 'New name' });
+        }}>
+            <button disabled={mutation.isPending}>Save</button>
+        </form>
+    );
+}
+```
+
+### Features
+
+- **Cache automático** — mesmo query key reutiliza dados
+- **Refetch on focus** — dados atualizados quando tab volta ao foco
+- **Refetch on reconnect** — ao recuperar conexão
+- **Stale-while-revalidate** — mostra cached, refetch em background
+- **Optimistic updates** — UI atualiza antes do server confirmar
+- **Infinite queries** — paginação e scroll infinito
+- **Prefetching** — carregar antes de precisar
+- **Paralelismo** — múltiplas queries em paralelo automaticamente
+
+### Alternativas
+
+- **SWR** — menor, da Vercel. API similar.
+- **Apollo Client** — para GraphQL
+- **tRPC** — para APIs typesafe end-to-end
+- **Relay** — GraphQL, da Meta
+
+**Em 2026, React Query é o default para REST. tRPC cresceu muito em stacks TS-only.**
+
+---
+
+## Rendering e Reconciliation
+
+### Virtual DOM
+
+React mantém uma representação do DOM em memória (Virtual DOM ou Fiber tree). Quando o state muda:
+
+1. React gera nova árvore
+2. Compara com árvore anterior (**diffing**)
+3. Calcula **mínimas mudanças** no DOM real
+4. Aplica as mudanças
+
+### Reconciliation — o algoritmo
+
+React usa 3 heuristics para diffing rápido:
+
+1. **Elementos de tipos diferentes → substituir completo**
+
+    ```tsx
+    // Re-cria árvore inteira
+    <div><Counter /></div>  →  <span><Counter /></span>
+    ```
+
+2. **Mesmo tipo de elemento → atualizar props**
+
+    ```tsx
+    <div className="before" />  →  <div className="after" />
+    // React só muda className
+    ```
+
+3. **Listas → comparar por `key`**
+
+    ```tsx
+    {items.map(item => <Item key={item.id} data={item} />)}
+    ```
+
+### Fiber architecture
+
+Desde React 16, o algoritmo de rendering é **interruptible** — React pode pausar trabalho e continuar depois. Permite:
+
+- **Priorização** — updates urgentes primeiro
+- **Suspense** — pausar render enquanto dados carregam
+- **Concurrent features** — transitions, deferred values
+
+### When components re-render
+
+Um componente re-renderiza quando:
+
+1. **Seu state muda** (via setState, dispatch)
+2. **Suas props mudam** (pai re-renderizou e passou novas)
+3. **Context que ele consome muda**
+4. **Pai re-renderiza** — mesmo sem mudanças, filho re-renderiza (a menos que memoized)
+
+**Não re-renderiza:**
+
+- Mutação direta de objeto (`obj.field = x`) — use imutável
+- Ref change (`ref.current = x`)
+
+### Evitando re-renders desnecessários
+
+**1. React.memo — componentes**
+
+```tsx
+const ExpensiveList = memo(function List({ items }) {
+    // só re-renderiza se items mudar (shallow compare)
+    return items.map(i => <Item key={i.id} {...i} />);
+});
+```
+
+**Custom compare:**
+
+```tsx
+const Component = memo(MyComponent, (prev, next) => {
+    return prev.id === next.id;  // true = SKIP render
+});
+```
+
+**2. useMemo — valores**
+
+```tsx
+const sortedItems = useMemo(
+    () => items.toSorted((a, b) => a.name.localeCompare(b.name)),
+    [items]
+);
+```
+
+**3. useCallback — funções**
+
+```tsx
+const handleClick = useCallback(() => {
+    doSomething(id);
+}, [id]);
+
+// Importante quando passar como prop para componente memoized
+<MemoChild onClick={handleClick} />
+```
+
+**Em React 19 com Compiler:** tudo isso é automático.
+
+### Profiler
+
+```tsx
+import { Profiler } from 'react';
+
+<Profiler id="App" onRender={(id, phase, actualDuration) => {
+    console.log(`${id} [${phase}] took ${actualDuration}ms`);
+}}>
+    <App />
+</Profiler>
+```
+
+**React DevTools** tem Profiler UI — grava interações, mostra qual componente causou re-render, quanto tempo levou.
+
+---
+
+## Formulários
+
+### Controlled vs Uncontrolled
+
+**Controlled** — state React é a source of truth:
+
+```tsx
+function ControlledForm() {
+    const [name, setName] = useState('');
+
+    return (
+        <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+        />
+    );
+}
+```
+
+**Uncontrolled** — DOM é a source of truth:
+
+```tsx
+function UncontrolledForm() {
+    const ref = useRef<HTMLInputElement>(null);
+
+    const handleSubmit = () => {
+        console.log(ref.current?.value);
+    };
+
+    return <input ref={ref} defaultValue="" />;
+}
+```
+
+**Quando usar cada:**
+
+- **Controlled** — validação em tempo real, condicional render baseado em value
+- **Uncontrolled** — forms simples, performance (sem re-render em cada keystroke)
+
+### React Hook Form — o padrão moderno
+
+Em 2026, **React Hook Form** é o default para formulários não triviais. Uncontrolled por default (performance), validação via schema.
+
+```tsx
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 
 const schema = z.object({
-  name: z.string().min(1, "Nome obrigatório"),
-  email: z.string().email("Email inválido"),
-  age: z.number().min(18, "Deve ser maior de idade"),
+    email: z.string().email(),
+    password: z.string().min(8),
+    age: z.number().int().positive()
 });
 
 type FormData = z.infer<typeof schema>;
 
-function PatientForm() {
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
-    resolver: zodResolver(schema),
-  });
+function LoginForm() {
+    const {
+        register,
+        handleSubmit,
+        formState: { errors, isSubmitting }
+    } = useForm<FormData>({
+        resolver: zodResolver(schema)
+    });
 
-  const onSubmit = (data: FormData) => createPatient(data);
+    const onSubmit = async (data: FormData) => {
+        await login(data);
+    };
 
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <input {...register("name")} />
-      {errors.name && <span>{errors.name.message}</span>}
-      <button type="submit">Salvar</button>
-    </form>
-  );
+    return (
+        <form onSubmit={handleSubmit(onSubmit)}>
+            <input {...register('email')} type="email" />
+            {errors.email && <p>{errors.email.message}</p>}
+
+            <input {...register('password')} type="password" />
+            {errors.password && <p>{errors.password.message}</p>}
+
+            <input {...register('age', { valueAsNumber: true })} type="number" />
+            {errors.age && <p>{errors.age.message}</p>}
+
+            <button disabled={isSubmitting}>Submit</button>
+        </form>
+    );
 }
 ```
 
-**Bibliotecas de validação:**
+**Vantagens:**
 
-| Lib | Estilo | Use case |
-| --- | --- | --- |
-| Zod | Schema-first, TypeScript-native | Preferido com React Hook Form + TS |
-| Yup | Encadeamento fluente | Popular, mais antigo que Zod |
-| Joi | API rica, origin Node.js | Backend-first, também funciona no front |
+- Performance (uncontrolled, sem re-render por keystroke)
+- Validação via Zod (type-safe)
+- Error handling robusto
+- TypeScript first-class
 
-> **Fontes:**
-> - [React Hook Form](https://react-hook-form.com/)
-> - [TanStack Form](https://tanstack.com/form/latest)
-> - [Zod](https://zod.dev/) — validação TypeScript-first
-> - [Yup](https://github.com/jquense/yup)
+### TanStack Form
 
-### HTTP e API Layer
+Nova entrada em 2025 — similar a React Hook Form mas com foco em TypeScript e agnóstico de framework.
 
-**Axios** — HTTP client com interceptors, cancel tokens, e configuração global:
+---
+
+## Router
+
+### React Router 7 (2026)
 
 ```tsx
-// services/api.ts — configuração centralizada
-import axios from "axios";
+import { createBrowserRouter, RouterProvider, Link, Outlet, useParams } from 'react-router-dom';
 
-export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-  timeout: 10000,
-});
+const router = createBrowserRouter([
+    {
+        path: '/',
+        element: <Layout />,
+        children: [
+            { index: true, element: <Home /> },
+            { path: 'about', element: <About /> },
+            {
+                path: 'users/:id',
+                element: <UserProfile />,
+                loader: async ({ params }) => {
+                    return await fetch(`/api/users/${params.id}`);
+                }
+            },
+            { path: '*', element: <NotFound /> }
+        ]
+    }
+]);
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
-});
+function App() {
+    return <RouterProvider router={router} />;
+}
 
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) redirectToLogin();
-    return Promise.reject(error);
-  }
-);
+function UserProfile() {
+    const { id } = useParams();
+    return <h1>User {id}</h1>;
+}
 ```
 
-**TanStack Query + Axios** — o padrão recomendado:
+### TanStack Router
+
+Alternativa type-safe ao React Router. Crescendo rápido em 2026.
 
 ```tsx
-// hooks/usePatients.ts
-export function usePatients(specialty: string) {
-  return useQuery({
-    queryKey: ["patients", specialty],
-    queryFn: () => api.get<Patient[]>(`/patients?specialty=${specialty}`).then(r => r.data),
-    staleTime: 5 * 60 * 1000, // 5 min cache
-  });
+import { createRouter, createRoute } from '@tanstack/react-router';
+
+const userRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: 'users/$id',
+    component: UserProfile,
+    loader: ({ params }) => fetchUser(params.id),
+    validateSearch: z.object({ tab: z.enum(['info', 'posts']) })
+});
+```
+
+**Vantagens:** type-safe URL params e search params, inference end-to-end.
+
+---
+
+## Arquitetura de projeto
+
+### Feature-based structure
+
+```
+src/
+├── features/
+│   ├── auth/
+│   │   ├── components/
+│   │   │   ├── LoginForm.tsx
+│   │   │   └── SignupForm.tsx
+│   │   ├── hooks/
+│   │   │   └── useAuth.ts
+│   │   ├── api/
+│   │   │   └── authApi.ts
+│   │   └── index.ts
+│   └── patients/
+│       ├── components/
+│       ├── hooks/
+│       ├── api/
+│       └── index.ts
+├── shared/
+│   ├── ui/                # componentes genéricos (Button, Card, Modal)
+│   ├── hooks/             # hooks genéricos
+│   └── lib/               # utilities
+├── app/                   # ou pages/
+│   ├── routes.tsx
+│   └── layouts/
+└── main.tsx
+```
+
+**Vantagens vs "by type" (components/, services/, etc.):**
+
+- Mudanças de feature ficam num só diretório
+- Fácil mover ou deletar features
+- Limites claros entre features
+
+### Container vs Presentational (classic pattern)
+
+```tsx
+// Container — smart, lida com state e data
+function UserListContainer() {
+    const { data: users, isLoading } = useQuery({
+        queryKey: ['users'],
+        queryFn: fetchUsers
+    });
+
+    if (isLoading) return <Spinner />;
+    return <UserList users={users} />;
 }
 
-// hooks/useCreatePatient.ts
-export function useCreatePatient() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (data: CreatePatientDTO) => api.post("/patients", data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["patients"] }),
-  });
+// Presentational — dumb, só renderiza props
+function UserList({ users }: { users: User[] }) {
+    return (
+        <ul>
+            {users.map(u => <UserCard key={u.id} user={u} />)}
+        </ul>
+    );
 }
 ```
 
-> **Fontes:**
-> - [TanStack Query](https://tanstack.com/)
-> - [React Query useMutation](https://profy.dev/article/react-query-usemutation)
-> - [React REST API patterns](https://profy.dev/article/react-rest-api)
+**Em 2026:** menos rígido. Com hooks, separação é natural via custom hooks em vez de componentes dedicados.
 
-### Ecossistema e Tooling
+---
 
-| Ferramenta | Categoria | O que faz |
-| --- | --- | --- |
-| Vite | Build tool | Dev server rápido, HMR, build otimizado (substitui CRA) |
-| Next.js | Meta-framework | SSR, SSG, API routes, file-based routing |
-| React Router | Routing | Navegação SPA, nested routes, loaders |
-| TanStack Query | Server state | Fetch, cache, sync, optimistic updates |
-| Zustand | Client state | Estado global minimalista |
-| React Hook Form | Forms | Formulários performáticos |
-| Zod | Validação | Schema validation TypeScript-first |
-| Axios | HTTP | Client HTTP com interceptors |
-| React Admin | Admin panels | CRUD admin out-of-the-box |
-| Tabler Icons | Ícones | Biblioteca de ícones open-source |
+## Performance
 
-**Migração CRA → Vite:** essencial para projetos existentes. Vite é 10-100x mais rápido no dev server.
+### Identificando problemas
 
-> **Fontes:**
-> - [Next.js](https://nextjs.org/)
-> - [React Admin](https://marmelab.com/react-admin/)
-> - [Migrar de CRA para Vite](https://dev.to/ajeetraina/how-to-migrate-from-create-react-app-to-vite-3b8m)
-> - [Tabler Icons](https://tabler.io/icons)
-> - [Lightweight Charts (gráficos)](https://www.tradingview.com/lightweight-charts/)
+**React DevTools Profiler** é a primeira ferramenta:
 
-### Performance
+1. Record interação
+2. Ver flame graph de renders
+3. Identificar componentes caros ou re-renders desnecessários
 
-- **`React.memo()`:** evita re-render quando props não mudaram (shallow compare)
-- **`useMemo` / `useCallback`:** memoizar valores e funções caras
-- **Lazy loading:** `React.lazy()` + `Suspense` para code splitting
-- **Virtualization:** `react-window` ou `@tanstack/react-virtual` para listas longas
-- **Key prop:** usar IDs estáveis (não índice do array) para listas
+**Web Vitals:**
 
-## Quando usar
+- **LCP** (Largest Contentful Paint) — < 2.5s
+- **FID/INP** (Interaction to Next Paint) — < 200ms
+- **CLS** (Cumulative Layout Shift) — < 0.1
 
-- **React:** SPAs, dashboards, apps interativos complexos
-- **Next.js:** quando precisa de SSR, SSG, API routes, ou SEO
-- **TanStack Query:** qualquer comunicação com API (substitui useEffect + useState para fetching)
-- **Zustand:** estado global simples sem boilerplate do Redux
+### Otimizações
+
+**1. Code splitting**
+
+```tsx
+const HeavyComponent = lazy(() => import('./HeavyComponent'));
+
+function App() {
+    return (
+        <Suspense fallback={<Spinner />}>
+            <HeavyComponent />
+        </Suspense>
+    );
+}
+```
+
+**2. List virtualization** — render só visível
+
+```tsx
+import { useVirtualizer } from '@tanstack/react-virtual';
+
+function BigList({ items }) {
+    const parentRef = useRef(null);
+
+    const virtualizer = useVirtualizer({
+        count: items.length,
+        getScrollElement: () => parentRef.current,
+        estimateSize: () => 35
+    });
+
+    return (
+        <div ref={parentRef} style={{ height: '400px', overflow: 'auto' }}>
+            <div style={{ height: virtualizer.getTotalSize() }}>
+                {virtualizer.getVirtualItems().map(virtualRow => (
+                    <div
+                        key={virtualRow.index}
+                        style={{
+                            position: 'absolute',
+                            top: virtualRow.start,
+                            height: virtualRow.size
+                        }}
+                    >
+                        {items[virtualRow.index].name}
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+```
+
+**3. React.memo, useMemo, useCallback** — ver seção anterior
+
+**4. Image optimization**
+
+```tsx
+// Next.js
+import Image from 'next/image';
+<Image src="/hero.jpg" width={1200} height={600} alt="Hero" priority />
+
+// Vite/SPA — use srcset e lazy loading
+<img
+    src="/image.jpg"
+    srcSet="/image-400.jpg 400w, /image-800.jpg 800w"
+    sizes="(max-width: 600px) 400px, 800px"
+    loading="lazy"
+    alt="..."
+/>
+```
+
+**5. Bundle analysis**
+
+```bash
+# Vite
+npx vite-bundle-visualizer
+
+# webpack
+npm install -D webpack-bundle-analyzer
+```
+
+### Web Workers para CPU heavy
+
+```tsx
+// worker.ts
+self.addEventListener('message', (e) => {
+    const result = heavyComputation(e.data);
+    self.postMessage(result);
+});
+
+// Component
+const worker = useMemo(() => new Worker(new URL('./worker.ts', import.meta.url)), []);
+
+useEffect(() => {
+    worker.onmessage = (e) => setResult(e.data);
+    return () => worker.terminate();
+}, [worker]);
+
+worker.postMessage(data);
+```
+
+---
+
+## Suspense e Concurrent features
+
+### Suspense
+
+```tsx
+<Suspense fallback={<Spinner />}>
+    <LazyComponent />
+</Suspense>
+```
+
+Suspende até o componente estar pronto (code loaded, data fetched).
+
+### Error boundaries
+
+```tsx
+class ErrorBoundary extends React.Component<
+    { children: React.ReactNode; fallback: React.ReactNode },
+    { hasError: boolean }
+> {
+    state = { hasError: false };
+
+    static getDerivedStateFromError() {
+        return { hasError: true };
+    }
+
+    componentDidCatch(error, info) {
+        console.error(error, info);
+    }
+
+    render() {
+        if (this.state.hasError) return this.props.fallback;
+        return this.props.children;
+    }
+}
+
+// Uso
+<ErrorBoundary fallback={<ErrorMessage />}>
+    <App />
+</ErrorBoundary>
+```
+
+**Limitação:** não pega erros em:
+
+- Event handlers (use try/catch)
+- Async code (use .catch ou try/catch)
+- SSR
+- Erros no próprio error boundary
+
+**`react-error-boundary`** — biblioteca popular com API baseada em hooks.
+
+---
+
+## Meta-frameworks
+
+### Next.js
+
+```tsx
+// app/users/[id]/page.tsx
+async function UserPage({ params }: { params: { id: string } }) {
+    const user = await fetchUser(params.id);  // Server Component
+    return <UserProfile user={user} />;
+}
+```
+
+**Features:**
+
+- App Router com Server Components (default em 14+)
+- Server Actions
+- API routes
+- Image optimization
+- Turbopack (default em 16)
+- Deployment otimizado para Vercel (e outros)
+
+**Em 2026, Next.js 16 com Turbopack é o default** para apps React em produção.
+
+### Remix / React Router 7
+
+Framework fullstack focado em web standards. Se fundiu com React Router em 2024-2025.
+
+### Astro
+
+Static-first, JS mínimo. Bom para blogs, docs, sites de marketing. Suporta React "islands" (interatividade pontual).
+
+### TanStack Start
+
+Framework fullstack novo em 2026, TanStack router + Start. Type-safe end-to-end.
+
+---
+
+## Testing
+
+Deep dive em [[Testes em JavaScript]]. Resumo:
+
+```tsx
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { describe, it, expect } from 'vitest';
+import { LoginForm } from './LoginForm';
+
+describe('LoginForm', () => {
+    it('should submit with valid data', async () => {
+        const user = userEvent.setup();
+        const onSubmit = vi.fn();
+
+        render(<LoginForm onSubmit={onSubmit} />);
+
+        await user.type(screen.getByLabelText(/email/i), 'maria@test.com');
+        await user.type(screen.getByLabelText(/password/i), 'secret');
+        await user.click(screen.getByRole('button', { name: /log in/i }));
+
+        expect(onSubmit).toHaveBeenCalledWith({
+            email: 'maria@test.com',
+            password: 'secret'
+        });
+    });
+});
+```
+
+---
 
 ## Armadilhas comuns
 
-- **useEffect para fetching:** usar TanStack Query ou SWR. useEffect não gerencia cache, loading, error, race conditions.
-- **Estado derivado em useState:** se um valor pode ser calculado a partir de outro estado, use `useMemo`, não outro `useState`.
-- **Memoização prematura:** `React.memo`, `useMemo`, `useCallback` adicionam complexidade. Otimizar quando medir que é necessário.
-- **Prop drilling profundo:** contexto ou composição são melhores que passar props por 5+ níveis.
-- **useEffect sem cleanup:** subscriptions, timers, event listeners precisam de cleanup no return.
-- **Key com índice de array:** causa bugs em listas que reordenam ou filtram.
+- **Stale closures em useEffect** — use updater functions ou adicione ao deps
+- **Missing dependencies no useEffect** — eslint plugin pega
+- **useEffect com setInterval sem cleanup** — vazamento
+- **Key como index** — problemas em listas que reordenam
+- **Mutação direta de state** — `state.push(x)`. Use spread ou bibliotecas como Immer.
+- **Context para state que muda muito** — re-renders em massa
+- **Re-criar funções/objetos em cada render sem memo** — passa novas props para filhos memoized
+- **Otimizar sem medir** — memo/useMemo/useCallback em tudo deixa código complexo
+- **useState para server state** — use React Query
+- **`{condition && <Component />}` com 0** — renderiza '0'
+- **Async no useEffect diretamente** — useEffect não aceita async function
+- **Esquecer cleanup em useEffect** — subscriptions, timers, fetch
+- **Re-render loop** — setState no render sem condição
+- **Props drilling** — profundo demais, use Context ou state management
+- **Strict mode quebrando effects** — effects devem ser idempotentes
+- **Forms controlled gigantes** — re-render em cada keystroke. Use React Hook Form.
+- **`useMemo` sem dependência correta** — valor stale
+- **ForwardRef confuso** — em React 19, ref é prop normal
+- **`defaultProps` em function components** — removido em React 19, use destructuring defaults
+- **Importar diretamente de `react`** sem necessidade — dead imports
+- **Esquecer `'use client'`** em Server Components com hooks
+
+---
 
 ## Na prática (da minha experiência)
 
-> No frontend do MedEspecialista, uso React com TypeScript, TanStack Query para comunicação com a API Spring Boot, e Zustand para estado de UI (sidebar, modais, filtros). O componente de agenda médica é o mais complexo — usa virtualização para renderizar centenas de slots de horário sem degradar performance. Custom hooks como `useAppointments(date, doctorId)` encapsulam toda a lógica de fetch, cache e invalidação.
+> **Stack do MedEspecialista frontend:**
+>
+> **1. React 19 + Next.js 16** (App Router, Server Components default)
+> **2. TypeScript estrito** desde o dia 1
+> **3. Tailwind CSS** para estilos
+> **4. React Hook Form + Zod** para formulários
+> **5. React Query** para server state
+> **6. Zustand** para client state global (pequeno)
+> **7. shadcn/ui** como base de componentes
+> **8. Vitest + Testing Library + MSW** para testes
+> **9. Playwright** para E2E
+> **10. Storybook** para desenvolvimento de componentes
+>
+> **Patterns que padronizei:**
+>
+> **1. Feature-based folders** — cada feature é auto-contida
+>
+> **2. Hooks customizados para lógica de domínio** — componentes ficam "burros", hooks têm a lógica
+>
+> ```tsx
+> function usePatient(id: string) {
+>     return useQuery({
+>         queryKey: ['patient', id],
+>         queryFn: () => api.getPatient(id)
+>     });
+> }
+> ```
+>
+> **3. Server Components first, Client opt-in** — `'use client'` só quando preciso de estado/efeito
+>
+> **4. Zod schemas compartilhados backend/frontend** — validação idêntica nos dois lados
+>
+> **5. Error boundaries por feature** — erro em uma não derruba tudo
+>
+> **6. Suspense + React Query** — loading states declarativos
+>
+> **7. TanStack Virtual** para listas grandes — tabelas de 10k+ pacientes
+>
+> **Incidente memorável — stale closure em useEffect:**
+>
+> Notification bell tinha polling a cada 30s. State dos notifications não atualizava — stale closure clássico. Fix:
+>
+> ```tsx
+> // Antes (bug)
+> useEffect(() => {
+>     const id = setInterval(() => {
+>         fetchNotifications().then(newOnes => setAll([...all, ...newOnes]));
+>     }, 30000);
+>     return () => clearInterval(id);
+> }, []);  // all nunca atualiza
+>
+> // Fix
+> useEffect(() => {
+>     const id = setInterval(() => {
+>         fetchNotifications().then(newOnes => setAll(prev => [...prev, ...newOnes]));
+>     }, 30000);
+>     return () => clearInterval(id);
+> }, []);
+> ```
+>
+> Melhor ainda: React Query com `refetchInterval`. Substituí todo polling manual por queries automaticamente.
+>
+> **Outro incidente — Context causando re-renders globais:**
+>
+> UserContext armazenava `{ user, setUser, preferences, setPreferences, ... }`. Qualquer mudança em qualquer campo re-renderizava a app inteira (1000+ componentes). Solução: split em 3 contexts separados (UserContext, PreferencesContext, ThemeContext) + Zustand para state com updates frequentes.
+>
+> **A lição principal:** React é simples conceitualmente, mas produtivo exige patterns — server state separado de client state, hooks custom para reutilização, memoization consciente (ou React Compiler), Suspense para loading, error boundaries para resiliência. Domine o modelo mental (componentes, reconciliation, hooks) e o resto é prática.
+
+---
 
 ## How to explain in English
 
-"React is my primary frontend library. I build applications with function components and hooks, using TypeScript for type safety on props and state. My architecture separates server state from client state — I use TanStack Query for data fetching, caching, and synchronization with the backend, and Zustand for UI state like modal visibility and filter selections.
+> "React is a library for building UIs through composable components. In 2026, I use React 19 with Next.js 16 and the App Router, which makes Server Components the default. The mental shift is significant — components that don't need interactivity run on the server, have direct database access, and ship zero JavaScript to the client. I only add `'use client'` when I actually need state, effects, or browser APIs.
+>
+> For state management, my rule is: server state is not client state. I use React Query for anything that comes from an API — it handles caching, refetch, invalidation, and optimistic updates. For global client state, Zustand is my default because it's minimal and type-safe. For URL state, the router. For form state, React Hook Form with Zod resolvers.
+>
+> The hooks I use most are useState, useEffect, and custom hooks that encapsulate feature logic. I follow Rules of Hooks strictly with the ESLint plugin. With React 19 Compiler becoming stable, I'm dropping most manual memoization — the compiler handles it automatically as long as I follow Rules of React.
+>
+> For performance, I measure before optimizing. React DevTools Profiler is my first tool. Common wins: list virtualization for large datasets, code splitting for routes, proper key usage in lists, and avoiding unnecessary Context re-renders by splitting contexts by concern.
+>
+> For testing, I use Vitest with React Testing Library and MSW for component and integration tests, and Playwright for end-to-end. The philosophy is test what users see, not implementation details. I use `getByRole` as the primary query because it aligns with accessibility.
+>
+> Common pitfalls I watch for: stale closures in useEffect, mutation of state objects, Context causing unnecessary re-renders, forgetting cleanup in effects, and using useState for server state when React Query is the right tool."
 
-For component design, I favor composition over configuration. Instead of a monolithic component with dozens of props, I create composable pieces that can be assembled flexibly. This makes components easier to test, reuse, and modify independently.
+### Frases úteis em entrevista
 
-Performance optimization is something I approach with measurement first. React's rendering is already efficient — unnecessary memoization adds complexity without benefit. I reach for `React.memo` and `useMemo` only when profiling shows a specific component is re-rendering expensively. For truly large datasets, I use virtualization to render only visible items.
-
-One thing I emphasize is proper data fetching. Using `useEffect` with `useState` for API calls is an anti-pattern — it doesn't handle caching, race conditions, loading states, or error recovery. TanStack Query solves all of these problems declaratively."
+- "Server state is not client state — React Query for one, Zustand for the other."
+- "I start with Server Components, add `'use client'` only when necessary."
+- "Stale closures are the classic bug in useEffect — fix with updater functions or correct deps."
+- "React Compiler in React 19 makes most manual memoization obsolete."
+- "I use `getByRole` as my primary query in Testing Library — accessibility-aligned."
+- "Performance: measure first with Profiler, optimize second."
+- "Feature-based folder structure, not by type."
+- "Zod schemas shared between backend and frontend — single source of validation truth."
+- "Error boundaries isolate failures — one feature crashing doesn't kill the app."
+- "Forms: React Hook Form uncontrolled + Zod, not useState for every field."
 
 ### Key vocabulary
 
-- componente → component: unidade de UI reutilizável
-- estado → state: dados que o componente gerencia
-- propriedades → props: dados passados pelo componente pai
-- gancho → hook: função que adiciona funcionalidade a componentes
-- renderização → rendering: processo de gerar a UI
-- reconciliação → reconciliation: diffing do virtual DOM
-- divisão de código → code splitting: carregar código sob demanda
-- estado do servidor → server state: dados do backend cacheados no frontend
+- componente → component
+- renderização → rendering
+- reconciliação → reconciliation
+- estado → state
+- propriedades → props
+- gancho → hook
+- efeito colateral → side effect
+- montagem / desmontagem → mount / unmount
+- memoização → memoization
+- lazy loading → lazy loading
+- suspensão → suspense
+- limite de erro → error boundary
+- componente de servidor → server component
+- componente de cliente → client component
+- ação de servidor → server action
+- fechamento obsoleto → stale closure
+- controlado / não controlado → controlled / uncontrolled
+- elevação de estado → lift state up
+- prop drilling → prop drilling
+- virtualização → virtualization
+- divisão de código → code splitting
+
+---
 
 ## Recursos
 
-- [React Docs](https://react.dev/) — documentação oficial
-- [React Reference](https://react.dev/reference/react) — API reference
-- [TanStack Query](https://tanstack.com/query/) — data fetching
-- [Zustand](https://zustand-demo.pmnd.rs/) — state management
-- [React Hook Form](https://react-hook-form.com/) — formulários
-- [React Components Demystified](https://dev.to/vyan/react-components-demystified-your-ultimate-guide-from-newbie-to-ninja-3l1n)
-- [Frontend Debugging 101](https://lukeberrypi.vercel.app/articles/frontend-debugging-101)
-- [Frontend Design Patterns](https://www.netguru.com/blog/frontend-design-patterns)
-- [[Trilha Frontend]] — trilha de aprendizado
+### Documentação
+
+- [React Docs](https://react.dev/) — nova docs (substitui reactjs.org)
+- [Next.js Docs](https://nextjs.org/docs)
+- [React Router](https://reactrouter.com/)
+- [TanStack Query](https://tanstack.com/query/latest)
+- [TanStack Router](https://tanstack.com/router/latest)
+
+### Livros e cursos
+
+- [React.dev tutorial](https://react.dev/learn) — oficial, bem escrito
+- [Full Stack Open](https://fullstackopen.com/en/) — partes 1, 2, 5, 6, 7 sobre React
+- [Epic React](https://epicreact.dev/) — Kent C. Dodds, pago mas excelente
+- [React Patterns](https://reactpatterns.com/)
+
+### Blogs essenciais
+
+- [overreacted.io](https://overreacted.io/) — Dan Abramov, profundo
+- [Josh Comeau](https://www.joshwcomeau.com/) — tutorials visuais ótimos
+- [Kent C. Dodds](https://kentcdodds.com/) — Testing Library, hooks, patterns
+- [Robin Wieruch](https://www.robinwieruch.de/)
+- [Rodrigo Pombo](https://pomb.us/)
+
+### Ferramentas
+
+- [React DevTools](https://react.dev/learn/react-developer-tools) — essencial
+- [shadcn/ui](https://ui.shadcn.com/) — componentes copy-paste baseados em Radix
+- [Radix UI](https://www.radix-ui.com/) — componentes acessíveis unstyled
+- [Headless UI](https://headlessui.com/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [React Hook Form](https://react-hook-form.com/)
+- [Zod](https://zod.dev/)
+- [Framer Motion](https://www.framer.com/motion/) — animações
+- [TanStack Table](https://tanstack.com/table/latest) — tabelas complexas
+- [TanStack Virtual](https://tanstack.com/virtual/latest) — virtualization
+- [Storybook](https://storybook.js.org/)
+
+### Newsletters
+
+- [This Week in React](https://thisweekinreact.com/)
+- [React Status](https://react.statuscode.com/)
+- [Bytes](https://bytes.dev/)
+
+---
 
 ## Veja também
 
-- [[JavaScript Fundamentals]]
-- [[TypeScript]]
-- [[Node.js]]
-- [[HTML e CSS]]
-- [[Material UI]]
-- [[Mantine]]
-- [[API Design]]
+- [[JavaScript Fundamentals]] — linguagem base
+- [[TypeScript]] — tipagem em React
+- [[Testes em JavaScript]] — Testing Library, Playwright
+- [[HTML e CSS]] — fundação do frontend
+- [[Node.js]] — backend para React
+- [[Full Stack Open - Guia de Revisão]] — curso da Universidade de Helsinki
+- [[API Design]] — consumindo APIs em React
+- [[Arquitetura de Software]] — patterns arquiteturais
+- [[System Design]] — React em system design
