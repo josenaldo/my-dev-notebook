@@ -1,0 +1,17 @@
+name: Trigger Site Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch deploy to site repo
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.SITE_DEPLOY_TOKEN }}
+          repository: josenaldo/codex-technomanticus-site
+          event-type: content-update
