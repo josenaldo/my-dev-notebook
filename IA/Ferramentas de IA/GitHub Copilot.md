@@ -473,6 +473,180 @@ I pair Copilot with Claude Code rather than replacing one with the other. Copilo
 - [GitHub Blog — Copilot tag](https://github.blog/tag/github-copilot/)
 - [GitHub Next](https://githubnext.com/) — experimentos e features em preview
 
+## Deep dives — Copilot arquitetura, research, evolução
+
+### Histórico — de OpenAI Codex a Copilot 2026
+
+- **2021 — Copilot lançamento:** Baseado em OpenAI Codex (GPT-3 fine-tuned em código). Primeiro AI coding assistant "mainstream".
+- **2022 — Copilot for Business:** policy controls, telemetry opt-out, public code filter.
+- **2023 — Copilot Chat:** GPT-4 no IDE. Chat contextual muda jogo para debugging e explicação.
+- **2024 — Copilot Workspace e Agent mode:** Planning no nível de repositório, agent que itera em tasks.
+- **2025 — Multi-model:** usuário pode escolher Claude ou Gemini em alguns planos. Skills customizadas.
+- **2026 — Ecossistema maduro:** chat modes, prompts, CLI, PR automation, Actions integration.
+
+### Como Copilot gerencia contexto no IDE
+
+Copilot não manda todo seu código para o servidor a cada keystroke. O client (extension VS Code) tem heurísticas:
+
+- **Files abertos** no editor (maior peso)
+- **Files "relevantes"** baseado em imports, recently edited, git-related
+- **Lint/problem context** quando disponível
+- **`copilot-instructions.md`** injetado como system context
+- **Chat history** da sessão
+
+Isso tudo forma o "prompt" que vai ao LLM. Você pode ver parte via VS Code developer tools quando habilita verbose logging.
+
+**Por que importa:** quando completions ficam ruins, muitas vezes é porque o contexto está errado — arquivo relevante fechado, ou um arquivo barulhento aberto. Feche arquivos irrelevantes.
+
+### Awesome Copilot Skills e o ecosystem
+
+GitHub mantém [awesome-copilot](https://github.com/github/awesome-copilot), um repositório curado de chat modes, prompts, e skills que a comunidade produz. Em 2026 é o lugar principal para descobrir workflows novos.
+
+Formato padrão:
+
+- **Chat modes** em `.github/chatmodes/`
+- **Prompt files** em `.github/prompts/`
+- **Instructions** em `.github/copilot-instructions.md`
+
+### Copilot Workspace — o formato de plano
+
+Copilot Workspace tem um formato específico de plano que o agent segue:
+
+```text
+Topic → Specs → Plan → Implementation → Tests
+```
+
+1. **Topic:** descrição de alto nível (da issue ou usuário).
+2. **Specs:** requirements concretos extraídos.
+3. **Plan:** steps detalhados, arquivos a tocar.
+4. **Implementation:** execução com preview por arquivo.
+5. **Tests:** validação.
+
+Você pode revisar e editar cada stage. Mais estruturado que agent mode "free-form".
+
+### GitHub Actions integration em detalhe
+
+Copilot exposto via Actions permite automation:
+
+```yaml
+- uses: github/copilot-review-action@v1
+  with:
+    chatmode: security-review
+    focus: changed files only
+```
+
+Casos práticos:
+
+- Review automático de PRs
+- Sumários de release
+- Triagem automática de issues
+- Documentação gerada em merge
+
+## Casos de produção
+
+### Caso 1 — Completion que copiou código GPL
+
+Public code filter estava desligado por config legada. Copilot sugeriu função que era cópia quase literal de projeto GPL. Descoberto em code scan (FOSSology).
+
+**Fix:**
+
+- Public code filter obrigatório em config central.
+- OSS license scan em CI.
+- Policy para todo repo comercial.
+- Treinamento do time.
+
+**Lição:** licensing risk é real. Mitigação é config + scan.
+
+### Caso 2 — Copilot sugerindo SQL injection
+
+Dev aceitou completion que concatenava string em SQL. Code review pegou antes do merge. Poderia ter ido a produção.
+
+**Fix:**
+
+- Chat mode `security-review` rodando em toda PR que toca DB.
+- Lint rule detectando string concatenation em queries.
+- Treinamento: "leia antes de `Tab`".
+
+**Lição:** Copilot não é revisor de segurança. Adicione camadas.
+
+### Caso 3 — copilot-instructions.md desatualizado
+
+Projeto migrou de REST para GraphQL. `copilot-instructions.md` não atualizada. Copilot continuou sugerindo REST handlers por 3 semanas até alguém notar.
+
+**Fix:**
+
+- Revisão trimestral do arquivo.
+- Updates no mesmo PR que muda stack.
+- Parte do onboarding: "leia e atualize copilot-instructions".
+
+**Lição:** docs vivas > docs escritas uma vez.
+
+### Caso 4 — Chat sem `#file` → respostas genéricas
+
+Dev novo reclamou que "Copilot chat é ruim". Investigação: ele estava perguntando sem referenciar arquivos (`"como faço isso?"`). Chat inferia mal o contexto.
+
+**Fix:**
+
+- Treinamento: sempre ancore em `#file`, `#folder`, `#problem`.
+- Cheat sheet no onboarding.
+- Chat modes que forçam contexto específico.
+
+**Lição:** Copilot chat funciona muito melhor com referências explícitas.
+
+### Caso 5 — Agent mode em projeto desconhecido
+
+Dev tentou agent mode do Copilot em projeto legacy sem `copilot-instructions.md`. Agent fez mudanças que violavam convenções implícitas do projeto. PR grande, difícil de reverter corretamente.
+
+**Fix:**
+
+- Regra: agent mode só em projetos com instructions bem feita.
+- Para legacy, começar com chat interativo até entender padrões.
+- Review mais rigoroso para PRs gerados por agent.
+
+**Lição:** agent mode precisa de contexto. Sem ele, é imprevisível.
+
+## Exercícios hands-on
+
+### Lab 1 — copilot-instructions.md de alto ROI
+
+1. Projeto real que você trabalha.
+2. Baseline: task não-trivial, observe output do Copilot.
+3. Escreva `.github/copilot-instructions.md` rica.
+4. Re-rode. Compare qualidade do output.
+5. Itere.
+
+### Lab 2 — Chat mode customizado
+
+1. Identifique workflow recorrente (ex: code review focado em segurança).
+2. Escreva `.github/chatmodes/security-review.md` com instructions.
+3. Use em PRs reais por 1 semana.
+4. Itere.
+
+### Lab 3 — Copilot chat com referencias
+
+Pratique referenciar contexto:
+
+- `#file:src/auth.ts explain this function`
+- `#folder:src/api summarize the endpoints`
+- `#problem:0 fix this error`
+- `@workspace search for usages of X`
+
+Meça diferença em qualidade com/sem referências.
+
+### Lab 4 — PR automation com Actions
+
+1. Adicione action de code review automatizado.
+2. Custom chat mode para o tipo de review do seu projeto.
+3. Observe PRs reais.
+4. Ajuste baseado em false positives.
+
+### Lab 5 — Workspace em task real
+
+1. Escolha feature de tamanho médio.
+2. Use Copilot Workspace desde issue.
+3. Revise cada stage (specs, plan, implementation).
+4. Compare vs fazer manualmente.
+
 ## Veja também
 
 - [[LLMs]]

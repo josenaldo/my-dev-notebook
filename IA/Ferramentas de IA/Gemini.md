@@ -384,6 +384,196 @@ Where I actually deploy Gemini: multimodal features where text-only LLMs simply 
 - [LMSYS Leaderboard](https://chat.lmsys.org/) — leaderboard público
 - [Artificial Analysis](https://artificialanalysis.ai/) — benchmarks independentes
 
+## Deep dives — Gemini research, multimodal, enterprise
+
+### Multimodal nativo — como é diferente
+
+Modelos como GPT-4 começaram text-only e tiveram image encoders adicionados depois. Gemini foi treinado desde o pretraining com todos os modos — texto, imagem, áudio, vídeo — compartilhando o mesmo espaço de tokens.
+
+**Consequências práticas:**
+
+- **Cross-modal reasoning:** o modelo pode raciocinar "juntando" info de imagem e texto organicamente.
+- **Video understanding:** Gemini processa sequências de frames com contexto temporal, não só frames isolados.
+- **Audio transcription em contexto:** áudio é transcrito considerando contexto textual disponível (exemplo: ambíguidades são resolvidas usando o contexto da conversa).
+
+**Onde vale benchmark:** se seu use case precisa de cross-modal, Gemini frequentemente domina. Text-only, Claude ou GPT costumam equiparar ou superar.
+
+### Context window 2M — o que funciona e não funciona
+
+2M tokens é muito. Na prática:
+
+**Funciona bem:**
+
+- Carregar codebases médias inteiras para análise.
+- Processar 1-2 horas de vídeo.
+- Múltiplos documentos em uma chamada para comparação lado-a-lado.
+
+**Não funciona tão bem:**
+
+- Lost-in-the-middle ainda é real em contextos > 300K.
+- Latência aumenta muito.
+- Custo por chamada pode ser significativo.
+- Muitos use cases ainda prefere RAG com 8-16K de contexto filtrado.
+
+**Regra prática:** use o context window grande para casos onde raciocínio cross-document é essencial; RAG para o resto.
+
+### Grounding com Google Search
+
+Feature única do Gemini: habilitar uma "tool" de Google Search que o modelo invoca durante a geração, retornando resposta com citações de URLs.
+
+```python
+response = client.generate_content(
+    model="gemini-2.5-pro",
+    contents="Qual a última versão do React e breaking changes?",
+    tools=[{"google_search": {}}]
+)
+# resposta cita URLs Web
+```
+
+**Quando usar:**
+
+- Informação que muda (notícias, versões, preços).
+- Research com citação obrigatória.
+- QA que exige fonte verificável.
+
+**Limitações:**
+
+- Qualidade depende do ranking do Google.
+- Custo adicional.
+- Latência maior (espera pela busca).
+- Não é substituto de RAG sobre dados privados.
+
+### Live API — voice + video em tempo real
+
+Gemini Live é API de streaming bidirecional com suporte a áudio e vídeo em tempo real. Latência sub-segundo. Usado em Gemini app mobile para "conversa com o câmera".
+
+**Arquitetura:**
+
+- WebSocket bidirecional.
+- Client envia áudio/vídeo chunks.
+- Server envia text/audio responses em stream.
+- Modelo processa tudo no mesmo contexto multimodal.
+
+**Use cases:**
+
+- Assistentes de câmera (descrever o que vê).
+- Conversas naturais por voz.
+- Tutor com compreensão visual.
+
+### Vertex AI — o caminho enterprise
+
+Vertex AI é a plataforma GCP para ML/AI em produção. Para Gemini, adiciona:
+
+- **Data residency:** rodar em região específica (crítico para LGPD/GDPR).
+- **Private endpoints:** tráfego não sai da VPC.
+- **IAM GCP:** permissions granulares via Google Cloud.
+- **Audit logs:** centralizados em Cloud Logging.
+- **SLA empresarial:** uptime garantido.
+- **Model Garden:** catálogo com Gemini + Claude (via parceria) + Llama + outros.
+- **Committed Use Discounts:** descontos por compromisso.
+
+Para empresas reguladas (saúde, finance), Vertex é frequentemente obrigatório, não opcional.
+
+## Casos de produção
+
+### Caso 1 — Multimodal vs text-only benchmarking
+
+Feature de análise de exames médicos (raio-X + laudo textual). Testei 3 opções:
+
+- **Claude Sonnet + Vision:** qualidade decente, mas tratava imagem "isolada".
+- **GPT-4o:** similar a Claude, variabilidade alta.
+- **Gemini 2.5 Pro:** qualidade superior por raciocínio cross-modal.
+
+Decidi por Gemini via Vertex AI (data residency Brasil obrigatório por LGPD).
+
+**Lição:** para cross-modal, Gemini é default. Mas benchmark no seu caso.
+
+### Caso 2 — Custo Flash vs Haiku para classificação
+
+Feature de triagem de mensagens de pacientes rodava com Claude Haiku. Custo ~$180/mês. Testei Gemini Flash na mesma feature:
+
+- Mesma acurácia no golden set (diferença < 1%).
+- Latência ~20% menor.
+- Custo ~$60/mês.
+
+Migrei, poupei ~$120/mês. Claude Haiku ainda usado para edge cases marcados como "incerto".
+
+**Lição:** Flash é extremamente competitivo em custo. Vale benchmark lado-a-lado.
+
+### Caso 3 — 2M context "funcionou" mas custou caro
+
+Tentei análise de prontuário completo (~400K tokens) jogando no contexto do Gemini Pro. Funcionou — modelo conseguiu extrair insights. Mas:
+
+- Latência: ~45s por chamada.
+- Custo: ~$2.50 por chamada.
+- Qualidade: boa, mas context rot detectável em detalhes do meio.
+
+**Fix:** migração para RAG com chunking semântico. Latência caiu para ~3s, custo para ~$0.15, qualidade subjetivamente melhor.
+
+**Lição:** 2M é capability, não sempre a solução. RAG quase sempre bate.
+
+### Caso 4 — Grounding retornando info errada
+
+Feature de Q&A sobre "últimas atualizações em guidelines médicos" usando Gemini + Google Search grounding. Em alguns casos, retornou info de fontes não-confiáveis (blogs vs papers).
+
+**Fix:**
+
+- Filter de sources por domínio (só dominios confiáveis).
+- Validação humana para decisões médicas.
+- Fallback para RAG sobre fontes curadas.
+
+**Lição:** grounding é útil mas precisa de validação. Google Search não garante qualidade de fonte.
+
+### Caso 5 — Vertex AI vs API direta — confusion
+
+Time inicialmente usava API direta do Gemini. Depois migrou para Vertex AI para compliance. Descobriu que pricing, quotas e features variavam entre os dois. Prompt caching comportava diferente. Levou 2 semanas para reajustar.
+
+**Fix:**
+
+- Escolher Vertex desde dia 1 se compliance é requisito.
+- Documentação clara da stack para novos devs.
+
+**Lição:** Vertex e API direta não são drop-in replacements. Planeje.
+
+## Exercícios hands-on
+
+### Lab 1 — Multimodal em problema real
+
+1. Escolha problema que envolve imagem + texto (análise de screenshot UI, OCR + raciocínio).
+2. Implemente com Gemini 2.5 Pro via AI Studio.
+3. Compare com Claude Sonnet (vision).
+4. Golden set + métricas.
+
+### Lab 2 — Long context experiment
+
+1. Base de documentos de ~500K tokens.
+2. Tente RAG normal com Gemini Flash.
+3. Tente jogar tudo no contexto (Gemini Pro).
+4. Compare: latência, custo, qualidade no golden set.
+
+### Lab 3 — Grounding para Q&A
+
+1. Construa Q&A sobre informações que mudam (tech news, versões).
+2. Habilite Google Search grounding.
+3. Teste com perguntas reais.
+4. Meça precisão e qualidade de fontes.
+
+### Lab 4 — Gemini CLI em workflow real
+
+1. Instale Gemini CLI.
+2. Use em projeto por 1 semana.
+3. Compare com Claude Code.
+4. Documente diferenças de UX.
+
+### Lab 5 — Vertex AI enterprise setup
+
+1. Configure projeto GCP com Vertex AI.
+2. Habilite Gemini.
+3. Restrinja região (ex: southamerica-east1).
+4. Configure IAM granular.
+5. Audit log setup.
+6. Deploy simples usando o endpoint.
+
 ## Veja também
 
 - [[LLMs]]

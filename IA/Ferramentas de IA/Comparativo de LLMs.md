@@ -458,6 +458,219 @@ For enterprise I consider platform choice alongside model choice — Azure OpenA
 - [Azure OpenAI Pricing](https://azure.microsoft.com/en-us/pricing/details/cognitive-services/openai-service/)
 - [Vertex AI Pricing](https://cloud.google.com/vertex-ai/pricing)
 
+## Deep dives — benchmarks, evaluation metodologia, arquiteturas de produção
+
+### Benchmarks públicos — o que medem e por que enganar
+
+Os benchmarks públicos mais citados e o que cada um realmente mede:
+
+- **MMLU (Massive Multitask Language Understanding):** conhecimento geral via múltipla escolha em 57 tópicos. Problema: muitos modelos "viram" o benchmark no treino.
+- **GPQA:** perguntas de ciência em nível PhD. Mais robusto a contamination.
+- **HumanEval, MBPP:** coding benchmarks clássicos (funções Python). Problema: saturados — quase todos modelos modernos passam de 90%.
+- **LiveCodeBench:** coding problems temporalizados (só problems pós-cutoff do modelo). Mais honesto.
+- **SWE-Bench:** tasks reais do GitHub com PRs. Bem mais próximo de uso real de coding agent.
+- **MATH:** problemas matemáticos de olympiad-level.
+- **AIME:** problemas de competição matemática. o3 e similar brilham.
+- **LMSYS Chatbot Arena (Elo):** ranking por voto humano blind. Mais subjetivo mas reflete "feel".
+
+**Por que benchmarks enganam:**
+
+1. **Contamination:** modelos podem ter visto o test set no treino.
+2. **Saturation:** benchmarks fáceis deixam todos modelos empatados no topo.
+3. **Optimization para o teste:** providers otimizam para benchmarks populares.
+4. **Distribution mismatch:** seu workload não é benchmarks.
+5. **Single-score reduction:** média não captura trade-offs.
+
+**Regra:** benchmarks públicos são úteis para calibrar "ordem de grandeza" — nunca decisão final sem golden set próprio.
+
+### Como montar um benchmark próprio
+
+Processo que eu uso:
+
+1. **Coletar ~50-100 inputs reais** da feature.
+2. **Gerar respostas esperadas** (humano + validation).
+3. **Definir métricas:** accuracy, latência, custo, faithfulness.
+4. **Rodar candidatos** com temperature 0, modelo pinado.
+5. **LLM-as-judge** para tarefas abertas (usando modelo forte como julgador).
+6. **Revisão manual** de amostra para calibrar judge.
+7. **Repetir** 3x para observar variância.
+8. **Score table** com métricas e custo.
+
+Ferramentas: [promptfoo](https://www.promptfoo.dev/), Langfuse, Braintrust, custom scripts.
+
+### LLM-as-judge — o que considerar
+
+Usar um LLM forte para avaliar outputs de outro é prático mas tem caveats:
+
+- **Position bias:** judge tende a preferir primeira resposta quando comparando duas.
+- **Length bias:** tende a preferir respostas mais longas.
+- **Self-preference:** GPT-4 prefere respostas de modelos da OpenAI (documentado em papers).
+- **Custo:** eval pode ficar caro em volume.
+
+**Mitigações:**
+
+- Rotacionar ordem em pairwise comparison.
+- Prompt judge explicitamente a ignorar length.
+- Usar modelo diferente de quem gera (se testando Claude, usar GPT como judge).
+- Human calibration em amostra.
+
+Paper importante: [Judging LLM-as-a-Judge](https://arxiv.org/abs/2306.05685).
+
+### Arquiteturas de produção em detalhe
+
+#### Arquitetura 1: Simple API direct
+
+```text
+App → LLM API
+```
+
+**Use quando:** POC, low-volume, single feature.
+
+**Evitar quando:** escala, compliance, multi-model.
+
+#### Arquitetura 2: Gateway + observability
+
+```text
+App → LLM Gateway (LiteLLM, Portkey) → {Claude API, OpenAI API, Vertex}
+                                    ↓
+                                 Langfuse/Helicone
+```
+
+**Benefícios:** unified API, routing, caching, observability centralizada.
+
+**Use quando:** múltiplas features, múltiplos providers.
+
+#### Arquitetura 3: Tiered routing
+
+```text
+App → Triage (Haiku/Flash) → {
+  simple → responde
+  medium → Sonnet/GPT-4.1
+  hard → Opus/o3
+}
+```
+
+**Benefícios:** custo/qualidade balanceado.
+
+**Use quando:** escala relevante, diversidade de dificuldade de tasks.
+
+#### Arquitetura 4: Multi-provider fallback
+
+```text
+App → Primary (Claude Sonnet)
+      ↓ on failure/degradation
+      Fallback 1 (GPT-4.1)
+      ↓
+      Fallback 2 (Gemini Flash)
+```
+
+**Benefícios:** resilience a outages.
+
+**Use quando:** uptime crítico.
+
+#### Arquitetura 5: Hybrid self-host + cloud
+
+```text
+Baseline: Llama 3 self-host
+Escalation: Claude/GPT API em casos difíceis
+```
+
+**Benefícios:** custo previsível, privacidade.
+
+**Use quando:** volume enorme, compliance, custo constraint severo.
+
+### Switching cost entre providers — o que realmente dói
+
+Migrar entre providers é mais caro do que parece. Componentes do custo:
+
+- **Prompts:** prompts otimizados para um modelo não transferem idênticos.
+- **Tool schemas:** formato varia sutilmente.
+- **Structured outputs:** OpenAI usa JSON Schema, Anthropic usa tool use forçado, Gemini tem formato próprio.
+- **Streaming formats:** diferentes SSE payloads.
+- **Error handling:** códigos e retry policies diferentes.
+- **Caching:** APIs e eficácia diferentes.
+- **Observability:** traces diferentes.
+- **Golden sets:** precisam re-validar.
+- **Team knowledge:** dev precisa aprender nova API.
+
+**Tempo típico de migração de feature séria:** 1-3 semanas de dev + 1-2 semanas de validation. Considere antes de decidir.
+
+## Casos de produção
+
+### Caso 1 — Migração GPT → Claude com surpresa de custo
+
+Time migrou feature de GPT-4o para Claude Sonnet para "qualidade melhor". Qualidade subiu levemente, mas custo subiu ~2x porque:
+
+1. Não estavam usando prompt caching (Claude tem, GPT-4o tem uma versão limitada).
+2. Prompts otimizados para GPT estavam verbosos quando migrados sem revisão.
+3. Não ajustaram max_tokens (Claude tende a ser mais verbose).
+
+**Fix:** adicionar prompt caching, condensar prompts, limit max_tokens. Custo final: 30% abaixo do GPT original. **Lição:** migração requer re-otimização, não só troca de client.
+
+### Caso 2 — Outage de único provider
+
+Anthropic API down em horário de pico. Feature crítica ficou fora. 40 min de incidente. Fallback multi-provider foi implementado depois, cascade Claude → GPT → Gemini com circuit breaker.
+
+**Lição:** single-provider é single point of failure.
+
+### Caso 3 — Silent model update
+
+`claude-sonnet-4-5` alias foi atualizado, taxa de erro subiu 4x. Rollback para versão pinada em 30 min. Depois: pin obrigatório + golden set em CI.
+
+**Lição:** alias == não determinismo.
+
+### Caso 4 — Flash-Lite competitive em task imprevista
+
+Task de moderação de conteúdo usava Claude Haiku. Testei Gemini Flash-Lite como experimento. Acurácia quase idêntica, custo ~3x menor, latência similar. Migrei.
+
+**Lição:** sempre benchmark novos modelos. Superfície de pricing vs qualidade muda rápido.
+
+### Caso 5 — Fine-tuning premature
+
+Feature tinha acurácia ~85%. Time quis fine-tuning para chegar a 95%. Custo de fine-tuning + tempo de setup + complexidade operacional alto. Alternativa: melhorar prompting, structured outputs, few-shot. Chegou a 94% sem tuning.
+
+**Lição:** exhausting prompting/RAG antes de considerar fine-tuning.
+
+## Exercícios hands-on
+
+### Lab 1 — Golden set benchmark próprio
+
+1. Task real.
+2. Golden set de 50 inputs + expected.
+3. Rode em 3 modelos: Claude Sonnet, GPT-4.1, Gemini Pro.
+4. Meça: accuracy, latência p50/p95, custo.
+5. Tabela comparativa. Decisão fundamentada.
+
+### Lab 2 — Multi-provider router
+
+1. Implemente cliente que aceita lista de providers.
+2. Roteamento por feature_id ou por latency/cost constraints.
+3. Fallback automático em erro.
+4. Circuit breaker simples.
+5. Observabilidade via Langfuse ou similar.
+
+### Lab 3 — Tiered routing
+
+1. Task com diversidade de dificuldade.
+2. Classifier LLM (Haiku) decide dificuldade.
+3. Route para Haiku (fácil), Sonnet (médio), Opus (difícil).
+4. Compare custo total vs usar Sonnet em tudo.
+
+### Lab 4 — LLM-as-judge calibration
+
+1. Golden set com 50 respostas humanamente rankeadas.
+2. Use GPT-4 como judge sobre respostas de Claude.
+3. Meça correlação com ranking humano.
+4. Ajuste prompt do judge para melhorar correlação.
+
+### Lab 5 — Switching cost analysis
+
+1. Feature em produção (ou simule).
+2. Documente todos os componentes impactados em migration.
+3. Estime tempo e custo.
+4. Compare vs ganho esperado.
+5. Escreva ADR (architecture decision record) da decisão.
+
 ## Veja também
 
 - [[LLMs]] — fundamentos técnicos

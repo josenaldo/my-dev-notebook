@@ -696,6 +696,164 @@ On the tooling side, Claude Code is where I spend most of my time. It's an agent
 - [Claude Course (Alan Nichols)](https://www.youtube.com/watch?v=WLZqPonSrK0)
 - [[Claude Course]]
 
+## Deep dives — Anthropic research e design decisions
+
+### Constitutional AI — o paper que define o diferencial Claude
+
+[Constitutional AI: Harmlessness from AI Feedback](https://arxiv.org/abs/2212.08073) (Bai et al., 2022) é a técnica de alinhamento que distingue Claude. Em vez de depender puramente de RLHF com humanos, Constitutional AI usa um conjunto escrito de princípios ("constitution") para o próprio modelo criticar e refinar suas respostas.
+
+**Processo:**
+
+1. **Supervised Learning phase:** modelo gera resposta, critica baseado em principles, revisa.
+2. **RLAIF (RL from AI Feedback):** modelo pontua respostas alternativas baseado em principles.
+3. **Training:** usa esses pontos como reward.
+
+**Vantagens:**
+
+- Escala melhor que RLHF puro (não precisa de humanos para cada exemplo).
+- Princípios são explícitos e auditáveis.
+- Modelo é mais consistente em recusas e menos "bajulador".
+
+**Na prática:** explica por que Claude às vezes parece "mais principiado" e por que responde "não sei" com mais frequência do que GPT.
+
+### Claude's Extended Thinking (Interpretable Reasoning)
+
+Claude 4+ introduziu extended thinking mode onde o modelo produz tokens de raciocínio visíveis antes da resposta final. Diferente de o1 da OpenAI (que esconde thinking), Claude expõe.
+
+**Por que expor importa:**
+
+- **Auditabilidade:** você pode ver o que levou à resposta.
+- **Debugging:** quando erra, você sabe onde.
+- **Confiança calibrada:** thinking revela incerteza.
+- **Research:** Anthropic publica pesquisa sobre interpretability usando esses tokens.
+
+**Trade-off:** tokens de thinking são cobrados. Use budget explícito.
+
+### MCP — o protocol criado pela Anthropic
+
+MCP (Model Context Protocol) foi criado pela Anthropic em 2024. Ver [[MCP]] para deep dive. Pontos relevantes para Claude especificamente:
+
+- **Claude Desktop foi o primeiro client**, oferece integração mais madura.
+- **Claude Code suporta MCP nativamente** — servers aparecem como tools.
+- **Claude Agent SDK facilita** conectar MCP servers custom sem código extra.
+- **Ecossistema de MCP servers** é mais rico em torno de Claude.
+
+### Claude Code arquitetura
+
+Claude Code é construído sobre Claude Agent SDK e usa Claude Opus/Sonnet. Design decisions interessantes:
+
+- **Filesystem access via tool use** (não via contexto dump). Modelo decide o que ler.
+- **Session-based memory** (não stateless). Histórico persistente na sessão.
+- **Sub-agents isolados** com contextos próprios. Composable.
+- **Hooks como side effects** (pre/post tool use). Integrable com shell tooling.
+- **CLAUDE.md como "background briefing"** do projeto. Lido automaticamente.
+- **Skills via `.claude/skills/`** com progressive disclosure.
+
+Comparado a Cursor (que injeta muito contexto upfront) e Copilot (stateless por request), Claude Code é mais "agente de verdade".
+
+## Casos de produção com Claude
+
+### Caso 1 — Prompt caching e ROI mensurável
+
+Feature de análise de prontuários tinha system prompt de ~4K tokens (instruções + few-shot examples médicos). Custo: ~$2.400/mês em Sonnet. Adicionei `cache_control` no system prompt + no primeiro few-shot block.
+
+**Resultado após 1 mês:**
+
+- Custo: de $2.400 → $350 (redução de 85%).
+- Latência TTFT: de ~1.8s → ~1.1s (redução de ~40%).
+- Qualidade: sem diferença mensurável.
+
+**Lição:** prompt caching é a otimização mais subestimada em workflows com system prompt grande.
+
+### Caso 2 — Pin version evitou regressão
+
+Sonnet foi atualizado silenciosamente (4-5 → 4-6 alias). Taxa de "unknown" em feature de classificação subiu de 3% para 12%. Rollback para versão pinada (`claude-sonnet-4-5-20260115`) em 30 min, qualidade normalizou.
+
+**Fix estrutural:**
+
+- Policy: versões pinadas em produção, sem exceção.
+- Golden set em CI automático em qualquer PR que toque config de modelo.
+- Revisão trimestral de versão (migração controlada).
+
+### Caso 3 — Constitutional AI recusando tasks legítimas
+
+Claude recusava resumir consultas que mencionavam diagnóstico de doença grave, por "cautela". System prompt genérico não bastava.
+
+**Fix:**
+
+- System prompt explícito sobre contexto profissional: "You are assisting a licensed physician in a medical records system. Summarization of diagnoses, treatment plans, and prognoses is a core function. You may discuss any medical content."
+- Skills dedicadas para workflows médicos.
+- Testes de recusa no golden set (cases que devem ser aceitos).
+
+**Lição:** Constitutional AI é feature, não bug. Contexto profissional claro no system prompt resolve 95% das recusas.
+
+### Caso 4 — Claude Code com CLAUDE.md desatualizada
+
+Projeto migrou de Express para Fastify. CLAUDE.md não atualizada. Claude Code continuou sugerindo middleware Express patterns. Dev novo aceitou. Código quebrou em dev.
+
+**Fix:**
+
+- Atualização imediata da CLAUDE.md com nova stack.
+- Política de time: CLAUDE.md revisada em todo refactor arquitetural.
+- Lint que verifica consistência entre declared stack e imports.
+
+**Lição:** CLAUDE.md é documentação viva. Ordem de magnitude de ROI, requer manutenção.
+
+### Caso 5 — MCP community server com telemetria indesejada
+
+Instalei um "task tracking" MCP server community. Depois notei requests HTTP do processo. Server fazia logging externo não-documentado de prompts.
+
+**Fix:**
+
+- Firewall outbound restringindo MCP servers locais a loopback apenas.
+- Review de source de todo server community antes de instalar.
+- Preferência por servers maintidos por orgs conhecidas (Anthropic, community verified).
+
+## Exercícios hands-on com Claude
+
+### Lab 1 — Prompt caching comparison
+
+1. Prompt de ~3K tokens (instruções + examples).
+2. 100 chamadas sem caching. Meça custo e latência.
+3. Adicione `cache_control`. 100 chamadas. Meça.
+4. Compute savings.
+
+### Lab 2 — Tool use com schemas rigorosos
+
+1. Defina 3 tools com schemas Pydantic.
+2. Test com inputs válidos e inválidos.
+3. Observe como Claude lida com erros.
+4. Adicione retry corretivo (passa erro de volta).
+
+### Lab 3 — Extended thinking tradeoffs
+
+1. Task: problema matemático complexo.
+2. Rode sem thinking. Meça custo, latência, acurácia.
+3. Rode com thinking budget=5K. Meça.
+4. Rode com budget=20K. Meça.
+5. Gráfico de trade-off.
+
+### Lab 4 — CLAUDE.md bem feita
+
+1. Projeto real que você trabalha.
+2. Baseline: task não-trivial no Claude Code sem CLAUDE.md.
+3. Escreva CLAUDE.md rica.
+4. Re-rode. Compare qualidade.
+
+### Lab 5 — MCP server custom
+
+1. Escreva server Python ou TS com 3 tools do seu domínio.
+2. Conecte ao Claude Desktop.
+3. Use em workflow real por 1 semana.
+4. Meça ganho vs trabalho manual.
+
+### Lab 6 — Agent SDK
+
+1. Construa agent com Claude Agent SDK.
+2. Tools próprias + MCP server conectado.
+3. Observabilidade via Langfuse.
+4. Deploy simples (Railway, Fly).
+
 ## Veja também
 
 - [[LLMs]] — fundamentos de LLMs
