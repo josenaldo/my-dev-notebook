@@ -29,6 +29,7 @@ Docker, Kubernetes, WSL, cloud e configuração de ambientes.
 
 - [[Linux]] — shell, permissions, systemd, networking, debugging
 - [[Terminal]]
+- [[GitHub CLI]] — gh, automação GitHub, repos, PRs, Actions, secrets, API
 - [[Configurando Ambiente Linux no WSL]]
 
 ## Cloud
