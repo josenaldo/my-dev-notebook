@@ -1,10 +1,11 @@
 ---
-title: My Dev Notebook
+title: Codex Technomanticus
+subtitle: Florilégio Tecnomântico do Arquimago Multiplanar
 type: moc
 publish: true
 ---
 
-# My Dev Notebook
+# Codex Technomanticus
 
 Caderno digital de desenvolvimento de software. Anotações, referências e guias que uso no dia a dia e compartilho com colegas, com foco em preparação para entrevistas técnicas internacionais.
 
