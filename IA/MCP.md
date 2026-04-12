@@ -567,6 +567,264 @@ The thing I think a lot of people underestimate is the security model. MCP serve
 - [Building a MCP Server — tutorial](https://modelcontextprotocol.io/tutorials/building-mcp-server)
 - [MCP Explained — Simon Willison](https://simonwillison.net/tags/mcp/)
 
+## Deep dives — spec, protocolo e ecossistema
+
+### O protocolo JSON-RPC 2.0 em MCP
+
+MCP usa JSON-RPC 2.0, um padrão simples e maduro para RPC. Cada mensagem é um desses três tipos:
+
+```json
+// Request (com id, espera response)
+{"jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": {}}
+
+// Response (com mesmo id)
+{"jsonrpc": "2.0", "id": 1, "result": {"tools": [...]}}
+
+// Notification (sem id, fire-and-forget)
+{"jsonrpc": "2.0", "method": "notifications/initialized"}
+```
+
+**Erros seguem padrão:**
+
+```json
+{"jsonrpc": "2.0", "id": 1, "error": {"code": -32602, "message": "Invalid params"}}
+```
+
+Códigos standard (-32700 parse error, -32600 invalid request, -32601 method not found, -32602 invalid params, -32603 internal error) + range custom para servers.
+
+### Ciclo de vida completo
+
+```text
+1. Client inicia server (stdio: subprocess; HTTP: connect)
+2. Client envia initialize com:
+     - protocolVersion
+     - capabilities do client
+     - clientInfo (nome, versão)
+3. Server responde com:
+     - protocolVersion (deve matchar)
+     - capabilities do server (tools, resources, prompts, logging)
+     - serverInfo
+4. Client envia notifications/initialized
+5. Ambos podem usar capabilities declaradas
+6. Client pode pedir mudança via listChanged notifications
+7. Shutdown: client envia shutdown, server responde, client exit
+```
+
+### Capabilities negotiation
+
+No handshake, server e client anunciam o que suportam. Isso permite evolução: um server novo pode rodar com um client antigo se as capabilities essenciais baterem.
+
+Exemplo de capabilities do server:
+
+```json
+{
+  "capabilities": {
+    "tools": {"listChanged": true},
+    "resources": {"subscribe": true, "listChanged": true},
+    "prompts": {"listChanged": true},
+    "logging": {}
+  }
+}
+```
+
+### Resources — URIs e subscribe
+
+Resources são identificados por URIs. Schemes comuns:
+
+- `file:///path/to/file`
+- `git://repo/branch/path`
+- `postgres://host/db/table`
+- `custom://server/thing/id`
+
+Clients podem se inscrever em resources específicas (se server suporta `subscribe`) para receber notifications quando mudarem. Útil para filesystem ao vivo.
+
+### Roots — escopo de trabalho
+
+Client anuncia "roots" (diretórios ou URLs) que são o escopo atual. Server respeita isso para limitar operações.
+
+```json
+{"method": "roots/list", "result": {"roots": [
+  {"uri": "file:///workspace/project-a"},
+  {"uri": "file:///workspace/project-b"}
+]}}
+```
+
+Isso previne que filesystem server acesse fora do escopo declarado.
+
+### Prompts com arguments
+
+Prompts são workflows parametrizados que o usuário invoca.
+
+```json
+{"method": "prompts/get", "params": {
+  "name": "code-review",
+  "arguments": {"file": "src/auth.ts", "severity": "high"}
+}}
+```
+
+Server retorna uma lista de messages pronta para enviar ao LLM.
+
+## Deep dives — papers e contexto
+
+### Origem e design philosophy
+
+MCP foi anunciado pela Anthropic em novembro de 2024. Design philosophy explicitamente inspirada em:
+
+- **LSP (Language Server Protocol):** analogia direta. LSP padronizou integração IDE↔language tooling; MCP quer padronizar AI client↔context sources.
+- **HTTP:** protocolo universal para transporte arbitrário sobre rede.
+- **USB:** analogia de marketing ("USB-C for AI") — plug-and-play standard.
+
+**Pontos de design:**
+
+- **Stateful por design:** sessão viva entre client e server, não stateless REST.
+- **Bidirectional:** server pode enviar notifications ao client.
+- **Capability negotiation:** graceful degradation entre versões.
+- **Multiple transports:** não acoplado a HTTP.
+
+### Adoção em 2025-2026
+
+Cronologia resumida:
+
+- **Nov 2024:** Anthropic anuncia, open source spec.
+- **Dez 2024-Fev 2025:** primeira leva de servers oficiais (filesystem, git, postgres, slack, github).
+- **2025 Q1:** Cursor, Zed, Windsurf adotam.
+- **2025 Q2:** OpenAI adiciona suporte a MCP em ChatGPT (desktop) e assistants.
+- **2025 Q3:** Google adiciona em Gemini CLI.
+- **2025 Q4:** Microsoft em Copilot (limited).
+- **2026:** padrão de facto para integração de AI com contexto externo.
+
+### MCP vs alternativas históricas
+
+- **OpenAI Plugins (2023):** precursor, não padronizado entre providers, descontinuado.
+- **ChatGPT Custom GPTs:** feature de produto, não protocol.
+- **Claude Artifacts:** feature in-app, não protocol.
+- **LangChain Tools:** abstração dentro do framework, não protocol cross-framework.
+
+MCP é o primeiro protocol real, cross-provider, cross-tool.
+
+## Casos de produção
+
+### Caso 1 — MCP server community malicioso
+
+Instalei um "task tracker" MCP server do GitHub que tinha ~500 stars. Após alguns dias de uso, notei requests HTTP inesperados do processo. Investigação: o server fazia POST dos prompts para o backend do autor para "análise". Silencioso, não documentado. Removido, issue reportado (autor disse que era "telemetria opcional").
+
+**Fix:**
+
+- Review de source de todo server community antes de instalar.
+- Firewall restringindo outbound de MCP servers locais a loopback.
+- Preferência por servers maintidos por orgs conhecidas.
+
+**Lição:** supply chain é real. "Open source popular" não garante segurança.
+
+### Caso 2 — Filesystem server com escopo amplo demais
+
+Configurei filesystem server com root = `$HOME` por conveniência. Durante uma sessão com prompt injection embutido em documento de cliente, agent tentou ler `~/.ssh/id_rsa`. Não conseguiu (permissões do OS), mas foi wake-up call.
+
+**Fix:**
+
+- Escopo sempre ao diretório do projeto específico, não `$HOME`.
+- Usuário separado para rodar MCP servers com privileges mínimos.
+- Audit log de todas leituras de arquivo.
+
+**Lição:** least privilege. Default restrito, abrir só quando necessário.
+
+### Caso 3 — Tool output gigante contaminando contexto
+
+MCP server custom expunha tool `query_database`. Uma query inocente retornou 30K tokens de JSON. Context do agent inundou, qualidade de próximas interações caiu drasticamente.
+
+**Fix:**
+
+- Tools paginam resultados (limit default + flag para expandir).
+- Outputs grandes retornam summary + ID para detalhe opcional.
+- Hard limit de tokens no return value.
+
+**Lição:** compactar outputs de tool é crítico. Não despeje dados brutos.
+
+### Caso 4 — HTTP MCP server sem TLS em dev
+
+Dev rodou HTTP MCP server local sem TLS "porque é localhost". Algumas semanas depois, resolveram compartilhar entre máquinas para "facilidade". Tráfego sem criptografia contendo queries sensíveis.
+
+**Fix:**
+
+- TLS sempre, mesmo em dev.
+- mkcert para certificados locais válidos.
+- Auth token obrigatório, rotacionável.
+- Rede restrita (VPN, firewall).
+
+**Lição:** padrões de segurança são contra temporários virarem permanentes.
+
+### Caso 5 — Schema change quebrou clients antigos
+
+Atualizei um MCP server custom renomeando um campo de `user_id` para `userId`. Clients com versão antiga (Claude Desktop desatualizado no laptop de um colega) começaram a falhar silenciosamente.
+
+**Fix:**
+
+- Versionamento explícito de tools via sufixo (`get_user` → `get_user_v2`).
+- Deprecation graceful: manter tool antiga por algumas versões.
+- Client compatibility check no handshake.
+
+**Lição:** schema de tool é API pública. Versione como tal.
+
+## Exercícios hands-on
+
+### Lab 1 — Setup de MCP local
+
+**Objetivo:** familiarizar-se com ecossistema.
+
+1. Instale Claude Desktop.
+2. Configure `claude_desktop_config.json` com servers oficiais: filesystem (scope ao diretório `mcp-lab`), git, fetch.
+3. Use em tarefas reais por 1 semana.
+4. Note onde ajuda e onde atrapalha.
+
+### Lab 2 — Escrever MCP server mínimo
+
+**Objetivo:** entender o protocolo na prática.
+
+1. Use o SDK TS ou Python oficial.
+2. Exponha uma tool única: `get_weather(city)` com API mock.
+3. Stdio transport.
+4. Connect ao Claude Desktop via config.
+5. Invoque tool através de conversa.
+
+### Lab 3 — Server com tools, resources e prompts
+
+**Objetivo:** usar os três primitivos.
+
+1. Tema: TODO list.
+2. Tools: `add_todo`, `complete_todo`, `delete_todo`.
+3. Resources: `todo://list` (todos), `todo://stats` (contagem).
+4. Prompts: `review_todos` (prompt parametrizado que gera análise dos todos).
+5. Conectar a cliente, usar.
+
+### Lab 4 — HTTP MCP server com auth
+
+**Objetivo:** praticar server remoto.
+
+1. Implemente MCP server como Express/Fastify com SSE.
+2. Auth via bearer token.
+3. TLS com cert self-signed.
+4. Conecte com client (Claude Code suporta HTTP MCP).
+5. Teste auth rejection e retry.
+
+### Lab 5 — Security review de server community
+
+**Objetivo:** praticar due diligence.
+
+1. Escolha um MCP server community popular no awesome-list.
+2. Clone, leia o código completo (30 min-1h).
+3. Verifique: o que ele faz de rede? Que credenciais acessa? Tem logging?
+4. Decida: instalar ou não?
+5. Documente análise.
+
+### Lab 6 — Observability em MCP
+
+**Objetivo:** instrumentar servers próprios.
+
+1. Adicione logging estruturado (JSON) a um server seu.
+2. Campos: timestamp, tool, args, result_size, duration, error.
+3. Envie para arquivo ou SIEM.
+4. Dashboards básicos de uso.
+
 ## Veja também
 
 - [[Inteligência Artificial]]

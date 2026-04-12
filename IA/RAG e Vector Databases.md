@@ -808,6 +808,122 @@ On the infra side, I default to pgvector unless scale forces me to a dedicated v
 - [HyDE paper](https://arxiv.org/abs/2212.10496)
 - [REALM paper](https://arxiv.org/abs/2002.08909)
 
+## Deep dives — papers e técnicas avançadas
+
+### RAG original (Lewis et al., 2020)
+
+O paper que cunhou o termo "Retrieval-Augmented Generation". Combinou um retriever neural (DPR) com gerador (BART). A ideia central — buscar antes de gerar — virou o padrão. [arxiv](https://arxiv.org/abs/2005.11401)
+
+### Dense Passage Retrieval (Karpukhin et al., 2020)
+
+Paper que estabeleceu embeddings densos como superiores a BM25 para QA. Popularizou a arquitetura dual-encoder. [arxiv](https://arxiv.org/abs/2004.04906)
+
+### ColBERT / SPLADE — late interaction e sparse learned retrieval
+
+Alternativas a dense retrieval: ColBERT embedda cada token separadamente com late interaction; SPLADE aprende representações esparsas. Mais precisos que vector search em alguns benchmarks, mais caros. [ColBERT](https://arxiv.org/abs/2004.12832)
+
+### HyDE — Hypothetical Document Embeddings (Gao et al., 2022)
+
+Em vez de embed a query, gerar uma resposta hipotética com LLM e embed a resposta. Técnica de query rewriting simples e efetiva, muito usada em produção. [arxiv](https://arxiv.org/abs/2212.10496)
+
+### Contextual Retrieval (Anthropic, 2024)
+
+Pré-anexar contexto do documento em cada chunk antes de embedar. Resolve o problema de chunks isolados que perdem significado.
+
+**Impacto reportado:** 49% redução em falhas de retrieval sozinho, 67% combinado com hybrid + rerank. [blog](https://www.anthropic.com/news/contextual-retrieval)
+
+### GraphRAG (Microsoft, 2024)
+
+Extrai entidades e relações com LLM, constrói grafo de conhecimento, combina retrieval com travessia. Destrava queries multi-hop. Caro de construir; use só quando justificado. [arxiv](https://arxiv.org/abs/2404.16130)
+
+### Ragas — evaluation framework
+
+Framework padrão para eval de RAG. Métricas: context precision, context recall, faithfulness, answer relevance, answer correctness. Separar eval de retrieval do eval de generation é crítico. [docs](https://docs.ragas.io/)
+
+### Advanced patterns
+
+- **Multi-query retrieval:** gerar N variações da query, unir resultados.
+- **Parent document retrieval:** embed chunks pequenos, retornar chunks pais maiores.
+- **Hierarchical retrieval:** busca primeiro em resumos, depois em chunks.
+- **Corrective RAG (CRAG):** agent avalia se contexto é suficiente, busca mais se não for.
+- **Self-RAG:** modelo decide quando retrievar e avalia contextos retornados.
+
+## Casos de produção
+
+### Caso 1 — Chunking quebrado com tabelas
+
+Base cresceu para 800+ docs. Usuários reclamaram de respostas vagas numa área específica. Chunker fixed-size quebrava tabelas no meio, criando chunks "lixo".
+
+**Fix:** chunker structure-aware respeitando headers/tabelas/code blocks. Re-indexação (~3h). Ragas regression test por categoria. Chunker versionado.
+
+**Lição:** chunking é onde metade da qualidade vive.
+
+### Caso 2 — Embeddings misturados de versões diferentes
+
+Upgrade de modelo de embeddings (v2 → v3) foi aplicado só em novos docs. Antigos ficaram com v2. Espaços vetoriais diferentes = qualidade arruinada.
+
+**Fix:** re-indexação completa sempre ao trocar modelo. Campo `embedding_version` nos metadados. Pipeline detecta mismatch.
+
+**Lição:** não misture embeddings de modelos diferentes.
+
+### Caso 3 — Multi-tenant leak
+
+Feature multi-tenant sem filtro estrito por `tenant_id`. Bug em query retornou chunks do tenant errado. Data leak confidencial.
+
+**Fix:** `tenant_id` obrigatório nos metadados + filtro no middleware + Row-level Security no Postgres (defense-in-depth). Audit log cross-tenant (deve ser sempre zero).
+
+**Lição:** isolation multi-tenant é crítico. Multi-camada.
+
+### Caso 4 — Reranker como otimização mais subestimada
+
+RAG com hybrid search tinha context precision ~0.6. Adicionei Cohere Rerank v3 em top-20 → subiu para ~0.85. Custo extra: ~$0.002/query.
+
+**Lição:** reranker é quase sempre worth it.
+
+### Caso 5 — Long context não substitui RAG
+
+Tentativa de "eliminar RAG" usando Gemini 1.5 Pro 2M contexto. Resultado: lost-in-the-middle severo, custo alto, latência inviável. Reverti para RAG filtrado.
+
+**Lição:** context window grande não é substituto de retrieval bem feito.
+
+## Exercícios hands-on
+
+### Lab 1 — RAG mínimo funcional
+
+1. Stack: pgvector + OpenAI embeddings + Claude Sonnet.
+2. Indexe ~50 docs próprios.
+3. Chunking fixed como baseline.
+4. Top-k=5, citation.
+5. Golden set de 20 perguntas + Ragas.
+
+### Lab 2 — Iteração medida de retrieval
+
+Partindo do Lab 1, melhore de 0.6 para 0.85 context precision via:
+
+1. Structure-aware chunking.
+2. Hybrid search (BM25 + vector + RRF).
+3. Reranker.
+4. Query rewriting (HyDE).
+5. Metadata filtering.
+
+Gráfico mostrando ganho por iteração.
+
+### Lab 3 — Contextual Retrieval
+
+Implemente a técnica da Anthropic: LLM gera contexto curto por chunk, embedda `[contexto]+[chunk]`. Compare no golden set.
+
+### Lab 4 — Eval pipeline profissional
+
+Golden set + Ragas + GitHub Actions + dashboard de trend.
+
+### Lab 5 — Multi-tenant isolado
+
+Schema com `tenant_id` obrigatório, RLS no Postgres, teste de segurança cross-tenant.
+
+### Lab 6 — Agentic RAG
+
+Agent com tools `search`, `rerank`, `answer`, comparado com RAG fixo. Decida se o ganho justifica o custo.
+
 ## Veja também
 
 - [[Inteligência Artificial]]

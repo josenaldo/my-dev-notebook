@@ -768,6 +768,333 @@ Third, production concerns: cost, latency, evaluation, safety. I treat prompts a
 - *Building LLMs for Production* — Bouchard, Peters
 - *Hands-On Large Language Models* — Jay Alammar, Maarten Grootendorst
 
+## Deep dives técnicos — entendendo os internals
+
+### Self-attention em detalhe
+
+Self-attention é o mecanismo que permite Transformer processar sequências com paralelização. Aqui está o que realmente acontece para cada token:
+
+**Passo 1 — Projeções Q/K/V.** O embedding de cada token é multiplicado por três matrizes aprendidas (W_Q, W_K, W_V), produzindo três vetores: Query, Key, Value.
+
+```text
+para cada token i:
+  Q_i = embedding_i × W_Q   // "o que eu procuro"
+  K_i = embedding_i × W_K   // "o que eu ofereço"
+  V_i = embedding_i × W_V   // "o que eu carrego"
+```
+
+**Passo 2 — Attention scores.** Para cada token, calcula-se quanto ele "presta atenção" em cada outro token.
+
+```text
+score(i, j) = (Q_i · K_j) / sqrt(d_k)
+```
+
+A divisão por `sqrt(d_k)` (onde `d_k` é a dimensão das Keys) evita que produtos escalares fiquem muito grandes e saturem o softmax.
+
+**Passo 3 — Softmax.** Os scores viram probabilidades que somam 1.
+
+```text
+attention(i, j) = softmax(score(i, j))
+```
+
+**Passo 4 — Causal mask.** Em LLMs decoder-only (GPT, Claude, Llama), tokens futuros são mascarados com `-inf` antes do softmax. Isso garante que token i só vê tokens j ≤ i.
+
+**Passo 5 — Weighted sum.** Output de cada token é a soma ponderada dos Values.
+
+```text
+output_i = sum(attention(i, j) × V_j para cada j)
+```
+
+**Multi-head:** em vez de uma "cabeça" de attention, usa-se N cabeças (tipicamente 8-128) em paralelo, cada uma com suas próprias matrizes W_Q/K/V. Elas aprendem a focar em coisas diferentes — algumas em sintaxe, outras em semântica, outras em referências. Outputs das cabeças são concatenados e projetados de volta.
+
+**Complexidade:** O(n²) em memória e compute, onde n é o número de tokens. Isso explica por que context windows grandes são caros. Alternativas (sparse attention, sliding window, linear attention) existem mas trade-off qualidade por custo.
+
+### KV cache — a otimização fundamental de inferência
+
+Durante geração autoregressive, você gera um token por vez. Ingenuamente, para o token N+1 você teria que re-processar todos os N tokens anteriores. **KV cache** resolve isso: guardam-se os Keys e Values já computados e só se calcula o novo token.
+
+```text
+Token 1: computar Q1, K1, V1 → cache [K1, V1]
+Token 2: computar Q2, K2, V2 → cache [K1,K2, V1,V2] → attention com K1-K2, V1-V2
+Token 3: computar Q3, K3, V3 → cache cresce → attention com cache
+...
+```
+
+**Implicações práticas:**
+
+- **Latência de TTFT (time to first token)** é dominada por "prefill" — processar o prompt inicial. Esse custo é O(n²).
+- **Latência entre tokens** ("decode") é O(n) após o prefill, porque KV cache amortiza.
+- **Memória** cresce linearmente com contexto. Contextos de 1M tokens exigem GBs de VRAM só para KV cache.
+- **Prompt caching** (Anthropic, OpenAI) é essencialmente KV cache persistente entre chamadas — por isso funciona como funciona.
+
+### Positional encoding e RoPE
+
+Transformers não têm noção natural de ordem — sem algo explícito, "gato come peixe" seria igual a "peixe come gato". **Positional encoding** injeta info de posição.
+
+**Approaches:**
+
+- **Absolute (original):** vetores senoidais somados aos embeddings.
+- **Learned absolute:** embeddings posicionais aprendidos.
+- **RoPE (Rotary Position Embedding):** rotaciona Q e K no espaço complexo pela posição. Dominante em LLMs modernos (Llama, Claude, GPT-4+). Vantagens: funciona bem com long context, extrapolação razoável para posições não vistas no treino.
+- **ALiBi, T5 relative:** variantes para contextos longos.
+
+Por que importa: extrapolação para contextos mais longos que o treino depende do positional encoding. RoPE com "NTK-aware" scaling ou "YaRN" são técnicas para estender context window pós-treino.
+
+### Tokenização — BPE em detalhe
+
+**BPE (Byte-Pair Encoding)** é o algoritmo padrão. Ideia: começa com bytes/caracteres individuais, mescla pares mais frequentes iterativamente até atingir um vocabulário alvo (tipicamente 50K-200K tokens).
+
+**Exemplo simplificado** com corpus `"low", "lower", "newest", "widest"`:
+
+```text
+Início (vocab = caracteres): {l, o, w, e, r, n, s, t, i, d}
+
+Iteração 1: par mais frequente → "es" (de "newest", "widest")
+  merge: "es" vira token
+Iteração 2: próximo mais frequente → "est"
+  merge: "est" vira token
+...
+```
+
+O vocabulário final contém caracteres + merges. Qualquer palavra pode ser tokenizada quebrando em merges conhecidos.
+
+**Implicações:**
+
+- Palavras comuns viram 1 token; raras viram múltiplos.
+- Código é penalizado (sintaxe, indentação, camelCase).
+- Línguas não-latinas são penalizadas (tokenizers EN-first).
+- Modelos com tokenizers diferentes têm economia diferente para o mesmo texto.
+
+**Ferramentas:** [tiktoken](https://github.com/openai/tiktoken) (OpenAI), `anthropic.count_tokens()`, [transformers AutoTokenizer](https://huggingface.co/docs/transformers/main_classes/tokenizer).
+
+### Embedding space geometry
+
+Embeddings vivem num espaço de alta dimensão com geometria aprendida. Algumas propriedades:
+
+- **Similaridade semântica → proximidade geométrica.** Cosine similarity é a medida padrão.
+- **Anisotropia:** espaços de embedding de modelos comuns têm uma direção "quente" onde todos os vetores concentram. Isso distorce similaridade e é corrigido com whitening em alguns pipelines.
+- **Linear structure:** operações como `king - man + woman ≈ queen` funcionam (parcialmente) em modelos bem treinados. Base de "word analogies".
+- **Dimensões matryoshka:** modelos modernos (OpenAI v3, Voyage 3) são treinados para que truncar as primeiras K dimensões preserve qualidade — permite trade-off custo/qualidade.
+- **Dense vs sparse:** dense embeddings têm ~500-4000 dims; sparse (SPLADE, ELSER) têm dimensão do vocabulário com maioria zero.
+
+## Deep dives — papers fundamentais
+
+### Attention is All You Need (Vaswani et al., 2017)
+
+O paper que introduziu Transformer. Leia para: intuição sobre attention, motivação arquitetural, por que RNNs ficaram obsoletos.
+
+Ponto-chave: multi-head self-attention substitui recorrência por paralelização massiva. [arxiv](https://arxiv.org/abs/1706.03762)
+
+### Scaling Laws (Kaplan et al., 2020; Hoffmann et al., 2022 — Chinchilla)
+
+Como performance escala com parameters, data, compute. Chinchilla mostrou que modelos anteriores estavam undertrained.
+
+Ponto-chave: proporção ideal é ~20 tokens por parâmetro. Modelo de 70B quer ~1.4T tokens de treino. [Chinchilla](https://arxiv.org/abs/2203.15556)
+
+### InstructGPT (Ouyang et al., 2022)
+
+Paper que descreveu SFT + RLHF, produzindo "ChatGPT-like" a partir de GPT-3. Explica por que modelos alinhados são mais úteis mas também mais "ativos" (hedging, recusas).
+
+Ponto-chave: alignment não aumenta capacidade bruta, mas aumenta utilidade por fator enorme. [arxiv](https://arxiv.org/abs/2203.02155)
+
+### FlashAttention (Dao et al., 2022, 2023)
+
+Otimização de I/O de attention em GPU. Reduz memória de O(n²) para O(n) ao processar em tiles. Destravou contexto longo viável.
+
+Ponto-chave: muita otimização de LLM vem de I/O awareness, não de math puro. [arxiv](https://arxiv.org/abs/2205.14135)
+
+### Lost in the Middle (Liu et al., 2023)
+
+Prova empírica que modelos usam info do início e fim de contexto melhor que do meio. Vale para contextos grandes mesmo em modelos "long context".
+
+Ponto-chave: placement no prompt importa. RAG bem feito bate "context dump" quase sempre. [arxiv](https://arxiv.org/abs/2307.03172)
+
+### Constitutional AI (Bai et al., Anthropic 2022)
+
+Como Claude é alinhado. Modelo auto-critica usando princípios escritos, reduz dependência de labelers humanos.
+
+Ponto-chave: direção de safety escalável; explica comportamentos distintivos de Claude. [arxiv](https://arxiv.org/abs/2212.08073)
+
+### Switch Transformer / Mixtral (MoE)
+
+Mixture of Experts: cada token ativa apenas uma fração dos parâmetros. Permite modelos com trilhões de parâmetros a custo de inferência comparável a modelos densos menores.
+
+Ponto-chave: GPT-4 rumor-ado é MoE. Mixtral 8x7B é exemplo open source prático. [Mixtral paper](https://arxiv.org/abs/2401.04088)
+
+### Language Models are Few-Shot Learners (GPT-3, Brown et al. 2020)
+
+O paper que mostrou que scaling destrava in-context learning. Base do "prompt engineering" como campo.
+
+Ponto-chave: modelos grandes aprendem pelo prompt, não só por fine-tuning. [arxiv](https://arxiv.org/abs/2005.14165)
+
+## Casos de produção — observability e incidentes
+
+### Caso 1 — Cost spike por context creep
+
+Feature de sumarização começou a custar 3x mais num mês. Investigação via Langfuse mostrou que tokens médios por chamada haviam dobrado. Causa raiz: um refactor acidentalmente passou a incluir mais contexto (histórico completo em vez de último par).
+
+**Fix:**
+
+- Limite hard de tokens de input por feature.
+- Alerta "tokens/call > p95 histórico".
+- Regression test com assertion de cost budget.
+
+### Caso 2 — Outage de provider
+
+Anthropic API começou a retornar 529 em um horário de pico. ~40 min de incidente. Depois: roteador multi-provider com Claude → GPT-4.1 → Gemini Flash como fallback cascata, circuit breaker em health checks passivos.
+
+**Lição:** multi-provider resilience é design, não opcional.
+
+### Caso 3 — Silent model update
+
+Feature classificando tickets usava alias `claude-sonnet-4-5`. Anthropic atualizou para 4-6. Taxa de "unknown" subiu de 3% para 12%. Rollback em 30 min, pin estrutural depois.
+
+**Lição:** pin version em produção + golden set em CI.
+
+### Caso 4 — Structured output edge case
+
+Extração de CEP de texto livre, JSON mode, funcionava 99%. Um PR mudou o system prompt trocando `JSON` por `json` minúsculo. Taxa de erro subiu para ~8% — modelo começou a retornar JSON em markdown code block em vez de raw.
+
+**Fix:**
+
+- Golden set com assertions estritas de schema.
+- `response_format` / `tool_choice` forçado em vez de depender de instrução textual.
+- Code review mais rigoroso para mudanças em prompts.
+
+### Caso 5 — PII em logs
+
+Inicialmente, logs da API LLM tinham inputs completos dos usuários. Passou LGPD compliance por anos. Depois, um auditor pediu retenção limitada a 7 dias + redaction de CPFs. Dor: logs estavam em múltiplos sistemas (Langfuse, Cloudwatch, nosso DB).
+
+**Fix:**
+
+- PII detection em middleware antes de enviar ao provider.
+- Campos sensíveis substituídos por hashes para audit.
+- Retention policy enforçada centralmente.
+- Audit review trimestral.
+
+**Lição:** compliance não é afterthought. Entrar no sistema cedo é barato; retrofit é caro.
+
+### Observabilidade mínima de LLM em produção
+
+```text
+Por chamada:
+  - feature_id, user_id (hash), session_id, request_id
+  - modelo, versão
+  - input_tokens, output_tokens, cache_hit
+  - latency (TTFT, total)
+  - temperature, max_tokens, top_p
+  - tool_calls (count, names, latency)
+  - status (ok, error, timeout, schema_invalid)
+  - custo estimado
+
+Dashboards:
+  - custo por feature (diário, semanal, mensal)
+  - latência p50/p95/p99
+  - taxa de erro por tipo
+  - tokens/call trend (detectar context creep)
+  - cache hit rate (eficácia de prompt caching)
+
+Alertas:
+  - custo diário > 1.5× média de 30d
+  - p95 latência > SLA
+  - taxa de erro > 2%
+  - golden set regression (from CI)
+```
+
+Ferramenta que uso: Langfuse. Alternativas: Helicone, LangSmith, Braintrust, Arize Phoenix.
+
+## Exercícios hands-on — labs
+
+### Lab 1 — Tokenizer awareness
+
+**Objetivo:** desenvolver intuição sobre tokenização.
+
+**Tarefas:**
+
+1. Com `tiktoken`, meça tokens para:
+   - Uma página de Wikipedia em inglês
+   - Mesma página em português
+   - Mesma página em japonês
+   - Arquivo de código TypeScript
+   - Arquivo de código Python minificado
+   - JSON com muitos campos curtos
+2. Calcule custo estimado (Claude Sonnet input) para cada.
+3. Escreva um post comparando.
+
+**Aprendizado esperado:** linguagens não-latinas são mais caras; código tem overhead; JSON denso é relativamente eficiente.
+
+### Lab 2 — Sampling intuition
+
+**Objetivo:** sentir diferença entre temperature settings.
+
+**Tarefas:**
+
+1. Prompt: "Escreva um parágrafo sobre o que é Kubernetes."
+2. Rode 5 vezes com temperature em [0, 0.2, 0.5, 1.0, 1.5].
+3. Compare saídas. Observe repetição vs variabilidade vs coerência.
+4. Meça tokens e score subjetivo de qualidade.
+
+**Aprendizado esperado:** você desenvolve intuição do que é "apropriado" para cada use case.
+
+### Lab 3 — Tool use robusto
+
+**Objetivo:** construir tool use confiável que lida com erros.
+
+**Tarefas:**
+
+1. Defina 3 tools: `calculator`, `get_time`, `search_wikipedia`.
+2. Implemente loop de agent com max_steps=10.
+3. Adicione:
+   - Validação de input com Pydantic
+   - Retry com error feedback ao modelo
+   - Logging estruturado
+   - Timeout por tool
+4. Teste com casos difíceis: input inválido, tool que falha, pergunta que exige encadear tools.
+
+**Aprendizado esperado:** você entende que tool use em produção precisa de muito mais que "call tool".
+
+### Lab 4 — Prompt caching ROI
+
+**Objetivo:** medir impacto real de prompt caching.
+
+**Tarefas:**
+
+1. Pegue um system prompt de ~3-5K tokens (ou crie um).
+2. Rode 100 chamadas sem caching, meça custo e latência p50.
+3. Adicione `cache_control: ephemeral`.
+4. Rode 100 chamadas, meça.
+5. Compare. Calcule ROI em dólares.
+
+**Aprendizado esperado:** você vê na prática por que caching "paga" rapidamente.
+
+### Lab 5 — Eval com golden set
+
+**Objetivo:** estabelecer disciplina de evaluation.
+
+**Tarefas:**
+
+1. Escolha uma tarefa: classificação, extração, ou Q&A.
+2. Monte golden set de 50 exemplos.
+3. Escreva script que rode o prompt sobre o set e compute métricas.
+4. Integre em GitHub Actions — PR falha se regressão > X%.
+5. Mude o prompt várias vezes, observe impacto no CI.
+
+**Aprendizado esperado:** você sai da "iteração ad-hoc" e entra na "evolução medida".
+
+### Lab 6 — Multi-provider fallback
+
+**Objetivo:** implementar resilience cross-provider.
+
+**Tarefas:**
+
+1. Construa um cliente que aceita lista de providers em ordem de prioridade.
+2. Primary: Claude Sonnet. Fallback: GPT-4.1. Fallback final: Gemini Flash.
+3. Circuit breaker: se primary retorna erro 3x seguidas em 1 min, pula por 5 min.
+4. Teste simulando outage (mock 529 responses).
+5. Meça: latência adicionada pelo fallback, precisão comparativa.
+
+**Aprendizado esperado:** você entende arquitetura resiliente em sistemas stochastic.
+
 ## Veja também
 
 - [[Inteligência Artificial]] — contexto amplo de IA
