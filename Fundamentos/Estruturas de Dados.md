@@ -123,14 +123,14 @@ Nós independentes conectados por ponteiros. Cada nó armazena o dado e uma (ou 
 
 ### Operações
 
-| Operação | Array/ArrayList | LinkedList |
-| --- | --- | --- |
-| Acesso por índice | O(1) | O(n) |
-| Inserção no início | O(n) | O(1) |
-| Inserção no final | O(1)* | O(1)** |
-| Remoção no meio (com ref) | O(n) | O(1) |
-| Busca por valor | O(n) | O(n) |
-| Memória por elemento | baixo | alto (overhead de ponteiros) |
+| Operação                  | Array/ArrayList | LinkedList                   |
+| ------------------------- | --------------- | ---------------------------- |
+| Acesso por índice         | O(1)            | O(n)                         |
+| Inserção no início        | O(n)            | O(1)                         |
+| Inserção no final         | O(1)*           | O(1)**                       |
+| Remoção no meio (com ref) | O(n)            | O(1)                         |
+| Busca por valor           | O(n)            | O(n)                         |
+| Memória por elemento      | baixo           | alto (overhead de ponteiros) |
 
 \* Amortizado. \*\* Se tiver ponteiro para o tail.
 
@@ -201,13 +201,13 @@ public class Cpf {
 
 ### HashMap, HashSet, LinkedHashMap, TreeMap
 
-| Estrutura | Ordem | Complexidade | Uso típico |
-| --- | --- | --- | --- |
-| `HashMap` | nenhuma | O(1) | lookup geral, cache, contagem |
-| `LinkedHashMap` | inserção (ou acesso) | O(1) | LRU cache, preservar ordem de chegada |
-| `TreeMap` | natural (Comparable) | O(log n) | range queries, ordenado |
-| `HashSet` | nenhuma | O(1) | deduplicação, verificação de existência |
-| `TreeSet` | natural | O(log n) | conjunto ordenado |
+| Estrutura       | Ordem                | Complexidade | Uso típico                              |
+| --------------- | -------------------- | ------------ | --------------------------------------- |
+| `HashMap`       | nenhuma              | O(1)         | lookup geral, cache, contagem           |
+| `LinkedHashMap` | inserção (ou acesso) | O(1)         | LRU cache, preservar ordem de chegada   |
+| `TreeMap`       | natural (Comparable) | O(log n)     | range queries, ordenado                 |
+| `HashSet`       | nenhuma              | O(1)         | deduplicação, verificação de existência |
+| `TreeSet`       | natural              | O(log n)     | conjunto ordenado                       |
 
 ```java
 Map<String, Integer> freq = new HashMap<>();
@@ -349,10 +349,10 @@ Conjunto de **vértices** (nós) conectados por **arestas**. Modelam redes socia
 
 ### Representações
 
-| Representação | Espaço | Verificar aresta | Iterar vizinhos |
-| --- | --- | --- | --- |
-| Matriz de adjacência | O(V²) | O(1) | O(V) |
-| Lista de adjacência | O(V + E) | O(grau) | O(grau) |
+| Representação        | Espaço   | Verificar aresta | Iterar vizinhos |
+| -------------------- | -------- | ---------------- | --------------- |
+| Matriz de adjacência | O(V²)    | O(1)             | O(V)            |
+| Lista de adjacência  | O(V + E) | O(grau)          | O(grau)         |
 
 **Regra prática:** use lista de adjacência (99% dos casos). Matriz só vale para grafos densos ou quando verificar a existência de uma aresta específica é a operação dominante.
 
@@ -488,18 +488,18 @@ Mantém partições de um conjunto. Operações `union` e `find` em quase O(1) c
 
 ## Complexidade comparativa
 
-| Estrutura | Acesso | Busca | Inserção | Remoção | Espaço | Ordem |
-| --- | --- | --- | --- | --- | --- | --- |
-| Array | O(1) | O(n) | O(n) | O(n) | O(n) | inserção |
-| ArrayList | O(1) | O(n) | O(1) amort. | O(n) | O(n) | inserção |
-| LinkedList | O(n) | O(n) | O(1)* | O(1)* | O(n) | inserção |
-| Stack / Queue / Deque | O(n) | O(n) | O(1) | O(1) | O(n) | inserção |
-| HashMap / HashSet | — | O(1) | O(1) | O(1) | O(n) | nenhuma |
-| LinkedHashMap | — | O(1) | O(1) | O(1) | O(n) | inserção/acesso |
-| TreeMap / TreeSet | — | O(log n) | O(log n) | O(log n) | O(n) | natural |
-| Heap (PriorityQueue) | — | O(n) | O(log n) | O(log n) | O(n) | parcial |
-| Trie | — | O(L) | O(L) | O(L) | O(A·N·L) | lexicográfica |
-| BST desbalanceada | — | O(n) | O(n) | O(n) | O(n) | natural |
+| Estrutura             | Acesso | Busca    | Inserção    | Remoção  | Espaço   | Ordem           |
+| --------------------- | ------ | -------- | ----------- | -------- | -------- | --------------- |
+| Array                 | O(1)   | O(n)     | O(n)        | O(n)     | O(n)     | inserção        |
+| ArrayList             | O(1)   | O(n)     | O(1) amort. | O(n)     | O(n)     | inserção        |
+| LinkedList            | O(n)   | O(n)     | O(1)*       | O(1)*    | O(n)     | inserção        |
+| Stack / Queue / Deque | O(n)   | O(n)     | O(1)        | O(1)     | O(n)     | inserção        |
+| HashMap / HashSet     | —      | O(1)     | O(1)        | O(1)     | O(n)     | nenhuma         |
+| LinkedHashMap         | —      | O(1)     | O(1)        | O(1)     | O(n)     | inserção/acesso |
+| TreeMap / TreeSet     | —      | O(log n) | O(log n)    | O(log n) | O(n)     | natural         |
+| Heap (PriorityQueue)  | —      | O(n)     | O(log n)    | O(log n) | O(n)     | parcial         |
+| Trie                  | —      | O(L)     | O(L)        | O(L)     | O(A·N·L) | lexicográfica   |
+| BST desbalanceada     | —      | O(n)     | O(n)        | O(n)     | O(n)     | natural         |
 
 \* Com referência ao nó. L = comprimento da string; A = alfabeto; N = número de strings.
 
@@ -509,22 +509,22 @@ Mantém partições de um conjunto. Operações `union` e `find` em quase O(1) c
 
 Reconhecer o pattern é metade do problema:
 
-| Sinal no enunciado | Estrutura / técnica |
-| --- | --- |
-| "qual é o par com soma X" | HashMap (complemento) |
-| "primeira ocorrência repetida" | HashSet |
-| "k maiores / menores elementos" | Heap de tamanho k |
-| "intervalo / janela de tamanho fixo" | Sliding window |
-| "subarray contíguo com soma X" | Prefix sum + HashMap |
-| "parênteses balanceados" / parsing | Stack |
-| "caminho mais curto" em grafo não-ponderado | BFS |
-| "caminho mais curto" com pesos | Dijkstra |
-| "ordem de execução com dependências" | Topological sort (DFS) |
-| "autocomplete / busca por prefixo" | Trie |
-| "LRU / cache com expiração" | LinkedHashMap / HashMap + DLL |
-| "mediana em stream" | Dois heaps (min + max) |
-| "intervalo ordenado / range query" | TreeMap |
-| "detectar ciclo" | DFS com estados ou Union-Find |
+| Sinal no enunciado                          | Estrutura / técnica           |
+| ------------------------------------------- | ----------------------------- |
+| "qual é o par com soma X"                   | HashMap (complemento)         |
+| "primeira ocorrência repetida"              | HashSet                       |
+| "k maiores / menores elementos"             | Heap de tamanho k             |
+| "intervalo / janela de tamanho fixo"        | Sliding window                |
+| "subarray contíguo com soma X"              | Prefix sum + HashMap          |
+| "parênteses balanceados" / parsing          | Stack                         |
+| "caminho mais curto" em grafo não-ponderado | BFS                           |
+| "caminho mais curto" com pesos              | Dijkstra                      |
+| "ordem de execução com dependências"        | Topological sort (DFS)        |
+| "autocomplete / busca por prefixo"          | Trie                          |
+| "LRU / cache com expiração"                 | LinkedHashMap / HashMap + DLL |
+| "mediana em stream"                         | Dois heaps (min + max)        |
+| "intervalo ordenado / range query"          | TreeMap                       |
+| "detectar ciclo"                            | DFS com estados ou Union-Find |
 
 ---
 

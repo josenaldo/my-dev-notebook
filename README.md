@@ -127,4 +127,4 @@ Cada pasta representa um plano de estudo e prática. Em cada plano, o arquivo co
 
 ## Dicionário de Magia Tecnomante
 
-- [[Dicionario de Magia Tecnomante]]
+- [[Fundamentos/Dicionario de Magia Tecnomante]]
