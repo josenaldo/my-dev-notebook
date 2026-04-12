@@ -13,40 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "00 - Inbox/Entradas.md",
+                "file": "Arquitetura/Arquitetura de Software.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Entradas"
-            }
-          },
-          {
-            "id": "0a930671a9f08a6a",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Aprendizado/Trilha IA.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Trilha IA"
-            }
-          },
-          {
-            "id": "69b3cfbe98cbeb09",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Aprendizado/Trilha Cloud.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Trilha Cloud"
+              "title": "Arquitetura de Software"
             }
           }
         ]
@@ -217,44 +189,44 @@
   },
   "active": "0e940fedb58df06d",
   "lastOpenFiles": [
-    "JavaScript/Backend/Node.js.md.tmp.3042512.1775307804704",
-    "IA/Ferramentas de IA/GitHub Copilot.md.tmp.3042512.1775307772813",
-    "IA/Agents.md.tmp.3042512.1775307757454",
-    "IA/Skills e Prompting.md.tmp.3042512.1775307733630",
-    "index.md.tmp.3042512.1775236508728",
-    "_guia/Como usar este vault.md.tmp.3042512.1775236498722",
-    "_guia/Como usar este vault.md.tmp.3042512.1775236497030",
-    "Ferramentas/sedjXEMhM",
-    "JavaScript/sedCM1jUD",
-    "Java/sedyDABiZ",
-    "index.md.tmp.3042512.1775236470528",
-    "Recursos/Recursos.md",
-    "JavaScript/JavaScript.md",
-    "Java/Java.md",
-    "Infraestrutura/Infraestrutura.md",
-    "IA/IA.md",
-    "Fundamentos/Fundamentos.md",
-    "Ferramentas/Ferramentas.md",
+    "Arquitetura/Design Patterns.md",
+    "IA/Ferramentas de IA/Comparativo de LLMs.md.tmp.2320287.1775954471589",
+    "IA/Ferramentas de IA/Gemini.md.tmp.2320287.1775954403862",
+    "IA/Ferramentas de IA/Codex.md.tmp.2320287.1775954342825",
+    "IA/Ferramentas de IA/GitHub Copilot.md.tmp.2320287.1775954290512",
+    "IA/Ferramentas de IA/GitHub Copilot.md.tmp.2320287.1775954270913",
+    "IA/Ferramentas de IA/Claude.md.tmp.2320287.1775954215503",
+    "IA/MCP.md.tmp.2320287.1775954124665",
+    "IA/RAG e Vector Databases.md.tmp.2320287.1775954052716",
+    "IA/Agents.md.tmp.2320287.1775953928040",
+    "IA/Skills e Prompting.md.tmp.2320287.1775953854224",
+    "IA/MCP.md",
+    "Arquitetura/Arquitetura de Software.md",
     "Arquitetura/Arquitetura.md",
-    "Aprendizado/Aprendizado.md",
-    "Java/Frontend/JavaFX.md",
     "Arquitetura/API Design.md",
-    "MOCs/MOC - IA.md",
-    "Infraestrutura/Terminal.md",
-    "Infraestrutura/Linux.md",
-    "Infraestrutura/Nginx.md",
-    "Infraestrutura/Kubernetes.md",
-    "Infraestrutura/Docker.md",
-    "Arquitetura/Mensageria/BullMQ.md",
-    "Arquitetura/Mensageria/RabbitMQ.md",
+    "Infraestrutura/Observabilidade.md",
+    "Infraestrutura/CI-CD.md",
+    "JavaScript/Full Stack Open - Guia de Revisão.md",
+    "JavaScript/Core/Testes em JavaScript.md",
+    "Java/Backend/Spring Security.md",
+    "Java/Backend/Spring Data JPA.md",
+    "Java/Core/Helsinki MOOC - Guia de Revisão.md",
+    "Java/Core/Certificação Java OCP.md",
+    "Java/Core/Java Concurrency.md",
     "Arquitetura/Mensageria/Kafka.md",
     "Arquitetura/Mensageria/Event Streaming.md",
-    "Arquitetura/Mensageria/Mensageria.md",
+    "Arquitetura/Mensageria/BullMQ.md",
     "Arquitetura/Event Storming/Event Storming.md",
+    "Aprendizado/Communicating Trade-offs.md",
+    "Aprendizado/Curso Fullcycle 3.0.md",
+    "Aprendizado/Instalando Anaconda no Ubuntu.md",
+    "Aprendizado/Aprendizado.md",
+    "Aprendizado/Claude Course.md",
+    "Aprendizado/Behavioral Questions.md",
+    "Aprendizado/RPA/Building Your First Automation Bot.md",
+    "00 - Inbox/Avaliar.md",
     "Arquitetura/Event Storming/Untitled 3.png",
     "Arquitetura/Event Storming/Untitled 1 2.png",
-    "Arquitetura/Event Storming/Exemplos.md",
-    "Aprendizado/Trilha Go.md",
     "Java/Backend/Kafka/Untitled 4.png",
     "Aprendizado/RPA/Untitled 1 4.png",
     "Aprendizado/RPA/Untitled 1 3.png",
