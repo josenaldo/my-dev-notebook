@@ -53,3 +53,7 @@ https://lushbinary.com/blog/cloudflare-emdash-developer-guide-setup-plugins-depl
 https://github.com/emdash-cms/emdash/
 https://docs.astro.build/en/concepts/why-astro/
 https://blog.cloudflare.com/emdash-wordpress/
+
+# Karpathy's memory
+https://x.com/DataChaz/status/2039963758790156555
+https://github.com/Mattbusel/srfm-lab/blob/c55a82754b31246664b1def452f3d261b0a5fa77/docs/guides/local_rag_setup.md

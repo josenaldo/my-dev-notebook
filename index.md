@@ -110,7 +110,7 @@ Cada pasta representa um plano de estudo e prática. Em cada plano, o arquivo co
 
 ## Plano de Aprendizado
 
-- [[Aprendizado]]
+- [[Aprendizado/index]]
 - **Entrevistas:** [[Trilha Entrevistas]]
 - **Trilhas:** [[Trilha Java]] · [[Trilha Backend]] · [[Trilha Frontend]] · [[Trilha Fullstack Java-Spring + TS-React-Nextjs 15]] · [[Trilha Cloud]] · [[Trilha Devops]] · [[Trilha Go]] · [[Trilha IA]] · [[Trilha JS-TS]] · [[Trilha Python]]
 - **Mestres:** [[Mestres Jedi]]
