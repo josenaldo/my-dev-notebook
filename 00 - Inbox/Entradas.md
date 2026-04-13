@@ -1,31 +1,34 @@
-https://github.com/shanraisshan/claude-code-best-practice
-https://charliehills.substack.com/p/claude-code-beginner-advanced?triedRedirect=true
+<https://github.com/shanraisshan/claude-code-best-practice>
+<https://charliehills.substack.com/p/claude-code-beginner-advanced?triedRedirect=true>
 [CLAUDE CODE FULL COURSE 4 HOURS: Build & Sell (2026)](https://www.youtube.com/watch?v=QoQBzR1NIqI)
 [Context Lens](https://github.com/TiagoSchr/context-lens)
 [12-Factor Agents - Principles for building reliable LLM applications](https://github.com/humanlayer/12-factor-agents/)
 [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents#agents)
 [No Vibes Allowed: Solving Hard Problems in Complex Codebases – Dex Horthy, HumanLayer](https://www.youtube.com/watch?v=rmvDxxNubIg)
-https://www.humanlayer.dev/
-https://github.com/affaan-m/everything-claude-code
-https://www.youtube.com/watch?v=WLZqPonSrK0
-https://newsletter.pragmaticengineer.com/p/the-third-golden-age-of-software
-https://addyosmani.com/blog/agentic-engineering/
-https://addyosmani.com/blog/factory-model/?ref=dailydev
-https://www.infoq.com/articles/spec-driven-development/?ref=dailydev
-https://www.youtube.com/playlist?list=PLucm8g_ezqNoAkYKXN_zWupyH6hQCAwxY
+<https://www.humanlayer.dev/>
+<https://github.com/affaan-m/everything-claude-code>
+<https://www.youtube.com/watch?v=WLZqPonSrK0>
+<https://newsletter.pragmaticengineer.com/p/the-third-golden-age-of-software>
+<https://addyosmani.com/blog/agentic-engineering/>
+<https://addyosmani.com/blog/factory-model/?ref=dailydev>
+<https://www.infoq.com/articles/spec-driven-development/?ref=dailydev>
+<https://www.youtube.com/playlist?list=PLucm8g_ezqNoAkYKXN_zWupyH6hQCAwxY>
 [Project Loom: Understand the new Java concurrency model](https://www.infoworld.com/article/2334607/project-loom-understand-the-new-java-concurrency-model.html)
 [Project Valhalla: A look inside Java’s epic refactor](https://www.infoworld.com/article/2337986/project-valhalla-a-look-inside-javas-epic-refactor.html)
 [How to speak](https://www.youtube.com/watch?v=Unzc731iCUY)
-https://x.com/heyrimsha/status/2037145631987556748
-https://github.com/karanpratapsingh/system-design
-https://github.com/donnemartin/system-design-primer
-https://www.systemdesignbutsimple.com/p/free-resources
-https://github.com/ByteByteGoHq/system-design-101/tree/main
+<https://x.com/heyrimsha/status/2037145631987556748>
+<https://github.com/karanpratapsingh/system-design>
+<https://github.com/donnemartin/system-design-primer>
+<https://www.systemdesignbutsimple.com/p/free-resources>
+<https://github.com/ByteByteGoHq/system-design-101/tree/main>
+[ Hard truths about building in the AI era | Keith Rabois (Khosla Ventures)](https://www.lennysnewsletter.com/p/hard-truths-about-building-in-the-ai-era?utm_source=podcast-email&publication_id=10845&post_id=193008881&utm_campaign=email-play-on-substack&utm_content=listen_now_button&r=1ktqd9&triedRedirect=true)
 # Notion + Obsidian
+
 [Stop Notion. Here's Why Obsidian is the BEST Note-Taking app in 2026 - Article](https://x.com/noahvnct/status/2032508457278980359)
 [Stop Notion. Here's Why Obsidian is the BEST Note-Taking app in 2026](https://www.youtube.com/watch?v=eGUOs7uqWYs)
 
 # 10 GitHub Repositories for AI Engineers
+
 1. [Hands on Large Language Models](https://lnkd.in/gpvPemeG) - Este repositório contém os exemplos de código completos do livro Hands-On Large Language Models, incluindo notebooks que cobrem desde a introdução até o fine-tuning de LLMs.
 2. [AI Agents for Begineers](https://lnkd.in/gVm5gmv7) - Curso amigável para iniciantes sobre Agentes de IA. São 11 lições gratuitas para começar a construir sistemas de agentes.
 3. [GenAI Agents](https://lnkd.in/gaiZgzpA) - Tutoriais e implementações de várias técnicas de Agentes de IA Generativa, do básico ao avançado.
@@ -37,23 +40,41 @@ https://github.com/ByteByteGoHq/system-design-101/tree/main
 9. [Awesome LLM Inference](https://lnkd.in/gWp6TYuU) - Lista curada de artigos e códigos sobre otimização de inferência (Flash-Attention, Quantização, Paged-Attention, etc).
 10. [LLM Course](https://lnkd.in/gUPJmWNM) - Curso completo cobrindo o ciclo de vida de aplicações LLM, do design ao deploy, com roadmaps e notebooks Colab.
 
-
-https://github.com/microsoft/ai-agents-for-beginners
-https://www.promptingguide.ai/
+<https://github.com/microsoft/ai-agents-for-beginners>
+<https://www.promptingguide.ai/>
 
 # Claw code
-https://github.com/ultraworkers/claw-code
-https://github.com/Yeachan-Heo/oh-my-codex
-https://github.com/code-yeongyu/oh-my-openagent
+<https://github.com/ultraworkers/claw-code>
+<https://github.com/Yeachan-Heo/oh-my-codex>
+<https://github.com/code-yeongyu/oh-my-openagent>
+
 # Document AI
-https://cloud.google.com/document-ai
+<https://cloud.google.com/document-ai>
 
 # EmDash
-https://lushbinary.com/blog/cloudflare-emdash-developer-guide-setup-plugins-deployment-2026/
-https://github.com/emdash-cms/emdash/
-https://docs.astro.build/en/concepts/why-astro/
-https://blog.cloudflare.com/emdash-wordpress/
+<https://lushbinary.com/blog/cloudflare-emdash-developer-guide-setup-plugins-deployment-2026/>
+<https://github.com/emdash-cms/emdash/>
+<https://docs.astro.build/en/concepts/why-astro/>
+<https://blog.cloudflare.com/emdash-wordpress/>
 
 # Karpathy's memory
-https://x.com/DataChaz/status/2039963758790156555
-https://github.com/Mattbusel/srfm-lab/blob/c55a82754b31246664b1def452f3d261b0a5fa77/docs/guides/local_rag_setup.md
+https://paulo.com.br/blog/memoria-agentes-second-brain/
+https://x.com/karpathy/status/2040470801506541998
+<https://x.com/DataChaz/status/2039963758790156555>
+<https://github.com/Mattbusel/srfm-lab/blob/c55a82754b31246664b1def452f3d261b0a5fa77/docs/guides/local_rag_setup.md>
+https://github.com/safishamsi/graphify
+https://www.youtube.com/playlist?list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ
+https://www.youtube.com/watch?v=7xTGNNLPyMI
+https://www.youtube.com/watch?v=EWvNQjAaOHw
+https://www.youtube.com/watch?v=zjkBMFhNj_g
+https://karpathy.ai/
+https://github.com/wendeus0/LLM-knowledge-base
+https://github.com/forrestchang/andrej-karpathy-skills
+https://github.com/safishamsi/graphify
+# Stanford CS230: Deep Learning I Autumn 2025
+
+[Stanford CS230: Deep Learning I Autumn 2025](https://www.youtube.com/playlist?list=PLoROMvodv4rNRRGdS0rBbXOUGA0wjdh1X)
+# Local models
+https://www.linkedin.com/posts/joseph-benguira-28264b2_localai-opensource-gpu-share-7448979034165735424-AKzd/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAOp364Bp-C3WEW14YMtkVbQTwgYBSPNxgY
+# SDD
+https://glaucia86.github.io/palestra-sdd/?lang=pt-BR#/capa
