@@ -1,13 +1,11 @@
 {
-    "folders": [
-        {
-            "path": ".",
-        },
-        {
-            "path": "../codex-technomanticus-site",
-        },
-        {
-            "path": "../codex-technomanticus-arcana",
-        },
-    ],
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../codex-technomanticus-apocrypha"
+		}
+	],
+	"settings": {}
 }
