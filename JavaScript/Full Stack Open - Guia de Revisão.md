@@ -10,7 +10,7 @@ tags:
   - react
   - nodejs
   - revisao
-publish: false
+publish: true
 ---
 
 # Full Stack Open — Guia de Revisão
@@ -1383,14 +1383,14 @@ const useNotesStore = create((set, get) => ({
 
 ### Por que Zustand substituiu Redux
 
-| | Redux | Zustand |
-| --- | --- | --- |
-| Boilerplate | Alto (actions, reducers, selectors) | Mínimo |
-| Provider | Obrigatório | Não precisa |
-| Async | Via thunks/sagas | Nativo |
-| TypeScript | Verboso | First-class |
-| Bundle | ~10KB | ~1KB |
-| Learning curve | Alta | Baixa |
+|                | Redux                               | Zustand     |
+| -------------- | ----------------------------------- | ----------- |
+| Boilerplate    | Alto (actions, reducers, selectors) | Mínimo      |
+| Provider       | Obrigatório                         | Não precisa |
+| Async          | Via thunks/sagas                    | Nativo      |
+| TypeScript     | Verboso                             | First-class |
+| Bundle         | ~10KB                               | ~1KB        |
+| Learning curve | Alta                                | Baixa       |
 
 ## 6.b — Complex state, fetch, testing
 
@@ -1588,12 +1588,12 @@ export const useResource = (baseUrl) => {
 
 ### esbuild vs webpack
 
-| | webpack | esbuild |
-| --- | --- | --- |
-| Velocidade | Lento | 10-100x mais rápido |
-| Linguagem | JS | Go |
-| Plugins | Muito maduro | Crescendo |
-| Maturidade | 2014 | 2020 |
+|            | webpack      | esbuild             |
+| ---------- | ------------ | ------------------- |
+| Velocidade | Lento        | 10-100x mais rápido |
+| Linguagem  | JS           | Go                  |
+| Plugins    | Muito maduro | Crescendo           |
+| Maturidade | 2014         | 2020                |
 
 Em 2026, Vite/esbuild é o padrão para React SPAs.
 
@@ -1680,13 +1680,13 @@ class ErrorBoundary extends React.Component {
 
 ### GraphQL vs REST
 
-| | REST | GraphQL |
-| --- | --- | --- |
-| Endpoints | Múltiplos | Um único |
-| Over-fetching | Comum | Mínimo |
-| Under-fetching | Comum (múltiplas requests) | Mínimo |
-| Caching | HTTP nativo | Complexo |
-| Typing | OpenAPI (add-on) | Schema nativo |
+|                | REST                       | GraphQL       |
+| -------------- | -------------------------- | ------------- |
+| Endpoints      | Múltiplos                  | Um único      |
+| Over-fetching  | Comum                      | Mínimo        |
+| Under-fetching | Comum (múltiplas requests) | Mínimo        |
+| Caching        | HTTP nativo                | Complexo      |
+| Typing         | OpenAPI (add-on)           | Schema nativo |
 
 ### Schema
 

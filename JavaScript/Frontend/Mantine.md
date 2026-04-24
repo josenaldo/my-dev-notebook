@@ -9,7 +9,7 @@ tags:
   - frontend
   - ui-library
   - entrevista
-publish: false
+publish: true
 ---
 
 # Mantine
@@ -83,14 +83,14 @@ const theme = createTheme({
 
 ### Diferenciais vs MUI
 
-| Aspecto | Mantine | MUI |
-| --- | --- | --- |
-| Design | Neutro, flexível | Material Design (opinionado) |
-| Estilização | CSS Modules (v7) | Emotion / styled |
-| Hooks | 50+ hooks utilitários | Poucos |
-| Forms | @mantine/form integrado | Sem solução oficial |
-| Bundle | Menor | Maior |
-| Maturidade | Mais novo (2021) | Mais maduro (2014) |
+| Aspecto     | Mantine                 | MUI                          |
+| ----------- | ----------------------- | ---------------------------- |
+| Design      | Neutro, flexível        | Material Design (opinionado) |
+| Estilização | CSS Modules (v7)        | Emotion / styled             |
+| Hooks       | 50+ hooks utilitários   | Poucos                       |
+| Forms       | @mantine/form integrado | Sem solução oficial          |
+| Bundle      | Menor                   | Maior                        |
+| Maturidade  | Mais novo (2021)        | Mais maduro (2014)           |
 
 ## Quando usar
 

@@ -9,7 +9,7 @@ tags:
   - frontend
   - web
   - entrevista
-publish: false
+publish: true
 ---
 
 # HTML e CSS
@@ -98,15 +98,15 @@ HTML semântico **significa usar elementos pelo significado**, não pela aparên
 
 **Principais tags estruturais:**
 
-| Tag | Uso |
-| --- | --- |
-| `<header>` | Cabeçalho de página OU de seção/artigo |
-| `<nav>` | Navegação principal |
-| `<main>` | Conteúdo principal (1 por página) |
-| `<article>` | Conteúdo auto-contido (post, card, notícia) |
-| `<section>` | Agrupamento temático com heading |
-| `<aside>` | Conteúdo relacionado mas secundário (sidebar) |
-| `<footer>` | Rodapé de página OU de seção/artigo |
+| Tag         | Uso                                           |
+| ----------- | --------------------------------------------- |
+| `<header>`  | Cabeçalho de página OU de seção/artigo        |
+| `<nav>`     | Navegação principal                           |
+| `<main>`    | Conteúdo principal (1 por página)             |
+| `<article>` | Conteúdo auto-contido (post, card, notícia)   |
+| `<section>` | Agrupamento temático com heading              |
+| `<aside>`   | Conteúdo relacionado mas secundário (sidebar) |
+| `<footer>`  | Rodapé de página OU de seção/artigo           |
 
 ### Elementos inline importantes
 
@@ -186,22 +186,22 @@ HTML semântico **significa usar elementos pelo significado**, não pela aparên
 
 **Input types modernos:**
 
-| Type | Uso |
-| --- | --- |
-| `text` | Texto genérico |
-| `email` | Valida formato email, teclado mobile adaptado |
-| `tel` | Teclado numérico em mobile |
-| `url` | Valida formato URL |
-| `number` | Só números, com spinners |
-| `date` / `time` / `datetime-local` | Date picker nativo |
-| `month` / `week` | Seleção mês/semana |
-| `color` | Color picker |
-| `range` | Slider |
-| `search` | Search com ícone nativo |
-| `password` | Oculta input |
-| `file` | File picker |
-| `hidden` | Não visível, envia valor |
-| `checkbox` / `radio` | Escolhas |
+| Type                               | Uso                                           |
+| ---------------------------------- | --------------------------------------------- |
+| `text`                             | Texto genérico                                |
+| `email`                            | Valida formato email, teclado mobile adaptado |
+| `tel`                              | Teclado numérico em mobile                    |
+| `url`                              | Valida formato URL                            |
+| `number`                           | Só números, com spinners                      |
+| `date` / `time` / `datetime-local` | Date picker nativo                            |
+| `month` / `week`                   | Seleção mês/semana                            |
+| `color`                            | Color picker                                  |
+| `range`                            | Slider                                        |
+| `search`                           | Search com ícone nativo                       |
+| `password`                         | Oculta input                                  |
+| `file`                             | File picker                                   |
+| `hidden`                           | Não visível, envia valor                      |
+| `checkbox` / `radio`               | Escolhas                                      |
 
 **Atributos de validação:**
 
@@ -428,19 +428,19 @@ font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, s
 
 ### Unidades
 
-| Unidade | O que é | Quando usar |
-| --- | --- | --- |
-| `px` | Pixel absoluto | Bordas, pequenos offsets |
-| `rem` | Relativo ao root (html) | **Default para font-size, spacing** |
-| `em` | Relativo ao elemento pai | Para escalar com contexto |
-| `%` | Relativo ao pai | Widths, heights |
-| `vw` / `vh` | Viewport width/height | Layouts full-screen |
-| `svh` / `lvh` / `dvh` | Small/large/dynamic vh (2023+) | Mobile com barra de URL |
-| `vmin` / `vmax` | Menor/maior do viewport | Responsividade |
-| `ch` | Largura do '0' da fonte | Line length |
-| `ex` | Altura do 'x' | Raramente |
-| `fr` | Fraction do grid | CSS Grid |
-| `auto` | Automático | Layout, margins |
+| Unidade               | O que é                        | Quando usar                         |
+| --------------------- | ------------------------------ | ----------------------------------- |
+| `px`                  | Pixel absoluto                 | Bordas, pequenos offsets            |
+| `rem`                 | Relativo ao root (html)        | **Default para font-size, spacing** |
+| `em`                  | Relativo ao elemento pai       | Para escalar com contexto           |
+| `%`                   | Relativo ao pai                | Widths, heights                     |
+| `vw` / `vh`           | Viewport width/height          | Layouts full-screen                 |
+| `svh` / `lvh` / `dvh` | Small/large/dynamic vh (2023+) | Mobile com barra de URL             |
+| `vmin` / `vmax`       | Menor/maior do viewport        | Responsividade                      |
+| `ch`                  | Largura do '0' da fonte        | Line length                         |
+| `ex`                  | Altura do 'x'                  | Raramente                           |
+| `fr`                  | Fraction do grid               | CSS Grid                            |
+| `auto`                | Automático                     | Layout, margins                     |
 
 **Unidades modernas (2023+):**
 
@@ -727,23 +727,23 @@ Flexbox é para layouts **unidimensionais** (row OU column).
 
 ### Justify-content
 
-| Valor | Efeito |
-| --- | --- |
-| `flex-start` | Itens no início |
-| `flex-end` | Itens no fim |
-| `center` | Itens no centro |
+| Valor           | Efeito                                           |
+| --------------- | ------------------------------------------------ |
+| `flex-start`    | Itens no início                                  |
+| `flex-end`      | Itens no fim                                     |
+| `center`        | Itens no centro                                  |
 | `space-between` | Espaço entre itens, primeiro e último encostados |
-| `space-around` | Espaço igual ao redor de cada item |
-| `space-evenly` | Espaço igual entre todos (incluindo pontas) |
+| `space-around`  | Espaço igual ao redor de cada item               |
+| `space-evenly`  | Espaço igual entre todos (incluindo pontas)      |
 
 ### Align-items
 
-| Valor | Efeito |
-| --- | --- |
-| `stretch` (default) | Esticam para altura do container |
-| `flex-start` / `flex-end` | Início / fim |
-| `center` | Centro |
-| `baseline` | Alinha pela baseline do texto |
+| Valor                     | Efeito                           |
+| ------------------------- | -------------------------------- |
+| `stretch` (default)       | Esticam para altura do container |
+| `flex-start` / `flex-end` | Início / fim                     |
+| `center`                  | Centro                           |
+| `baseline`                | Alinha pela baseline do texto    |
 
 ### Patterns clássicos
 
@@ -864,12 +864,12 @@ grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 
 ### Flexbox vs Grid
 
-| | Flexbox | Grid |
-| --- | --- | --- |
-| Dimensões | 1D (linha OU coluna) | 2D (linha E coluna) |
-| Alinhamento | Content-first | Layout-first |
-| Responsivo | Baseado em wrap | Baseado em template |
-| Uso | Nav, formulários, cards internos | Layout de página, dashboards |
+|             | Flexbox                          | Grid                         |
+| ----------- | -------------------------------- | ---------------------------- |
+| Dimensões   | 1D (linha OU coluna)             | 2D (linha E coluna)          |
+| Alinhamento | Content-first                    | Layout-first                 |
+| Responsivo  | Baseado em wrap                  | Baseado em template          |
+| Uso         | Nav, formulários, cards internos | Layout de página, dashboards |
 
 **Regra prática:**
 

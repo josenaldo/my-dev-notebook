@@ -12,7 +12,7 @@ tags:
   - anti-patterns
   - entrevista
   - manual
-publish: false
+publish: true
 sources:
   - https://www.frontendjoy.com/p/29-react-codebase-red-flags-from-a-senior-frontend-developer
   - https://react.dev/learn/you-might-not-need-an-effect

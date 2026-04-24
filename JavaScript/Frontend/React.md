@@ -8,7 +8,7 @@ tags:
   - javascript
   - frontend
   - entrevista
-publish: false
+publish: true
 ---
 
 # React
