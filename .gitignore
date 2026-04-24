@@ -1,3 +1,6 @@
 # Temporary files
 .tmp
 .tmp/*
+
+# Obsidian plugin secrets (API keys, TLS private keys)
+.obsidian/plugins/obsidian-local-rest-api/data.json
