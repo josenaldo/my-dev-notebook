@@ -1,5 +1,5 @@
 ---
-title: "Spec — Trilha Memória de Agentes (LLM Wiki Pattern)"
+title: "Spec — Trilha Memória de Agentes"
 date: 2026-04-25
 author: Josenaldo
 status: draft
@@ -7,17 +7,23 @@ type: spec
 publish: false
 ---
 
-# Spec — Trilha "Memória de Agentes (LLM Wiki Pattern)"
+# Spec — Trilha "Memória de Agentes"
 
 ## 1. Contexto e motivação
 
-Em 3 de abril de 2026 Andrej Karpathy publicou no X (e em seguida via gist) o que ele chama de **"LLM Wiki" pattern** — um esquema em que o LLM não apenas consulta um corpo de conhecimento, mas **constrói e mantém ativamente** uma wiki interlinkada em markdown a partir de fontes brutas. A repercussão foi imediata: VentureBeat publicou que "bypassa RAG", surgiram dezenas de implementações e tutoriais em poucas semanas, e o tema se cruzou com um campo acadêmico já em ebulição (memória de agentes), gerando confusão entre "o que é hype recente do Twitter" e "o que é arquitetura técnica madura".
+Memória de agentes (do inglês *agent memory* / *agentic memory*) é um campo em ebulição em 2026 que estuda como dar memória persistente a sistemas de IA — algo que LLMs por padrão não têm, já que cada conversa começa do zero. O campo já tem surveys acadêmicos consolidados (Shichun-Liu 2026, arxiv 2603.07670), workshop dedicado no ICLR 2026 ("MemAgents"), e um conjunto crescente de implementações concorrentes (MemGPT/Letta, Mem0, Zep/Graphiti, MemPalace, A-MEM).
 
-Este projeto entrega uma trilha de notas em português brasileiro, hospedada no vault Codex Technomanticus, capaz de:
+Em 3 de abril de 2026, Andrej Karpathy publicou no X (e em seguida via gist) o que ele chama de **"LLM Wiki" pattern** — um esquema em que o LLM não apenas consulta um corpo de conhecimento, mas **constrói e mantém ativamente** uma wiki interlinkada em markdown a partir de fontes brutas. A repercussão foi imediata: VentureBeat publicou que "bypassa RAG", surgiram dezenas de implementações e tutoriais em poucas semanas. O insight do Karpathy é uma das peças centrais desta trilha (nota 06), mas é uma entre várias abordagens dentro do campo maior de memória de agentes — e é precisamente a confusão entre "hype recente do Twitter" e "arquitetura técnica madura" que esta trilha existe para dissolver.
 
-1. Levar um leitor leigo (que sabe usar Obsidian e tem alguma noção de LLM) ao entendimento profundo do tema
-2. Servir como base de discurso público (artigos, palestras, posts) para o autor
-3. Servir como material de venda/consultoria — o conjunto de notas é o argumento de autoridade
+Para o autor, o assunto é oportuno e estratégico. Ele já está construindo um sistema de conhecimento pessoal (este vault Codex Technomanticus) com Obsidian, é desenvolvedor sênior fullstack em transição para o ecossistema de IA, e busca diferenciação técnica em um campo onde boa parte dos "consultores de IA" apenas amplifica hype.
+
+**Esta trilha não é o produto final do projeto.** É a base de pesquisa que o autor precisa construir para:
+
+1. Desenvolver entendimento profundo e estruturado do campo, separando técnica madura de marketing
+2. Decidir, com critério, qual abordagem adotar no próprio workflow (e justificar a escolha)
+3. A partir desse entendimento, desenvolver as habilidades práticas — implementação concreta, criação de conteúdo público, atendimento de clientes — que sustentarão sua autoridade no tema
+
+A autoridade vem do que será **construído depois** com este conhecimento (implementações concretas no Codex, conteúdo público maduro, casos atendidos), não das notas em si. As notas são substrato e ferramenta de pensamento — não a entrega que se mostra ao cliente.
 
 ## 2. Objetivo
 
@@ -49,13 +55,13 @@ A trilha precisa ser:
 
 ## 4. Audiência e barra de qualidade
 
-**Audiência primária:** dev/knowledge worker que conhece Obsidian e tem noção básica de LLM (sabe o que é uma API de modelo, ouviu falar de RAG), mas que **não** acompanhou o campo de memória de agentes.
+**Audiência primária:** dev/knowledge worker que conhece Obsidian, sabe que LLM é uma API texto→texto, mas que **não conhece RAG ainda** e **não acompanhou** o campo de memória de agentes. A trilha introduz o que for necessário (incluindo um primer de RAG na nota 04). Para profundidade em RAG, a nota linka explicitamente para [[RAG e Vector Databases]] no vault.
 
-**Audiência secundária:** dev sênior que já implementou RAG e quer entender o que muda com agentic memory.
+**Audiência secundária:** dev sênior que já implementou RAG e quer entender o que muda com agentic memory. Esses leitores podem pular o primer de RAG na nota 04 e ir direto para a comparação conceitual.
 
 **Barra de qualidade:** ao terminar de ler a trilha, o leitor deve conseguir:
 
-1. Explicar o LLM Wiki Pattern para um cliente não-técnico em 5 minutos
+1. Explicar o que é memória de agentes (e por que importa) para um cliente não-técnico em 5 minutos
 2. Listar 3-5 implementações reais e dizer qual escolher para qual caso
 3. Citar pelo menos 2 papers acadêmicos por nome
 4. Reconhecer claims de marketing inflados (ex: "100% no LongMemEval em modo híbrido") e responder com análise crítica
@@ -65,57 +71,57 @@ A trilha precisa ser:
 
 ### MOC
 
-| # | Arquivo | Propósito |
-|---|---------|-----------|
-| — | `Memória de Agentes.md` | MOC central. Trilha sequencial recomendada + 4 rotas alternativas (gerencial / técnica / acadêmica / implementador). Inclui callout de aviso sobre o domínio impostor `mempalace.tech` e nota sobre os 2 links descartados do Inbox. |
+| #   | Arquivo                 | Propósito                                                                                                                                                                                                                            |
+| --- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| —   | `Memória de Agentes.md` | MOC central. Trilha sequencial recomendada + 4 rotas alternativas (gerencial / técnica / acadêmica / implementador). Inclui callout de aviso sobre o domínio impostor `mempalace.tech` e nota sobre os 2 links descartados do Inbox. |
 
 ### Fundamentos (5 notas)
 
-| # | Arquivo | Propósito | Conteúdo-chave |
-|---|---------|-----------|----------------|
-| 01 | `01 - O que é memória em IA.md` | Introdução acessível ao conceito | Memória in-context vs persistente; analogia com memória humana; por que LLMs "esquecem"; primeiros exemplos práticos |
-| 02 | `02 - O problema das janelas de contexto.md` | O problema técnico que motiva tudo | Janelas finitas; custo de tokens; latência; "lost in the middle"; degradação de qualidade em contextos longos; números atualizados (Claude 4.7 1M, GPT-5, etc) |
-| 03 | `03 - Taxonomia da memória (episódica, semântica, procedural).md` | Vocabulário fundamental | Distinções de Tulving + adaptações para IA; episódica/semântica/procedural; working memory vs long-term; Park et al. (memory stream); referência a [[17 - Generative Agents]] |
-| 04 | `04 - RAG vs memória de longo prazo.md` | Diferenciação conceitual | RAG = retrieval reativo de docs estáticos; memória = construção ativa de representação; quando RAG basta, quando não basta; analogia "biblioteca vs caderno" |
-| 05 | `05 - Beyond RAG - quando RAG não basta.md` | A limitação que o LLM Wiki tenta resolver | Multi-session continuity; conhecimento que evolui; conexões implícitas; meta-conhecimento (o que sei sobre o que sei); referência a [[06 - O LLM Wiki Pattern]] |
+| #   | Arquivo                                                           | Propósito                                 | Conteúdo-chave                                                                                                                                                                |
+| --- | ----------------------------------------------------------------- | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 01  | `01 - O que é memória em IA.md`                                   | Introdução acessível ao conceito          | Memória in-context vs persistente; analogia com memória humana; por que LLMs "esquecem"; primeiros exemplos práticos                                                          |
+| 02  | `02 - O problema das janelas de contexto.md`                      | O problema técnico que motiva tudo        | Janelas finitas; custo de tokens; latência; "lost in the middle"; degradação de qualidade em contextos longos; números atualizados (Claude 4.7 1M, GPT-5, etc)                |
+| 03  | `03 - Taxonomia da memória (episódica, semântica, procedural).md` | Vocabulário fundamental                   | Distinções de Tulving + adaptações para IA; episódica/semântica/procedural; working memory vs long-term; Park et al. (memory stream); referência a [[17 - Generative Agents]] |
+| 04  | `04 - RAG vs memória de longo prazo.md`                           | Diferenciação conceitual                  | **Abertura "RAG em 90 segundos"** (3 componentes: index → retrieve → augment; embedding/vector DB/chunking em uma frase cada; link explícito para [[RAG e Vector Databases]] para profundidade). Depois: RAG = retrieval reativo de docs estáticos; memória = construção ativa de representação; quando RAG basta, quando não basta; analogia "biblioteca vs caderno" |
+| 05  | `05 - Beyond RAG - quando RAG não basta.md`                       | A limitação que o LLM Wiki tenta resolver | Multi-session continuity; conhecimento que evolui; conexões implícitas; meta-conhecimento (o que sei sobre o que sei); referência a [[06 - O LLM Wiki Pattern]]               |
 
 ### O insight do Karpathy (3 notas)
 
-| # | Arquivo | Propósito | Conteúdo-chave |
-|---|---------|-----------|----------------|
-| 06 | `06 - O LLM Wiki Pattern (gist do Karpathy).md` | Coração da trilha — o insight original | Tweet de 3/abril/2026; gist oficial; arquitetura 3-layer (Raw / Wiki / Schema); operações Ingest/Query/Lint; o esquema da wiki real do Karpathy (~100 artigos, 400k palavras); compiler analogy |
-| 07 | `07 - Por que Obsidian e markdown como substrato.md` | Justificativa técnica do substrato | Markdown como formato textual durável; wikilinks como grafo emergente; vantagens vs vector DB puro; portabilidade; Obsidian como "IDE" da wiki |
-| 08 | `08 - Arquitetura de um sistema de memória.md` | Generalização da arquitetura | Componentes: ingestão, indexação, retrieval, escrita, lint, governance; diagramas Mermaid; padrões "Storage / Reflection / Experience" do survey 2026 |
+| #   | Arquivo                                              | Propósito                              | Conteúdo-chave                                                                                                                                                                                  |
+| --- | ---------------------------------------------------- | -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 06  | `06 - O LLM Wiki Pattern (gist do Karpathy).md`      | Coração da trilha — o insight original | Tweet de 3/abril/2026; gist oficial; arquitetura 3-layer (Raw / Wiki / Schema); operações Ingest/Query/Lint; o esquema da wiki real do Karpathy (~100 artigos, 400k palavras); compiler analogy |
+| 07  | `07 - Por que Obsidian e markdown como substrato.md` | Justificativa técnica do substrato     | Markdown como formato textual durável; wikilinks como grafo emergente; vantagens vs vector DB puro; portabilidade; Obsidian como "IDE" da wiki                                                  |
+| 08  | `08 - Arquitetura de um sistema de memória.md`       | Generalização da arquitetura           | Componentes: ingestão, indexação, retrieval, escrita, lint, governance; diagramas Mermaid; padrões "Storage / Reflection / Experience" do survey 2026                                           |
 
 ### Implementações (8 notas)
 
-| # | Arquivo | Propósito | Conteúdo-chave |
-|---|---------|-----------|----------------|
-| 09 | `09 - Panorama de implementações (abril 2026).md` | Visão geral comparativa | Mapa do mercado em abril/2026; categorização (Karpathy-inspired / production framework / academic); tabela síntese; entrada para as notas 10-16 |
-| 10 | `10 - LLM-knowledge-base (Wendel) — direto do gist.md` | Implementação de referência do gist | Arquitetura kb/ package; 4-stage cycle (ingest/compile/answer/lint); hybrid search (BM25 + RRF); claims lifecycle (confidence, supersession, decay); EPUB/PDF/OCR; integração Obsidian; 311 testes |
-| 11 | `11 - graphify — knowledge graph de raw.md` | Versão graph-based | 3-pass processing (AST + audio/video + semantic); NetworkX + Leiden community detection; 25 linguagens via tree-sitter; integração Claude Code/Cursor; "71.5x fewer tokens"; output graph.html + graph.json + GRAPH_REPORT.md |
-| 12 | `12 - basic-memory — MCP nativo Obsidian.md` | A opção mais elegante para integração Obsidian | MCP server; mesmo arquivo .md serve LLM e Obsidian; SQLite local index; semantic graph traversável; Docker image disponível; comparativo com soluções não-MCP |
-| 13 | `13 - Letta (ex-MemGPT).md` | Sucessor MemGPT, framework de produção | OS analogy (RAM/disk); virtual context management; self-editing memory; tiers (core / archival / message buffer); $10M raised; ausência de score LongMemEval (analisar) |
-| 14 | `14 - Mem0 — vetorial + grafo.md` | Framework de produção mais maduro comercialmente | Base Mem0 (vetorial) + Mem0g (graph); 21 frameworks suportados Python+TS; 93.4% LongMemEval (abril/2026); 91% lower latency; arxiv 2504.19413 |
-| 15 | `15 - Zep e Graphiti — knowledge graph temporal.md` | Solução KG temporal | Graphiti = engine open-source; Zep Cloud = comercial; Neo4j-based; bi-temporal model; +18.5% LongMemEval; tokens 115k → 1.6k, latência 30s → 3s; arxiv 2501.13956 |
-| 16 | `16 - MemPalace (Milla Jovovich).md` | A virada de abril/2026 | Memory palace architecture (wings/rooms/drawers); AAAK 30x compression; 170-token startup; 96.6% LongMemEval; 29 MCP tools; SQLite + grafo temporal; **callout de aviso sobre `mempalace.tech` impostor**; análise honesta com referência a [[21 - Críticas, limitações e armadilhas]] |
+| #   | Arquivo                                                | Propósito                                        | Conteúdo-chave                                                                                                                                                                                                                                                                         |
+| --- | ------------------------------------------------------ | ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 09  | `09 - Panorama de implementações (abril 2026).md`      | Visão geral comparativa                          | Mapa do mercado em abril/2026; categorização (Karpathy-inspired / production framework / academic); tabela síntese; entrada para as notas 10-16                                                                                                                                        |
+| 10  | `10 - LLM-knowledge-base (Wendel) — direto do gist.md` | Implementação de referência do gist              | Arquitetura kb/ package; 4-stage cycle (ingest/compile/answer/lint); hybrid search (BM25 + RRF); claims lifecycle (confidence, supersession, decay); EPUB/PDF/OCR; integração Obsidian; 311 testes                                                                                     |
+| 11  | `11 - graphify — knowledge graph de raw.md`            | Versão graph-based                               | 3-pass processing (AST + audio/video + semantic); NetworkX + Leiden community detection; 25 linguagens via tree-sitter; integração Claude Code/Cursor; "71.5x fewer tokens"; output graph.html + graph.json + GRAPH_REPORT.md                                                          |
+| 12  | `12 - basic-memory — MCP nativo Obsidian.md`           | A opção mais elegante para integração Obsidian   | MCP server; mesmo arquivo .md serve LLM e Obsidian; SQLite local index; semantic graph traversável; Docker image disponível; comparativo com soluções não-MCP                                                                                                                          |
+| 13  | `13 - Letta (ex-MemGPT).md`                            | Sucessor MemGPT, framework de produção           | OS analogy (RAM/disk); virtual context management; self-editing memory; tiers (core / archival / message buffer); $10M raised; ausência de score LongMemEval (analisar)                                                                                                                |
+| 14  | `14 - Mem0 — vetorial + grafo.md`                      | Framework de produção mais maduro comercialmente | Base Mem0 (vetorial) + Mem0g (graph); 21 frameworks suportados Python+TS; 93.4% LongMemEval (abril/2026); 91% lower latency; arxiv 2504.19413                                                                                                                                          |
+| 15  | `15 - Zep e Graphiti — knowledge graph temporal.md`    | Solução KG temporal                              | Graphiti = engine open-source; Zep Cloud = comercial; Neo4j-based; bi-temporal model; +18.5% LongMemEval; tokens 115k → 1.6k, latência 30s → 3s; arxiv 2501.13956                                                                                                                      |
+| 16  | `16 - MemPalace (Milla Jovovich).md`                   | A virada de abril/2026                           | Memory palace architecture (wings/rooms/drawers); AAAK 30x compression; 170-token startup; 96.6% LongMemEval; 29 MCP tools; SQLite + grafo temporal; **callout de aviso sobre `mempalace.tech` impostor**; análise honesta com referência a [[21 - Críticas, limitações e armadilhas]] |
 
 ### Fundamentação acadêmica (3 notas — review notes)
 
-| # | Arquivo | Propósito | Conteúdo-chave |
-|---|---------|-----------|----------------|
-| 17 | `17 - Generative Agents (Park, Stanford 2023).md` | Paper foundational | Park et al. UIST 2023; arxiv 2304.03442; memory stream + reflection trees + planning; o sandbox de 25 agentes "Sims"; por que esse paper criou o vocabulário do campo |
-| 18 | `18 - A-MEM — Zettelkasten dinâmico.md` | Inovação acadêmica recente | Wujiang Xu et al., NeurIPS 2025; arxiv 2502.12110; nota com atributos estruturados; ligação dinâmica baseada em similaridade; memory evolution (notas antigas se atualizam); inspiração explícita em Luhmann |
-| 19 | `19 - Surveys e estado da arte 2026.md` | Mapa do campo | "Memory in the Age of AI Agents: A Survey" (Shichun-Liu); "Memory for Autonomous LLM Agents" (arxiv 2603.07670); "From Storage to Experience" (OpenReview); ICLR 2026 Workshop "MemAgents"; 5 mecanismos (context-resident compression / retrieval-augmented stores / reflective self-improvement / hierarchical virtual context / policy-learned management) |
+| #   | Arquivo                                           | Propósito                  | Conteúdo-chave                                                                                                                                                                                                                                                                                                                                                |
+| --- | ------------------------------------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 17  | `17 - Generative Agents (Park, Stanford 2023).md` | Paper foundational         | Park et al. UIST 2023; arxiv 2304.03442; memory stream + reflection trees + planning; o sandbox de 25 agentes "Sims"; por que esse paper criou o vocabulário do campo                                                                                                                                                                                         |
+| 18  | `18 - A-MEM — Zettelkasten dinâmico.md`           | Inovação acadêmica recente | Wujiang Xu et al., NeurIPS 2025; arxiv 2502.12110; nota com atributos estruturados; ligação dinâmica baseada em similaridade; memory evolution (notas antigas se atualizam); inspiração explícita em Luhmann                                                                                                                                                  |
+| 19  | `19 - Surveys e estado da arte 2026.md`           | Mapa do campo              | "Memory in the Age of AI Agents: A Survey" (Shichun-Liu); "Memory for Autonomous LLM Agents" (arxiv 2603.07670); "From Storage to Experience" (OpenReview); ICLR 2026 Workshop "MemAgents"; 5 mecanismos (context-resident compression / retrieval-augmented stores / reflective self-improvement / hierarchical virtual context / policy-learned management) |
 
 ### Análise crítica e aplicação (4 notas)
 
-| # | Arquivo | Propósito | Conteúdo-chave |
-|---|---------|-----------|----------------|
-| 20 | `20 - Comparativo crítico (LongMemEval).md` | Tabela comparativa rigorosa | Resultados reais abril/2026 com fontes; quem **não** publicou (Letta, Cognee, LangMem); arquitetura vs performance; recomendações por caso de uso (consultor solo / startup / enterprise / pesquisador) |
-| 21 | `21 - Críticas, limitações e armadilhas.md` | A nota que diferencia da hype | Paper crítico arxiv 2604.21284 sobre MemPalace (spatial metaphor não faz o trabalho real); overfitting de benchmark; viés de auto-publicação; quando NÃO usar memória (tarefas one-shot, dados sensíveis, baixo orçamento); custo computacional escondido; "context pollution" |
-| 22 | `22 - Guia de implementação do zero.md` | O guia how-to | Setup mínimo do LLM Wiki Pattern em Obsidian + Claude Code; estrutura de pastas; CLAUDE.md schema; primeira ingestão; primeira query; primeiro lint; alternativa pronta (basic-memory MCP); critérios de quando ir além do mínimo |
-| 23 | `23 - Aplicações comerciais e modelo de negócio.md` | A nota explicitamente comercial | Personas de cliente; ofertas (consultoria de implementação / setup pronto / treinamento); precificação observada no mercado abril/2026; objeções comuns; ROI mensurável; positioning vs ferramentas SaaS prontas (Mem0, Letta) |
+| #   | Arquivo                                             | Propósito                       | Conteúdo-chave                                                                                                                                                                                                                                                                 |
+| --- | --------------------------------------------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 20  | `20 - Comparativo crítico (LongMemEval).md`         | Tabela comparativa rigorosa     | Resultados reais abril/2026 com fontes; quem **não** publicou (Letta, Cognee, LangMem); arquitetura vs performance; recomendações por caso de uso (consultor solo / startup / enterprise / pesquisador)                                                                        |
+| 21  | `21 - Críticas, limitações e armadilhas.md`         | A nota que diferencia da hype   | Paper crítico arxiv 2604.21284 sobre MemPalace (spatial metaphor não faz o trabalho real); overfitting de benchmark; viés de auto-publicação; quando NÃO usar memória (tarefas one-shot, dados sensíveis, baixo orçamento); custo computacional escondido; "context pollution" |
+| 22  | `22 - Guia de implementação do zero.md`             | O guia how-to                   | Setup mínimo do LLM Wiki Pattern em Obsidian + Claude Code; estrutura de pastas; CLAUDE.md schema; primeira ingestão; primeira query; primeiro lint; alternativa pronta (basic-memory MCP); critérios de quando ir além do mínimo                                              |
+| 23  | `23 - Aplicações comerciais e modelo de negócio.md` | A nota explicitamente comercial | Personas de cliente; ofertas (consultoria de implementação / setup pronto / treinamento); precificação observada no mercado abril/2026; objeções comuns; ROI mensurável; positioning vs ferramentas SaaS prontas (Mem0, Letta)                                                 |
 
 ## 6. Convenções aplicadas a todas as notas
 
@@ -245,9 +251,12 @@ publish: true
 tags: [memoria-agentes, ia, moc]
 ---
 
-# Memória de Agentes (LLM Wiki Pattern)
+# Memória de Agentes
 
-[abertura: 3-4 frases sobre o tema, do que se trata, por que importa em 2026]
+[abertura: 3-4 frases sobre o tema (campo de agent memory), do que se trata, por que importa em 2026, e o destaque do gist do Karpathy de abril/2026 como gancho de relevância]
+
+> [!info] Pré-leitura sugerida
+> Esta trilha menciona "RAG" como termo de referência. Se você nunca leu sobre RAG, dê uma passada nos níveis 1-2 de [[RAG e Vector Databases]] antes de começar — ou siga direto, porque a nota 04 traz um primer rápido com o necessário.
 
 ## Comece por aqui
 
@@ -281,6 +290,7 @@ FROM "IA/Memória de Agentes"
 WHERE type != "moc"
 SORT file.name ASC
 ```
+
 ```
 
 ## 8. Bibliografia anotada (fontes-âncora)
@@ -371,14 +381,14 @@ Documentar aqui para não esquecer e para o autor decidir prazos depois:
 
 ## 12. Riscos e mitigações
 
-| Risco | Probabilidade | Impacto | Mitigação |
-|-------|---------------|---------|-----------|
-| Campo se mover rápido (paper novo, ferramenta nova) durante a escrita | Alta | Médio | Datar todas as notas; revisitar em 6 meses; nota 19 (surveys) é o pivô a atualizar |
-| Confundir hype de Twitter com técnica madura | Média | Alto | Nota 21 (críticas) é mandatory antes de publicar; usar paper crítico arxiv 2604.21284 |
-| Notas longas demais para serem atômicas | Média | Médio | Limite: ~3000 palavras por nota; se ultrapassar, sub-dividir |
-| Linkagem inconsistente entre notas | Média | Baixo | Wave 8 (revisão) faz audit; o Quartz mostra backlinks para conferir |
-| Tom de "evangelista" (vendendo demais o LLM Wiki) | Baixa | Alto | Critério "Quando NÃO usar" obrigatório por nota; nota 21 explícita |
-| Conteúdo do paper crítico (arxiv 2604.21284) ser propaganda disfarçada da MemPalace | Baixa | Médio | Verificar autoria, peer review, citações cruzadas antes de usar como fonte central |
+| Risco                                                                               | Probabilidade | Impacto | Mitigação                                                                             |
+| ----------------------------------------------------------------------------------- | ------------- | ------- | ------------------------------------------------------------------------------------- |
+| Campo se mover rápido (paper novo, ferramenta nova) durante a escrita               | Alta          | Médio   | Datar todas as notas; revisitar em 6 meses; nota 19 (surveys) é o pivô a atualizar    |
+| Confundir hype de Twitter com técnica madura                                        | Média         | Alto    | Nota 21 (críticas) é mandatory antes de publicar; usar paper crítico arxiv 2604.21284 |
+| Notas longas demais para serem atômicas                                             | Média         | Médio   | Limite: ~3000 palavras por nota; se ultrapassar, sub-dividir                          |
+| Linkagem inconsistente entre notas                                                  | Média         | Baixo   | Wave 8 (revisão) faz audit; o Quartz mostra backlinks para conferir                   |
+| Tom de "evangelista" (vendendo demais o LLM Wiki)                                   | Baixa         | Alto    | Critério "Quando NÃO usar" obrigatório por nota; nota 21 explícita                    |
+| Conteúdo do paper crítico (arxiv 2604.21284) ser propaganda disfarçada da MemPalace | Baixa         | Médio   | Verificar autoria, peer review, citações cruzadas antes de usar como fonte central    |
 
 ## 13. Definição de "concluído"
 

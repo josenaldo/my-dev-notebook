@@ -370,7 +370,7 @@ Exemplo prático: agent de feature development com sub-agents de `explorer`, `pl
 
 CLAUDE.md, AGENTS.md, .cursor/rules/, README, ADRs. O modelo lê automaticamente e o comportamento melhora sem reescrever prompts.
 
-Esta é **a mais alta alavanca** que conheço: uma CLAUDE.md bem escrita transforma drasticamente a qualidade do output do Claude Code. Vale horas investidas.
+Esta é **a mais alta alavanca** disponível: uma CLAUDE.md bem escrita transforma drasticamente a qualidade do output do Claude Code. Vale horas investidas.
 
 ### A curva do contexto
 
@@ -572,47 +572,75 @@ Expor agent com tools destrutivas a conteúdo não-confiável sem delimitação.
 
 "Acho que esse prompt ficou melhor" vira deploy direto. **Fix:** A/B test em produção, comparar métricas antes de consolidar.
 
-## Na prática (da minha experiência)
+## Como ganhar experiência prática
 
-No MedEspecialista, evoluímos os prompts em três gerações:
+Esta nota é estrutura sobre prompting/context engineering/skills. Para internalizar, prática é insubstituível. Três caminhos curados:
 
-**Geração 1 (2023) — "copy-paste de prompts".** Prompts em Notion, rodados manualmente, copiados no código. Funcionaram em protótipos. Quebraram em produção com 10% de falhas silenciosas. Sem evaluation, não descobríamos até usuário reclamar.
+### Caminho 1 — Iteração medida em prompt único (1 semana)
 
-**Geração 2 (2024) — "prompts em arquivos + few-shot + structured outputs".** Movemos prompts para `prompts/` no repositório, cada um com frontmatter e exemplos. Adicionamos structured outputs. Taxa de erro caiu de 10% para ~2%. Criei primeiros golden sets.
+Pegar uma tarefa concreta (ex: classificar reviews em positivo/neutro/negativo) e levar do baseline ao production-grade:
 
-**Geração 3 (2025-2026) — "context engineering + skills + evals".** Prompts viraram skills versionadas. Implementei prompt caching, progressive disclosure, sub-agents para workflows complexos. Custo caiu ~80% em algumas features, qualidade subiu. Golden sets rodam em CI a cada PR que toca skill.
+- Golden set de 50 exemplos
+- Baseline: prompt zero-shot. Medir.
+- Iterar 6-10 vezes aplicando técnicas: system prompt, few-shot, CoT, structured output, delimitação XML, ajuste de temperature
+- Gráfico de progressão de accuracy ao longo das iterações
+- Última iteração > 95% no golden set
 
-**Lições:**
+**Critério de sucesso:** entende empiricamente qual técnica resolve qual tipo de problema; não chuta mais.
 
-- **Investir em CLAUDE.md/AGENTS.md do projeto paga caro.** Uma boa `CLAUDE.md` com convenções, patterns, e anti-patterns do projeto melhora output drasticamente.
-- **Skills compartilhadas no time eliminam retrabalho.** Escrevo a skill uma vez, time inteiro usa.
-- **Tool descriptions importam mais do que eu achava.** Uma má descrição de ferramenta é pior que não ter a ferramenta — o agent usa errado.
-- **Prompt caching é dinheiro na mesa.** Se você tem system prompt > 1K tokens, não usar caching é desperdício.
+### Caminho 2 — Biblioteca pessoal de skills (2 semanas)
+
+Construir 5 skills reutilizáveis para tarefas que se repetem no Codex Technomanticus:
+
+- `code-review` — review focado em segurança/qualidade
+- `write-tests` — gerar testes unitários/integração
+- `refactor` — refactor com escopo claro
+- `obsidian-note-review` — auditar nota Obsidian (frontmatter, links, estrutura)
+- `commit` — gerar commit messages no estilo do projeto
+
+Cada skill com frontmatter (`name`, `description`), instruções passo a passo, formato de output, exemplos. Distribuir entre Claude Code e Copilot via os formatos respectivos.
+
+**Critério de sucesso:** biblioteca de skills usadas diariamente no workflow; economia mensurável de horas/semana.
+
+### Caminho 3 — CLAUDE.md de alto valor em projeto profissional (quando aparecer)
+
+Em projeto profissional sério, escrever uma `CLAUDE.md` (ou `AGENTS.md`/copilot-instructions) que cubra: stack, convenções, comandos, antipatterns, patterns. Iterar baseado em onde o agent erra. Medir baseline (sem) vs após (com) em tasks reais.
+
+**Critério de sucesso:** time inteiro usa, qualidade do output do agent é mensurávelmente melhor.
+
+---
+
+**Sugestão de ordem:** Caminho 1 → Caminho 2 → Caminho 3.
+
+**Princípios universais:**
+
+- **CLAUDE.md/AGENTS.md bem feita é a maior alavanca** disponível em qualquer projeto sério.
+- **Skills compartilhadas no time eliminam retrabalho.** Escrever uma vez, time inteiro usa.
+- **Tool descriptions importam mais do que parece.** Má descrição de ferramenta é pior que não ter a ferramenta — o agent usa errado.
+- **Prompt caching é dinheiro na mesa.** System prompt > 1K tokens sem caching é desperdício.
 - **Golden set é obrigatório, não "nice to have".** Sem ele, toda mudança é superstição.
-
-**Incidente memorável:** uma feature de QA sobre docs internos começou a alucinar referências inexistentes em ~20% das respostas. Investigação: mudança de modelo do provedor (Sonnet foi atualizado silenciosamente), combinada com few-shot examples que haviam se tornado desatualizados. Fix imediato: pin do modelo. Fix estrutural: golden set automatizado em CI e re-avaliação dos few-shot examples a cada 3 meses.
 
 ## How to explain in English
 
 ### Short pitch
 
-"Prompting is necessary but not sufficient. I think in terms of context engineering: what tokens does the model see, at what point, and why. That includes system prompts, tools, RAG retrievals, persistent notes, and skills. For recurring behaviors I build reusable skills — versioned, tested, and distributed via git — rather than rewriting prompts every time."
+"Prompting is necessary but not sufficient. The mature framing is context engineering: what tokens does the model see, at what point, and why. That includes system prompts, tools, RAG retrievals, persistent notes, and skills. For recurring behaviors, reusable skills — versioned, tested, distributed via git — beat rewriting prompts every time."
 
 ### Deeper version
 
-"My mental model has three layers. At the top, individual prompts — few-shot, chain-of-thought, output constraints, role prompts. The basics you need to do anything.
+"Three layers to think about prompting in 2026. At the bottom, individual prompts — few-shot, chain-of-thought, output constraints, role prompts. The basics needed to do anything.
 
-In the middle, context engineering — the curation of the whole token budget the model sees at inference. Compaction for long conversations, structured note-taking for persistent state, tool design for efficiency, sub-agents for isolation. The principle is 'smallest possible set of high-signal tokens'.
+In the middle, context engineering — curation of the whole token budget the model sees at inference. Compaction for long conversations, structured note-taking for persistent state, tool design for efficiency, sub-agents for isolation. The principle is 'smallest possible set of high-signal tokens'.
 
-At the top, skills — reusable packaged behaviors that agents load on demand. I maintain a personal library of skills for code review, testing, refactoring, debugging. They live in git, have tests, and get better over time. The same skills work across Claude Code, Copilot, and Cursor because the formats have converged enough.
+At the top, skills — reusable packaged behaviors that agents load on demand. A personal library of skills for code review, testing, refactoring, debugging — versioned in git, tested, getting better over time. The same skills work across Claude Code, Copilot, and Cursor because the formats have converged enough.
 
-The discipline that ties it all together is evaluation. Prompts without golden sets are superstition. Every prompt or skill that matters has a test suite, and I run them on every change. That's what separates prompt hacking from prompt engineering."
+The discipline that ties it together is evaluation. Prompts without golden sets are superstition. Every prompt or skill that matters has a test suite that runs on every change. That's what separates prompt hacking from prompt engineering."
 
 ### Phrases to use in interviews
 
-- "I treat prompts as code — versioned, reviewed, tested."
+- "Treat prompts as code — versioned, reviewed, tested."
 - "Context engineering is where the leverage is in 2026, not prompt engineering alone."
-- "Progressive disclosure — the agent discovers what it needs when it needs it — is how you scale skills without drowning in context."
+- "Progressive disclosure — the agent discovers what it needs when it needs it — is how skills scale without drowning context."
 - "Prompt injection is the SQL injection of the LLM era. Assume adversarial content."
 - "Every critical prompt has a golden set. Every change runs it before ship."
 - "Tool descriptions are the most underinvested part of agent design."

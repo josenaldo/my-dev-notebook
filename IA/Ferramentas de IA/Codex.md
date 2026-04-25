@@ -330,45 +330,66 @@ Task precisa acessar API interna não permitida. **Fix:** configurar proxy/allow
 
 Codex como única ferramenta é engessamento. **Fix:** usar junto com Claude Code e Copilot em papéis diferentes.
 
-## Na prática (da minha experiência)
+## Como ganhar experiência prática
 
-No MedEspecialista, Codex entrou como ferramenta complementar em 2025 para workflows específicos:
+Esta nota é estrutura sobre Codex. Para internalizar, prática é insubstituível. Três caminhos curados:
 
-**Uso 1 — batch refactors.** Tínhamos um refactor de renomear um conceito de domínio que afetava ~60 arquivos. Escrevi task detalhada com before/after, deleguei para Codex, fui almoçar. Voltei com PR pronto, revisei, mergeei. Ganho: ~3h de trabalho manual comprimidas em ~1h de wait + review.
+### Caminho 1 — AGENTS.md de alto valor + task simples (1 semana)
 
-**Uso 2 — dependency updates recorrentes.** Agendei Codex task semanal para tentar update de minor versions + rodar testes. PRs aparecem toda segunda, reviso. Reduziu "dependency debt" para quase zero sem esforço humano.
+Em um projeto próprio:
 
-**Uso 3 — bug triage em batch.** Quando backlog de "bugs pequenos" cresce, delego 5-10 em paralelo. Retornos variam: ~30% viram PR direto, ~40% viram análise que acelera o fix humano, ~30% não dão em nada (task vaga ou bug complexo).
+1. Baseline: dispatch task via Codex sem AGENTS.md. Observe qualidade.
+2. Escreva AGENTS.md detalhada (stack, convenções, comandos, antipatterns).
+3. Re-rode mesma task. Compare qualidade do PR.
+4. Itere AGENTS.md baseado em gaps.
 
-**Uso 4 — CI para tarefas automatizáveis.** Action no GitHub dispara Codex para: escrever release notes do PR, gerar resumo de mudanças na docs, triar issues com labels.
+**Critério de sucesso:** entende empiricamente o ROI de AGENTS.md; tem template próprio para próximos projetos.
 
-**Lições:**
+### Caminho 2 — Batch paralelo no Codex Technomanticus (1-2 semanas)
+
+Identificar 4-5 tasks pequenas e independentes no próprio vault:
+
+- Adicionar frontmatter padrão a notas que não têm
+- Atualizar 4-5 MOCs específicas
+- Reorganizar 3 pastas seguindo convenção
+
+Dispatch em paralelo para Codex CLI ou Cloud. Review cada PR sequencialmente.
+
+**Critério de sucesso:** experimenta async/paralelo na prática; tem opinião sobre quando vale e quando não vale.
+
+### Caminho 3 — Codex em GitHub Actions em projeto profissional (quando aparecer)
+
+Em projeto profissional, configurar Action que dispara Codex para: dependency update semanal, geração de release notes, triagem automática de issues. Medir impacto em throughput do time.
+
+**Critério de sucesso:** automação rodando em produção, com governance e observabilidade.
+
+---
+
+**Sugestão de ordem:** Caminho 1 → Caminho 2 → Caminho 3.
+
+**Princípios universais:**
 
 - **AGENTS.md bem feito é a diferença entre "funciona" e "não funciona".**
-- **Async é uma ferramenta mental, não só técnica.** Você aprende a pensar "o que posso delegar e checar depois".
-- **Paralelização real destrava throughput.** 5 tasks em paralelo rendem mais que 5 sequenciais porque não tem task-switching.
+- **Async é uma postura mental, não só técnica.** "O que posso delegar e checar depois?" é a pergunta certa.
+- **Paralelização real destrava throughput.** 5 tasks em paralelo costumam render mais que 5 sequenciais — sem task-switching.
 - **Custo escala com uso.** Fácil gastar $50-100/mês em workflows pequenos; enterprise pode chegar a milhares.
 - **Human review sempre.** Codex erra de formas novas e criativas.
-
-**Incidente memorável:** uma task Codex de "add input validation" aplicou validação agressiva demais e quebrou clientes antigos que mandavam campos opcionais como `null`. Passou testes (os testes não cobriam esse caso) mas quebrou em produção. Dentro de 30 min após deploy. Fix: rollback + teste de regressão + lição aprendida de sempre revisar _semantics_ do PR, não só os checks.
-
-**Outro incidente:** deleguei 8 tasks em paralelo, 3 delas tocavam arquivos sobrepostos. 2 PRs limparam no merge, 1 falhou com conflict. Depois passei a serializar tasks com overlap de path.
 
 ## How to explain in English
 
 ### Short pitch
 
-"Codex is OpenAI's cloud-native coding agent. Unlike Claude Code or Copilot, it runs in a sandbox in the cloud, clones your repo, and returns a PR. The value for me is async and parallel work — I can fire off five tasks, close the laptop, and come back to five PRs ready for review. It complements my interactive tools rather than replacing them."
+"Codex is OpenAI's cloud-native coding agent. Unlike Claude Code or Copilot, it runs in a sandbox in the cloud, clones the repo, and returns a PR. The value is async and parallel work — fire off five tasks, close the laptop, come back to five PRs ready for review. It complements interactive tools rather than replacing them."
 
 ### Deeper version
 
 "Codex has three modes: cloud async via the web UI or ChatGPT app, local CLI for more controlled environments, and IDE integrations. Each task runs in an isolated container — clone, install deps, read AGENTS.md, plan, execute, open a PR. No persistent state between tasks; each one starts fresh.
 
-Where Codex wins is async scale. I have five small issues in the backlog? I dispatch five tasks in parallel, and review PRs later. I need a 60-file refactor? I write a detailed task and let Codex grind while I do other work. It's a different posture from interactive coding — fire, forget, review.
+Where Codex wins is async scale. Five small issues in the backlog? Dispatch five tasks in parallel, review PRs later. A 60-file refactor? Write a detailed task and let Codex grind while doing other work. It's a different posture from interactive coding — fire, forget, review.
 
-The configuration that matters is AGENTS.md, which is becoming something of a standard across tools — similar in role to CLAUDE.md or copilot-instructions.md. Good AGENTS.md means Codex understands architecture, conventions, and commands without me re-explaining every time.
+The configuration that matters is AGENTS.md, which is becoming something of a standard across tools — similar in role to CLAUDE.md or copilot-instructions.md. Good AGENTS.md means Codex understands architecture, conventions, and commands without re-explaining every time.
 
-The limits to be clear on: no persistent context between tasks, sandbox has restricted network, and you pay for compute plus tokens — so long complex tasks can add up. And you always human-review the PR, because agents fail in creative ways that CI doesn't catch."
+The limits to be clear on: no persistent context between tasks, sandbox has restricted network, and pricing is compute plus tokens — long complex tasks can add up. And human-review every PR, because agents fail in creative ways that CI doesn't catch."
 
 ### Talking points
 
@@ -457,7 +478,9 @@ Codex requer uma mudança de postura. Interactive tools (Claude Code, Copilot) s
 
 Senior devs que adotam bem Codex mudam hábitos para aproveitar async.
 
-## Casos de produção
+## Casos comuns no mercado
+
+Padrões frequentes em times usando Codex em produção. Não são casos vividos pessoalmente — são armadilhas recorrentes documentadas em post-mortems, talks, e literatura técnica.
 
 ### Caso 1 — Task vaga virou PR ruim
 
@@ -473,9 +496,9 @@ Senior devs que adotam bem Codex mudam hábitos para aproveitar async.
 
 ### Caso 2 — Over-aggressive validation breaking clients
 
-Task "add input validation" aplicou validação agressiva a endpoint legacy. Campos opcionais com `null` passaram a ser rejeitados. Quebrou clientes antigos em produção após merge.
+**Padrão observado:** task "add input validation" aplica validação agressiva demais a endpoint legacy. Campos opcionais com `null` passam a ser rejeitados. Quebra clientes antigos em produção após merge — CI passou (testes não cobriam esse caso).
 
-**Fix:**
+**Fix típico:**
 
 - Testes de regressão contra contrato público.
 - Review manual semântico, não só checks automatizados.
@@ -485,9 +508,9 @@ Task "add input validation" aplicou validação agressiva a endpoint legacy. Cam
 
 ### Caso 3 — Tasks paralelas conflitando
 
-Deleguei 8 tasks em paralelo. 3 delas tocavam arquivos sobrepostos. 2 PRs auto-mergearam depois de review independente, terceiro falhou com conflict irresolvível.
+**Padrão observado:** time despacha 8 tasks em paralelo. Algumas delas tocam arquivos sobrepostos. Maioria dos PRs auto-mergeia após review independente, alguns falham com conflict irresolvível, lições só aparecem na hora do merge.
 
-**Fix:**
+**Fix típico:**
 
 - Serializar tasks com overlap de path.
 - "Path lock" manual no planejamento.
@@ -497,19 +520,19 @@ Deleguei 8 tasks em paralelo. 3 delas tocavam arquivos sobrepostos. 2 PRs auto-m
 
 ### Caso 4 — AGENTS.md desatualizado
 
-Refactor grande mudou convenções do projeto. AGENTS.md ficou desatualizada. Codex continuou produzindo código no estilo antigo por semanas.
+**Padrão observado:** refactor grande muda convenções do projeto. AGENTS.md fica desatualizada. Codex continua produzindo código no estilo antigo por semanas até alguém notar.
 
-**Fix:**
+**Fix típico:**
 
 - Policy: AGENTS.md faz parte de todo refactor arquitetural.
 - Review mensal do arquivo.
 - PR template inclui checkbox "AGENTS.md atualizada se necessário".
 
-### Caso 5 — Cost explosion com o3
+### Caso 5 — Cost explosion com modelo premium
 
-Task complexa com extended thinking (o3) custou ~$25 sozinha. Dev não sabia. Task não era crítica. Bill do mês surpreendeu.
+**Padrão observado:** task complexa com extended thinking (o3) custa $25+ sozinha. Dev não sabia que estava usando o3. Task não era crítica. Bill do mês surpreende.
 
-**Fix:**
+**Fix típico:**
 
 - Budget per task alert.
 - Default para GPT-4.1; o3 explicit opt-in.

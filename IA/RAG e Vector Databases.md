@@ -705,41 +705,54 @@ RAG onde um **agent** decide o que buscar, quando buscar de novo, e quando parar
 
 Ver [[Agents]] para o conceito geral.
 
-## Na prática (da minha experiência)
+## Como ganhar experiência prática
 
-No MedEspecialista, RAG foi o que destravou várias features. A evolução:
+Esta nota é conhecimento estruturado sobre RAG, mas conhecimento sem prática não destrava entendimento profundo nem credibilidade técnica. Três caminhos curados, do menor para o maior esforço:
 
-**V1 (2023) — RAG de tutorial.** Pinecone + OpenAI embeddings + chunking fixo de 500 chars + pure vector search. Funcionou bem o suficiente para protótipo. Em produção, usuários rapidamente encontraram casos quebrados: queries com códigos específicos (CID-10 por exemplo) não retornavam os chunks certos.
+### Caminho 1 — RAG mínimo em 1-2 dias (validar o conceito)
 
-**V2 (2024) — hybrid + reranker.** Migrei para pgvector (consolidação de stack com Postgres que já tínhamos) + adicionei BM25 usando `ts_vector` nativo do Postgres + Cohere Rerank v3. Qualidade subiu drasticamente. Context precision passou de ~0.6 para ~0.85 no golden set.
+Fazer o **Lab 1** da seção "Exercícios hands-on" abaixo: pgvector + OpenAI embeddings + Claude Sonnet sobre ~50 documentos próprios, golden set de 20 perguntas, Ragas para medir. Stack mínima, foco em rodar end-to-end uma vez.
 
-**V3 (2025) — chunking inteligente + evaluation.** Tratei chunking como prioridade: structure-aware splitter que respeita headers markdown, preserva código em blocos inteiros, mantém metadata (seção, tipo de doc, idioma). Implementei Ragas para evaluation contínua. Qualquer mudança no pipeline passa por golden set antes de ship.
+**Critério de sucesso:** responder perguntas sobre os docs com citação de fonte; identificar concretamente onde retrieval falha.
 
-**V4 (2026) — query rewriting + prompt caching.** Adicionei LLM para reescrever queries usando contexto da conversa anterior ("e para crianças?" vira "contraindicações para crianças" na query). Prompt caching no system prompt do generator, redução de custo ~60%.
+### Caminho 2 — RAG sobre o próprio Codex Technomanticus (1-2 semanas)
 
-**Lições duras:**
+Indexar este próprio vault (~100 notas em PT-BR e crescendo) e expor via interface conversacional. Força lidar com:
 
-- **Chunking ruim quebra tudo. Invista aí primeiro.** Mudar de fixed para structure-aware teve impacto maior que trocar de modelo de embedding.
-- **Reranker é barato e transforma qualidade.** $0.002 por query da Cohere valem ouro.
-- **Evaluation automatizada é obrigatório.** Descobri 3 regressões em 6 meses que só o golden set pegou.
-- **Metadata é crítico em multi-tenant.** Implementar depois é dor.
-- **Documentação do usuário e documentação técnica precisam de tratamentos diferentes.** Uma pergunta "como fazer X" vs "código de erro Y" se beneficia de estratégias diferentes.
+- Chunking de markdown estruturado (headers, callouts, code blocks)
+- Metadata útil (tags do frontmatter, tipo de nota, status)
+- Queries em PT-BR
+- Casos limites (notas curtas, notas longas, MOCs vs concept notes)
 
-**Incidente memorável:** usuários começaram a relatar respostas incorretas em uma área específica (ortopedia). Investigação: uma atualização do parser de PDF havia quebrado o chunking para documentos com tabelas complexas — chunks viravam "lixo" misturado com células. Ragas pegou a regressão no deploy, fizemos rollback em 30 min. Desde então, **parser é versionado e testado como código**.
+Tem motivação real: o vault é usado todo dia, qualquer melhoria de qualidade é sentida imediatamente.
+
+**Critério de sucesso:** consultar o próprio vault sem abrir o Obsidian, com qualidade decente; cada iteração de melhoria mensurável.
+
+### Caminho 3 — RAG em stack profissional (quando aparecer oportunidade)
+
+Se em projeto profissional (atual ou futuro) houver caso real de RAG, implementar usando o stack do próprio projeto. Mais demorado e menos didático que o Caminho 2, mas é o que se torna "RAG em produção" no CV. Se não há caso real ainda, não forçar — os Caminhos 1 e 2 já dão a base; o 3 espera a oportunidade certa.
+
+**Critério de sucesso:** entrega no projeto com métricas, não estudo paralelo.
+
+---
+
+**Sugestão de ordem:** Caminho 1 → Caminho 2 → Caminho 3.
+
+Pular o Caminho 1 e ir direto para o Caminho 3 é a forma mais comum de gastar 3 meses construindo RAG ruim porque os fundamentos ficaram opacos. Em qualquer caminho: **medir é não-negociável** (golden set + Ragas ou equivalente). Sem métrica, "parece funcionar" engana por meses.
 
 ## How to explain in English
 
 ### Short pitch
 
-"RAG is how you make an LLM 'know' your data without training anything. You embed chunks of your documents, store them in a vector DB, retrieve relevant chunks per query, and inject them into the prompt. The trap is thinking RAG = vector DB. Retrieval quality is where the work lives: chunking, hybrid search, reranking, query rewriting, and evaluation."
+"RAG is how you make an LLM 'know' your data without training anything. You embed chunks of your documents, store them in a vector DB, retrieve relevant chunks per query, and inject them into the prompt. The trap is thinking RAG equals vector DB. Retrieval quality is where the work lives: chunking, hybrid search, reranking, query rewriting, and evaluation."
 
 ### Deeper version
 
-"My rule of thumb: nobody serious in 2026 runs pure vector search in production. Hybrid search — BM25 plus vector — catches both semantic matches and exact terms. On top of that, a reranker on the top 20-30 results makes a bigger difference than most realize. And none of it matters if your chunks are garbage, so structure-aware chunking that respects headers, tables, and code blocks is where I start.
+"A reliable rule of thumb for 2026: nobody serious runs pure vector search in production. Hybrid search — BM25 plus vector — catches both semantic matches and exact terms. On top of that, a reranker on the top 20-30 results makes a bigger difference than most realize. And none of it matters if the chunks are garbage, so structure-aware chunking that respects headers, tables, and code blocks is the right place to start.
 
-For evaluation, I separate retrieval quality from generation quality. If retrieval fails, the LLM can't save it. Ragas or similar frameworks give me context precision, recall, and faithfulness — the three metrics I actually monitor.
+For evaluation, retrieval quality and generation quality should be measured separately. If retrieval fails, the LLM cannot save it. Ragas or similar frameworks give context precision, recall, and faithfulness — the three metrics that actually matter to monitor.
 
-On the infra side, I default to pgvector unless scale forces me to a dedicated vector DB. Keeping data in Postgres means filters, joins, and transactions work naturally. And I always embed metadata for filtering: tenant, date, doc type. Multi-tenant RAG without metadata is a leak waiting to happen."
+On the infra side, pgvector is a sensible default unless scale forces a dedicated vector DB. Keeping data in Postgres means filters, joins, and transactions work naturally. And metadata for filtering (tenant, date, doc type) is essential: multi-tenant RAG without metadata is a leak waiting to happen."
 
 ### Talking points
 
@@ -747,7 +760,7 @@ On the infra side, I default to pgvector unless scale forces me to a dedicated v
 - "Chunking is where 50% of RAG quality lives."
 - "Long context doesn't replace RAG — 'lost in the middle' is real."
 - "RAG before fine-tuning, almost always."
-- "I measure retrieval separately from generation."
+- "Retrieval and generation should be measured separately."
 - "Metadata is not optional — it's how you enforce permissions and freshness."
 
 ### Key vocabulary
@@ -848,43 +861,45 @@ Framework padrão para eval de RAG. Métricas: context precision, context recall
 - **Corrective RAG (CRAG):** agent avalia se contexto é suficiente, busca mais se não for.
 - **Self-RAG:** modelo decide quando retrievar e avalia contextos retornados.
 
-## Casos de produção
+## Casos comuns no mercado
+
+Padrões frequentes em equipes implementando RAG em produção. Não são casos vividos pessoalmente — são armadilhas recorrentes documentadas em post-mortems, talks, e literatura técnica.
 
 ### Caso 1 — Chunking quebrado com tabelas
 
-Base cresceu para 800+ docs. Usuários reclamaram de respostas vagas numa área específica. Chunker fixed-size quebrava tabelas no meio, criando chunks "lixo".
+**Padrão observado:** base cresce, chunker fixed-size começa a quebrar tabelas e blocos estruturados no meio, criando chunks "lixo" misturados. Sintoma típico: respostas vagas em áreas específicas onde a documentação tem muito conteúdo tabular ou código.
 
-**Fix:** chunker structure-aware respeitando headers/tabelas/code blocks. Re-indexação (~3h). Ragas regression test por categoria. Chunker versionado.
+**Fix típico:** chunker structure-aware respeitando headers/tabelas/code blocks; re-indexação completa após troca; Ragas regression test por categoria; chunker versionado como código.
 
 **Lição:** chunking é onde metade da qualidade vive.
 
 ### Caso 2 — Embeddings misturados de versões diferentes
 
-Upgrade de modelo de embeddings (v2 → v3) foi aplicado só em novos docs. Antigos ficaram com v2. Espaços vetoriais diferentes = qualidade arruinada.
+**Padrão observado:** upgrade de modelo de embeddings (ex: v2 → v3) aplicado apenas em novos docs. Docs antigos ficam com v2. Espaços vetoriais incompatíveis arruinam a qualidade do retrieval.
 
-**Fix:** re-indexação completa sempre ao trocar modelo. Campo `embedding_version` nos metadados. Pipeline detecta mismatch.
+**Fix típico:** re-indexação completa ao trocar modelo; campo `embedding_version` nos metadados; pipeline detecta mismatch e bloqueia query híbrida entre versões.
 
-**Lição:** não misture embeddings de modelos diferentes.
+**Lição:** não misturar embeddings de modelos diferentes na mesma base.
 
 ### Caso 3 — Multi-tenant leak
 
-Feature multi-tenant sem filtro estrito por `tenant_id`. Bug em query retornou chunks do tenant errado. Data leak confidencial.
+**Padrão observado:** feature multi-tenant implementada sem filtro estrito por `tenant_id` em todas as camadas. Bug em alguma query retorna chunks de outro tenant. Data leak confidencial — risco crítico em ambientes B2B/saúde/financeiro.
 
-**Fix:** `tenant_id` obrigatório nos metadados + filtro no middleware + Row-level Security no Postgres (defense-in-depth). Audit log cross-tenant (deve ser sempre zero).
+**Fix típico:** `tenant_id` obrigatório nos metadados; filtro no middleware da aplicação; Row-Level Security no Postgres (defense-in-depth); audit log cross-tenant que deve ser sempre zero.
 
-**Lição:** isolation multi-tenant é crítico. Multi-camada.
+**Lição:** isolamento multi-tenant é crítico e precisa ser multi-camada.
 
 ### Caso 4 — Reranker como otimização mais subestimada
 
-RAG com hybrid search tinha context precision ~0.6. Adicionei Cohere Rerank v3 em top-20 → subiu para ~0.85. Custo extra: ~$0.002/query.
+**Padrão observado:** muitos sistemas em produção param em "hybrid search" e nunca adicionam reranker. Adicionar Cohere Rerank v3 ou bge-reranker-v2 em cima de top-20 tipicamente eleva context precision em 15-30 pontos percentuais, com custo de ~$0.002/query.
 
-**Lição:** reranker é quase sempre worth it.
+**Lição:** reranker é quase sempre worth it. Subestimado porque "mais um modelo no pipeline" parece complicação — o impacto em qualidade dilui isso.
 
 ### Caso 5 — Long context não substitui RAG
 
-Tentativa de "eliminar RAG" usando Gemini 1.5 Pro 2M contexto. Resultado: lost-in-the-middle severo, custo alto, latência inviável. Reverti para RAG filtrado.
+**Padrão observado:** com modelos de 1M+ tokens, equipes tentam "eliminar RAG" jogando tudo no contexto. Resultado típico: lost-in-the-middle severo (info no meio do contexto é mal usada), custo por query alto, latência inviável para muitos casos de uso.
 
-**Lição:** context window grande não é substituto de retrieval bem feito.
+**Lição:** context window grande não substitui retrieval bem feito. O retrieval continua valioso mesmo com 1M+ tokens, especialmente para precisão de citação e custo.
 
 ## Exercícios hands-on
 

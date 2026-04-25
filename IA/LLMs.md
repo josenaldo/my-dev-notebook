@@ -362,7 +362,7 @@ response = client.messages.create(
 )
 ```
 
-**Impacto real:** no MedEspecialista reduzimos custo de sumarização em ~85% movendo o prompt-padrão (~4K tokens) para cache. A latência também caiu ~40%.
+**Impacto típico:** features com system prompt de 3-5K tokens sob caching tipicamente reduzem custo em ~80-90% e TTFT em ~30-40%. ROI imediato em qualquer workload com system prompt grande recorrente.
 
 ### Streaming vs non-streaming
 
@@ -659,44 +659,65 @@ Ferramentas: **Langfuse**, **Helicone**, **LangSmith**, **Arize Phoenix**, **Bra
 
 Em produção, compare variantes de prompt/modelo. Métricas de negócio (conversion, resolution time) são mais honestas que métricas de LLM.
 
-## Na prática (da minha experiência)
+## Como ganhar experiência prática
 
-No MedEspecialista, minha experiência operacional com LLMs foi uma progressão dolorosa que destravou padrões:
+Esta nota é estrutura técnica sobre LLMs. Para internalizar, prática é insubstituível. Três caminhos curados:
 
-**Lição 1 — Prompt caching paga sozinho a feature.** Feature de sumarização estava custando ~$2.400/mês em Sonnet. Movi system prompt e few-shot examples para cache, custo caiu para ~$350/mês. ROI imediato.
+### Caminho 1 — Domínio de API em 1-2 semanas
 
-**Lição 2 — Tiering é obrigatório em escala.** Para triagem de mensagens (classificar urgente/normal/junk), Opus era overkill. Haiku com 8 few-shot examples cobre 95% dos casos a 1/30 do custo. Reservo Opus para os 5% que o Haiku marca como "incerto".
+Construir 4 scripts pequenos com Anthropic SDK (ou OpenAI), focando em uma capability cada:
 
-**Lição 3 — Structured outputs eliminam classes inteiras de bugs.** Antes de usar tool use forçado com schema, 2-3% dos responses vinham com JSON quase-válido (trailing comma, aspas erradas, campo extra). Todo parse era envelope com retry. Depois de structured outputs, essa taxa caiu para praticamente zero.
+1. **Chat com streaming** — terminal que mantém histórico, mostra tokens fluindo
+2. **Classificador com structured output** — texto livre → JSON validado por schema
+3. **Tool use loop** — agent mínimo com 2-3 tools (calculadora, web search)
+4. **Prompt caching benchmark** — system prompt de ~3K tokens, medir custo com e sem cache
 
-**Lição 4 — Context rot é real.** Tentei passar o prontuário completo (120K tokens) para o modelo sumarizar. Resultado: perdia info do meio. Mudei para pipeline de chunking + summary-of-summaries. Qualidade subiu, custo caiu.
+**Critério de sucesso:** consegue levantar uma integração LLM de produção sem hesitar; sabe responder por que cada parâmetro está como está.
 
-**Lição 5 — Observabilidade salva seu pescoço.** Integrei Langfuse em todos os calls. Um dia, custo dobrou do nada. Olhei no dashboard: um dev tinha colocado um PDF de 80 páginas no prompt dentro de um loop. Detectei em 2h, não em final de mês com susto.
+### Caminho 2 — Feature LLM no Codex Technomanticus (2-3 semanas)
 
-**Lição 6 — Pin model versions em produção.** Dia que Anthropic atualizou Sonnet silenciosamente, um prompt que era 99% estável começou a falhar em ~15% dos casos. Versões pinadas em config + suite de regression tests passou a ser obrigatório.
+Implementar uma feature de LLM com valor real sobre o próprio vault:
 
-**Incidente memorável:** um refactor de prompt "aparentemente inofensivo" quebrou a extração de dados estruturados — adição de um tab no system prompt fez o modelo começar a retornar código markdown em vez de JSON puro. Passou no code review, passou em 3 testes manuais, quebrou em produção quando hit alguns inputs específicos. Desde então: golden set de 50 casos, rodado automaticamente em todo PR que toca prompt.
+- **Opção A:** classificador de notas do Inbox (urgente/aprender/referência) usando Haiku + structured output
+- **Opção B:** sumário diário das notas modificadas
+- **Opção C:** assistente de tags (sugere tags baseado no conteúdo)
+
+Cobre o ciclo completo: prompting → API → eval → custo → produção pequena. Tem motivação real.
+
+**Critério de sucesso:** feature funcionando, golden set de 20 casos, métricas (acurácia, custo, latência) e dashboard simples.
+
+### Caminho 3 — LLM em produção em projeto profissional (quando aparecer)
+
+Em projeto profissional com caso real, implementar com observabilidade completa, evaluation contínua, fallback multi-provider, pin de versão. Mais demorado, mas é o que vira "LLM em produção" no CV.
+
+Sem oportunidade ainda? Caminhos 1 e 2 já dão fundação sólida; Caminho 3 espera.
+
+**Critério de sucesso:** entrega no projeto com métricas, não estudo paralelo.
+
+---
+
+**Sugestão de ordem:** Caminho 1 → Caminho 2 → Caminho 3. Em qualquer caminho, golden set + métricas básicas são não-negociáveis.
 
 ## How to explain in English
 
 ### Elevator pitch
 
-"LLMs are transformer-based neural networks trained to predict the next token. The magic is that from that objective emerges remarkable language and code abilities. For production work, my focus is on treating them as stochastic functions with untyped outputs — I use structured outputs, validation, retries, evaluation, and observability the same way I'd engineer any other unreliable dependency."
+"LLMs are transformer-based neural networks trained to predict the next token. From that objective emerges remarkable language and code abilities. For production, the right framing is treating them as stochastic functions with untyped outputs — structured outputs, validation, retries, evaluation, and observability are not optional, they're the same engineering discipline applied to any unreliable dependency."
 
 ### Deeper version
 
-"I think about LLMs at three levels. First, the architecture: causal decoder-only transformers, attention, tokenization, sampling. I don't train them, but I know enough to reason about context rot, why temperature matters, and why tokenization affects cost and behavior.
+"Three levels to think about LLMs in production. First, the architecture: causal decoder-only transformers, attention, tokenization, sampling. Enough understanding to reason about context rot, why temperature matters, and why tokenization affects cost and behavior — not enough to train them, and that's fine for application work.
 
-Second, the API surface: system prompts, messages, tools, structured outputs, streaming, prompt caching. These are the knobs I use every day. I have opinions about temperature (zero for structured tasks, higher for creative), about tool use (descriptions are everything), about caching (massively underused).
+Second, the API surface: system prompts, messages, tools, structured outputs, streaming, prompt caching. These are the everyday knobs. Defaults that hold up: temperature zero for structured tasks, higher for creative; tool use is mostly about description quality; prompt caching is massively underused.
 
-Third, production concerns: cost, latency, evaluation, safety. I treat prompts as code — versioned, reviewed, tested against golden sets. I instrument every call with tracing. I tier models aggressively — Haiku for triage, Sonnet for the hard work. I defend against prompt injection at system boundaries. And I never, ever execute LLM-generated code or SQL without sandboxing or human review."
+Third, production concerns: cost, latency, evaluation, safety. The mature posture is prompts as code — versioned, reviewed, tested against golden sets — every call instrumented with tracing, models tiered aggressively (Haiku/Flash for triage, Sonnet/GPT-4 for the hard work), prompt injection defended at system boundaries, and never execute LLM-generated code or SQL without sandboxing or human review."
 
 ### Talking points for specific topics
 
-- **On hallucination:** "I mitigate it with RAG and citations, structured outputs for format stability, and LLM-as-judge for fact verification. And I design features assuming hallucination will happen — nothing critical relies on the LLM being right."
-- **On cost:** "Prompt caching and model tiering are the biggest wins. I cut a feature's cost by 85% just by caching the system prompt."
-- **On evaluation:** "Prompts without evals are superstition. I maintain golden sets and run them on every prompt change. That's the bare minimum."
-- **On context window:** "1M tokens sounds great until you benchmark lost-in-the-middle. I still prefer RAG-filtered 8K over raw dumps, except for very specific use cases like codebase-wide refactoring."
+- **On hallucination:** "Mitigated with RAG and citations, structured outputs for format stability, and LLM-as-judge for fact verification. Features should be designed assuming hallucination will happen — nothing critical relies on the LLM being right."
+- **On cost:** "Prompt caching and model tiering are the biggest wins. Caching a 4-5K-token system prompt typically cuts feature cost by 80%+."
+- **On evaluation:** "Prompts without evals are superstition. Golden sets run on every prompt change is the bare minimum."
+- **On context window:** "1M tokens sounds great until you benchmark lost-in-the-middle. RAG-filtered 8K usually beats raw dumps, except for specific cases like codebase-wide refactoring."
 
 ### Key vocabulary
 
@@ -927,13 +948,15 @@ O paper que mostrou que scaling destrava in-context learning. Base do "prompt en
 
 Ponto-chave: modelos grandes aprendem pelo prompt, não só por fine-tuning. [arxiv](https://arxiv.org/abs/2005.14165)
 
-## Casos de produção — observability e incidentes
+## Casos comuns no mercado — observability e incidentes
+
+Padrões frequentes em times rodando LLMs em produção. Não são casos vividos pessoalmente — são armadilhas recorrentes documentadas em post-mortems, talks, e literatura técnica.
 
 ### Caso 1 — Cost spike por context creep
 
-Feature de sumarização começou a custar 3x mais num mês. Investigação via Langfuse mostrou que tokens médios por chamada haviam dobrado. Causa raiz: um refactor acidentalmente passou a incluir mais contexto (histórico completo em vez de último par).
+**Padrão observado:** feature de LLM em produção há meses. Sem aumento de usuários, custo dobra em uma semana. Investigação via observability mostra que tokens médios por chamada dobraram. Causa raiz típica: um refactor passou a incluir mais contexto (histórico completo em vez de último par; "últimas 20 entradas" em vez de "últimas 3").
 
-**Fix:**
+**Fix típico:**
 
 - Limite hard de tokens de input por feature.
 - Alerta "tokens/call > p95 histórico".
@@ -941,36 +964,38 @@ Feature de sumarização começou a custar 3x mais num mês. Investigação via 
 
 ### Caso 2 — Outage de provider
 
-Anthropic API começou a retornar 529 em um horário de pico. ~40 min de incidente. Depois: roteador multi-provider com Claude → GPT-4.1 → Gemini Flash como fallback cascata, circuit breaker em health checks passivos.
+**Padrão observado:** API do provider começa a retornar 529 (overloaded) em pico de tráfego. Feature crítica fica fora por dezenas de minutos.
+
+**Fix típico:** roteador multi-provider com cascata de fallback (ex: Claude → GPT-4.1 → Gemini Flash) e circuit breaker em health checks passivos.
 
 **Lição:** multi-provider resilience é design, não opcional.
 
 ### Caso 3 — Silent model update
 
-Feature classificando tickets usava alias `claude-sonnet-4-5`. Anthropic atualizou para 4-6. Taxa de "unknown" subiu de 3% para 12%. Rollback em 30 min, pin estrutural depois.
+**Padrão observado:** feature usa alias (ex: `claude-sonnet-4-5`). Provider atualiza o modelo atrás do alias. Taxa de erro/comportamento muda silenciosamente. SLA tradicional (uptime) não detecta porque é qualidade.
 
-**Lição:** pin version em produção + golden set em CI.
+**Fix típico:** pin de versão obrigatório em produção + golden set em CI rodando em todo PR que toque prompt ou config de modelo.
 
 ### Caso 4 — Structured output edge case
 
-Extração de CEP de texto livre, JSON mode, funcionava 99%. Um PR mudou o system prompt trocando `JSON` por `json` minúsculo. Taxa de erro subiu para ~8% — modelo começou a retornar JSON em markdown code block em vez de raw.
+**Padrão observado:** extração estruturada com JSON mode funciona 99%. Mudança trivial no system prompt (capitalização, espaçamento, vírgula) altera distribuição de saída. Modelo passa a retornar JSON em markdown code block em vez de raw, ou adiciona campos extras. Taxa de erro pula para ~8%.
 
-**Fix:**
+**Fix típico:**
 
 - Golden set com assertions estritas de schema.
 - `response_format` / `tool_choice` forçado em vez de depender de instrução textual.
-- Code review mais rigoroso para mudanças em prompts.
+- Code review rigoroso para mudanças em prompts (mesmo "cosméticas").
 
 ### Caso 5 — PII em logs
 
-Inicialmente, logs da API LLM tinham inputs completos dos usuários. Passou LGPD compliance por anos. Depois, um auditor pediu retenção limitada a 7 dias + redaction de CPFs. Dor: logs estavam em múltiplos sistemas (Langfuse, Cloudwatch, nosso DB).
+**Padrão observado:** inicialmente, logs da API LLM contêm inputs completos dos usuários. Passa em compliance review por inércia. Auditoria posterior pede retenção limitada e redaction de dados sensíveis. Logs já estão espalhados em múltiplos sistemas (observability tool, cloud provider logs, DB).
 
-**Fix:**
+**Fix típico:**
 
 - PII detection em middleware antes de enviar ao provider.
 - Campos sensíveis substituídos por hashes para audit.
 - Retention policy enforçada centralmente.
-- Audit review trimestral.
+- Audit review periódico.
 
 **Lição:** compliance não é afterthought. Entrar no sistema cedo é barato; retrofit é caro.
 
@@ -1001,7 +1026,7 @@ Alertas:
   - golden set regression (from CI)
 ```
 
-Ferramenta que uso: Langfuse. Alternativas: Helicone, LangSmith, Braintrust, Arize Phoenix.
+Ferramentas comuns no mercado: Langfuse, Helicone, LangSmith, Braintrust, Arize Phoenix.
 
 ## Exercícios hands-on — labs
 

@@ -487,38 +487,66 @@ Review antes de rodar. Package do npm/pypi pode ser malicioso.
 
 Erros precisam seguir padrões JSON-RPC. Retornar HTTP 500 em vez de JSON-RPC error é bug.
 
-## Na prática (da minha experiência)
+## Como ganhar experiência prática
 
-No MedEspecialista, MCP entrou no workflow em 2025, quando o Claude Code passou a suportar.
+Esta nota é estrutura sobre MCP. Para internalizar, prática é insubstituível. Três caminhos curados:
 
-**Uso 1 — Desenvolvimento local.** Rodo Claude Code com os servers: filesystem (escopo no projeto), git, postgres (DB de dev, read-only), github (issues, PRs). O ganho é que esses capabilities ficam disponíveis em qualquer projeto sem configuração duplicada.
+### Caminho 1 — Setup e exploração de servers oficiais (3-5 dias)
 
-**Uso 2 — Server customizado para o domínio.** Escrevi um MCP server que expõe tools específicas do MedEspecialista: `list_patients`, `read_consultation`, `search_procedures`. Isso vira utilidade para coding assistants quando precisam testar código contra dados reais (com sanitização).
+Configurar Claude Desktop ou Claude Code com 3-4 servers oficiais e usar em tarefas reais por uma semana:
 
-**Uso 3 — Server interno de observabilidade.** Um MCP server que conecta no Langfuse/Grafana para o agent consultar métricas durante debugging. "Qual o p99 de latência do endpoint X?" vira uma tool call.
+- `filesystem` (escopo restrito a um diretório de teste)
+- `git` (operações em repos próprios)
+- `github` (issues e PRs em repos próprios)
+- `fetch` (HTTP requests genéricos)
 
-**Lições:**
+Notar onde ajuda, onde atrapalha, onde é "magia que vale ouro".
 
-- **MCP server bem-feito é reutilizado em múltiplos workflows.** Investi 1 dia no filesystem server do MedEspecialista e uso em todos projetos.
-- **Allowlist de tools no client é crítico.** Em projetos sensíveis desabilito tools destrutivas na config.
-- **HTTP + OAuth é complexidade significativa.** Só vale se o server precisa ser compartilhado.
+**Critério de sucesso:** entende experiência de usuário do MCP; tem opinião sobre quais servers vale habilitar.
+
+### Caminho 2 — MCP server customizado para o Codex Technomanticus (2 semanas)
+
+Construir um MCP server (TypeScript ou Python) com 3-5 tools específicas do vault:
+
+- `list_recent_notes` — notas modificadas nos últimos N dias
+- `find_orphan_notes` — notas sem backlinks
+- `search_by_tag` — busca por tag do frontmatter
+- `read_moc` — lê uma MOC e suas notas referenciadas
+
+Conectar ao Claude Code, usar em workflow real. Documentar.
+
+**Critério de sucesso:** server funcional, integrado ao workflow do vault, com observabilidade básica.
+
+### Caminho 3 — MCP server profissional com auth (quando aparecer)
+
+Em projeto profissional que se beneficie de capability via MCP (ex: query a sistema interno), implementar HTTP MCP server com OAuth, TLS, audit log, rate limiting. Mais demorado, mas é o que vira "MCP em produção" no CV.
+
+**Critério de sucesso:** server compartilhado entre devs do time, com governance apropriada.
+
+---
+
+**Sugestão de ordem:** Caminho 1 → Caminho 2 → Caminho 3.
+
+**Princípios universais:**
+
+- **MCP server bem-feito é reutilizado em múltiplos workflows.** Investimento se paga rápido.
+- **Allowlist de tools no client é crítico.** Em projetos sensíveis, desabilitar tools destrutivas via config.
+- **HTTP + OAuth é complexidade significativa.** Só vale se o server precisa ser compartilhado entre máquinas/usuários.
 - **Debugging de MCP é sofrível sem logs.** Instrumentar desde o início.
-
-**Incidente memorável:** um server community que instalei (um "time tracking" server) fazia log dos prompts no próprio servidor deles. Descobri ao reparar requests HTTP saindo durante uso normal. Desinstalei imediatamente. **Lição:** review code antes de rodar server community, mesmo pequenos. Confie mas verifique, em escala pequena.
 
 ## How to explain in English
 
 ### Short pitch
 
-"MCP is the standard protocol for connecting LLM clients to external capabilities — filesystem, databases, APIs, custom services. Think 'LSP for AI'. You write a server once, any MCP-compatible client can use it. Claude Code, Cursor, Copilot, and ChatGPT all support it in 2026."
+"MCP is the standard protocol for connecting LLM clients to external capabilities — filesystem, databases, APIs, custom services. Think 'LSP for AI'. Write a server once, any MCP-compatible client can use it. Claude Code, Cursor, Copilot, and ChatGPT all support it in 2026."
 
 ### Deeper version
 
-"The value of MCP is composability. Before it, every tool had to be written as a plugin for each client, in each client's format. MCP gives you one server, any client. I've written a few custom servers for the codebase at my company — one for our internal knowledge base, one for our observability stack — and they just work whether I'm in Claude Code, Cursor, or testing something in Claude Desktop.
+"The value of MCP is composability. Before it, every tool had to be written as a plugin for each client, in each client's format. MCP gives you one server, any client. Custom servers for an internal knowledge base or observability stack just work whether the entry point is Claude Code, Cursor, or Claude Desktop.
 
 The protocol itself is JSON-RPC 2.0 over either stdio or HTTP+SSE. stdio for local servers, HTTP for remote. The primitives are tools, resources, and prompts — tools being the active ones the LLM decides to invoke.
 
-The thing I think a lot of people underestimate is the security model. MCP servers often have real capabilities — filesystem access, database queries, API calls. Combined with prompt injection risks from any external content the LLM consumes, you need least-privilege, allowlists, human-in-the-loop for destructive actions, and supply chain vigilance. I audit every third-party server I install."
+The underestimated piece is the security model. MCP servers often have real capabilities — filesystem access, database queries, API calls. Combined with prompt injection risks from any external content the LLM consumes, the necessary discipline is least-privilege, allowlists, human-in-the-loop for destructive actions, and supply chain vigilance. Every third-party server should be audited before installation."
 
 ### Phrases to use
 
@@ -702,25 +730,27 @@ Cronologia resumida:
 
 MCP é o primeiro protocol real, cross-provider, cross-tool.
 
-## Casos de produção
+## Casos comuns no mercado
+
+Padrões frequentes em times usando MCP em produção. Não são casos vividos pessoalmente — são armadilhas recorrentes documentadas em post-mortems, talks, e literatura técnica.
 
 ### Caso 1 — MCP server community malicioso
 
-Instalei um "task tracker" MCP server do GitHub que tinha ~500 stars. Após alguns dias de uso, notei requests HTTP inesperados do processo. Investigação: o server fazia POST dos prompts para o backend do autor para "análise". Silencioso, não documentado. Removido, issue reportado (autor disse que era "telemetria opcional").
+**Padrão observado:** dev instala MCP server community do GitHub com boas estrelas. Após dias de uso, requests HTTP inesperados são detectados saindo do processo. Investigação revela que o server faz POST dos prompts para backend do autor "para análise" — silencioso, não-documentado.
 
-**Fix:**
+**Fix típico:**
 
 - Review de source de todo server community antes de instalar.
 - Firewall restringindo outbound de MCP servers locais a loopback.
-- Preferência por servers maintidos por orgs conhecidas.
+- Preferência por servers mantidos por orgs conhecidas.
 
 **Lição:** supply chain é real. "Open source popular" não garante segurança.
 
 ### Caso 2 — Filesystem server com escopo amplo demais
 
-Configurei filesystem server com root = `$HOME` por conveniência. Durante uma sessão com prompt injection embutido em documento de cliente, agent tentou ler `~/.ssh/id_rsa`. Não conseguiu (permissões do OS), mas foi wake-up call.
+**Padrão observado:** dev configura filesystem server com root = `$HOME` por conveniência. Durante sessão com prompt injection embutido em documento externo, agent tenta ler `~/.ssh/id_rsa`. OS bloqueia (permissões), mas é wake-up call.
 
-**Fix:**
+**Fix típico:**
 
 - Escopo sempre ao diretório do projeto específico, não `$HOME`.
 - Usuário separado para rodar MCP servers com privileges mínimos.
@@ -730,34 +760,34 @@ Configurei filesystem server com root = `$HOME` por conveniência. Durante uma s
 
 ### Caso 3 — Tool output gigante contaminando contexto
 
-MCP server custom expunha tool `query_database`. Uma query inocente retornou 30K tokens de JSON. Context do agent inundou, qualidade de próximas interações caiu drasticamente.
+**Padrão observado:** MCP server custom expõe tool `query_database`. Query inocente retorna 30K tokens de JSON. Context do agent é inundado, qualidade de próximas interações cai drasticamente.
 
-**Fix:**
+**Fix típico:**
 
 - Tools paginam resultados (limit default + flag para expandir).
 - Outputs grandes retornam summary + ID para detalhe opcional.
 - Hard limit de tokens no return value.
 
-**Lição:** compactar outputs de tool é crítico. Não despeje dados brutos.
+**Lição:** compactar outputs de tool é crítico. Não despejar dados brutos.
 
 ### Caso 4 — HTTP MCP server sem TLS em dev
 
-Dev rodou HTTP MCP server local sem TLS "porque é localhost". Algumas semanas depois, resolveram compartilhar entre máquinas para "facilidade". Tráfego sem criptografia contendo queries sensíveis.
+**Padrão observado:** dev roda HTTP MCP server local sem TLS "porque é localhost". Semanas depois, time decide compartilhar entre máquinas "para facilidade". Tráfego sem criptografia contendo queries sensíveis circula em rede.
 
-**Fix:**
+**Fix típico:**
 
 - TLS sempre, mesmo em dev.
-- mkcert para certificados locais válidos.
+- `mkcert` para certificados locais válidos.
 - Auth token obrigatório, rotacionável.
 - Rede restrita (VPN, firewall).
 
-**Lição:** padrões de segurança são contra temporários virarem permanentes.
+**Lição:** padrões de segurança previnem temporários de virarem permanentes.
 
 ### Caso 5 — Schema change quebrou clients antigos
 
-Atualizei um MCP server custom renomeando um campo de `user_id` para `userId`. Clients com versão antiga (Claude Desktop desatualizado no laptop de um colega) começaram a falhar silenciosamente.
+**Padrão observado:** atualização de MCP server custom renomeia campo de `user_id` para `userId`. Clients em versão antiga (ex: Claude Desktop desatualizado em laptop de colega) começam a falhar silenciosamente.
 
-**Fix:**
+**Fix típico:**
 
 - Versionamento explícito de tools via sufixo (`get_user` → `get_user_v2`).
 - Deprecation graceful: manter tool antiga por algumas versões.

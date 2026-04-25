@@ -14,15 +14,15 @@ publish: true
 
 # Comparativo de LLMs
 
-> "Qual LLM devo usar?" é a pergunta que todo senior fullstack responde 20 vezes por ano. Esta nota é o framework de decisão que uso hoje, destilado de ~3 anos pagando contas de API, testando migrações, e revertendo decisões mal informadas. **Não existe "o melhor LLM"** — existe o melhor para cada combinação de (task, restrições de custo, restrições de latência, stack, compliance). Esta nota dá: uma matriz de decisão prática, trade-offs reais (não marketing), e critérios para escolher entre Claude, GPT, Gemini e ferramentas derivadas em 2026. Para notas individuais, ver [[Claude]], [[GitHub Copilot]], [[Codex]], [[Gemini]]. Para fundamentos de LLMs em geral, [[LLMs]].
+> "Qual LLM devo usar?" é a pergunta que todo senior fullstack responde dezenas de vezes por ano. Esta nota é um framework de decisão prático, destilado de literatura técnica, post-mortems públicos, e benchmarks independentes. **Não existe "o melhor LLM"** — existe o melhor para cada combinação de (task, restrições de custo, restrições de latência, stack, compliance). Esta nota dá: uma matriz de decisão prática, trade-offs reais (não marketing), e critérios para escolher entre Claude, GPT, Gemini e ferramentas derivadas em 2026. Para notas individuais, ver [[Claude]], [[GitHub Copilot]], [[Codex]], [[Gemini]]. Para fundamentos de LLMs em geral, [[LLMs]].
 
 ## A pergunta errada e a pergunta certa
 
 **Pergunta errada:** "Qual o melhor LLM?"
 
-**Pergunta certa:** "Dada minha task, meu budget, minha latência tolerável, meu stack e minhas restrições de compliance, qual LLM entrega o melhor resultado esperado?"
+**Pergunta certa:** "Dada a task, o budget disponível, a latência tolerável, o stack existente e as restrições de compliance, qual LLM entrega o melhor resultado esperado?"
 
-Sempre que alguém pergunta a primeira, eu pergunto de volta:
+Antes de responder a primeira, é necessário esclarecer:
 
 1. **Task:** coding interativo? Classificação em volume? Chatbot? RAG? Multimodal?
 2. **Custo tolerável:** $0.001 por chamada ou $0.30?
@@ -31,7 +31,7 @@ Sempre que alguém pergunta a primeira, eu pergunto de volta:
 5. **Compliance:** regulamentado (saúde, finance)? Data residency? On-prem?
 6. **Volume:** 100 chamadas/dia ou 10M/dia?
 
-Só depois dessas respostas faço sentido recomendar algo.
+Só depois dessas respostas faz sentido recomendar algo.
 
 ## As três famílias principais em 2026
 
@@ -75,7 +75,7 @@ Fora dessas, há players relevantes em nicho:
 | **Async/paralelo** | **Codex Cloud** |
 | **Voice/visual interaction** | **Cursor** ou **Gemini Live** (experimental) |
 
-Minha stack atual: Claude Code + Copilot (inline completions). Os dois juntos batem qualquer um sozinho.
+Stack típica em times produtivos em 2026: Claude Code + Copilot (inline completions). Os dois juntos costumam render mais do que qualquer um isolado.
 
 ### Chatbot em produção
 
@@ -177,9 +177,9 @@ Ver [[RAG e Vector Databases]] para deep dive.
 
 **Observação:** tiers de contexto longo, batch, caching e regional pricing podem fazer diferença enorme. Sempre consulte pricing atual do provedor.
 
-### Qualidade de código (observação prática)
+### Qualidade de código (observação geral do mercado em abril 2026)
 
-Baseado em minha experiência e benchmarks do meu golden set pessoal:
+Baseado em benchmarks públicos (LMSYS Arena, SWE-Bench, LiveCodeBench), análises independentes (Artificial Analysis) e relatos consistentes da comunidade. **Sempre validar com golden set próprio antes de decidir.**
 
 - **Refactors complexos, debugging profundo:** Claude Opus ~ o3 > Claude Sonnet > GPT-4.1 > Gemini 2.5 Pro
 - **Coding interativo confortável:** Claude Code > Cursor > Copilot > Gemini CLI
@@ -362,49 +362,65 @@ Sem breakdown por feature, não consegue otimizar. **Fix:** metadata por chamada
 
 Provider atualiza modelo silenciosamente, prompt quebra. **Fix:** pin version + golden set em CI.
 
-## Na prática (da minha experiência)
+## Como ganhar experiência prática
 
-No MedEspecialista, fui passando por várias revisões de stack ao longo dos anos. O que decidiu cada vez:
+Esta nota é framework de decisão. Para internalizar, prática é insubstituível. Três caminhos curados:
 
-**2023 — OpenAI primeira escolha.** Começamos com GPT-3.5 Turbo porque era o que tinha API estável e documentação boa. Funcionou para MVPs, mas qualidade em análise de prontuários era decepcionante.
+### Caminho 1 — Benchmark próprio com golden set (1 semana)
 
-**2024 — Migração para Claude como default.** Testes lado a lado mostraram qualidade superior do Claude 2 em análise médica longa. Migrei features críticas para Anthropic API mantendo GPT para fallback.
+Construir golden set de 30-50 inputs representativos de uma task real. Rodar em 3 modelos lado a lado:
 
-**2025 — Tiering aggressivo multi-provider.** Implementei padrão: Haiku para triagem, Sonnet para casos normais, Opus para edge cases. Custo total caiu ~60% sem perda de qualidade. Gemini Flash entrou para uma feature específica (triagem de mensagens de paciente) onde era objetivamente mais barato com qualidade equivalente.
+- Claude Sonnet 4.6
+- GPT-4.1
+- Gemini 2.5 Pro
 
-**2026 — Multi-provider por capability.** Hoje:
+Medir: accuracy (LLM-as-judge ou exact match), latência p50/p95, custo por chamada, taxa de erro de schema. Tabela comparativa final justificando a escolha.
 
-- **Claude Sonnet 4.6** — feature principal (análise de prontuário, Q&A sobre docs médicas).
-- **Claude Haiku** — triagem rápida em vários pontos.
-- **Gemini 2.5 Pro** — análise multimodal de exames com imagem.
-- **OpenAI GPT-4o** — voice/conversation em uma feature específica.
-- **GPT-4.1-mini** — fallback quando Anthropic tem problemas.
+**Critério de sucesso:** decisão fundamentada por dados, não por hype.
 
-Cada feature tem métricas próprias. Revisão a cada 6 meses, às vezes mais quando aparece modelo importante.
+### Caminho 2 — Multi-provider router no Codex Technomanticus (2 semanas)
 
-**Lições:**
+Implementar cliente que aceita lista de providers em ordem de prioridade, com fallback automático em erro/timeout e circuit breaker básico.
+
+- Primary: Claude Sonnet
+- Secondary: GPT-4.1
+- Tertiary: Gemini Flash (cost fallback)
+
+Testar simulando outage (mock 529 responses). Medir: latência adicionada pelo fallback, precisão comparativa.
+
+**Critério de sucesso:** tem multi-provider funcionando com observabilidade básica.
+
+### Caminho 3 — Tiered routing em projeto profissional (quando aparecer)
+
+Em projeto profissional com volume relevante, implementar tiering Haiku/Flash → Sonnet/4.1 → Opus/o3 com classifier LLM decidindo dificuldade. Medir custo total vs usar modelo grande sempre.
+
+**Critério de sucesso:** redução mensurável de custo (típico: 5-10x) sem perda de qualidade no golden set.
+
+---
+
+**Sugestão de ordem:** Caminho 1 → Caminho 2 → Caminho 3.
+
+**Princípios universais (válidos em qualquer caminho):**
 
 - **Não há religião.** Use o melhor para cada caso, não o "favorito".
 - **Tiering é obrigatório em escala.** Sem ele, custo explode.
-- **Fallback multi-provider salva seu pescoço.** Outages acontecem.
+- **Fallback multi-provider salva o pescoço.** Outages acontecem.
 - **Pin versions e tenha golden sets.** Updates silenciosos existem.
 - **Meça custo por outcome**, não por token. Um modelo "caro" que acerta mais pode ser mais barato no total.
-
-**Incidente memorável:** em 2025, um dia de outage da Anthropic (~3h em horário de pico). Features principais ficaram fora. Desde então: fallback automático para GPT-4.1 configurado em camada de roteamento, reduzindo RTO de 3h para segundos. Custo extra: mínimo, porque só é usado em fallback. **Lição:** resilience é design, não sorte.
 
 ## How to explain in English
 
 ### Short pitch
 
-"There is no 'best LLM'. There's the best LLM for a given task, budget, latency target, stack, and compliance constraints. I maintain a multi-provider stack — Claude as the primary, Gemini for multimodal, GPT for voice and fallback — and I tier aggressively so that Haiku or Flash handles the simple cases and the big models only get the hard ones. That's what keeps cost and quality in balance at scale."
+"There is no 'best LLM'. There's the best LLM for a given task, budget, latency target, stack, and compliance constraints. The mature posture in 2026 is a multi-provider stack — Claude as primary for reasoning and tool use, Gemini for multimodal, GPT for voice and fallback — with aggressive tiering so Haiku or Flash handles the simple cases and the big models only get the hard ones. That's how cost and quality stay in balance at scale."
 
 ### Deeper version
 
-"The core mental model I apply: separate model from tool, tier by task, always benchmark on my data. Separate model from tool because 'Claude Code' and 'Claude' are different things — one is a coding agent, the other is a model. Tier by task because using Opus or GPT-o3 for everything is wasteful; Haiku and Flash handle simple classification at a fraction of the cost. And benchmark on my data because public benchmarks don't reflect how my features actually behave.
+"The core mental model: separate model from tool, tier by task, always benchmark on real data. Separate model from tool because 'Claude Code' and 'Claude' are different things — one is a coding agent, the other is a model. Tier by task because using Opus or GPT-o3 for everything is wasteful; Haiku and Flash handle simple classification at a fraction of the cost. And benchmark on real data because public benchmarks don't reflect how specific features behave.
 
-The current meta in 2026: Claude leads in reasoning and tool use, Gemini in native multimodal and cost at the low end, GPT in ecosystem breadth and voice. For a greenfield project, I'd typically start with Claude Sonnet as the main model, add Haiku for triage, and bring in Gemini specifically for multimodal or extreme-cost use cases. I'd use Claude Code as my coding agent paired with GitHub Copilot for IDE completions.
+The current meta in April 2026: Claude leads in reasoning and tool use, Gemini in native multimodal and cost at the low end, GPT in ecosystem breadth and voice. For a greenfield project, a sensible default is Claude Sonnet as the main model, Haiku for triage, and Gemini specifically for multimodal or extreme-cost use cases. Claude Code as the coding agent paired with GitHub Copilot for IDE completions is a strong pairing.
 
-For enterprise I consider platform choice alongside model choice — Azure OpenAI, Vertex AI, or Bedrock — because data residency, IAM, and audit logs matter more than the model at that level."
+For enterprise, platform choice matters as much as model choice — Azure OpenAI, Vertex AI, or Bedrock — because data residency, IAM, and audit logs matter more than the model at that level."
 
 ### Talking points
 
@@ -595,41 +611,47 @@ Migrar entre providers é mais caro do que parece. Componentes do custo:
 
 **Tempo típico de migração de feature séria:** 1-3 semanas de dev + 1-2 semanas de validation. Considere antes de decidir.
 
-## Casos de produção
+## Casos comuns no mercado
+
+Padrões frequentes em times escolhendo e migrando entre LLMs em 2026.
 
 ### Caso 1 — Migração GPT → Claude com surpresa de custo
 
-Time migrou feature de GPT-4o para Claude Sonnet para "qualidade melhor". Qualidade subiu levemente, mas custo subiu ~2x porque:
+**Padrão observado:** time migra feature de GPT-4o para Claude Sonnet buscando "qualidade melhor". Qualidade sobe levemente, mas custo dobra porque:
 
-1. Não estavam usando prompt caching (Claude tem, GPT-4o tem uma versão limitada).
-2. Prompts otimizados para GPT estavam verbosos quando migrados sem revisão.
-3. Não ajustaram max_tokens (Claude tende a ser mais verbose).
+1. Não usaram prompt caching (Claude tem caching agressivo; GPT-4o tem versão limitada).
+2. Prompts otimizados para GPT ficaram verbosos quando migrados sem revisão.
+3. Não ajustaram `max_tokens` (Claude tende a ser mais verbose por padrão).
 
-**Fix:** adicionar prompt caching, condensar prompts, limit max_tokens. Custo final: 30% abaixo do GPT original. **Lição:** migração requer re-otimização, não só troca de client.
+**Fix típico:** adicionar prompt caching, condensar prompts, limitar `max_tokens`. Custo final tipicamente ~30% abaixo do GPT original.
+
+**Lição:** migração requer re-otimização, não só troca de client.
 
 ### Caso 2 — Outage de único provider
 
-Anthropic API down em horário de pico. Feature crítica ficou fora. 40 min de incidente. Fallback multi-provider foi implementado depois, cascade Claude → GPT → Gemini com circuit breaker.
+**Padrão observado:** API do provider primário fica indisponível em horário de pico. Feature crítica fica fora por dezenas de minutos. Sem fallback configurado, recovery é manual.
+
+**Fix típico:** fallback multi-provider em cascata (ex: Claude → GPT → Gemini) com circuit breaker em health checks passivos.
 
 **Lição:** single-provider é single point of failure.
 
 ### Caso 3 — Silent model update
 
-`claude-sonnet-4-5` alias foi atualizado, taxa de erro subiu 4x. Rollback para versão pinada em 30 min. Depois: pin obrigatório + golden set em CI.
+**Padrão observado:** feature usa alias (`claude-sonnet-4-5`). Provider atualiza atrás do alias. Taxa de erro/comportamento muda. Rollback para versão pinada anterior é necessário.
 
-**Lição:** alias == não determinismo.
+**Lição:** alias = não determinismo. Pin obrigatório + golden set em CI.
 
-### Caso 4 — Flash-Lite competitive em task imprevista
+### Caso 4 — Flash-Lite competitivo em task imprevista
 
-Task de moderação de conteúdo usava Claude Haiku. Testei Gemini Flash-Lite como experimento. Acurácia quase idêntica, custo ~3x menor, latência similar. Migrei.
+**Padrão observado:** task de moderação ou classificação rodando em modelo "default" (ex: Haiku). Benchmark com alternativa (ex: Gemini Flash-Lite) revela acurácia equivalente, custo 2-3x menor, latência similar. Migração trivial após validação.
 
 **Lição:** sempre benchmark novos modelos. Superfície de pricing vs qualidade muda rápido.
 
-### Caso 5 — Fine-tuning premature
+### Caso 5 — Fine-tuning prematuro
 
-Feature tinha acurácia ~85%. Time quis fine-tuning para chegar a 95%. Custo de fine-tuning + tempo de setup + complexidade operacional alto. Alternativa: melhorar prompting, structured outputs, few-shot. Chegou a 94% sem tuning.
+**Padrão observado:** feature tem acurácia ~85%. Time decide fine-tuning para chegar a 95%. Custo de fine-tuning + tempo de setup + complexidade operacional altos. Alternativa típica (melhorar prompting, structured outputs, few-shot, RAG) chega a 92-94% sem tuning.
 
-**Lição:** exhausting prompting/RAG antes de considerar fine-tuning.
+**Lição:** exaurir prompting/RAG antes de considerar fine-tuning.
 
 ## Exercícios hands-on
 

@@ -258,12 +258,12 @@ Ter em mente:
 - **Ecossistema de agents:** Anthropic MCP e Claude Agent SDK são mais maduros.
 - **Tool use em produção crítica:** teste bem — Claude/GPT são mais consistentes historicamente.
 
-### Minha recomendação em 2026
+### Recomendação prática em abril/2026
 
 - **Multimodal qualquer coisa:** comece com Gemini.
 - **Contexto > 500K:** Gemini 2.5 Pro.
-- **Classificação em alta escala:** considere Gemini Flash-Lite vs Haiku lado a lado.
-- **Outros use cases:** Claude ou GPT, a menos que você esteja no GCP.
+- **Classificação em alta escala:** considere Gemini Flash-Lite vs Haiku lado a lado em benchmark próprio.
+- **Outros use cases:** Claude ou GPT, a menos que o stack já esteja no GCP.
 
 ## Armadilhas comuns
 
@@ -307,44 +307,67 @@ Streaming contínuo soma tokens rápido. **Fix:** budget e telemetria por sessã
 
 Claims de "Gemini > Claude em X" frequentemente não replicam no seu caso. **Fix:** golden set próprio.
 
-## Na prática (da minha experiência)
+## Como ganhar experiência prática
 
-No MedEspecialista, Gemini foi tool exploratória até virar production em casos específicos:
+Esta nota é estrutura sobre Gemini. Para internalizar, prática é insubstituível. Três caminhos curados:
 
-**2024 — experimentação.** Testei 1.5 Pro para análise de documentos médicos longos (prontuários 80K-120K tokens). Qualidade era boa mas latência alta; mantive Claude como default.
+### Caminho 1 — Multimodal exploratório (1 semana)
 
-**2025 — Gemini 2.5 Flash para classificação em volume.** Feature de triagem automática de mensagens de pacientes. Custo em Haiku era ~$200/mês. Migrei para Gemini Flash, custo caiu para ~$80/mês com qualidade comparável. Mantive Claude para casos complexos que o Flash marca como "incerto".
+Em problema real que envolva imagem + texto (análise de screenshot UI, OCR + raciocínio sobre diagrama, descrição de fotos):
 
-**2026 — multimodal para análise de exames.** Feature nova para análise de exames com imagens (raios-X, fotos de lesões dermatológicas). Gemini 2.5 Pro multimodal é objetivamente melhor que Claude/GPT para esse use case. Integração via Vertex AI para garantir data residency Brasil + compliance LGPD.
+- Implementar com Gemini 2.5 Pro via AI Studio (free tier generoso)
+- Comparar com Claude Sonnet (vision) no mesmo problema
+- Golden set de 20 exemplos + métricas (acurácia, latência, custo)
 
-**Lições:**
+**Critério de sucesso:** entende empiricamente onde Gemini multimodal brilha e onde Claude/GPT são equivalentes.
 
-- **Multimodal é o killer app do Gemini.** Em texto puro, Claude costuma superar em qualidade mesmo quando benchmarks dizem o contrário.
+### Caminho 2 — Long context vs RAG no Codex Technomanticus (1 semana)
+
+Comparação prática:
+
+- Base de notas do vault (~500K tokens depois de meses de uso)
+- Tentar RAG normal com Gemini Flash + embeddings
+- Tentar jogar tudo no contexto (Gemini 2.5 Pro com 1M-2M tokens)
+- Comparar: latência, custo por query, qualidade no golden set
+
+**Critério de sucesso:** tem opinião própria, baseada em dados, sobre quando 2M context vale e quando RAG ganha.
+
+### Caminho 3 — Vertex AI enterprise setup em projeto profissional (quando aparecer)
+
+Em projeto profissional regulado (saúde, finance, gov), configurar projeto GCP com Vertex AI: Gemini habilitado, região restrita (data residency), IAM granular, audit log no Cloud Logging, deploy via endpoint privado. Comparar TCO vs API direta.
+
+**Critério de sucesso:** entende differenças concretas Vertex vs API direta para compliance.
+
+---
+
+**Sugestão de ordem:** Caminho 1 → Caminho 2 → Caminho 3.
+
+**Princípios universais:**
+
+- **Multimodal é o killer app do Gemini.** Em texto puro, Claude costuma superar em qualidade mesmo quando benchmarks públicos sugerem o contrário.
 - **Flash é extremamente competitivo em custo.** Para workloads de classificação, vale benchmark próprio.
-- **Vertex AI em enterprise é diferenciador.** Data residency, IAM, audit logs — coisas que em API direta você teria que montar.
+- **Vertex AI em enterprise é diferenciador.** Data residency, IAM, audit logs — coisas que em API direta exigem trabalho próprio.
 - **Live API ainda é nicho** mas promissor para apps mobile.
-- **Context 2M é "nice to have"**, não game-changer — RAG continua sendo melhor pattern.
-
-**Incidente memorável:** primeira versão da feature multimodal de exames começou a alucinar diagnósticos em casos onde a imagem era ambígua. Adicionei system prompt explícito: "Se a imagem não for clara ou o diagnóstico for ambíguo, indique 'indeterminado' e recomende revisão humana." Problema resolvido. **Lição:** multimodal não é imune a hallucination — estratégias de prompting/guardrails continuam críticas.
+- **Context 2M é "nice to have"**, não game-changer — RAG continua sendo melhor pattern para a maior parte dos casos.
 
 ## How to explain in English
 
 ### Short pitch
 
-"Gemini is Google's LLM family, and in 2026 it's the most capable multimodal model in production and the only one with a 2M context window. I use it for three kinds of work: anything multimodal, very long context tasks, and high-volume classification where Flash-Lite offers the best cost per token. For interactive coding I still prefer Claude Code, but Gemini CLI is a solid alternative if you're already in the Google ecosystem."
+"Gemini is Google's LLM family, and in 2026 it's the most capable multimodal model in production and the only one with a 2M context window. The right use cases are anything multimodal, very long context tasks, and high-volume classification where Flash-Lite offers the best cost per token. For interactive coding, Claude Code typically leads, but Gemini CLI is a solid alternative for teams already in the Google ecosystem."
 
 ### Deeper version
 
-"Gemini's distinctive technical advantages are native multimodality and context size. Native multimodal means the same model handles text, image, audio, and video without separate encoders, so mixed prompts work cleanly — you can combine a screenshot with a video and text question in one call. The 2M context window lets you load entire codebases or hours of video in a single request, though lost-in-the-middle still applies.
+"Gemini's distinctive technical advantages are native multimodality and context size. Native multimodal means the same model handles text, image, audio, and video without separate encoders, so mixed prompts work cleanly — combining a screenshot with a video and a text question in one call works coherently. The 2M context window allows loading entire codebases or hours of video in a single request, though lost-in-the-middle still applies.
 
-The Gemini ecosystem has a consumer app, a developer API via AI Studio, Vertex AI for enterprise, Gemini CLI as a coding agent, Gemini Code Assist for IDEs, and Workspace integration. In enterprise I default to Vertex AI for data residency and IAM integration — those are real enablers when you're dealing with regulated data.
+The Gemini ecosystem has a consumer app, a developer API via AI Studio, Vertex AI for enterprise, Gemini CLI as a coding agent, Gemini Code Assist for IDEs, and Workspace integration. In enterprise, Vertex AI is the default choice for data residency and IAM integration — real enablers when dealing with regulated data.
 
-Where I actually deploy Gemini: multimodal features where text-only LLMs simply can't compete, and high-volume classification where Gemini Flash-Lite's pricing makes a measurable difference. Everything else — interactive coding, agents, deep reasoning — I typically reach for Claude or a specialized option first. That's not a fixed opinion; I benchmark on my data."
+Where Gemini actually deploys best in 2026: multimodal features where text-only LLMs can't compete, and high-volume classification where Gemini Flash-Lite's pricing makes a measurable difference. Everything else — interactive coding, agents, deep reasoning — Claude or specialized options typically lead. Benchmark on real data, not benchmarks."
 
 ### Talking points
 
 - "Gemini's native multimodal is a real architectural advantage, not marketing."
-- "Flash is surprisingly competitive on cost. Worth benchmarking against Haiku and 4o-mini for your workload."
+- "Flash is surprisingly competitive on cost. Worth benchmarking against Haiku and 4o-mini for any workload."
 - "Vertex AI matters in enterprise — data residency and IAM are real."
 - "2M tokens is nice but lost-in-the-middle is still lost-in-the-middle."
 - "Grounding with Google Search reduces hallucination on current events, but validate for critical decisions."
@@ -474,66 +497,68 @@ Vertex AI é a plataforma GCP para ML/AI em produção. Para Gemini, adiciona:
 
 Para empresas reguladas (saúde, finance), Vertex é frequentemente obrigatório, não opcional.
 
-## Casos de produção
+## Casos comuns no mercado
+
+Padrões frequentes em times usando Gemini em produção. Não são casos vividos pessoalmente — são armadilhas recorrentes documentadas em post-mortems, talks, e literatura técnica.
 
 ### Caso 1 — Multimodal vs text-only benchmarking
 
-Feature de análise de exames médicos (raio-X + laudo textual). Testei 3 opções:
+**Padrão observado:** feature que combina imagem + texto (ex: análise de exames com laudo textual, descrição de UI a partir de screenshot, OCR + raciocínio). Benchmark típico em 3 opções:
 
-- **Claude Sonnet + Vision:** qualidade decente, mas tratava imagem "isolada".
+- **Claude Sonnet + Vision:** qualidade decente, mas trata imagem como input "isolado".
 - **GPT-4o:** similar a Claude, variabilidade alta.
-- **Gemini 2.5 Pro:** qualidade superior por raciocínio cross-modal.
+- **Gemini 2.5 Pro:** qualidade superior por raciocínio cross-modal nativo.
 
-Decidi por Gemini via Vertex AI (data residency Brasil obrigatório por LGPD).
+Para casos regulados, decisão tipicamente vai para Gemini via Vertex AI (data residency).
 
-**Lição:** para cross-modal, Gemini é default. Mas benchmark no seu caso.
+**Lição:** para cross-modal, Gemini é default. Mas benchmark no caso específico.
 
 ### Caso 2 — Custo Flash vs Haiku para classificação
 
-Feature de triagem de mensagens de pacientes rodava com Claude Haiku. Custo ~$180/mês. Testei Gemini Flash na mesma feature:
+**Padrão observado:** feature de triagem rodando com Claude Haiku. Benchmark com Gemini Flash mostra:
 
-- Mesma acurácia no golden set (diferença < 1%).
-- Latência ~20% menor.
-- Custo ~$60/mês.
+- Acurácia no golden set quase idêntica (diferença < 1%).
+- Latência tipicamente ~20% menor.
+- Custo 2-3x menor.
 
-Migrei, poupei ~$120/mês. Claude Haiku ainda usado para edge cases marcados como "incerto".
+Migração trivial, economia significativa. Edge cases ambíguos podem continuar em Haiku.
 
 **Lição:** Flash é extremamente competitivo em custo. Vale benchmark lado-a-lado.
 
 ### Caso 3 — 2M context "funcionou" mas custou caro
 
-Tentei análise de prontuário completo (~400K tokens) jogando no contexto do Gemini Pro. Funcionou — modelo conseguiu extrair insights. Mas:
+**Padrão observado:** time tenta análise de documento longo (~400K tokens) jogando no contexto do Gemini Pro. Funciona — modelo extrai insights. Mas:
 
 - Latência: ~45s por chamada.
 - Custo: ~$2.50 por chamada.
 - Qualidade: boa, mas context rot detectável em detalhes do meio.
 
-**Fix:** migração para RAG com chunking semântico. Latência caiu para ~3s, custo para ~$0.15, qualidade subjetivamente melhor.
+Migração para RAG com chunking semântico tipicamente: latência → ~3s, custo → ~$0.15, qualidade subjetivamente melhor.
 
 **Lição:** 2M é capability, não sempre a solução. RAG quase sempre bate.
 
 ### Caso 4 — Grounding retornando info errada
 
-Feature de Q&A sobre "últimas atualizações em guidelines médicos" usando Gemini + Google Search grounding. Em alguns casos, retornou info de fontes não-confiáveis (blogs vs papers).
+**Padrão observado:** feature de Q&A sobre informações que mudam (versões, guidelines, notícias) usando Gemini + Google Search grounding. Em alguns casos, retorna info de fontes não-confiáveis (blogs vs fontes oficiais/papers).
 
-**Fix:**
+**Fix típico:**
 
-- Filter de sources por domínio (só dominios confiáveis).
-- Validação humana para decisões médicas.
+- Filter de sources por domínio (só domínios confiáveis).
+- Validação humana para decisões críticas.
 - Fallback para RAG sobre fontes curadas.
 
 **Lição:** grounding é útil mas precisa de validação. Google Search não garante qualidade de fonte.
 
 ### Caso 5 — Vertex AI vs API direta — confusion
 
-Time inicialmente usava API direta do Gemini. Depois migrou para Vertex AI para compliance. Descobriu que pricing, quotas e features variavam entre os dois. Prompt caching comportava diferente. Levou 2 semanas para reajustar.
+**Padrão observado:** time inicialmente usa API direta do Gemini. Migra para Vertex AI por compliance. Descobre que pricing, quotas e features variam entre os dois. Prompt caching se comporta diferente. Re-ajuste leva semanas.
 
-**Fix:**
+**Fix típico:**
 
 - Escolher Vertex desde dia 1 se compliance é requisito.
 - Documentação clara da stack para novos devs.
 
-**Lição:** Vertex e API direta não são drop-in replacements. Planeje.
+**Lição:** Vertex e API direta não são drop-in replacements. Planejar a escolha.
 
 ## Exercícios hands-on
 

@@ -189,7 +189,7 @@ This is a Next.js 15 app with Server Components, Prisma, and Zod.
 - Run: `pnpm test`, `pnpm test:e2e`
 ```
 
-Eu reviso este arquivo ao adicionar feature grande ou refactor. Desatualizado = Copilot ruim.
+Boa prática: revisar este arquivo a cada feature grande ou refactor arquitetural. Desatualizado = Copilot ruim.
 
 ### Chat modes customizados
 
@@ -315,11 +315,11 @@ Estudantes verificados e manutenedores de projetos OSS populares têm acesso gra
 - **Worktrees e isolation** nativas (Claude Code).
 - **Controle fino sobre contexto** (MCP servers, context management).
 
-### Minha stack atual
+### Stack típica que se mostra produtiva
 
-Uso **os dois juntos:**
+Usar **os dois juntos:**
 
-- **Copilot** para completions inline (muito bom, sempre ativo), review de PR, e chat rápido sobre arquivos abertos.
+- **Copilot** para completions inline (sempre ativo no IDE), review de PR, e chat rápido sobre arquivos abertos.
 - **Claude Code** para tasks não-triviais, refactors, debugging profundo, workflows customizados via skills.
 
 Não é "ou Copilot ou Claude Code". São complementares.
@@ -392,43 +392,65 @@ Overhead desnecessário. **Fix:** chat/edit para tasks pequenas; workspace para 
 
 Skills viram legacy desatualizado. **Fix:** review trimestral.
 
-## Na prática (da minha experiência)
+## Como ganhar experiência prática
 
-No MedEspecialista, Copilot entrou em 2022 (gh beta) e ficou como fundação para produtividade diária:
+Esta nota é estrutura sobre Copilot. Para internalizar, prática é insubstituível. Três caminhos curados:
 
-**2022-2023 — completion only.** Apenas ghost text. Ganho claro mas limitado — bom pra boilerplate, fraco em lógica de negócio.
+### Caminho 1 — copilot-instructions.md de alto ROI (1 semana)
 
-**2024 — chat + GPT-4.** Chat contextual mudou o jogo. Comecei a usar como debugging/explain buddy. Reduzi busca no Stack Overflow drasticamente.
+Em projeto próprio que você trabalha:
 
-**2025 — agent mode + workspace + chat modes.** Investi em `.github/copilot-instructions.md` por projeto e chat modes customizados. Ganho em onboarding de devs novos (eles usam os mesmos chatmodes que eu).
+1. Baseline: task não-trivial, observar output do Copilot.
+2. Escrever `.github/copilot-instructions.md` rica (stack, convenções, comandos, antipatterns).
+3. Re-rodar mesma task. Comparar qualidade.
+4. Iterar baseado em gaps.
 
-**2026 — Copilot + Claude Code como stack dupla.** Copilot para o dia a dia dentro do IDE; Claude Code para tarefas complexas em sessão dedicada. CI roda Copilot review automático em todo PR.
+**Critério de sucesso:** entende empiricamente o ROI do arquivo de instructions; tem template próprio para próximos projetos.
 
-**Lições:**
+### Caminho 2 — Chat modes + skills no Codex Technomanticus (2 semanas)
 
-- **Completions são substrato:** sempre ligados, mas não o principal benefício em 2026.
+Construir biblioteca de chat modes em `.github/chatmodes/` e prompts em `.github/prompts/` para tarefas recorrentes:
+
+- `note-review` — revisar nota Obsidian (estrutura, frontmatter, links)
+- `commit-message` — gerar commit message no estilo do projeto
+- `quartz-frontmatter` — adicionar/corrigir frontmatter para Quartz
+- Opcional: `english-review` — revisar nota em inglês para fluência
+
+Usar `#file`, `#folder` como referências de contexto. Iterar baseado em uso real.
+
+**Critério de sucesso:** biblioteca em uso diário; economia mensurável de tempo.
+
+### Caminho 3 — PR automation com GitHub Actions (quando aparecer)
+
+Em projeto profissional, configurar Action que dispara Copilot review automatizado em todas as PRs com chatmode customizado para o tipo de revisão necessária. Iterar baseado em false positives e cobertura.
+
+**Critério de sucesso:** automação rodando em produção, com qualidade ajustada para o time.
+
+---
+
+**Sugestão de ordem:** Caminho 1 → Caminho 2 → Caminho 3.
+
+**Princípios universais:**
+
+- **Completions são substrato:** sempre ligadas, mas não o principal benefício em 2026.
 - **Chat contextual é onde está o ganho real.** `#file`, `#folder`, `#problem` são fundamentais.
 - **Instructions bem feitas são 60% do valor.** Sem elas, Copilot é um GPT com menos contexto.
-- **Public code filter ligado.** Não vale o risco licensing.
+- **Public code filter sempre ligado** em projetos comerciais. Não vale o risco licensing.
 - **Pair Copilot + Claude Code** é mais forte do que escolher um.
-
-**Incidente memorável:** um dev aceitou completion do Copilot que gerava uma query SQL com concat de string (injeção SQL). Code review pegou antes do merge, mas foi wake-up call. Adicionamos chatmode de security-review rodando automaticamente em PRs que tocam em DB. Desde então: 0 incidentes similares.
-
-**Outro incidente:** Copilot sugeriu código que era cópia quase literal de um pacote OSS sob GPL. Filter estava desligado por engano (config antiga). Identificamos via `detekt`/OSSRH scan, removemos, relicenciamos a função. Lição: filter ligado sempre, scanning automático em CI.
 
 ## How to explain in English
 
 ### Short pitch
 
-"GitHub Copilot is where AI meets the GitHub-native developer. Completions in the editor, chat with project context, agent mode for multi-step tasks, PR integration, and Workspace for repo-level planning. I use it alongside Claude Code — Copilot for the always-on inline completions and PR automation, Claude Code for the heavier, customized workflows. The highest-leverage config is `.github/copilot-instructions.md` — basically CLAUDE.md for Copilot."
+"GitHub Copilot is where AI meets the GitHub-native developer. Completions in the editor, chat with project context, agent mode for multi-step tasks, PR integration, and Workspace for repo-level planning. The mature pattern in 2026 is using it alongside Claude Code — Copilot for the always-on inline completions and PR automation, Claude Code for the heavier, customized workflows. The highest-leverage config is `.github/copilot-instructions.md` — essentially CLAUDE.md for Copilot."
 
 ### Deeper version
 
-"Copilot in 2026 is an ecosystem, not just completions. The capabilities that matter for me: inline ghost text for speed, chat with file/folder/problem references for focused questions, edit mode for targeted multi-file changes, agent mode for autonomous iteration, and PR-level automation — summaries, review comments, reviewer suggestions. I also use Copilot CLI for the kinds of shell commands I otherwise google.
+"Copilot in 2026 is an ecosystem, not just completions. The capabilities that matter: inline ghost text for speed, chat with file/folder/problem references for focused questions, edit mode for targeted multi-file changes, agent mode for autonomous iteration, and PR-level automation — summaries, review comments, reviewer suggestions. Copilot CLI handles shell commands that would otherwise need a google search.
 
-Configuration is where seniors separate from juniors. I maintain `.github/copilot-instructions.md` with architecture, conventions, and commands. I keep `.github/chatmodes/` with workflows like security review and test writing, and `.github/prompts/` with parameterized prompt templates. `.copilotignore` keeps secrets out of the context. Model selection — GPT, Claude, or Gemini — I pick based on what the task needs.
+Configuration is where seniors separate from juniors. The high-leverage files are `.github/copilot-instructions.md` (architecture, conventions, commands), `.github/chatmodes/` (workflows like security review and test writing), and `.github/prompts/` (parameterized prompt templates). `.copilotignore` keeps secrets out of the context. Model selection — GPT, Claude, or Gemini — picked based on the task.
 
-I pair Copilot with Claude Code rather than replacing one with the other. Copilot is low-friction and always on in the IDE, great for daily work. Claude Code is where I go for hard refactors, deep debugging, and customized skill-driven workflows. The two complement each other."
+The strong pairing is Copilot with Claude Code rather than choosing one. Copilot is low-friction and always on in the IDE, great for daily work. Claude Code is where heavy refactors, deep debugging, and customized skill-driven workflows happen. The two complement each other."
 
 ### Phrases
 
@@ -542,13 +564,15 @@ Casos práticos:
 - Triagem automática de issues
 - Documentação gerada em merge
 
-## Casos de produção
+## Casos comuns no mercado
+
+Padrões frequentes em times usando Copilot em produção. Não são casos vividos pessoalmente — são armadilhas recorrentes documentadas em post-mortems, talks, e literatura técnica.
 
 ### Caso 1 — Completion que copiou código GPL
 
-Public code filter estava desligado por config legada. Copilot sugeriu função que era cópia quase literal de projeto GPL. Descoberto em code scan (FOSSology).
+**Padrão observado:** public code filter desligado por config legada ou esquecimento. Copilot sugere função que é cópia quase literal de projeto GPL. Descoberto em code scan (FOSSology, similar) ou auditoria de licensing.
 
-**Fix:**
+**Fix típico:**
 
 - Public code filter obrigatório em config central.
 - OSS license scan em CI.
@@ -559,21 +583,21 @@ Public code filter estava desligado por config legada. Copilot sugeriu função 
 
 ### Caso 2 — Copilot sugerindo SQL injection
 
-Dev aceitou completion que concatenava string em SQL. Code review pegou antes do merge. Poderia ter ido a produção.
+**Padrão observado:** dev aceita completion que concatena string em SQL. Code review pega antes do merge, ou pior — vai a produção.
 
-**Fix:**
+**Fix típico:**
 
 - Chat mode `security-review` rodando em toda PR que toca DB.
 - Lint rule detectando string concatenation em queries.
-- Treinamento: "leia antes de `Tab`".
+- Cultura: "leia antes de `Tab`".
 
 **Lição:** Copilot não é revisor de segurança. Adicione camadas.
 
 ### Caso 3 — copilot-instructions.md desatualizado
 
-Projeto migrou de REST para GraphQL. `copilot-instructions.md` não atualizada. Copilot continuou sugerindo REST handlers por 3 semanas até alguém notar.
+**Padrão observado:** projeto migra (ex: REST → GraphQL, framework antigo → novo). `copilot-instructions.md` não é atualizada junto. Copilot continua sugerindo padrões antigos por semanas até alguém notar — devs novos no time aceitam sem questionar.
 
-**Fix:**
+**Fix típico:**
 
 - Revisão trimestral do arquivo.
 - Updates no mesmo PR que muda stack.
@@ -583,11 +607,11 @@ Projeto migrou de REST para GraphQL. `copilot-instructions.md` não atualizada. 
 
 ### Caso 4 — Chat sem `#file` → respostas genéricas
 
-Dev novo reclamou que "Copilot chat é ruim". Investigação: ele estava perguntando sem referenciar arquivos (`"como faço isso?"`). Chat inferia mal o contexto.
+**Padrão observado:** dev novo no time reclama que "Copilot chat é ruim". Investigação revela que está perguntando sem referenciar arquivos (`"como faço isso?"`). Chat infere mal o contexto.
 
-**Fix:**
+**Fix típico:**
 
-- Treinamento: sempre ancore em `#file`, `#folder`, `#problem`.
+- Treinamento: sempre ancorar em `#file`, `#folder`, `#problem`.
 - Cheat sheet no onboarding.
 - Chat modes que forçam contexto específico.
 
@@ -595,9 +619,9 @@ Dev novo reclamou que "Copilot chat é ruim". Investigação: ele estava pergunt
 
 ### Caso 5 — Agent mode em projeto desconhecido
 
-Dev tentou agent mode do Copilot em projeto legacy sem `copilot-instructions.md`. Agent fez mudanças que violavam convenções implícitas do projeto. PR grande, difícil de reverter corretamente.
+**Padrão observado:** dev tenta agent mode do Copilot em projeto legacy sem `copilot-instructions.md`. Agent faz mudanças que violam convenções implícitas. PR grande, difícil de reverter corretamente.
 
-**Fix:**
+**Fix típico:**
 
 - Regra: agent mode só em projetos com instructions bem feita.
 - Para legacy, começar com chat interativo até entender padrões.

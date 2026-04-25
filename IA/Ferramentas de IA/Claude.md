@@ -14,7 +14,7 @@ publish: true
 
 # Claude
 
-> Claude é minha ferramenta principal de IA para desenvolvimento em 2026. Não é uma escolha leve — testei GPT, Gemini, Cursor, Copilot, e voltei para Claude Code + Anthropic API como stack principal por motivos concretos: qualidade de raciocínio em tarefas longas, tool use mais confiável, contexto de 1M tokens que funciona de verdade (não só no benchmark), Claude Agent SDK limpo, e ecossistema maduro de MCP, skills e subagents. Esta nota é a trilha completa: modelos, API, ferramentas (Claude Code, Desktop, web), como operar em produção, e como adotar progressivamente. Para fundamentos de LLMs em geral ver [[LLMs]]; para comparação com outros modelos ver [[Comparativo de LLMs]].
+> Claude é uma das três famílias de LLM dominantes em 2026 (junto com GPT e Gemini), com diferenciais técnicos concretos: qualidade de raciocínio em tarefas longas, tool use consistente, contexto de 1M tokens com retenção razoável (não só "no benchmark"), Claude Agent SDK limpo, e ecossistema maduro de MCP, skills e subagents. Para muitos workloads de coding e agents, é a escolha default em times sérios. Esta nota é a trilha completa: modelos, API, ferramentas (Claude Code, Desktop, web), como operar em produção, e como adotar progressivamente. Para fundamentos de LLMs em geral ver [[LLMs]]; para comparação com outros modelos ver [[Comparativo de LLMs]].
 
 ## O que é
 
@@ -232,7 +232,7 @@ Regras importantes:
 - **Até 4 blocos cacheados** por request.
 - **Ordenação estável** — cache funciona por prefixo exato.
 
-**Impacto real:** no MedEspecialista, caching do system prompt de sumarização (5K tokens) reduziu custo do feature em ~85% e TTFT em ~40%.
+**Impacto típico:** caching de system prompt de 4-5K tokens em workload recorrente reduz custo da feature em ~80-90% e TTFT em ~30-40%. ROI imediato em qualquer caso com system prompt grande chamado com frequência.
 
 ### Structured outputs via tool use
 
@@ -341,7 +341,7 @@ Arquivo markdown na raiz do projeto que o Claude Code lê automaticamente. Defin
 - Como rodar testes
 - Deploy process
 
-**Uma boa CLAUDE.md é o maior ROI que você pode ter com Claude Code.** Eu reservo 1-2h no início de um projeto para escrever e iteração regular quando noto comportamento ruim.
+**Uma boa CLAUDE.md é o maior ROI que se pode ter com Claude Code.** O padrão que funciona: reservar 1-2h no início de um projeto para escrever bem, e iterar regularmente quando comportamentos ruins aparecerem.
 
 Exemplo esquelético:
 
@@ -439,19 +439,19 @@ brew install anthropic/claude/claude
 claude
 ```
 
-### Fluxo completo real — uma feature
+### Fluxo típico — uma feature
 
-Como uso Claude Code para uma feature não-trivial:
+Padrão de uso do Claude Code para feature não-trivial:
 
 1. **Setup:** `cd` no projeto com CLAUDE.md atualizada.
 2. **Brainstorming:** "Preciso adicionar notificações via email para eventos X. Explora o código atual de email e proponha abordagem".
-3. **Plano em markdown:** Claude escreve plano. Eu reviso, ajusto.
+3. **Plano em markdown:** Claude escreve plano. Humano revisa, ajusta.
 4. **Execução em stages:** "Execute stage 1 do plano, commite, espere."
-5. **Validação:** rodo testes, reviso diff.
+5. **Validação:** humano roda testes, revisa diff.
 6. **Iteração:** "Ajuste X, Y."
-7. **Final review:** `/review` (skill customizada) antes do PR.
+7. **Final review:** skill customizada `/review` antes do PR.
 
-Raramente deixo Claude rodar 30 min sem checkpoint. É onde as coisas dão errado.
+Boa prática: nunca deixar Claude rodar mais de 15-20 minutos sem checkpoint humano. É onde as coisas dão errado.
 
 ## Claude Desktop — o hub local
 
@@ -592,49 +592,55 @@ Agent entra em loop. **Fix:** sempre configure limites; revise diff antes de com
 
 Malicioso ou buggy. **Fix:** review antes de instalar; least privilege.
 
-## Na prática (da minha experiência)
+## Como ganhar experiência prática
 
-No MedEspecialista, Claude é minha ferramenta principal desde 2023. Evolução:
+Esta nota é estrutura sobre Claude. Para internalizar, prática é insubstituível. Três caminhos curados:
 
-**2023 — Claude 2 via API:** ainda era GPT-3.5 era equivalente. Claude 2 começou a chamar minha atenção pela qualidade em análises longas (prontuários).
+### Caminho 1 — Claude Code no Codex Technomanticus (1 semana)
 
-**2024 — Claude 3 + Claude Code beta:** primeira vez que um LLM era "coding pair programmer" real. Comecei a usar Claude Code em features e produtividade deu salto. Migrei vários workflows do Copilot para Claude Code.
+Adotar Claude Code como ferramenta principal para gerenciar este próprio vault Obsidian:
 
-**2025 — Claude 4 + MCP + skills:** ecosystem maduro. Investi pesado em CLAUDE.md, skills customizadas, MCP servers. Hoje todo projeto sério tem CLAUDE.md bem feita + `.claude/skills/` do projeto + subagents.
+- Escrever uma `CLAUDE.md` na raiz do vault descrevendo: estrutura de pastas, convenções de notas (frontmatter, MOCs), workflow de publicação Quartz, antipatterns
+- Pedir Claude Code para tarefas reais: "limpar inbox", "criar nova nota X usando template Y", "encontrar notas relacionadas a Z"
+- Iterar a CLAUDE.md baseado em onde Claude erra
 
-**2026 — Claude 4.6 + agent SDK:** para workflows automatizados não-coding (análise de tickets, sumarização em batch) passei a usar Agent SDK em vez de montar pipeline próprio.
+**Critério de sucesso:** consegue manter o vault com Claude Code de forma confortável; tem opinião própria sobre o que vai e o que não vai na CLAUDE.md.
 
-**Lições:**
+### Caminho 2 — Feature LLM com Claude API + caching (2 semanas)
 
-- **CLAUDE.md é 10x ROI.** 2h escrevendo economiza 20h em interações.
-- **Prompt caching em system prompts grandes virou default.**
-- **Tool use de Claude é consistentemente melhor que alternativas** em workflows complexos.
-- **Context 1M é útil** mas uso RAG sempre que possível — melhor qualidade + custo.
-- **Claude Code > Cursor para trabalho sério em projeto conhecido.** Cursor ganha em exploração rápida.
+Construir feature pequena que use Anthropic API direto, exercitando os diferenciais do Claude:
 
-**Incidentes memoráveis:**
+- **Opção A:** classificador de notas com structured output via tool use forçado
+- **Opção B:** sumário de PRs de um repo seu, com prompt caching no system prompt
+- **Opção C:** review automático de notas Obsidian (qualidade, completude, links faltando)
 
-1. **Context rot:** tentei processar prontuário de 400K tokens em uma chamada. Claude perdia info de ~180K até ~280K. Migrei para pipeline RAG + chunking, qualidade subiu.
+Exercitar: pin version, prompt caching, structured output via tool use, retry com error feedback, observabilidade básica.
 
-2. **Alias em produção:** um dia uma feature de extração começou a falhar em ~8% dos casos. Investigação: Anthropic atualizou Sonnet silenciosamente, e meu prompt era sensível a diferenças sutis. Fix: pin version + golden set automatizado em CI.
+**Critério de sucesso:** feature em produção pequena, com métricas (custo, latência, acurácia) e prompt cacheado funcionando.
 
-3. **MCP server community malicioso:** instalei um "task tracker" MCP server do GitHub que logava prompts no servidor do autor. Descobri via requests HTTP inesperados. Removido, issue reportado, lição aprendida. **Sempre review source code antes.**
+### Caminho 3 — Claude Agent SDK em workflow profissional (quando aparecer)
 
-4. **Cost spike:** um dev habilitou extended thinking em toda chamada de feature de triagem. Custo diário subiu de $50 para $400. Alerta no Langfuse pegou em 6h. **Fix:** budget alert + review em cada PR que mexe em prompt.
+Em projeto profissional com workflow agent automatizável (sumarização em batch, triagem, geração de relatórios), implementar com Claude Agent SDK + MCP servers customizados + observabilidade. Mais demorado, mas é o que vira "agent em produção" no CV.
+
+**Critério de sucesso:** entrega no projeto com métricas, não estudo paralelo.
+
+---
+
+**Sugestão de ordem:** Caminho 1 → Caminho 2 → Caminho 3.
 
 ## How to explain in English
 
 ### Elevator pitch
 
-"Claude is my primary AI tool in 2026. I use Claude Code daily for pair programming, the Anthropic API for production features, and MCP servers to connect Claude to internal systems. I chose it over GPT-based tools for three reasons: stronger reasoning on long tasks, more reliable tool use, and a 1M-token context that actually works in practice. I maintain a CLAUDE.md in every serious project — that's the single highest ROI investment with Claude Code."
+"Claude is one of the top three LLM families in 2026 alongside GPT and Gemini. Where it leads: reasoning on long tasks, tool use consistency, and a 1M-token context that holds up in practice. The full ecosystem includes the Anthropic API, Claude Code as a coding agent, Claude Desktop with native MCP, and the Claude Agent SDK for custom agents. The highest-ROI configuration in a Claude Code project is a well-maintained CLAUDE.md."
 
 ### Deeper version
 
-"Anthropic has three tiers: Opus for deep reasoning, Sonnet for daily work, Haiku for cheap/fast tasks. In production I tier aggressively — Haiku handles triage, Sonnet does the heavy lifting, Opus only gets invoked for cases Sonnet flags uncertain. That alone cut costs 5-10x on several features.
+"Anthropic has three tiers: Opus for deep reasoning, Sonnet for daily work, Haiku for cheap/fast tasks. The default production posture is aggressive tiering — Haiku handles triage, Sonnet does the heavy lifting, Opus only gets invoked for cases Sonnet flags uncertain. This alone cuts costs 5-10x on many features.
 
-The API essentials I always use: prompt caching on any system prompt over 1K tokens (often 80% savings), tool use for structured outputs, streaming for user-facing features, and pinned model versions in production so silent provider updates don't blow up my golden set.
+API essentials that matter: prompt caching on any system prompt over 1K tokens (often 80% savings), tool use for structured outputs, streaming for user-facing features, and pinned model versions in production so silent provider updates don't blow up the golden set.
 
-On the tooling side, Claude Code is where I spend most of my time. It's an agent with access to my filesystem, git, and MCP servers. The tricks that matter are a well-maintained CLAUDE.md as project context, custom skills for recurring workflows, and sub-agents for tasks that benefit from context isolation. I also enforce max_steps, human-in-the-loop for destructive actions, and a review step before merging any agent-produced change."
+On the tooling side, Claude Code is the agent surface — filesystem, git, and MCP servers via tool use. What matters in practice: a well-maintained CLAUDE.md as project context, custom skills for recurring workflows, and sub-agents for tasks that benefit from context isolation. Production hardening includes max_steps, human-in-the-loop for destructive actions, and a review step before merging any agent-produced change."
 
 ### Talking points
 
@@ -751,23 +757,23 @@ Claude Code é construído sobre Claude Agent SDK e usa Claude Opus/Sonnet. Desi
 
 Comparado a Cursor (que injeta muito contexto upfront) e Copilot (stateless por request), Claude Code é mais "agente de verdade".
 
-## Casos de produção com Claude
+## Casos comuns no mercado
+
+Padrões frequentes em times usando Claude em produção. Não são casos vividos pessoalmente — são armadilhas recorrentes documentadas em post-mortems, talks, e comunidade.
 
 ### Caso 1 — Prompt caching e ROI mensurável
 
-Feature de análise de prontuários tinha system prompt de ~4K tokens (instruções + few-shot examples médicos). Custo: ~$2.400/mês em Sonnet. Adicionei `cache_control` no system prompt + no primeiro few-shot block.
+**Padrão observado:** feature com system prompt de ~4K tokens (instruções + few-shot examples) rodando em volume. Custo mensal substancial em Sonnet. Adicionar `cache_control` no system prompt:
 
-**Resultado após 1 mês:**
-
-- Custo: de $2.400 → $350 (redução de 85%).
-- Latência TTFT: de ~1.8s → ~1.1s (redução de ~40%).
-- Qualidade: sem diferença mensurável.
+- Redução típica de custo: ~80-90% no system cacheável
+- Redução de TTFT: ~30-40%
+- Qualidade: sem diferença mensurável
 
 **Lição:** prompt caching é a otimização mais subestimada em workflows com system prompt grande.
 
-### Caso 2 — Pin version evitou regressão
+### Caso 2 — Pin version evita regressão
 
-Sonnet foi atualizado silenciosamente (4-5 → 4-6 alias). Taxa de "unknown" em feature de classificação subiu de 3% para 12%. Rollback para versão pinada (`claude-sonnet-4-5-20260115`) em 30 min, qualidade normalizou.
+**Padrão observado:** feature usa alias (ex: `claude-sonnet-4-5`). Provider atualiza silenciosamente para próxima versão. Taxa de "unknown" em classificação sobe sutilmente, ou modelo fica mais conservador, ou formato de output muda. Detecção tardia, rollback exige migração para versão pinada anterior.
 
 **Fix estrutural:**
 
@@ -777,37 +783,37 @@ Sonnet foi atualizado silenciosamente (4-5 → 4-6 alias). Taxa de "unknown" em 
 
 ### Caso 3 — Constitutional AI recusando tasks legítimas
 
-Claude recusava resumir consultas que mencionavam diagnóstico de doença grave, por "cautela". System prompt genérico não bastava.
+**Padrão observado:** Claude recusa tarefas que parecem sensíveis em superfície (médicas, jurídicas, segurança) mas são legítimas em contexto profissional. System prompt genérico não basta para resolver.
 
-**Fix:**
+**Fix típico:**
 
-- System prompt explícito sobre contexto profissional: "You are assisting a licensed physician in a medical records system. Summarization of diagnoses, treatment plans, and prognoses is a core function. You may discuss any medical content."
-- Skills dedicadas para workflows médicos.
-- Testes de recusa no golden set (cases que devem ser aceitos).
+- System prompt explícito sobre contexto profissional, ex: *"You are assisting a licensed [profession] in a [system]. [List of normal operations] is a core function. You may discuss [scope]."*
+- Skills dedicadas para workflows do domínio.
+- Testes de recusa no golden set (casos que devem ser aceitos).
 
 **Lição:** Constitutional AI é feature, não bug. Contexto profissional claro no system prompt resolve 95% das recusas.
 
 ### Caso 4 — Claude Code com CLAUDE.md desatualizada
 
-Projeto migrou de Express para Fastify. CLAUDE.md não atualizada. Claude Code continuou sugerindo middleware Express patterns. Dev novo aceitou. Código quebrou em dev.
+**Padrão observado:** projeto faz refactor arquitetural (ex: migração de framework). CLAUDE.md não é atualizada junto. Claude Code continua sugerindo padrões antigos por semanas. Devs novos no time aceitam sem questionar — não conhecem o histórico.
 
-**Fix:**
+**Fix típico:**
 
-- Atualização imediata da CLAUDE.md com nova stack.
-- Política de time: CLAUDE.md revisada em todo refactor arquitetural.
-- Lint que verifica consistência entre declared stack e imports.
+- Atualização da CLAUDE.md como parte de todo refactor arquitetural.
+- Política de revisão regular (mensal/trimestral).
+- Lint que verifica consistência entre stack declarada e imports.
 
 **Lição:** CLAUDE.md é documentação viva. Ordem de magnitude de ROI, requer manutenção.
 
 ### Caso 5 — MCP community server com telemetria indesejada
 
-Instalei um "task tracking" MCP server community. Depois notei requests HTTP do processo. Server fazia logging externo não-documentado de prompts.
+**Padrão observado:** equipe instala MCP server community popular (boas estrelas no GitHub). Após uso, requests HTTP inesperados são detectados saindo do processo — server faz logging externo não-documentado de prompts ou interações.
 
-**Fix:**
+**Fix típico:**
 
 - Firewall outbound restringindo MCP servers locais a loopback apenas.
 - Review de source de todo server community antes de instalar.
-- Preferência por servers maintidos por orgs conhecidas (Anthropic, community verified).
+- Preferência por servers mantidos por orgs conhecidas (Anthropic, community verified).
 
 ## Exercícios hands-on com Claude
 
