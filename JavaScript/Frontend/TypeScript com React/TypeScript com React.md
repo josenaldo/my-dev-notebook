@@ -9,7 +9,9 @@ updated: 2026-04-26
 
 # TypeScript com React
 
-Esta trilha cobre a intersecção idiomática entre TypeScript e React — não é um curso de TS isolado nem de React isolado, mas o que acontece quando os dois encostam: tipagem de props, hooks customizados, Context, generics em componentes e os patterns de type-level que distinguem código senior de código pleno. Em 2026, TypeScript é default em qualquer projeto React sério, mas a intersecção tem soluções não-óbvias que aparecem com frequência em entrevistas internacionais e em revisões de código de design systems. A trilha pressupõe que o leitor já estudou (ou pode consultar) [[TypeScript]] e [[React]] como referências paralelas — aqui o foco é exatamente o que essas duas notas mãe não esgotam. Em 15 notas, vai do mental model fundamental ("como o TS pensa em React") ao type-level avançado (polymorphic components, compound components tipados), passando pelos idiomas práticos do dia a dia, com seção "Em entrevista" em cada nota para preparação internacional.
+Esta trilha cobre a intersecção idiomática entre TypeScript e React — não é um curso de TS isolado nem de React isolado, mas o que acontece quando os dois encostam: tipagem de props, hooks customizados, Context, generics em componentes e os patterns de type-level que distinguem código senior de código pleno. Em 2026, TypeScript é default em qualquer projeto React sério, mas a intersecção tem soluções não-óbvias que aparecem com frequência em entrevistas internacionais e em revisões de código de design systems.
+
+Em 15 notas, a trilha vai do mental model fundamental ("como o TS pensa em React") ao type-level avançado (polymorphic components, compound components tipados), passando pelos idiomas práticos do dia a dia. Cada nota tem seção "Em entrevista" para preparação internacional.
 
 > [!info] Como ler
 > A trilha pressupõe que você consultará [[TypeScript]] e [[React]] como referências paralelas. Cada nota linka explicitamente para a seção mãe quando precisa de um conceito de TS ou React que não é o foco. Para uma primeira leitura, siga a sequência 01 → 15. Para reforço pontual ou preparação de entrevista, use as rotas alternativas abaixo.
@@ -20,8 +22,8 @@ Trilha sequencial recomendada — leia na ordem para construir o terreno do ment
 
 - [[01 - A tripla inferência - props, state, hooks|01 - A tripla inferência]] — como o TS pensa em React: props declaradas, state inferido, hooks tipados pela lib
 - [[02 - Inferir vs anotar - quando deixar o TS trabalhar|02 - Inferir vs anotar]] — a regra prática: anote inputs públicos, deixe inferir o resto
-- [[03 - Por que React.FC saiu de moda|03 - Por que React.FC saiu de moda]] — a história, os problemas e o que usar no lugar
-- [[04 - interface vs type vs satisfies para props|04 - interface vs type vs satisfies]] — a decisão idiomática para tipos de props
+- [[03 - Por que React.FC saiu de moda]] — a história, os problemas e o que usar no lugar
+- [[04 - interface vs type vs satisfies para props|04 - interface vs type vs satisfies]] — a decisão idiomática: extensão e merging vs unions e mapped types
 - [[05 - Tipando state e refs|05 - Tipando state e refs]] — `useState`, `useRef`, DOM refs vs mutable refs, `useImperativeHandle`
 - [[06 - Tipando event handlers|06 - Tipando event handlers]] — synthetic events, `ChangeEvent`, `currentTarget` vs `target`
 - [[07 - Tipando hooks customizados|07 - Tipando hooks customizados]] — return types preservando inferência, tuplas com `as const`, overloads
