@@ -28,10 +28,11 @@ Janela de contexto é o número de tokens que um LLM processa em uma única cham
 Em abril de 2026 os limites declarados pelos principais provedores são, em ordem de grandeza:
 
 - **Claude Opus 4.7** e **Sonnet 4.6**: até **1M tokens** de contexto.
-- **Gemini 2.5 Pro**: **1M tokens** disponíveis, com versão de **2M tokens** anunciada como iminente.
-- **GPT-5 Pro**: aproximadamente **272K tokens** — significativamente menor que os concorrentes na ponta de contexto longo.
+- **Gemini 2.5 Pro**: **1M tokens** atual, com **2M tokens** anunciado (março de 2025) mas ainda pendente em abril de 2026.
+- **GPT-5 Pro**: contexto total de **400K tokens** (**272K** máx de input + **128K** máx de output) — significativamente menor que os concorrentes na ponta de contexto longo.
 
-(Esses números mudam com frequência; antes de citar em produção, vale conferir a página oficial de cada provedor.)
+> [!info] GPT-5.5 (abril de 2026)
+> **GPT-5.5**, lançado em **23-24 de abril de 2026** (dois dias antes desta nota), sobe para **1M tokens** de contexto — fechando a distância para Claude e Gemini. Esses números mudam rapidamente; antes de citar em produção, sempre confira a página oficial de cada provedor.
 
 A leitura ingênua é animadora: "se cabe um livro no prompt, por que memória externa?". Esta nota responde com quatro problemas concretos.
 
