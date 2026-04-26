@@ -18,9 +18,9 @@ publish: false
 
 ## Status geral
 
-- **Tasks concluídas:** 0 / 17
+- **Tasks concluídas:** 1 / 17
 - **Bloco atual:** Wave 1 (Esqueleto)
-- **Próxima task:** Task 1 (MOC)
+- **Próxima task:** Task 2 (Nota 01 - A tripla inferência)
 
 ---
 
@@ -30,14 +30,14 @@ publish: false
 
 | # | Task | Status | Commit | Notas |
 |---|------|--------|--------|-------|
-| 0 | Criar diretório, sanity-check de fontes | ⏸️ pendente | — | Será feito pelo implementer da Task 1 |
+| 0 | Criar diretório, sanity-check de fontes | ✅ concluída | `e474238` | Diretório criado pelo implementer da Task 1 |
 
 ### Wave 1 — Esqueleto (bloqueante)
 
 | # | Task | Status | Commit | Notas |
 |---|------|--------|--------|-------|
-| 1 | MOC `TypeScript com React.md` | ⏸️ pendente | — | — |
-| 2 | Nota 01 - A tripla inferência | ⏸️ pendente | — | — |
+| 1 | MOC `TypeScript com React.md` | ✅ concluída | `e474238` + `2ca8aa2` (polish) | Spec ✅, Quality ⚠️ aprovado com sugestões; 1 Important + 2 Minor corrigidas inline |
+| 2 | Nota 01 - A tripla inferência | 🟡 implementando | — | — |
 
 ### Wave 2 — Mental model
 
@@ -100,3 +100,8 @@ _(atualizado a cada evento relevante: dispatch, review result, fix loop, commit)
 - **2026-04-26 — Plano commitado.** `3390053`
 - **2026-04-26 — Spec commitado.** `2144ecc`
 - **2026-04-26 — Modo de execução escolhido:** subagent-driven, incremental, main direto.
+- **2026-04-26 — Task 1 (MOC) implementada.** Implementer subagent reportou DONE. Commit `e474238`.
+- **2026-04-26 — Task 1 spec review:** ✅ Spec compliant. 7/7 steps OK + restrições absolutas OK.
+- **2026-04-26 — Task 1 quality review:** ⚠️ Aprovado com sugestões. 1 Important (redundância abertura/callout) + 2 Minor (descrição nota 04, pipe redundante). Polish aplicado inline pelo controller. Commit `2ca8aa2`.
+- **2026-04-26 — Task 1 concluída.** MOC publicado, dataview retorna vazio até notas 01-15 chegarem (esperado).
+- **2026-04-26 — Task 2 (Nota 01 - A tripla inferência) iniciada.**
