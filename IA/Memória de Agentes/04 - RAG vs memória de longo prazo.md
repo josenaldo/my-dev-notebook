@@ -100,7 +100,9 @@ Nada impede combinar os dois. Um agent de suporte técnico pode usar RAG sobre a
 - [[01 - O que é memória em IA]] — conceito antecedente, define memória no contexto de agentes
 - [[02 - O problema das janelas de contexto]] — o problema raiz que motiva tanto RAG quanto memória
 - [[03 - Taxonomia da memória (episódica, semântica, procedural)]] — os tipos de informação que memória precisa cobrir
+- [[05 - Beyond RAG - quando RAG não basta]] — análise das limitações de RAG e quando memória se torna necessária
 - [[06 - O LLM Wiki Pattern (gist do Karpathy)]] — abordagem ativa de Karpathy para memória estruturada
+- [[14 - Mem0 — vetorial + grafo]] — sistema de produção que combina retrieval factual e memória episódica
 - [[RAG e Vector Databases]] — para profundidade técnica em RAG
 
 ## Referências
