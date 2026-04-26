@@ -29,9 +29,9 @@ A literatura de memória de agentes saiu, entre 2024 e início de 2026, de um co
 
 Survey de autor único (Pengfei Du), publicado em arXiv em março de 2026 sob o identificador `arXiv:2603.07670`. Cobre o intervalo de 2022 ao início de 2026. O formalismo central é tratar memória como um **write–manage–read loop tightly coupled with perception and action** — um ciclo de escrita, gerenciamento e leitura acoplado ao laço sensoriomotor do agente. A partir desse formalismo, o autor identifica **cinco famílias de mecanismos** (detalhadas mais adiante) e propõe uma taxonomia tridimensional para classificar implementações. O paper discute também desafios de engenharia (filtragem de write-path, tratamento de contradições, restrições de latência, privacidade) e questões abertas (consolidação contínua, retrieval causalmente fundamentado, mecanismos de esquecimento aprendido). É a referência mais conveniente quando o objetivo é citar um único trabalho que cubra tanto os mecanismos quanto a avaliação do campo.
 
-### 2. *Memory in the Age of AI Agents: A Survey* — paper list mantido por Shichun Liu
+### 2. *Memory in the Age of AI Agents: A Survey* (Hu et al., 2025)
 
-Survey associada ao paper `arXiv:2512.13564`, com lista de papers comunitária mantida em `github.com/Shichun-Liu/Agent-Memory-Paper-List`. O framework analítico tem três dimensões: **Forms** (token-level, parametric, latent), **Functions** (factual, experiential, contextual) e **Dynamics** (formação, consolidação, retrieval). O repositório, frequentemente atualizado e com tração visível na comunidade, funciona na prática como o índice mais útil do campo — quando uma referência é citada num paper recente, costuma estar listada lá com link direto. Vale acompanhar como termômetro do que circula em arXiv.
+Survey publicada em arXiv sob o identificador `arXiv:2512.13564`, com Yuyang Hu como primeiro autor e mais de quatro dezenas de co-autores. O framework analítico tem três dimensões: **Forms** (token-level, parametric, latent), **Functions** (factual, experiential, contextual) e **Dynamics** (formação, consolidação, retrieval). O companion paper-list é mantido por Shichun Liu em `github.com/Shichun-Liu/Agent-Memory-Paper-List` — repositório frequentemente atualizado e com tração visível na comunidade, que funciona na prática como o índice mais útil do campo: quando uma referência é citada num paper recente, costuma estar listada lá com link direto. Vale acompanhar como termômetro do que circula em arXiv.
 
 ### 3. *From Storage to Experience: A Survey on the Evolution of LLM Agent Memory Mechanisms*
 
@@ -121,7 +121,8 @@ A interseção entre os cinco surveys aponta cinco tendências que dominam a fro
 - Zhang, Z., Bo, X., Ma, C., Li, R., Chen, X., Dai, Q., Zhu, J., Dong, Z., Wen, J.-R. *A Survey on the Memory Mechanism of Large Language Model-based Agents*. ACM Transactions on Information Systems — `https://dl.acm.org/doi/10.1145/3748302` (preprint em `https://arxiv.org/abs/2404.13501`; repositório em `https://github.com/nuster1128/LLM_Agent_Memory_Survey`)
 - *From Storage to Experience: A Survey on the Evolution of LLM Agent Memory Mechanisms*. OpenReview — `https://openreview.net/forum?id=l9Ly41xxPb`
 - *LLM Agent Memory: A Survey from a Unified Representation–Management Perspective*. OpenReview — `https://openreview.net/forum?id=KPs1EgGKcT`
-- *Memory in the Age of AI Agents: A Survey* (Liu et al.). arXiv `2512.13564`; paper list mantida em `https://github.com/Shichun-Liu/Agent-Memory-Paper-List`
+- Hu, Y. et al. (2025). *Memory in the Age of AI Agents: A Survey*. arXiv `2512.13564` — `https://arxiv.org/abs/2512.13564`
+- *Agent-Memory-Paper-List* — companion paper-list mantido por Shichun Liu em `https://github.com/Shichun-Liu/Agent-Memory-Paper-List`
 - ICLR 2026 Workshop on Memory for LLM-Based Agentic Systems ("MemAgents") — `https://sites.google.com/view/memagent-iclr26/`
 - *Awesome-GraphMemory* — `https://github.com/DEEP-PolyU/Awesome-GraphMemory` (catálogo curado de sistemas grafo-baseados)
 - *Awesome-Agent-Memory* (TeleAI-UAGI) — `https://github.com/TeleAI-UAGI/Awesome-Agent-Memory` (catálogo curado complementar)
