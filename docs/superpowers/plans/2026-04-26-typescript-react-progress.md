@@ -18,9 +18,9 @@ publish: false
 
 ## Status geral
 
-- **Tasks concluídas:** 5 / 17 (Wave 2 completa)
+- **Tasks concluídas:** 6 / 17
 - **Bloco atual:** Wave 3 (Idiomas práticos — notas 05-11)
-- **Próxima task:** Task 6 (Nota 05 - Tipando state e refs)
+- **Próxima task:** Task 7 (Nota 06 - Tipando event handlers)
 
 ---
 
@@ -51,7 +51,7 @@ publish: false
 
 | # | Task | Status | Commit | Notas |
 |---|------|--------|--------|-------|
-| 6 | Nota 05 - Tipando state e refs | ⏸️ pendente | — | — |
+| 6 | Nota 05 - Tipando state e refs | ✅ concluída | `ff17d6e` | Spec ✅ 16/16 checks (decisão propagável React 19 aplicada). Quality ✅ aprovado. 243 linhas, 5 code samples, 5 armadilhas. |
 | 7 | Nota 06 - Tipando event handlers | ⏸️ pendente | — | — |
 | 8 | Nota 07 - Tipando hooks customizados | ⏸️ pendente | — | — |
 | 9 | Nota 08 - Tipando Context API | ⏸️ pendente | — | — |
@@ -127,6 +127,11 @@ _(atualizado a cada evento relevante: dispatch, review result, fix loop, commit)
 - **2026-04-26 — Task 5 quality review:** ✅ Aprovado (manual).
 - **2026-04-26 — Task 5 concluída. Wave 2 (Mental model) completa.**
 - **2026-04-26 — Task 6 (Nota 05 - Tipando state e refs) iniciada — primeira nota da Wave 3 (Idiomas práticos).**
+- **2026-04-26 — Task 6 implementada.** Implementer DONE. Pré-research validou APIs React 19 (useRef unificado, ref como prop normal, useImperativeHandle ainda existe). Commit `ff17d6e`. 243 linhas.
+- **2026-04-26 — Task 6 spec review:** ✅ Spec compliant em 16/16 checks. Ambos checks críticos sobre React 19 useRef OK (`MutableRefObject` só como histórico; argumento obrigatório).
+- **2026-04-26 — Task 6 quality review:** ✅ Aprovado (manual).
+- **2026-04-26 — Task 6 concluída.**
+- **2026-04-26 — Task 7 (Nota 06 - Tipando event handlers) iniciada.**
 
 ## Decisões propagáveis para próximas notas
 
