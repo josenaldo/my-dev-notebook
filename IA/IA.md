@@ -24,6 +24,10 @@ IA para desenvolvedores: conceitos, LLMs, RAG, agents, MCP e ferramentas. Trilha
 - [[RAG e Vector Databases]] — retrieval-augmented generation
 - [[MCP]] — Model Context Protocol, o "USB-C para agents"
 
+## Memória de Agentes
+
+- [[Memória de Agentes]] — trilha completa: do conceito ao guia de implementação, com fundamentação acadêmica e análise crítica
+
 ## Ferramentas
 
 - [[Claude]] — Anthropic: Claude Code, API, Agent SDK, MCP
