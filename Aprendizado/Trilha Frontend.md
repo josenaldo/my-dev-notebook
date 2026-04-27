@@ -22,6 +22,7 @@
 - [[#Gráficos]]
 - [[#Tooling]]
 - [[#Patterns]]
+- [[#Trilhas relacionadas]]
 
 # React
 
@@ -132,3 +133,7 @@ https://github.com/jquense/yup
 # Patterns
 
 [https://www.netguru.com/blog/frontend-design-patterns?ref=dailydev](https://www.netguru.com/blog/frontend-design-patterns?ref=dailydev)
+
+# Trilhas relacionadas
+
+- [[TypeScript com React]] — aprofundamento da intersecção TS+React (15 notas + MOC)

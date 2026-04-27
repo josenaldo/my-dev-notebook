@@ -1636,6 +1636,7 @@ describe('LoginForm', () => {
 
 - [[JavaScript Fundamentals]] — linguagem base
 - [[TypeScript]] — tipagem em React
+- [[TypeScript com React]] — trilha completa sobre tipagem em React (mental model, idiomas práticos, type-level avançado)
 - [[Testes em JavaScript]] — Testing Library, Playwright
 - [[HTML e CSS]] — fundação do frontend
 - [[Node.js]] — backend para React

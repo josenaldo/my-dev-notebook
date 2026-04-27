@@ -1505,6 +1505,7 @@ if (result.ok) {
 - [[JavaScript Fundamentals]] — linguagem base
 - [[Node.js]] — runtime, TS nativo em Node 22+
 - [[React]] — React com TypeScript
+- [[TypeScript com React]] — trilha completa sobre a intersecção idiomática TS+React (mental model, idiomas práticos, type-level avançado)
 - [[Testes em JavaScript]] — tipagem em testes
 - [[Full Stack Open - Guia de Revisão]] — Parte 9 é sobre TS
 - [[API Design]] — OpenAPI, contract types
