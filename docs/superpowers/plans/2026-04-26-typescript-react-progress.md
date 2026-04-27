@@ -18,9 +18,9 @@ publish: false
 
 ## Status geral
 
-- **Tasks concluídas:** 6 / 17
+- **Tasks concluídas:** 7 / 17
 - **Bloco atual:** Wave 3 (Idiomas práticos — notas 05-11)
-- **Próxima task:** Task 7 (Nota 06 - Tipando event handlers)
+- **Próxima task:** Task 8 (Nota 07 - Tipando hooks customizados)
 
 ---
 
@@ -52,7 +52,7 @@ publish: false
 | # | Task | Status | Commit | Notas |
 |---|------|--------|--------|-------|
 | 6 | Nota 05 - Tipando state e refs | ✅ concluída | `ff17d6e` | Spec ✅ 16/16 checks (decisão propagável React 19 aplicada). Quality ✅ aprovado. 243 linhas, 5 code samples, 5 armadilhas. |
-| 7 | Nota 06 - Tipando event handlers | ⏸️ pendente | — | — |
+| 7 | Nota 06 - Tipando event handlers | ✅ concluída | `7cbdc92` | Spec ✅ + Quality ✅ aprovado. 7 code samples (incluindo opcional KeyboardEvent), 5 armadilhas. |
 | 8 | Nota 07 - Tipando hooks customizados | ⏸️ pendente | — | — |
 | 9 | Nota 08 - Tipando Context API | ⏸️ pendente | — | — |
 | 10 | Nota 09 - Tipando reducers e state machines | ⏸️ pendente | — | — |
@@ -132,6 +132,11 @@ _(atualizado a cada evento relevante: dispatch, review result, fix loop, commit)
 - **2026-04-26 — Task 6 quality review:** ✅ Aprovado (manual).
 - **2026-04-26 — Task 6 concluída.**
 - **2026-04-26 — Task 7 (Nota 06 - Tipando event handlers) iniciada.**
+- **2026-04-26 — Task 7 implementada.** Implementer DONE. Pré-research validou tipos canônicos React 19 (synthetic events estáveis). Commit `7cbdc92`.
+- **2026-04-26 — Task 7 spec review:** ✅ Spec compliant. Sample 5 (handler reutilizável) sofisticado mas didaticamente superior.
+- **2026-04-26 — Task 7 quality review:** ✅ Aprovado (manual).
+- **2026-04-26 — Task 7 concluída.**
+- **2026-04-26 — Task 8 (Nota 07 - Tipando hooks customizados) iniciada.**
 
 ## Decisões propagáveis para próximas notas
 
