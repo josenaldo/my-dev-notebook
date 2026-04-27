@@ -18,9 +18,9 @@ publish: false
 
 ## Status geral
 
-- **Tasks concluídas:** 11 / 17
-- **Bloco atual:** Wave 3 (Idiomas práticos — notas 05-11)
-- **Próxima task:** Task 12 (Nota 11 - Tipando data fetching) — última nota da Wave 3
+- **Tasks concluídas:** 12 / 17 (Wave 3 completa)
+- **Bloco atual:** Wave 4 (Type-level avançado — notas 12-14)
+- **Próxima task:** Task 13 (Nota 12 - Generic components)
 
 ---
 
@@ -57,7 +57,7 @@ publish: false
 | 9 | Nota 08 - Tipando Context API | ✅ concluída | `c666d9c` | Spec ✅ + Quality ✅ aprovado (manual). 204 linhas. Pré-research validou React 19 `<Context>` direto. 5 armadilhas (bônus: exportar Context cru). |
 | 10 | Nota 09 - Tipando reducers e state machines | ✅ concluída | `f1440bd` | Spec ✅ + Quality ✅ aprovado (manual). 299 linhas. 5 armadilhas (bônus sobre inferência de initial state). Vocabulário-chave com "make illegal states unrepresentable". |
 | 11 | Nota 10 - Tipando formulários | ✅ concluída | `0dbf503` | Spec ✅ + Quality ✅ aprovado (manual). 6 armadilhas. Pré-research validou Zod v4.3.6 atual; RHF docs com 403 mas API estável. |
-| 12 | Nota 11 - Tipando data fetching | ⏸️ pendente | — | — |
+| 12 | Nota 11 - Tipando data fetching | ✅ concluída | `e3586e6` | Spec ✅ + Quality ✅ aprovado (manual). 268 linhas. 6 code samples + 6 armadilhas. Pré-research validou TanStack Query, `use()` em React 19, Server Actions Next 16. |
 
 ### Wave 4 — Type-level avançado
 
@@ -154,6 +154,10 @@ _(atualizado a cada evento relevante: dispatch, review result, fix loop, commit)
 - **2026-04-27 — Task 11 spec/quality review:** ✅ Aprovado (manual). 6 armadilhas (bônus sobre validação onChange vs onSubmit).
 - **2026-04-27 — Task 11 concluída.**
 - **2026-04-27 — Task 12 (Nota 11 - Tipando data fetching) iniciada — última nota da Wave 3.**
+- **2026-04-27 — Task 12 implementada.** Implementer DONE. Pré-research validou 3 fontes (TanStack Query TS guide, React 19 `use()`, Next.js 16 Server Components). Commit `e3586e6`. 268 linhas.
+- **2026-04-27 — Task 12 spec/quality review:** ✅ Aprovado (manual). 6 armadilhas (bônus sobre estabilidade de Promise para `use()`).
+- **2026-04-27 — Task 12 concluída. Wave 3 (Idiomas práticos) completa.**
+- **2026-04-27 — Task 13 (Nota 12 - Generic components) iniciada — primeira da Wave 4 (Type-level avançado).**
 
 ## Decisões propagáveis para próximas notas
 
