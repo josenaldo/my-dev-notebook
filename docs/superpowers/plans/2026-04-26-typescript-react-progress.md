@@ -18,9 +18,9 @@ publish: false
 
 ## Status geral
 
-- **Tasks concluídas:** 14 / 17
-- **Bloco atual:** Wave 4 (Type-level avançado — notas 12-14)
-- **Próxima task:** Task 15 (Nota 14 - Compound components, slots, render props) — última da Wave 4
+- **Tasks concluídas:** 15 / 17 (Wave 4 completa)
+- **Bloco atual:** Wave 5 (Fechamento)
+- **Próxima task:** Task 16 (Nota 15 - Armadilhas, tsconfig, ferramentas)
 
 ---
 
@@ -65,7 +65,7 @@ publish: false
 |---|------|--------|--------|-------|
 | 13 | Nota 12 - Generic components | ✅ concluída | `1bafd77` | Spec ✅ + Quality ✅ aprovado (manual). 270 linhas. 5 code samples, 5 armadilhas. Pré-research confirmou workaround `<T,>` ainda necessário em TS 5.x. |
 | 14 | Nota 13 - Polymorphic components | ✅ concluída | `9963dc3` | Spec ✅ + Quality ✅ aprovado (manual). 241 linhas. 5 code samples (incluindo versão React 18 com forwardRef + cast e versão React 19 sem forwardRef). Pré-research validou citação literal do React 19 blog. |
-| 15 | Nota 14 - Compound components, slots, render props | ⏸️ pendente | — | — |
+| 15 | Nota 14 - Compound components, slots, render props | ✅ concluída | `c4fd336` | Spec ✅ + Quality ✅ aprovado (manual). 286 linhas. 5 code samples (compound + Slot + render prop), 5 armadilhas. Pré-research validou Radix Dialog/Slot e React.Children desencorajado em React 19. |
 
 ### Wave 5 — Fechamento
 
@@ -166,6 +166,10 @@ _(atualizado a cada evento relevante: dispatch, review result, fix loop, commit)
 - **2026-04-27 — Task 14 spec/quality review:** ✅ Aprovado (manual). 5 armadilhas, contraste explícito React 18 (com forwardRef + cast) vs React 19 (sem forwardRef).
 - **2026-04-27 — Task 14 concluída.**
 - **2026-04-27 — Task 15 (Nota 14 - Compound components, slots, render props) iniciada — última da Wave 4.**
+- **2026-04-27 — Task 15 implementada.** Implementer DONE. Pré-research validou Radix Dialog/Slot e React.Children em React 19 (não deprecated mas desencorajado). Commit `c4fd336`. 286 linhas.
+- **2026-04-27 — Task 15 spec/quality review:** ✅ Aprovado (manual). Sample 5 didaticamente mostra quando NÃO usar Children API.
+- **2026-04-27 — Task 15 concluída. Wave 4 (Type-level avançado) completa.**
+- **2026-04-27 — Task 16 (Nota 15 - Armadilhas, tsconfig, ferramentas) iniciada — Wave 5 (Fechamento). Estrutura tópica (não narrativa).**
 
 ## Decisões propagáveis para próximas notas
 
