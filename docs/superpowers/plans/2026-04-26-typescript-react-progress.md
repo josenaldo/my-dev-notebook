@@ -18,9 +18,9 @@ publish: false
 
 ## Status geral
 
-- **Tasks concluídas:** 16 / 17 (Wave 5 completa — todas as 15 notas + MOC criadas)
-- **Bloco atual:** Wave 6 (Integração com notas mãe)
-- **Próxima task:** Task 17 (integração — wikilinks cruzados, atualização de TypeScript.md / React.md / Trilha Frontend.md)
+- **Tasks concluídas:** 17 / 17 ✅ **TRILHA COMPLETA**
+- **Bloco atual:** Concluído.
+- **Resultado final:** 16 arquivos em `JavaScript/Frontend/TypeScript com React/` (MOC + 15 notas) + 3 notas mãe atualizadas com referências cruzadas (TypeScript.md, React.md, Trilha Frontend.md).
 
 ---
 
@@ -77,7 +77,7 @@ publish: false
 
 | # | Task | Status | Commit | Notas |
 |---|------|--------|--------|-------|
-| 17 | Wikilinks cruzados + notas mãe | ⏸️ pendente | — | — |
+| 17 | Wikilinks cruzados + notas mãe | ✅ concluída | `0f0c0fe` | MOC pass-final OK (todos os 15 wikilinks resolvem). Entradas adicionadas em TypeScript.md, React.md, Trilha Frontend.md (com nova seção "Trilhas relacionadas" + entrada no TOC). |
 
 ---
 
@@ -174,6 +174,9 @@ _(atualizado a cada evento relevante: dispatch, review result, fix loop, commit)
 - **2026-04-27 — Task 16 spec/quality review:** ✅ Aprovado (manual). Estrutura tópica conforme spec, `type: reference`.
 - **2026-04-27 — Task 16 concluída. Wave 5 (Fechamento) completa. Trilha de notas finalizada (16 arquivos: MOC + 15 notas).**
 - **2026-04-27 — Task 17 (integração com notas mãe) iniciada — última task do plano.**
+- **2026-04-27 — Task 17 implementada.** MOC verificado (todos os wikilinks resolvem). Entradas em "Veja também" adicionadas em TypeScript.md e React.md. Em Trilha Frontend.md, criada nova seção `# Trilhas relacionadas` com entrada também no TOC. Verificação Quartz OK (sem `index.md` na pasta da trilha). Commit `0f0c0fe`.
+- **2026-04-27 — Task 17 concluída.**
+- **2026-04-27 — 🎉 TRILHA "TypeScript com React" COMPLETA. 17/17 tasks ✅.**
 
 ## Decisões propagáveis para próximas notas
 
