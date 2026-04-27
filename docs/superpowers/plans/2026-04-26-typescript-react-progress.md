@@ -18,10 +18,9 @@ publish: false
 
 ## Status geral
 
-- **Tasks concluídas:** 2 / 17 (Wave 1 completa)
+- **Tasks concluídas:** 3 / 17
 - **Bloco atual:** Wave 2 (Mental model — notas 02-04)
-- **Próxima task:** Task 3 (Nota 02 - Inferir vs anotar)
-- **Pausado em:** 2026-04-26, após Task 2. Quality reviewer subagent atingiu rate limit; quality check da Nota 01 feito manualmente pelo controller (resultado: ✅ Aprovado).
+- **Próxima task:** Task 4 (Nota 03 - Por que React.FC saiu de moda)
 
 ---
 
@@ -44,7 +43,7 @@ publish: false
 
 | # | Task | Status | Commit | Notas |
 |---|------|--------|--------|-------|
-| 3 | Nota 02 - Inferir vs anotar | ⏸️ pendente | — | — |
+| 3 | Nota 02 - Inferir vs anotar | ✅ concluída | `01eae07` | Spec ✅ compliant. Quality ✅ aprovado (manual). 175 linhas, 5 code samples corretos, sem concerns. |
 | 4 | Nota 03 - Por que React.FC saiu de moda | ⏸️ pendente | — | — |
 | 5 | Nota 04 - interface vs type vs satisfies | ⏸️ pendente | — | — |
 
@@ -111,6 +110,13 @@ _(atualizado a cada evento relevante: dispatch, review result, fix loop, commit)
 - **2026-04-26 — Task 2 quality review:** subagent atingiu rate limit antes de reportar. Controller fez quality check manual: code samples corretos, precisão técnica boa, tom alinhado, vocabulário central ("tripla inferência") estabelecido. ✅ Aprovado.
 - **2026-04-26 — Task 2 concluída.** Wave 1 completa.
 - **2026-04-26 — Pausado.** Esperando decisão do usuário sobre retomar (próxima: Task 3 - Nota 02).
+- **2026-04-26 — Retomado por instrução do usuário ("prossiga").**
+- **2026-04-26 — Task 3 (Nota 02 - Inferir vs anotar) iniciada.**
+- **2026-04-26 — Task 3 implementada.** Implementer DONE sem concerns. Pré-research validou TS 4.9 release notes (`satisfies`) e Type Inference handbook. Commit `01eae07`. 175 linhas.
+- **2026-04-26 — Task 3 spec review:** ✅ Spec compliant em todos os 11 steps. 4 observações secundárias (redação enrolada na linha 119; ponto didático sobre `as const` na linha 134; shadowing em didático no Sample 4; descrição do `[[TypeScript]]` cita seção que existe). Nenhuma bloqueante.
+- **2026-04-26 — Task 3 quality review:** ✅ Aprovado (manual). Code samples corretos, tom alinhado, sem fabricação.
+- **2026-04-26 — Task 3 concluída.**
+- **2026-04-26 — Task 4 (Nota 03 - Por que React.FC saiu de moda) iniciada.**
 
 ## Decisões propagáveis para próximas notas
 
