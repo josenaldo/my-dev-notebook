@@ -18,9 +18,9 @@ publish: false
 
 ## Status geral
 
-- **Tasks concluídas:** 15 / 17 (Wave 4 completa)
-- **Bloco atual:** Wave 5 (Fechamento)
-- **Próxima task:** Task 16 (Nota 15 - Armadilhas, tsconfig, ferramentas)
+- **Tasks concluídas:** 16 / 17 (Wave 5 completa — todas as 15 notas + MOC criadas)
+- **Bloco atual:** Wave 6 (Integração com notas mãe)
+- **Próxima task:** Task 17 (integração — wikilinks cruzados, atualização de TypeScript.md / React.md / Trilha Frontend.md)
 
 ---
 
@@ -71,7 +71,7 @@ publish: false
 
 | # | Task | Status | Commit | Notas |
 |---|------|--------|--------|-------|
-| 16 | Nota 15 - Armadilhas, tsconfig, ferramentas | ⏸️ pendente | — | — |
+| 16 | Nota 15 - Armadilhas, tsconfig, ferramentas | ✅ concluída | `0e68e12` | Spec ✅ + Quality ✅ aprovado (manual). 256 linhas. 15 armadilhas, tsconfig Vite + Next 16, ESLint, ts-reset, React Compiler. Estrutura tópica (não narrativa), `type: reference`. |
 
 ### Wave 6 — Integração
 
@@ -170,6 +170,10 @@ _(atualizado a cada evento relevante: dispatch, review result, fix loop, commit)
 - **2026-04-27 — Task 15 spec/quality review:** ✅ Aprovado (manual). Sample 5 didaticamente mostra quando NÃO usar Children API.
 - **2026-04-27 — Task 15 concluída. Wave 4 (Type-level avançado) completa.**
 - **2026-04-27 — Task 16 (Nota 15 - Armadilhas, tsconfig, ferramentas) iniciada — Wave 5 (Fechamento). Estrutura tópica (não narrativa).**
+- **2026-04-27 — Task 16 implementada.** Implementer DONE. Pré-research validou React Compiler, ts-reset, eslint-plugin-react-hooks, e templates tsconfig Vite/Next 16. Commit `0e68e12`. 256 linhas, 15 armadilhas.
+- **2026-04-27 — Task 16 spec/quality review:** ✅ Aprovado (manual). Estrutura tópica conforme spec, `type: reference`.
+- **2026-04-27 — Task 16 concluída. Wave 5 (Fechamento) completa. Trilha de notas finalizada (16 arquivos: MOC + 15 notas).**
+- **2026-04-27 — Task 17 (integração com notas mãe) iniciada — última task do plano.**
 
 ## Decisões propagáveis para próximas notas
 
