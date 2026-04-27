@@ -18,9 +18,10 @@ publish: false
 
 ## Status geral
 
-- **Tasks concluídas:** 1 / 17
-- **Bloco atual:** Wave 1 (Esqueleto)
-- **Próxima task:** Task 2 (Nota 01 - A tripla inferência)
+- **Tasks concluídas:** 2 / 17 (Wave 1 completa)
+- **Bloco atual:** Wave 2 (Mental model — notas 02-04)
+- **Próxima task:** Task 3 (Nota 02 - Inferir vs anotar)
+- **Pausado em:** 2026-04-26, após Task 2. Quality reviewer subagent atingiu rate limit; quality check da Nota 01 feito manualmente pelo controller (resultado: ✅ Aprovado).
 
 ---
 
@@ -37,7 +38,7 @@ publish: false
 | # | Task | Status | Commit | Notas |
 |---|------|--------|--------|-------|
 | 1 | MOC `TypeScript com React.md` | ✅ concluída | `e474238` + `2ca8aa2` (polish) | Spec ✅, Quality ⚠️ aprovado com sugestões; 1 Important + 2 Minor corrigidas inline |
-| 2 | Nota 01 - A tripla inferência | 🟡 implementando | — | — |
+| 2 | Nota 01 - A tripla inferência | ✅ concluída | `c002cbb` + `2840b22` (fix técnico) | Spec ✅ compliant, Quality ✅ aprovado (manual; subagent hit rate limit). Pré-research revelou: React 19 unifica retorno de `useRef` em `RefObject<T>` (`MutableRefObject` não retorna mais); namespace é `React.JSX.IntrinsicElements` (escopado). |
 
 ### Wave 2 — Mental model
 
@@ -105,3 +106,16 @@ _(atualizado a cada evento relevante: dispatch, review result, fix loop, commit)
 - **2026-04-26 — Task 1 quality review:** ⚠️ Aprovado com sugestões. 1 Important (redundância abertura/callout) + 2 Minor (descrição nota 04, pipe redundante). Polish aplicado inline pelo controller. Commit `2ca8aa2`.
 - **2026-04-26 — Task 1 concluída.** MOC publicado, dataview retorna vazio até notas 01-15 chegarem (esperado).
 - **2026-04-26 — Task 2 (Nota 01 - A tripla inferência) iniciada.**
+- **2026-04-26 — Task 2 implementada.** Implementer reportou DONE_WITH_CONCERNS. Pré-research apontou 2 ajustes ao plano: `React.JSX.IntrinsicElements` (vs global) e `useRef` em React 19 (sem `MutableRefObject` no retorno). Commit `c002cbb`.
+- **2026-04-26 — Task 2 spec review:** ✅ Spec compliant em todos os 12 steps. Validou os 2 concerns do implementer. Apontou imprecisão técnica na linha 119 sobre `MutableRefObject` "descontinuado" (tecnicamente o tipo ainda é exportado de `@types/react@19`, só não é o retorno de `useRef`). Fix aplicado pelo controller. Commit `2840b22`.
+- **2026-04-26 — Task 2 quality review:** subagent atingiu rate limit antes de reportar. Controller fez quality check manual: code samples corretos, precisão técnica boa, tom alinhado, vocabulário central ("tripla inferência") estabelecido. ✅ Aprovado.
+- **2026-04-26 — Task 2 concluída.** Wave 1 completa.
+- **2026-04-26 — Pausado.** Esperando decisão do usuário sobre retomar (próxima: Task 3 - Nota 02).
+
+## Decisões propagáveis para próximas notas
+
+Para uso consistente nas notas subsequentes da trilha:
+
+- **`useRef` em React 19**: sempre referir como `RefObject<T>` com `.current` mutável e nullable. `MutableRefObject` mencionar apenas em contexto histórico/legacy. **Especialmente relevante para Task 6 (Nota 05 - Tipando state e refs).**
+- **Namespace JSX**: usar `React.JSX.IntrinsicElements` (escopado). Mencionar fallback global apenas quando relevante. **Relevante para Task 14 (Nota 13 - Polymorphic) e Task 16 (Nota 15 - tsconfig).**
+- **`React.ComponentPropsWithoutRef<T>`**: pattern idiomático para herdar atributos HTML; evitar redeclarar props nativas manualmente. **Relevante para Tasks 6, 14, 15.**
