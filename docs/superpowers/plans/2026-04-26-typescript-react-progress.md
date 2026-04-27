@@ -18,9 +18,9 @@ publish: false
 
 ## Status geral
 
-- **Tasks concluídas:** 8 / 17
+- **Tasks concluídas:** 9 / 17
 - **Bloco atual:** Wave 3 (Idiomas práticos — notas 05-11)
-- **Próxima task:** Task 9 (Nota 08 - Tipando Context API)
+- **Próxima task:** Task 10 (Nota 09 - Tipando reducers e state machines)
 
 ---
 
@@ -54,7 +54,7 @@ publish: false
 | 6 | Nota 05 - Tipando state e refs | ✅ concluída | `ff17d6e` | Spec ✅ 16/16 checks (decisão propagável React 19 aplicada). Quality ✅ aprovado. 243 linhas, 5 code samples, 5 armadilhas. |
 | 7 | Nota 06 - Tipando event handlers | ✅ concluída | `7cbdc92` | Spec ✅ + Quality ✅ aprovado. 7 code samples (incluindo opcional KeyboardEvent), 5 armadilhas. |
 | 8 | Nota 07 - Tipando hooks customizados | ✅ concluída | `4db0ac3` | Spec ✅ + Quality ✅ aprovado (manual; reviewer hit rate limit). 262 linhas, 5 code samples (overloads e discriminated union técnicamente corretos), 5 armadilhas. |
-| 9 | Nota 08 - Tipando Context API | ⏸️ pendente | — | — |
+| 9 | Nota 08 - Tipando Context API | ✅ concluída | `c666d9c` | Spec ✅ + Quality ✅ aprovado (manual). 204 linhas. Pré-research validou React 19 `<Context>` direto. 5 armadilhas (bônus: exportar Context cru). |
 | 10 | Nota 09 - Tipando reducers e state machines | ⏸️ pendente | — | — |
 | 11 | Nota 10 - Tipando formulários | ⏸️ pendente | — | — |
 | 12 | Nota 11 - Tipando data fetching | ⏸️ pendente | — | — |
@@ -142,6 +142,10 @@ _(atualizado a cada evento relevante: dispatch, review result, fix loop, commit)
 - **2026-04-26 — Task 8 quality review:** ✅ Aprovado (manual).
 - **2026-04-26 — Task 8 concluída.**
 - **2026-04-27 — Task 9 (Nota 08 - Tipando Context API) iniciada.**
+- **2026-04-27 — Task 9 implementada.** Implementer DONE. Pré-research confirmou React 19 syntax direto e citação oficial sobre depreciação futura de `.Provider`. Commit `c666d9c`. 204 linhas.
+- **2026-04-27 — Task 9 spec/quality review:** ✅ Aprovado (manual). 5 armadilhas (bônus sobre não exportar Context cru).
+- **2026-04-27 — Task 9 concluída.**
+- **2026-04-27 — Task 10 (Nota 09 - Tipando reducers e state machines) iniciada.**
 
 ## Decisões propagáveis para próximas notas
 
