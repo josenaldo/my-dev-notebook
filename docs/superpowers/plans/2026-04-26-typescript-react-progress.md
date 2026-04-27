@@ -18,9 +18,9 @@ publish: false
 
 ## Status geral
 
-- **Tasks concluídas:** 13 / 17
+- **Tasks concluídas:** 14 / 17
 - **Bloco atual:** Wave 4 (Type-level avançado — notas 12-14)
-- **Próxima task:** Task 14 (Nota 13 - Polymorphic components com as prop)
+- **Próxima task:** Task 15 (Nota 14 - Compound components, slots, render props) — última da Wave 4
 
 ---
 
@@ -64,7 +64,7 @@ publish: false
 | # | Task | Status | Commit | Notas |
 |---|------|--------|--------|-------|
 | 13 | Nota 12 - Generic components | ✅ concluída | `1bafd77` | Spec ✅ + Quality ✅ aprovado (manual). 270 linhas. 5 code samples, 5 armadilhas. Pré-research confirmou workaround `<T,>` ainda necessário em TS 5.x. |
-| 14 | Nota 13 - Polymorphic components | ⏸️ pendente | — | — |
+| 14 | Nota 13 - Polymorphic components | ✅ concluída | `9963dc3` | Spec ✅ + Quality ✅ aprovado (manual). 241 linhas. 5 code samples (incluindo versão React 18 com forwardRef + cast e versão React 19 sem forwardRef). Pré-research validou citação literal do React 19 blog. |
 | 15 | Nota 14 - Compound components, slots, render props | ⏸️ pendente | — | — |
 
 ### Wave 5 — Fechamento
@@ -162,6 +162,10 @@ _(atualizado a cada evento relevante: dispatch, review result, fix loop, commit)
 - **2026-04-27 — Task 13 spec/quality review:** ✅ Aprovado (manual). 5 armadilhas (bônus sobre posição do `<T>` em function signature).
 - **2026-04-27 — Task 13 concluída.**
 - **2026-04-27 — Task 14 (Nota 13 - Polymorphic components com as prop) iniciada.**
+- **2026-04-27 — Task 14 implementada.** Implementer DONE. Pré-research confirmou citação literal do React 19 blog sobre ref como prop e Radix Themes Box. Commit `9963dc3`. 241 linhas.
+- **2026-04-27 — Task 14 spec/quality review:** ✅ Aprovado (manual). 5 armadilhas, contraste explícito React 18 (com forwardRef + cast) vs React 19 (sem forwardRef).
+- **2026-04-27 — Task 14 concluída.**
+- **2026-04-27 — Task 15 (Nota 14 - Compound components, slots, render props) iniciada — última da Wave 4.**
 
 ## Decisões propagáveis para próximas notas
 
