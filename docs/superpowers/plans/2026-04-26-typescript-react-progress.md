@@ -18,9 +18,9 @@ publish: false
 
 ## Status geral
 
-- **Tasks concluídas:** 12 / 17 (Wave 3 completa)
+- **Tasks concluídas:** 13 / 17
 - **Bloco atual:** Wave 4 (Type-level avançado — notas 12-14)
-- **Próxima task:** Task 13 (Nota 12 - Generic components)
+- **Próxima task:** Task 14 (Nota 13 - Polymorphic components com as prop)
 
 ---
 
@@ -63,7 +63,7 @@ publish: false
 
 | # | Task | Status | Commit | Notas |
 |---|------|--------|--------|-------|
-| 13 | Nota 12 - Generic components | ⏸️ pendente | — | — |
+| 13 | Nota 12 - Generic components | ✅ concluída | `1bafd77` | Spec ✅ + Quality ✅ aprovado (manual). 270 linhas. 5 code samples, 5 armadilhas. Pré-research confirmou workaround `<T,>` ainda necessário em TS 5.x. |
 | 14 | Nota 13 - Polymorphic components | ⏸️ pendente | — | — |
 | 15 | Nota 14 - Compound components, slots, render props | ⏸️ pendente | — | — |
 
@@ -158,6 +158,10 @@ _(atualizado a cada evento relevante: dispatch, review result, fix loop, commit)
 - **2026-04-27 — Task 12 spec/quality review:** ✅ Aprovado (manual). 6 armadilhas (bônus sobre estabilidade de Promise para `use()`).
 - **2026-04-27 — Task 12 concluída. Wave 3 (Idiomas práticos) completa.**
 - **2026-04-27 — Task 13 (Nota 12 - Generic components) iniciada — primeira da Wave 4 (Type-level avançado).**
+- **2026-04-27 — Task 13 implementada.** Implementer DONE. Pré-research confirmou workaround `<T,>` em TS 5.x via macwright.com e Ashby Engineering Blog. Commit `1bafd77`. 270 linhas.
+- **2026-04-27 — Task 13 spec/quality review:** ✅ Aprovado (manual). 5 armadilhas (bônus sobre posição do `<T>` em function signature).
+- **2026-04-27 — Task 13 concluída.**
+- **2026-04-27 — Task 14 (Nota 13 - Polymorphic components com as prop) iniciada.**
 
 ## Decisões propagáveis para próximas notas
 
