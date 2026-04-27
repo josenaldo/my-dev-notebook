@@ -18,9 +18,9 @@ publish: false
 
 ## Status geral
 
-- **Tasks concluídas:** 9 / 17
+- **Tasks concluídas:** 10 / 17
 - **Bloco atual:** Wave 3 (Idiomas práticos — notas 05-11)
-- **Próxima task:** Task 10 (Nota 09 - Tipando reducers e state machines)
+- **Próxima task:** Task 11 (Nota 10 - Tipando formulários)
 
 ---
 
@@ -55,7 +55,7 @@ publish: false
 | 7 | Nota 06 - Tipando event handlers | ✅ concluída | `7cbdc92` | Spec ✅ + Quality ✅ aprovado. 7 code samples (incluindo opcional KeyboardEvent), 5 armadilhas. |
 | 8 | Nota 07 - Tipando hooks customizados | ✅ concluída | `4db0ac3` | Spec ✅ + Quality ✅ aprovado (manual; reviewer hit rate limit). 262 linhas, 5 code samples (overloads e discriminated union técnicamente corretos), 5 armadilhas. |
 | 9 | Nota 08 - Tipando Context API | ✅ concluída | `c666d9c` | Spec ✅ + Quality ✅ aprovado (manual). 204 linhas. Pré-research validou React 19 `<Context>` direto. 5 armadilhas (bônus: exportar Context cru). |
-| 10 | Nota 09 - Tipando reducers e state machines | ⏸️ pendente | — | — |
+| 10 | Nota 09 - Tipando reducers e state machines | ✅ concluída | `f1440bd` | Spec ✅ + Quality ✅ aprovado (manual). 299 linhas. 5 armadilhas (bônus sobre inferência de initial state). Vocabulário-chave com "make illegal states unrepresentable". |
 | 11 | Nota 10 - Tipando formulários | ⏸️ pendente | — | — |
 | 12 | Nota 11 - Tipando data fetching | ⏸️ pendente | — | — |
 
@@ -146,6 +146,10 @@ _(atualizado a cada evento relevante: dispatch, review result, fix loop, commit)
 - **2026-04-27 — Task 9 spec/quality review:** ✅ Aprovado (manual). 5 armadilhas (bônus sobre não exportar Context cru).
 - **2026-04-27 — Task 9 concluída.**
 - **2026-04-27 — Task 10 (Nota 09 - Tipando reducers e state machines) iniciada.**
+- **2026-04-27 — Task 10 implementada.** Implementer DONE. Pré-research validou useReducer estável em React 19 e padrões de discriminated union via Total TypeScript. Commit `f1440bd`. 299 linhas.
+- **2026-04-27 — Task 10 spec/quality review:** ✅ Aprovado (manual). 5 armadilhas (bônus sobre inferência incompleta de initial state em useReducer).
+- **2026-04-27 — Task 10 concluída.**
+- **2026-04-27 — Task 11 (Nota 10 - Tipando formulários) iniciada.**
 
 ## Decisões propagáveis para próximas notas
 
