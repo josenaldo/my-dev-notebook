@@ -18,9 +18,9 @@ publish: false
 
 ## Status geral
 
-- **Tasks concluídas:** 10 / 17
+- **Tasks concluídas:** 11 / 17
 - **Bloco atual:** Wave 3 (Idiomas práticos — notas 05-11)
-- **Próxima task:** Task 11 (Nota 10 - Tipando formulários)
+- **Próxima task:** Task 12 (Nota 11 - Tipando data fetching) — última nota da Wave 3
 
 ---
 
@@ -56,7 +56,7 @@ publish: false
 | 8 | Nota 07 - Tipando hooks customizados | ✅ concluída | `4db0ac3` | Spec ✅ + Quality ✅ aprovado (manual; reviewer hit rate limit). 262 linhas, 5 code samples (overloads e discriminated union técnicamente corretos), 5 armadilhas. |
 | 9 | Nota 08 - Tipando Context API | ✅ concluída | `c666d9c` | Spec ✅ + Quality ✅ aprovado (manual). 204 linhas. Pré-research validou React 19 `<Context>` direto. 5 armadilhas (bônus: exportar Context cru). |
 | 10 | Nota 09 - Tipando reducers e state machines | ✅ concluída | `f1440bd` | Spec ✅ + Quality ✅ aprovado (manual). 299 linhas. 5 armadilhas (bônus sobre inferência de initial state). Vocabulário-chave com "make illegal states unrepresentable". |
-| 11 | Nota 10 - Tipando formulários | ⏸️ pendente | — | — |
+| 11 | Nota 10 - Tipando formulários | ✅ concluída | `0dbf503` | Spec ✅ + Quality ✅ aprovado (manual). 6 armadilhas. Pré-research validou Zod v4.3.6 atual; RHF docs com 403 mas API estável. |
 | 12 | Nota 11 - Tipando data fetching | ⏸️ pendente | — | — |
 
 ### Wave 4 — Type-level avançado
@@ -150,6 +150,10 @@ _(atualizado a cada evento relevante: dispatch, review result, fix loop, commit)
 - **2026-04-27 — Task 10 spec/quality review:** ✅ Aprovado (manual). 5 armadilhas (bônus sobre inferência incompleta de initial state em useReducer).
 - **2026-04-27 — Task 10 concluída.**
 - **2026-04-27 — Task 11 (Nota 10 - Tipando formulários) iniciada.**
+- **2026-04-27 — Task 11 implementada.** Implementer DONE. Pré-research: Zod 4.3.6 confirmado; RHF docs com 403. Commit `0dbf503`.
+- **2026-04-27 — Task 11 spec/quality review:** ✅ Aprovado (manual). 6 armadilhas (bônus sobre validação onChange vs onSubmit).
+- **2026-04-27 — Task 11 concluída.**
+- **2026-04-27 — Task 12 (Nota 11 - Tipando data fetching) iniciada — última nota da Wave 3.**
 
 ## Decisões propagáveis para próximas notas
 
