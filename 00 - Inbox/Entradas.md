@@ -21,7 +21,8 @@
 <https://github.com/donnemartin/system-design-primer>
 <https://www.systemdesignbutsimple.com/p/free-resources>
 <https://github.com/ByteByteGoHq/system-design-101/tree/main>
-[ Hard truths about building in the AI era | Keith Rabois (Khosla Ventures)](https://www.lennysnewsletter.com/p/hard-truths-about-building-in-the-ai-era?utm_source=podcast-email&publication_id=10845&post_id=193008881&utm_campaign=email-play-on-substack&utm_content=listen_now_button&r=1ktqd9&triedRedirect=true)
+[Hard truths about building in the AI era | Keith Rabois (Khosla Ventures)](https://www.lennysnewsletter.com/p/hard-truths-about-building-in-the-ai-era?utm_source=podcast-email&publication_id=10845&post_id=193008881&utm_campaign=email-play-on-substack&utm_content=listen_now_button&r=1ktqd9&triedRedirect=true)
+
 # Notion + Obsidian
 
 [Stop Notion. Here's Why Obsidian is the BEST Note-Taking app in 2026 - Article](https://x.com/noahvnct/status/2032508457278980359)
@@ -44,51 +45,67 @@
 <https://www.promptingguide.ai/>
 
 # Claw code
+
 <https://github.com/ultraworkers/claw-code>
 <https://github.com/Yeachan-Heo/oh-my-codex>
 <https://github.com/code-yeongyu/oh-my-openagent>
 
 # Document AI
+
 <https://cloud.google.com/document-ai>
 
 # EmDash
+
 <https://lushbinary.com/blog/cloudflare-emdash-developer-guide-setup-plugins-deployment-2026/>
 <https://github.com/emdash-cms/emdash/>
 <https://docs.astro.build/en/concepts/why-astro/>
 <https://blog.cloudflare.com/emdash-wordpress/>
+
 # Ingestão de PDF
-https://github.com/opendataloader-project/opendataloader-pdf
-https://github.com/microsoft/markitdown
+
+<https://github.com/opendataloader-project/opendataloader-pdf>
+<https://github.com/microsoft/markitdown>
+
 # Karpathy's memory
-https://paulo.com.br/blog/memoria-agentes-second-brain/
-https://x.com/karpathy/status/2040470801506541998
+
+<https://paulo.com.br/blog/memoria-agentes-second-brain/>
+<https://x.com/karpathy/status/2040470801506541998>
 <https://x.com/DataChaz/status/2039963758790156555>
 <https://github.com/Mattbusel/srfm-lab/blob/c55a82754b31246664b1def452f3d261b0a5fa77/docs/guides/local_rag_setup.md>
-https://github.com/safishamsi/graphify
-https://www.youtube.com/playlist?list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ
-https://www.youtube.com/watch?v=7xTGNNLPyMI
-https://www.youtube.com/watch?v=EWvNQjAaOHw
-https://www.youtube.com/watch?v=zjkBMFhNj_g
-https://karpathy.ai/
-https://github.com/wendeus0/LLM-knowledge-base
-https://github.com/forrestchang/andrej-karpathy-skills
-https://github.com/safishamsi/graphify
-https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2
+<https://github.com/safishamsi/graphify>
+<https://www.youtube.com/playlist?list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ>
+<https://www.youtube.com/watch?v=7xTGNNLPyMI>
+<https://www.youtube.com/watch?v=EWvNQjAaOHw>
+<https://www.youtube.com/watch?v=zjkBMFhNj_g>
+<https://karpathy.ai/>
+<https://github.com/wendeus0/LLM-knowledge-base>
+<https://github.com/forrestchang/andrej-karpathy-skills>
+<https://github.com/safishamsi/graphify>
+<https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2>
+
 # Stanford CS230: Deep Learning I Autumn 2025
 
 [Stanford CS230: Deep Learning I Autumn 2025](https://www.youtube.com/playlist?list=PLoROMvodv4rNRRGdS0rBbXOUGA0wjdh1X)
+
 # Local models
-https://www.linkedin.com/posts/joseph-benguira-28264b2_localai-opensource-gpu-share-7448979034165735424-AKzd/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAOp364Bp-C3WEW14YMtkVbQTwgYBSPNxgY
+
+<https://www.linkedin.com/posts/joseph-benguira-28264b2_localai-opensource-gpu-share-7448979034165735424-AKzd/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAOp364Bp-C3WEW14YMtkVbQTwgYBSPNxgY>
+
 # SDD
-https://glaucia86.github.io/palestra-sdd/?lang=pt-BR#/capa
+
+<https://glaucia86.github.io/palestra-sdd/?lang=pt-BR#/capa>
 
 # IA
-https://adventures.nodeland.dev/archive/the-economics-of-judgment/?ref=dailydev
-https://adventures.nodeland.dev/archive/the-human-in-the-loop/?utm_source=nodeland&utm_medium=email&utm_campaign=the-economics-of-judgment
-https://adventures.nodeland.dev/archive/the-future-of-the-software-engineering-career/?utm_source=nodeland&utm_medium=email&utm_campaign=the-economics-of-judgment
+
+<https://adventures.nodeland.dev/archive/the-economics-of-judgment/?ref=dailydev>
+<https://adventures.nodeland.dev/archive/the-human-in-the-loop/?utm_source=nodeland&utm_medium=email&utm_campaign=the-economics-of-judgment>
+<https://adventures.nodeland.dev/archive/the-future-of-the-software-engineering-career/?utm_source=nodeland&utm_medium=email&utm_campaign=the-economics-of-judgment>
+
 # Carreira
-https://github.com/santifer/career-ops
+
+<https://github.com/santifer/career-ops>
 
 # MCP Apps
-https://blog.modelcontextprotocol.io/posts/2026-01-26-mcp-apps/
-https://workos.com/blog/2026-01-27-mcp-apps
+
+<https://blog.modelcontextprotocol.io/posts/2026-01-26-mcp-apps/>
+<https://workos.com/blog/2026-01-27-mcp-apps>
