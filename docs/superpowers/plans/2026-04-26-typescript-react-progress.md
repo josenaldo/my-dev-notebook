@@ -18,9 +18,9 @@ publish: false
 
 ## Status geral
 
-- **Tasks concluídas:** 4 / 17
-- **Bloco atual:** Wave 2 (Mental model — notas 02-04)
-- **Próxima task:** Task 5 (Nota 04 - interface vs type vs satisfies)
+- **Tasks concluídas:** 5 / 17 (Wave 2 completa)
+- **Bloco atual:** Wave 3 (Idiomas práticos — notas 05-11)
+- **Próxima task:** Task 6 (Nota 05 - Tipando state e refs)
 
 ---
 
@@ -45,7 +45,7 @@ publish: false
 |---|------|--------|--------|-------|
 | 3 | Nota 02 - Inferir vs anotar | ✅ concluída | `01eae07` | Spec ✅ compliant. Quality ✅ aprovado (manual). 175 linhas, 5 code samples corretos, sem concerns. |
 | 4 | Nota 03 - Por que React.FC saiu de moda | ✅ concluída | `c5650cf` | Spec ✅ compliant + verificação anti-fabricação OK (3 PRs canônicos confirmados via `gh` CLI). Quality ✅ aprovado (manual). 140 linhas. |
-| 5 | Nota 04 - interface vs type vs satisfies | ⏸️ pendente | — | — |
+| 5 | Nota 04 - interface vs type vs satisfies | ✅ concluída | `8fcaade` | Spec ✅ + anti-fabricação rigorosa (sem nomear MUI/Mantine/Radix sem fonte; cita cheatsheet com link). Quality ✅ aprovado (manual). |
 
 ### Wave 3 — Idiomas práticos
 
@@ -122,6 +122,11 @@ _(atualizado a cada evento relevante: dispatch, review result, fix loop, commit)
 - **2026-04-26 — Task 4 quality review:** ✅ Aprovado (manual). Tom honesto sobre causalidade, código didaticamente incorreto comentado adequadamente.
 - **2026-04-26 — Task 4 concluída.**
 - **2026-04-26 — Task 5 (Nota 04 - interface vs type vs satisfies) iniciada.**
+- **2026-04-26 — Task 5 implementada.** Implementer DONE. Pré-research no React TypeScript Cheatsheet validou orientação. NÃO conseguiu confirmar Radix Themes — suavizou para "libs grandes do ecossistema". Commit `8fcaade`.
+- **2026-04-26 — Task 5 spec review:** ✅ Spec compliant. Anti-fabricação rigorosa: nenhuma afirmação sobre lib específica sem fonte; cita cheatsheet com link e Handbook Do's and Don'ts.
+- **2026-04-26 — Task 5 quality review:** ✅ Aprovado (manual).
+- **2026-04-26 — Task 5 concluída. Wave 2 (Mental model) completa.**
+- **2026-04-26 — Task 6 (Nota 05 - Tipando state e refs) iniciada — primeira nota da Wave 3 (Idiomas práticos).**
 
 ## Decisões propagáveis para próximas notas
 
