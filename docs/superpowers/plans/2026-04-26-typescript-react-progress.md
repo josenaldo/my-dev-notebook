@@ -18,9 +18,9 @@ publish: false
 
 ## Status geral
 
-- **Tasks concluídas:** 3 / 17
+- **Tasks concluídas:** 4 / 17
 - **Bloco atual:** Wave 2 (Mental model — notas 02-04)
-- **Próxima task:** Task 4 (Nota 03 - Por que React.FC saiu de moda)
+- **Próxima task:** Task 5 (Nota 04 - interface vs type vs satisfies)
 
 ---
 
@@ -44,7 +44,7 @@ publish: false
 | # | Task | Status | Commit | Notas |
 |---|------|--------|--------|-------|
 | 3 | Nota 02 - Inferir vs anotar | ✅ concluída | `01eae07` | Spec ✅ compliant. Quality ✅ aprovado (manual). 175 linhas, 5 code samples corretos, sem concerns. |
-| 4 | Nota 03 - Por que React.FC saiu de moda | ⏸️ pendente | — | — |
+| 4 | Nota 03 - Por que React.FC saiu de moda | ✅ concluída | `c5650cf` | Spec ✅ compliant + verificação anti-fabricação OK (3 PRs canônicos confirmados via `gh` CLI). Quality ✅ aprovado (manual). 140 linhas. |
 | 5 | Nota 04 - interface vs type vs satisfies | ⏸️ pendente | — | — |
 
 ### Wave 3 — Idiomas práticos
@@ -117,6 +117,11 @@ _(atualizado a cada evento relevante: dispatch, review result, fix loop, commit)
 - **2026-04-26 — Task 3 quality review:** ✅ Aprovado (manual). Code samples corretos, tom alinhado, sem fabricação.
 - **2026-04-26 — Task 3 concluída.**
 - **2026-04-26 — Task 4 (Nota 03 - Por que React.FC saiu de moda) iniciada.**
+- **2026-04-26 — Task 4 implementada.** Implementer DONE. Pré-research confirmou 3 PRs canônicos (CRA #8177 Retsam 22/01/2020; DT #46643 awmottaz 26/08/2020; DT #56210 eps1lon 07/04/2022). Commit `c5650cf`. 140 linhas.
+- **2026-04-26 — Task 4 spec review:** ✅ Spec compliant. Verificação anti-fabricação rigorosa (gh CLI confirmou todos os 3 PRs com autores e datas exatas). Nenhuma fabricação encontrada.
+- **2026-04-26 — Task 4 quality review:** ✅ Aprovado (manual). Tom honesto sobre causalidade, código didaticamente incorreto comentado adequadamente.
+- **2026-04-26 — Task 4 concluída.**
+- **2026-04-26 — Task 5 (Nota 04 - interface vs type vs satisfies) iniciada.**
 
 ## Decisões propagáveis para próximas notas
 
