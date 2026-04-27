@@ -38,7 +38,7 @@ O diferencial estrutural está no **modelo bi-temporal**, herdado da literatura 
 - **Casos enterprise exigem audit trail temporal.** Compliance, regulatory e qualquer cenário onde "qual era o estado em t1?" é pergunta legítima — diagnóstico médico, contrato em vigor, política aplicada — pedem exatamente o que o modelo bi-temporal entrega.
 - **Conhecimento real evolui.** Endereços mudam, contratos são renovados, preferências são corrigidas. KG temporal trata mudança como sinal de primeira classe, sem perder histórico — diferente de vector stores, onde upsert sobre o mesmo embedding apaga o passado.
 - **Multi-hop reasoning é o que graphs habilitam.** Travessia "entidade → relação → entidade → relação" é cara ou impossível de representar em vector store puro; em grafos é o caminho natural. Quando a query é "quais clientes do produto X foram afetados pela mudança Y entre março e abril?", graph traversal é a forma econômica de responder.
-- **Reduções reportadas são argumentos concretos para escala.** No paper, Zep reduziu o contexto enviado ao LLM de **115k tokens para 1,6k** (cerca de 1,4% do baseline) com **18,5 pontos de ganho de acurácia** sobre full-context com GPT-4o no LongMemEval. Para casos enterprise rodando milhões de queries, a economia composta é material.
+- **Reduções reportadas são argumentos concretos para escala.** No paper, Zep reduziu o contexto enviado ao LLM de **115k tokens para 1,6k** (cerca de 1,4% do baseline) com **+18,5% relativo de ganho de acurácia (11 pontos absolutos)** sobre full-context com GPT-4o no LongMemEval. Para casos enterprise rodando milhões de queries, a economia composta é material.
 - **Open-core com adoção crescente.** Graphiti é Apache-2.0; quem não quer cloud paga rebaixa para self-host, ainda que assumindo o custo operacional do Neo4j (ou outro backend).
 
 ## Como funciona
@@ -76,8 +76,8 @@ Os itens abaixo foram verificados em `github.com/getzep/graphiti` (README e LICE
 - **Ingestão incremental:** novos episodes integram em tempo real; sem recomputação do grafo. Provenance até o episode é mantida em cada derived fact.
 - **Performance reportada (paper, LongMemEval$_s$, ~115k tokens por conversa):**
   - **DMR:** Zep **94,8%** (gpt-4-turbo) e **98,2%** (gpt-4o-mini), vs **MemGPT 93,4%** e full-conversation 94,4% / 98,0%.
-  - **LongMemEval com gpt-4o-mini:** Zep **63,8%** vs full-context 55,4% (**+15,2 pontos**); latência mediana 3,20s vs 31,3s; tokens 1,6k vs 115k.
-  - **LongMemEval com gpt-4o:** Zep **71,2%** vs full-context 60,2% (**+18,5 pontos**, +11 pontos absolutos sobre o baseline maior); latência mediana 2,58s vs 28,9s; tokens 1,6k vs 115k.
+  - **LongMemEval com gpt-4o-mini:** Zep **63,8%** vs full-context 55,4% (**+15,2% relativo (8,4 pontos absolutos)**); latência mediana 3,20s vs 31,3s; tokens 1,6k vs 115k.
+  - **LongMemEval com gpt-4o:** Zep **71,2%** vs full-context 60,2% (**+18,5% relativo** = +11 pontos absolutos sobre o baseline com GPT-4o (60,2% → 71,2%)); latência mediana 2,58s vs 28,9s; tokens 1,6k vs 115k.
   - **Performance enterprise reportada (site):** sub-200ms de latência de retrieval em escala (claim de produto, separado do paper).
 - **Licença Graphiti:** Apache-2.0 (verificado no LICENSE do repositório).
 - **API:** REST (Zep Cloud), Python SDK, TypeScript SDK, Go SDK (Zep). Graphiti core é Python-only.
@@ -107,7 +107,7 @@ Os itens abaixo foram verificados em `github.com/getzep/graphiti` (README e LICE
 
 - **Confundir Graphiti com Zep.** Graphiti é open-source (Apache-2.0); Zep é o produto comercial em cima dele. Em discussões técnicas a confusão produz expectativas erradas — alguém pede "Graphiti com SLA" sem perceber que SLA é Zep.
 - **Bi-temporal não é mágica.** Para o eixo *event time* funcionar, é preciso convenção rigorosa de "quando o fato passou a ser verdade" no input. Se a entrada não traz essa marca, Graphiti usa o tempo de ingestão como aproximação — e a vantagem temporal degrada para timestamp simples.
-- **+18,5 pontos sobre baseline é métrica única (GPT-4o no LongMemEval).** O ganho com gpt-4o-mini é menor (+15,2 pontos), e o paper observa que a performance escala com a capacidade do modelo. Outros modelos podem variar — não generalizar para "+18,5% sempre".
+- **+18,5% relativo sobre baseline é métrica única (GPT-4o no LongMemEval).** O ganho com gpt-4o-mini é menor (+15,2% relativo), e o paper observa que a performance escala com a capacidade do modelo. Outros modelos podem variar — não generalizar para "+18,5% sempre".
 - **Neo4j em produção custa caro.** Cluster, replicação, backup, monitoramento, eventualmente licença Enterprise para features avançadas. ROI exige volume; para cenário pequeno, FalkorDB ou Zep Cloud são caminhos mais leves.
 - **Extração via LLM é não-determinística.** A construção do grafo depende da extração de entidades e relações; o paper usa gpt-4o-mini para isso. Mudar o modelo de extração muda o grafo. Auditar amostras é prática recomendada antes de confiar para decisão crítica.
 - **Score em DMR (94,8%) e score em LongMemEval (71,2% com GPT-4o) são benchmarks diferentes.** Confundir os dois — citar "Zep = 94,8% no LongMemEval" — é erro frequente. DMR é mais simples (60 mensagens por conversa); LongMemEval$_s$ tem ~115k tokens por conversa e é o benchmark mais relevante para casos enterprise.
