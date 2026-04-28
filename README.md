@@ -56,7 +56,7 @@ A todos que chegarem aqui, sejam bem-vindos ao meu **Codex Technomanticus — Gr
 
 Cada pasta representa um plano de estudo e prática. Em cada plano, o arquivo com o mesmo nome da pasta funciona como portal de entrada. Se estiver chegando agora, comece por esses portais e avance pelos links internos.
 
-> Veja também [[Como usar este vault]] e [[Trilha Entrevistas]].
+> Veja também [[Como usar este vault]] e [[Senda Entrevistas]].
 
 ---
 
@@ -75,7 +75,7 @@ Cada pasta representa um plano de estudo e prática. Em cada plano, o arquivo co
 ## Plano de Java
 
 - [[Java]]
-- **Core:** [[Java Fundamentals]] · [[Trilha Java]]
+- **Core:** [[Java Fundamentals]] · [[Senda Java]]
 - **Backend:** [[Spring Boot]] · [[Kafka]] · [[Testes em Java]] · [[gRPC e Go]]
 - **Frontend:** [[JavaFX]]
 
@@ -110,9 +110,9 @@ Cada pasta representa um plano de estudo e prática. Em cada plano, o arquivo co
 
 ## Plano de Aprendizado
 
-- [[Aprendizado/index]]
-- **Entrevistas:** [[Trilha Entrevistas]]
-- **Trilhas:** [[Trilha Java]] · [[Trilha Backend]] · [[Trilha Frontend]] · [[Trilha Fullstack Java-Spring + TS-React-Nextjs 15]] · [[Trilha Cloud]] · [[Trilha Devops]] · [[Trilha Go]] · [[Trilha IA]] · [[Trilha JS-TS]] · [[Trilha Python]]
+- [[Sendas]]
+- **Entrevistas:** [[Senda Entrevistas]]
+- **Trilhas:** [[Senda Java]] · [[Senda Backend]] · [[Senda Frontend]] · [[Senda Fullstack Java-Spring + TS-React-Nextjs 15]] · [[Senda Cloud]] · [[Senda Devops]] · [[Senda Go]] · [[Senda IA]] · [[Senda JS-TS]] · [[Senda Python]]
 - **Mestres:** [[Mestres Jedi]]
 - **Cursos:** [[Cursos completos]] · [[Courses]] · [[Curso Fullcycle 3.0]]
 
@@ -127,4 +127,4 @@ Cada pasta representa um plano de estudo e prática. Em cada plano, o arquivo co
 
 ## Dicionário de Magia Tecnomante
 
-- [[Fundamentos/Dicionario de Magia Tecnomante]]
+- [[Dicionario de Magia Tecnomante]]
