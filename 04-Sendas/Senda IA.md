@@ -328,15 +328,15 @@ Mês 12+   | Fase 6: Especialização
 
 ## Ferramentas recomendadas por fase
 
-| Fase | Essenciais | Opcionais |
-| --- | --- | --- |
-| 0 | ChatGPT, Claude, Gemini web | — |
-| 1 | Jupyter, sklearn, numpy, pandas | fast.ai lib |
-| 2 | Anthropic SDK, OpenAI SDK, tiktoken, promptfoo | LangChain (leve) |
-| 3 | pgvector, sentence-transformers, Ragas, Cohere Rerank | Pinecone, Qdrant, LlamaIndex |
-| 4 | Anthropic SDK, Claude Code, MCP SDK | LangGraph, CrewAI |
-| 5 | Langfuse, promptfoo, Sentry | Helicone, LangSmith, Braintrust |
-| 6 | depende do vetor escolhido | — |
+| Fase | Essenciais                                            | Opcionais                       |
+| ---- | ----------------------------------------------------- | ------------------------------- |
+| 0    | ChatGPT, Claude, Gemini web                           | —                               |
+| 1    | Jupyter, sklearn, numpy, pandas                       | fast.ai lib                     |
+| 2    | Anthropic SDK, OpenAI SDK, tiktoken, promptfoo        | LangChain (leve)                |
+| 3    | pgvector, sentence-transformers, Ragas, Cohere Rerank | Pinecone, Qdrant, LlamaIndex    |
+| 4    | Anthropic SDK, Claude Code, MCP SDK                   | LangGraph, CrewAI               |
+| 5    | Langfuse, promptfoo, Sentry                           | Helicone, LangSmith, Braintrust |
+| 6    | depende do vetor escolhido                            | —                               |
 
 ## Projetos para portfolio
 
