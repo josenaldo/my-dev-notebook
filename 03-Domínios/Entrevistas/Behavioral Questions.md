@@ -93,4 +93,3 @@ The key is being specific. Instead of saying 'I improved the deployment process,
 
 - [[STAR Method]]
 - [[Communicating Trade-offs]]
-- [[Minha Narrativa Profissional]]

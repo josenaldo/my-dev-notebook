@@ -157,4 +157,3 @@ Substituir Junior English por verbos de senioridade. Lista canônica:
 
 - [[Behavioral Questions]] — categorias de perguntas e como se preparar
 - [[Communicating Trade-offs]] — como explicar decisões técnicas sob pressão
-- [[Minha Narrativa Profissional]] — banco de impacto mensurável e timeline de carreira

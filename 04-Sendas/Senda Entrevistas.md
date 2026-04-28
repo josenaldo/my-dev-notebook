@@ -97,7 +97,6 @@ Roteiro de preparação para entrevistas de Senior Fullstack Developer em vagas 
 - [ ] [[Behavioral Questions]]
 - [ ] [[STAR Method]]
 - [ ] [[Communicating Trade-offs]]
-- [ ] [[Minha Narrativa Profissional]]
 
 ## Fase 6 — Prática
 

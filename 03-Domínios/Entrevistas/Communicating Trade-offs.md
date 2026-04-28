@@ -106,4 +106,3 @@ I always present at least two alternatives when proposing a technical direction.
 - [[Behavioral Questions]]
 - [[STAR Method]]
 - [[System Design]]
-- [[Minha Narrativa Profissional]]
