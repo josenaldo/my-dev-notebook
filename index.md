@@ -52,9 +52,33 @@ A todos que chegarem aqui, sejam bem-vindos ao meu **Codex Technomanticus — Gr
 
 ---
 
+## As 5 zonas do grimório
+
+O conteúdo flui em cinco zonas numeradas, do bruto ao curatorial:
+
+- **`00-Meta/`** — meta-linguagem do codex: templates, guia, dicionário, mestres, workflow
+- **`01-Pergaminhos/`** — links brutos coletados (`entradas.md`), wishlist (`avaliar.md`), recursos incipientes (Brag Document, listas de cursos)
+- **`02-Glosas/`** — fichamentos de artigos lidos (uma ficha por leitura, formato `<ano>-<slug>.md`)
+- **`03-Domínios/`** — conhecimento integrado e evergreen, organizado por área (Java, IA, Arquitetura, Entrevistas, etc.)
+- **`04-Sendas/`** — caminhos curatoriais que sequenciam Domínios pra atender objetivos (Senda Entrevistas, Senda Frontend, etc.)
+
+Detalhes em [[Como usar este vault]] e [[workflow]].
+
+## Captura e destilação — skill `/glosa`
+
+Pra reduzir o atrito do "li algo, quero guardar":
+
+- Cole o link em `01-Pergaminhos/entradas.md` quando aparecer
+- Quando ler, invoque `/glosa <url>` — a skill faz o WebFetch, gera fichamento estruturado em `02-Glosas/`, e remove o link de Pergaminhos automaticamente
+- Você só preenche **Meu comentário** (sua reação genuína) e **Ver também** (wikilinks pra Domínios)
+
+Limitação atual: só artigos web (HTML). PDFs, YouTube, podcasts, redes sociais avisam e abortam.
+
+---
+
 ## Ritual de navegação
 
-Cada pasta representa um plano de estudo e prática. Em cada plano, o arquivo com o mesmo nome da pasta funciona como portal de entrada. Se estiver chegando agora, comece por esses portais e avance pelos links internos.
+Cada plano de Domínio tem um portal de entrada (arquivo com mesmo nome da pasta). Se estiver chegando agora, comece por esses portais.
 
 > Veja também [[Como usar este vault]] e [[Senda Entrevistas]].
 
@@ -108,23 +132,36 @@ Cada pasta representa um plano de estudo e prática. Em cada plano, o arquivo co
 - [[Docker]] · [[Kubernetes]] · [[Nginx]] · [[Linux]] · [[Terminal]]
 - [[WSL, Docker e Kubernetes]] · [[Digital Ocean]] · [[Configurando Ambiente Linux no WSL]]
 
-## Plano de Aprendizado
+## Plano de Entrevistas
 
-- [[Sendas]]
-- **Entrevistas:** [[Senda Entrevistas]]
-- **Trilhas:** [[Senda Java]] · [[Senda Backend]] · [[Senda Frontend]] · [[Senda Fullstack Java-Spring + TS-React-Nextjs 15]] · [[Senda Cloud]] · [[Senda Devops]] · [[Senda Go]] · [[Senda IA]] · [[Senda JS-TS]] · [[Senda Python]]
-- **Mestres:** [[Mestres Jedi]]
-- **Cursos:** [[Cursos completos]] · [[Courses]] · [[Curso Fullcycle 3.0]]
+- **Senda guia:** [[Senda Entrevistas]]
+- **Notas de prep:** [[Behavioral Questions]] · [[STAR Method]] · [[Coding Challenges Strategy]] · [[System Design Practice]] · [[Communicating Trade-offs]] · [[Minha Narrativa Profissional]]
+
+## Plano de RPA
+
+- [[RPA]] — Robotic Process Automation
+- [[Building Your First Automation Bot]] · [[Identifying Use Cases for Creating Bots]]
+
+## Plano das Sendas
+
+- [[Sendas]] — MOC de todas as sendas
+- **Stacks:** [[Senda Java]] · [[Senda JS-TS]] · [[Senda Python]] · [[Senda Go]]
+- **Camadas:** [[Senda Backend]] · [[Senda Frontend]] · [[Senda Fullstack Java-Spring + TS-React-Nextjs 15]] · [[Senda Cloud]] · [[Senda Devops]]
+- **Domínio:** [[Senda IA]] · [[Senda Entrevistas]]
 
 ## Plano de Ferramentas
 
 - [[Ferramentas]]
 - [[Versionamento]] · [[Atalhos do IntelliJ]] · [[Prompts]]
 
-## Plano de Recursos
+## Plano de Mestres
 
-- [[Brag Document]] · [[Cursos completos]]
+- [[Mestres Jedi]] — desenvolvedores e referências (em `00-Meta/mestres/`)
+
+## Recursos e curadoria
+
+- [[Brag Document]] · [[Cursos completos]] · [[Courses]] · [[Curso Fullcycle 3.0]] (em `01-Pergaminhos/recursos/`)
 
 ## Dicionário de Magia Tecnomante
 
-- [[Dicionario de Magia Tecnomante]]
+- [[Dicionario de Magia Tecnomante]] — vocabulário do grimório (em `00-Meta/`)
