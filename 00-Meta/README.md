@@ -22,9 +22,16 @@ Sem esta zona, o grimório seria uma coleção de papéis soltos. Com ela, ele t
 
 ### `guia/`
 
-Documentação sobre como usar este vault.
+Toda a meta-documentação do vault — como ele é organizado, como o conteúdo se move, e as convenções que mantêm tudo coerente.
 
-- [[Como usar este vault]] — visão geral das 5 zonas, convenções e fluxo de trabalho
+- [[Como usar este vault]] — mapa estático: as 5 zonas, navegação, templates
+- [[workflow]] — fluxo do pipeline cognitivo (captura → destilação → integração → curadoria) e skill `/glosa`
+- [[Dicionario de Magia Tecnomante]] — vocabulário do grimório: o que significa cada termo, zona e metáfora
+- [[Convenções de escrita]] — filename, status, tags, atomicidade
+- [[Wikilinks e MOCs]] — boas práticas de linking
+- [[Manutenção do vault]] — rotinas de processamento e revisão
+- [[Publicação]] — fluxo Quartz, isolamento público/apocrypha
+- [[Decisões do vault]] — registro de decisões de design
 
 ### `templates/`
 
@@ -45,14 +52,6 @@ Templates Templater para criação de notas no Obsidian. Cada template cobre um 
 Notas sobre desenvolvedores, engenheiros e educadores que influenciam a prática registrada no grimório.
 
 - [[Mestres Jedi]] — índice de todos os mestres
-
-### `workflow.md`
-
-[[workflow|Workflow do Codex]] — fluxo completo do pipeline cognitivo: captura → destilação → integração → curadoria. Inclui a skill `/glosa` e as convenções de nomenclatura.
-
-### `Dicionario de Magia Tecnomante.md`
-
-[[Dicionario de Magia Tecnomante]] — glossário do universo do grimório: o que significa cada termo, zona e metáfora usada no Codex.
 
 ---
 

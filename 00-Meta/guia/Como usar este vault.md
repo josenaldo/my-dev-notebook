@@ -1,7 +1,7 @@
 ---
 title: "Como usar este vault"
 created: 2026-04-01
-updated: 2026-04-27
+updated: 2026-04-28
 type: how-to
 status: seedling
 tags:
@@ -12,12 +12,14 @@ publish: false
 
 # Como usar este vault
 
+Mapa estático do Codex Technomanticus: o que existe, onde fica, como navegar. Para entender **como o conteúdo se move** entre as zonas, veja [[workflow]].
+
 Este vault é um caderno digital de desenvolvimento (commonplace book) organizado para estudo, consulta rápida e preparação de entrevistas técnicas internacionais. O conteúdo flui em **5 zonas numeradas** que refletem o pipeline cognitivo: bruto → destilado → integrado → curatorial.
 
 ## As 5 zonas
 
 ```text
-00-Meta/         meta-linguagem do codex (templates, guia, dicionário, workflow)
+00-Meta/         meta-linguagem do codex (templates, guia, dicionário, mestres)
 01-Pergaminhos/  links brutos e recursos incipientes
 02-Glosas/       fichamentos de artigos lidos (uma ficha por leitura)
 03-Domínios/     conhecimento integrado e evergreen, organizado por área
@@ -35,23 +37,31 @@ Classificação semântica:
 
 ## `00-Meta/` — meta-linguagem do codex
 
-- `guia/` — como usar este vault (você está aqui)
+- `guia/` — documentação sobre o vault (você está aqui)
+  - [[Como usar este vault]] — este arquivo (mapa estático)
+  - [[workflow]] — fluxo do material entre zonas
+  - [[Dicionario de Magia Tecnomante]] — vocabulário do grimório
+  - [[Convenções de escrita]] — regras de filename, status, tags, atomicidade
+  - [[Wikilinks e MOCs]] — boas práticas de linking
+  - [[Manutenção do vault]] — rotinas de processamento e revisão
+  - [[Publicação]] — fluxo Quartz, isolamento público/apocrypha
+  - [[Decisões do vault]] — registro de decisões de design
 - `templates/` — templates Templater (Nota, Glosa, How-To, TIL, MOC, Mestre, Interview Note)
 - `mestres/` — referências sobre desenvolvedores e mentores
-- `workflow.md` — fluxo completo (captura → destilação → integração)
-- `Dicionario de Magia Tecnomante.md` — vocabulário do grimório
 
 ## `01-Pergaminhos/` — captura e curadoria inicial
 
 - `entradas.md` — links coletados, em seções por tema (`# Tema`)
 - `avaliar.md` — wishlist de tópicos a estudar
-- `recursos/` — Brag Document, listas de cursos, Curso Fullcycle 3.0 (notas incipientes que serão reclassificadas conforme amadurecem)
+- `recursos/` — Brag Document, listas de cursos, notas incipientes que serão reclassificadas conforme amadurecem
 
-Pergaminhos é zona de captura. Links chegam aqui, são processados (viram Glosas) e removidos. Se `entradas.md` cresce, é sinal de leitura acumulada — pause e processe.
+Pergaminhos é zona de captura. Links chegam aqui, são processados (viram Glosas) e removidos.
 
 ## `02-Glosas/` — fichamentos de artigos
 
 Cada arquivo é uma ficha de leitura: TL;DR + Pontos-chave + Citações + Meu comentário + Ver também. Filename: `<ano>-<slug>.md`. Populado pela skill `/glosa` (recomendado) ou manualmente via Templater com `Template - Glosa`.
+
+Detalhes do fluxo em [[workflow]].
 
 ## `03-Domínios/` — conhecimento evergreen
 
@@ -61,7 +71,7 @@ Notas atômicas, organizadas por área. Cada pasta tem um MOC (ex: `Java/Java.md
 - **Stacks**: `Java/`, `JavaScript/`, `Python/`, `Go/`
 - **Suporte**: `Infraestrutura/`, `Inglês/`
 - **Carreira**: `Entrevistas/` (Behavioral, STAR, System Design Practice, etc.)
-- **Tecnologia**: `RPA/`
+- **Tecnologia**: `RPA/`, `IA/`
 
 ## `04-Sendas/` — caminhos curatoriais
 
@@ -74,37 +84,10 @@ Sendas são trilhas de estudo que **sequenciam Domínios** num caminho que atend
 ## Como navegar
 
 1. **MOC da pasta**: cada pasta de Domínio tem um índice (`Java.md`, `Arquitetura.md`)
-2. **[[Senda Entrevistas]]**: roteiro sequencial pra preparação de entrevistas
-3. **[[Sendas]]**: MOC de todas as sendas
-4. **[[workflow]]**: fluxo do codex e da skill `/glosa`
+2. [[Senda Entrevistas]] — roteiro sequencial pra preparação de entrevistas
+3. [[Sendas]] — MOC de todas as sendas
+4. [[workflow]] — fluxo do codex e da skill `/glosa`
 5. **Wikilinks** `[[Nome]]` conectam conceitos entre zonas
-
-## Skill `/glosa` — fichamento automático
-
-A skill `/glosa` automatiza o passo "captura → fichamento" do pipeline.
-
-**Invocação:**
-
-- `/glosa <url>` — slash command, forma canônica
-- `Claude, fiche esse link: <url>` — linguagem natural
-
-**O que faz (5 passos):**
-
-1. Faz `WebFetch` da URL e extrai título, autor, site, data, idioma, body
-2. Gera draft em PT-BR (TL;DR, Pontos-chave, Tags) e seleciona Citações verbatim na língua original
-3. Deixa **Meu comentário** vazio com placeholder — campo onde a ficha vira sua
-4. Escreve em `02-Glosas/<ano>-<slug>.md` (em colisão de slug, sufixo `-2`, `-3`)
-5. Remove o link de `01-Pergaminhos/entradas.md` se ele estava lá
-
-**Edge cases (skill avisa e aborta):**
-
-- PDFs (URL `.pdf`)
-- YouTube/Vimeo (vídeos)
-- Spotify/podcasts
-- Twitter/X (rede social)
-- URL malformada
-
-Detalhes completos em [[workflow]].
 
 ## Templates disponíveis
 
