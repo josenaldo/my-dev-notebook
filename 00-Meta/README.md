@@ -30,15 +30,15 @@ Documentação sobre como usar este vault.
 
 Templates Templater para criação de notas no Obsidian. Cada template cobre um tipo de nota com campos e estrutura padronizados.
 
-| Template                       | Para quê                                             |
-| ------------------------------ | ---------------------------------------------------- |
-| `Template - Nota.md`           | Conceito genérico evergreen                          |
-| `Template - Glosa.md`          | Fichamento de artigo lido                            |
-| `Template - Interview Note.md` | Conceito técnico com foco em entrevista (bilíngue)   |
-| `Template - How-To.md`         | Passo-a-passo de como fazer algo                     |
-| `Template - TIL.md`            | "Today I Learned" — aprendizado pontual              |
-| `Template - MOC.md`            | Índice de área (Map of Content)                      |
-| `Template - Mestre.md`         | Perfil de desenvolvedor ou mentor de referência      |
+| Template                       | Para quê                                           |
+| ------------------------------ | -------------------------------------------------- |
+| `Template - Nota.md`           | Conceito genérico evergreen                        |
+| `Template - Glosa.md`          | Fichamento de artigo lido                          |
+| `Template - Interview Note.md` | Conceito técnico com foco em entrevista (bilíngue) |
+| `Template - How-To.md`         | Passo-a-passo de como fazer algo                   |
+| `Template - TIL.md`            | "Today I Learned" — aprendizado pontual            |
+| `Template - MOC.md`            | Índice de área (Map of Content)                    |
+| `Template - Mestre.md`         | Perfil de desenvolvedor ou mentor de referência    |
 
 ### `mestres/`
 
