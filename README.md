@@ -56,7 +56,7 @@ A todos que chegarem aqui, sejam bem-vindos ao meu **Codex Technomanticus — Gr
 
 O conteúdo flui em cinco zonas numeradas, do bruto ao curatorial:
 
-- **`00-Meta/`** — meta-linguagem do codex: templates, guia, dicionário, mestres, workflow
+- **`00-Meta/`** — meta-linguagem do codex: `guia/` (8 arquivos cobrindo estrutura, fluxo, convenções, manutenção, publicação, decisões e dicionário), `templates/` Templater, `mestres/` (referências de devs)
 - **`01-Pergaminhos/`** — links brutos coletados (`entradas.md`), wishlist (`avaliar.md`), recursos incipientes (Brag Document, listas de cursos)
 - **`02-Glosas/`** — fichamentos de artigos lidos (uma ficha por leitura, formato `<ano>-<slug>.md`)
 - **`03-Domínios/`** — conhecimento integrado e evergreen, organizado por área (Java, IA, Arquitetura, Entrevistas, etc.)
@@ -78,83 +78,92 @@ Limitação atual: só artigos web (HTML). PDFs, YouTube, podcasts, redes sociai
 
 ## Ritual de navegação
 
-Cada plano de Domínio tem um portal de entrada (arquivo com mesmo nome da pasta). Se estiver chegando agora, comece por esses portais.
+Cada Domínio em `03-Domínios/` tem um portal de entrada (MOC com mesmo nome da pasta). Se estiver chegando agora, comece por esses portais.
 
 > Veja também [[Como usar este vault]] e [[Senda Entrevistas]].
 
 ---
 
-## Plano dos Fundamentos
+## Domínio dos Fundamentos
 
 - [[Fundamentos]]
 - [[Algoritmos]] · [[Estruturas de Dados]] · [[Banco de dados]] · [[Orientação a Objetos]] · [[Testes]] · [[Redes e Protocolos]]
 
-## Plano da Arquitetura
+## Domínio da Arquitetura
 
 - [[Arquitetura]]
 - [[Arquitetura de Software]] · [[System Design]] · [[Design Patterns]] · [[API Design]]
 - **Mensageria:** [[Mensageria]] · [[Event Streaming]] · [[Kafka]] · [[RabbitMQ]] · [[BullMQ]]
 - [[Event Storming]] · [[Gateway de Pagamento]]
 
-## Plano de Java
+## Domínio de Java
 
 - [[Java]]
-- **Core:** [[Java Fundamentals]] · [[Senda Java]]
-- **Backend:** [[Spring Boot]] · [[Kafka]] · [[Testes em Java]] · [[gRPC e Go]]
+- **Core:** [[Java Fundamentals]] · [[Java Concurrency]] · [[Certificação Java OCP]] · [[Helsinki MOOC - Guia de Revisão]]
+- **Backend:** [[Spring Boot]] · [[Spring Data JPA]] · [[Spring Security]] · [[Kafka]] · [[Testes em Java]] · [[gRPC e Go]]
 - **Frontend:** [[JavaFX]]
 
-## Plano de JavaScript
+## Domínio de JavaScript
 
 - [[JavaScript]]
-- **Core:** [[JavaScript Fundamentals]] · [[TypeScript]]
+- **Core:** [[JavaScript Fundamentals]] · [[TypeScript]] · [[Testes em JavaScript]]
 - **Backend:** [[Node.js]]
-- **Frontend:** [[React]] · [[HTML e CSS]] · [[Bootstrap]] · [[Material UI]] · [[Mantine]]
+- **Frontend:** [[React]] · [[React Red Flag Manual]] · [[HTML e CSS]] · [[Bootstrap]] · [[Material UI]] · [[Mantine]]
+- **Revisão:** [[Full Stack Open - Guia de Revisão]]
 
-## Plano de Python
+## Domínio de Python
 
 - [[Python]]
 - **Backend:** [[Python Backend]]
+- **Setup:** [[Instalando Anaconda no Ubuntu]]
 
-## Plano de Go
+## Domínio de Go
 
 - [[Go]]
 - **Backend:** [[Go Backend]] · [[gRPC e Go]]
 
-## Plano de Inteligência Artificial
+## Domínio de Inteligência Artificial
 
 - [[IA]]
-- [[Inteligência Artificial]] · [[LLMs]] · [[Agents]] · [[Skills e Prompting]]
+- [[Inteligência Artificial]] · [[LLMs]] · [[Agents]] · [[Skills e Prompting]] · [[MCP]] · [[RAG e Vector Databases]]
+- **Memória de Agentes** (série de 23 notas): [[Memória de Agentes]] — taxonomia, RAG vs memória, implementações (Letta, Mem0, Zep, Graphiti, Generative Agents, A-MEM), guia de implementação
 - **Ferramentas:** [[Claude]] · [[GitHub Copilot]] · [[Codex]] · [[Gemini]] · [[Comparativo de LLMs]]
 
-## Plano de Infraestrutura
+## Domínio de Infraestrutura
 
 - [[Infraestrutura]]
-- [[Docker]] · [[Kubernetes]] · [[Nginx]] · [[Linux]] · [[Terminal]]
-- [[WSL, Docker e Kubernetes]] · [[Digital Ocean]] · [[Configurando Ambiente Linux no WSL]]
+- **Containers:** [[Docker]] · [[Comandos Docker e WSL]] · [[Docker credential helpers]] · [[Kubernetes]] · [[WSL, Docker e Kubernetes]]
+- **Servidores e cloud:** [[Nginx]] · [[Digital Ocean]]
+- **Linux/Terminal:** [[Linux]] · [[Terminal]] · [[Configurando Ambiente Linux no WSL]]
+- **CI/CD e operação:** [[CI-CD]] · [[Observabilidade]] · [[GitHub CLI]]
 
-## Plano de Entrevistas
+## Domínio de Inglês
+
+- Notas de estudo de inglês para entrevistas internacionais (em `03-Domínios/Inglês/`)
+
+## Domínio de Entrevistas
 
 - **Senda guia:** [[Senda Entrevistas]]
-- **Notas de prep:** [[Behavioral Questions]] · [[STAR Method]] · [[Coding Challenges Strategy]] · [[System Design Practice]] · [[Communicating Trade-offs]] · [[Minha Narrativa Profissional]]
+- **Notas de prep:** [[Behavioral Questions]] · [[STAR Method]] · [[Coding Challenges Strategy]] · [[System Design Practice]] · [[Communicating Trade-offs]]
 
-## Plano de RPA
+## Domínio de RPA
 
 - [[RPA]] — Robotic Process Automation
 - [[Building Your First Automation Bot]] · [[Identifying Use Cases for Creating Bots]]
 
-## Plano das Sendas
+## Domínio de Ferramentas
+
+- [[Ferramentas]]
+- [[Versionamento]] · [[Atalhos do IntelliJ]] · [[Prompts]]
+
+## Sendas (caminhos curatoriais)
 
 - [[Sendas]] — MOC de todas as sendas
 - **Stacks:** [[Senda Java]] · [[Senda JS-TS]] · [[Senda Python]] · [[Senda Go]]
 - **Camadas:** [[Senda Backend]] · [[Senda Frontend]] · [[Senda Fullstack Java-Spring + TS-React-Nextjs 15]] · [[Senda Cloud]] · [[Senda Devops]]
 - **Domínio:** [[Senda IA]] · [[Senda Entrevistas]]
 
-## Plano de Ferramentas
-
-- [[Ferramentas]]
-- [[Versionamento]] · [[Atalhos do IntelliJ]] · [[Prompts]]
-
-## Plano de Mestres
+## Mestres
 
 - [[Mestres Jedi]] — desenvolvedores e referências (em `00-Meta/mestres/`)
 
@@ -162,6 +171,15 @@ Cada plano de Domínio tem um portal de entrada (arquivo com mesmo nome da pasta
 
 - [[Brag Document]] · [[Cursos completos]] · [[Courses]] · [[Curso Fullcycle 3.0]] (em `01-Pergaminhos/recursos/`)
 
-## Dicionário de Magia Tecnomante
+## Guia do vault
 
-- [[Dicionario de Magia Tecnomante]] — vocabulário do grimório (em `00-Meta/`)
+A pasta `00-Meta/guia/` reúne toda a meta-documentação do Codex:
+
+- [[Como usar este vault]] — mapa estático: zonas, navegação, templates
+- [[workflow]] — pipeline cognitivo e skill `/glosa`
+- [[Convenções de escrita]] — filename, frontmatter, status, tags, atomicidade
+- [[Wikilinks e MOCs]] — boas práticas de linking e índices
+- [[Manutenção do vault]] — rotinas de processamento e revisão
+- [[Publicação]] — pipeline Quartz e isolamento público/apocrypha
+- [[Decisões do vault]] — registro de decisões de design (ADRs leves)
+- [[Dicionario de Magia Tecnomante]] — vocabulário do grimório
