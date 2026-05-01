@@ -109,3 +109,14 @@
 
 <https://blog.modelcontextprotocol.io/posts/2026-01-26-mcp-apps/>
 <https://workos.com/blog/2026-01-27-mcp-apps>
+# AI Tools
+https://zed.dev/
+https://thoughtminds.ai/blog/mastering-google-antigravity-and-claude-code
+https://www.augmentcode.com/tools/google-antigravity-vs-claude-code
+https://www.youtube.com/watch?v=Lk50aQMA_dk
+https://github.com/nexu-io/open-design
+https://forgecode.dev/
+https://github.com/VectifyAI/OpenKB
+https://github.com/shanraisshan/claude-code-best-practice
+https://github.com/FlorianBruniaux/claude-code-ultimate-guide
+https://github.com/shareAI-lab/learn-claude-code

@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "00-Meta/guia/Convenções de escrita.md",
+                "file": "01-Pergaminhos/entradas.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Convenções de escrita"
+              "title": "entradas"
             }
           }
         ]
@@ -164,6 +164,18 @@
               "icon": "lucide-list",
               "title": "Outline of Welcome"
             }
+          },
+          {
+            "id": "6fb48910eefecef0",
+            "type": "leaf",
+            "state": {
+              "type": "footnotes",
+              "state": {
+                "file": "01-Pergaminhos/entradas.md"
+              },
+              "icon": "lucide-file-signature",
+              "title": "Footnotes"
+            }
           }
         ]
       }
@@ -184,13 +196,17 @@
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
-      "bases:Create new base": false
+      "bases:Create new base": false,
+      "markdown-importer:Open format converter": false
     }
   },
   "active": "fdb4badcc6a035dc",
   "lastOpenFiles": [
-    "00-Meta/guia/Decisões do vault.md",
+    "03-Domínios/IA/Memória de Agentes/Memória de Agentes.md",
+    "03-Domínios/IA/Memória de Agentes/01 - O que é memória em IA.md",
+    "01-Pergaminhos/entradas.md",
     "00-Meta/guia/Convenções de escrita.md",
+    "00-Meta/guia/Decisões do vault.md",
     "00-Meta/guia/Como usar este vault.md",
     "03-Domínios/Entrevistas/STAR Method.md.tmp.1551157.1777410637985",
     "03-Domínios/Entrevistas/Communicating Trade-offs.md.tmp.1551157.1777410636510",
@@ -222,8 +238,6 @@
     "03-Domínios/Python/Python.md",
     "03-Domínios/Python/Python Backend.md",
     "03-Domínios/Python/Instalando Anaconda no Ubuntu.md",
-    "03-Domínios/JavaScript/Frontend/TypeScript com React/15 - Armadilhas, tsconfig, ferramentas.md",
-    "03-Domínios/JavaScript/Frontend/TypeScript com React/TypeScript com React.md",
     "03-Domínios/Java/Backend/Kafka/Untitled 4.png",
     "03-Domínios/Infraestrutura/Untitled.png",
     "03-Domínios/Infraestrutura/Untitled 2.png",
