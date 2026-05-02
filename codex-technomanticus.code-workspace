@@ -12,6 +12,9 @@
         {
             "path": "../codex-technomanticus-site",
         },
+        {
+            "path": "../estudeme",
+        },
     ],
     "settings": {
         "workbench.colorCustomizations": {
@@ -34,7 +37,7 @@
             "titleBar.activeBackground": "#00527a",
             "titleBar.activeForeground": "#e7e7e7",
             "titleBar.inactiveBackground": "#00527a99",
-            "titleBar.inactiveForeground": "#e7e7e799",
+            "titleBar.inactiveForeground": "#e7e7e799"
         },
         "peacock.color": "#00527A",
     },

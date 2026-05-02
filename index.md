@@ -126,7 +126,7 @@ Cada Domínio em `03-Domínios/` tem um portal de entrada (MOC com mesmo nome da
 
 - [[IA]]
 - [[Inteligência Artificial]] · [[LLMs]] · [[Agents]] · [[Skills e Prompting]] · [[MCP]] · [[RAG e Vector Databases]]
-- **Memória de Agentes** (série de 23 notas): [[Memória de Agentes]] — taxonomia, RAG vs memória, implementações (Letta, Mem0, Zep, Graphiti, Generative Agents, A-MEM), guia de implementação
+- **Memória de Agentes** (série de 23 notas): [[03-Domínios/IA/Memória de Agentes/index]] — taxonomia, RAG vs memória, implementações (Letta, Mem0, Zep, Graphiti, Generative Agents, A-MEM), guia de implementação
 - **Ferramentas:** [[Claude]] · [[GitHub Copilot]] · [[Codex]] · [[Gemini]] · [[Comparativo de LLMs]]
 
 ## Domínio de Infraestrutura

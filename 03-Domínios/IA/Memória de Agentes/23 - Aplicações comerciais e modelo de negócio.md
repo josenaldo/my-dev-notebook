@@ -143,7 +143,7 @@ A pergunta inversa importa tanto quanto a direta. Há perfis onde a oferta tende
 - [[20 - Comparativo crítico (LongMemEval)|20 - Comparativo]] — escolha fundamentada
 - [[21 - Críticas, limitações e armadilhas]] — discurso público equilibrado
 - [[22 - Guia de implementação do zero]] — base técnica da oferta
-- [[Memória de Agentes]] — MOC
+- [[03-Domínios/IA/Memória de Agentes/index]] — MOC
 
 ## Referências
 

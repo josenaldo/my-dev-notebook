@@ -102,7 +102,7 @@ A análise da QvickRead no Medium ("A-MEM: Pros and Cons of a New Memory System 
 
 - A-MEM representa a **ala acadêmica** do mesmo problema que o LLM Wiki Pattern resolve pragmaticamente. Ambos perguntam "como organizar memória que evolui", mas chegam por caminhos opostos: research-led, com taxonomia formal e benchmarks, no caso do A-MEM; engineering-led, com arquivos markdown e wikilinks, no caso do gist do Karpathy ([[06 - O LLM Wiki Pattern (gist do Karpathy)]]).
 - **Linkagem dinâmica** e ***memory evolution*** já aparecem como ideias emprestadas em sistemas de produção como Mem0 ([[14 - Mem0 — vetorial + grafo]]) — o vocabulário do paper rapidamente virou linguagem comum no campo.
-- Para o vault em si, a coincidência com Zettelkasten é instrutiva: a [[Memória de Agentes]] inteira é construída como um Zettelkasten humano, e A-MEM mostra como esse mesmo padrão pode ser delegado, em parte, a um agente.
+- Para o vault em si, a coincidência com Zettelkasten é instrutiva: a [[03-Domínios/IA/Memória de Agentes/index]] inteira é construída como um Zettelkasten humano, e A-MEM mostra como esse mesmo padrão pode ser delegado, em parte, a um agente.
 
 ## Veja também
 

@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "01-Pergaminhos/entradas.md",
+                "file": "03-Domínios/Empreendedorismo/Indie Hacker 101/01 - Bootstrapping vs venture capital.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "entradas"
+              "title": "01 - Bootstrapping vs venture capital"
             }
           }
         ]
@@ -53,7 +53,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "prune",
+                "query": "restart",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -74,7 +74,8 @@
               "title": "Bookmarks"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -200,44 +201,44 @@
       "markdown-importer:Open format converter": false
     }
   },
-  "active": "fdb4badcc6a035dc",
+  "active": "3974e0d4dd252257",
   "lastOpenFiles": [
-    "03-Domínios/IA/Memória de Agentes/Memória de Agentes.md",
+    "03-Domínios/JavaScript/Frontend/TypeScript com React/index.md",
+    "03-Domínios/Empreendedorismo/Indie Hacker 101/index.md",
+    "03-Domínios/Empreendedorismo/Indie Hacker 101/Indie Hacker 101.md",
+    "03-Domínios/Empreendedorismo/Indie Hacker 101/18 - De 0 a 2.000 — marcos de crescimento.md",
+    "03-Domínios/Empreendedorismo/Indie Hacker 101/17 - Retenção e redução de churn.md",
+    "03-Domínios/Empreendedorismo/Indie Hacker 101/16 - Lançamento — de soft launch ao Product Hunt.md",
+    "03-Domínios/Empreendedorismo/Indie Hacker 101/15 - Product-led growth para bootstrapped.md",
+    "03-Domínios/Empreendedorismo/Indie Hacker 101/14 - SEO e GEO em 2026.md",
+    "03-Domínios/Empreendedorismo/Indie Hacker 101/13 - Posicionamento — Obviously Awesome.md",
+    "03-Domínios/Empreendedorismo/Indie Hacker 101/12 - Unit economics — CAC, LTV, MRR, churn.md",
+    "03-Domínios/Empreendedorismo/Indie Hacker 101/11 - Pricing para SaaS bootstrapped.md",
+    "03-Domínios/Empreendedorismo/Indie Hacker 101/10 - Open-core — a linha entre grátis e pago.md",
+    "03-Domínios/Empreendedorismo/Indie Hacker 101/09 - Stack de custo zero.md",
+    "03-Domínios/Empreendedorismo/Indie Hacker 101/08 - Shape Up para solo founders.md",
+    "03-Domínios/Empreendedorismo/Indie Hacker 101/07 - O que é realmente um MVP.md",
+    "03-Domínios/Empreendedorismo/Indie Hacker 101/06 - Landing page de validação e sinais de demanda.md",
+    "03-Domínios/Empreendedorismo/Indie Hacker 101/05 - Nicho vs mercado amplo.md",
+    "03-Domínios/Empreendedorismo/Indie Hacker 101/04 - The Mom Test — entrevistas que não mentem.md",
+    "03-Domínios/Empreendedorismo/Indie Hacker 101/03 - Risco calculado do solo founder.md",
+    "03-Domínios/Empreendedorismo/Indie Hacker 101/02 - O conceito de enough — Company of One.md",
+    "03-Domínios/Empreendedorismo/Indie Hacker 101/01 - Bootstrapping vs venture capital.md",
+    "03-Domínios/IA/Memória de Agentes/index.md",
     "03-Domínios/IA/Memória de Agentes/01 - O que é memória em IA.md",
     "01-Pergaminhos/entradas.md",
     "00-Meta/guia/Convenções de escrita.md",
     "00-Meta/guia/Decisões do vault.md",
-    "00-Meta/guia/Como usar este vault.md",
     "03-Domínios/Entrevistas/STAR Method.md.tmp.1551157.1777410637985",
     "03-Domínios/Entrevistas/Communicating Trade-offs.md.tmp.1551157.1777410636510",
     "04-Sendas/Senda Entrevistas.md.tmp.1551157.1777410634987",
     "00-Meta/guia/Decisões do vault.md.tmp.1551157.1777381265517",
-    "00-Meta/guia/Publicação.md",
     "00-Meta/guia/Publicação.md.tmp.1551157.1777381226610",
-    "00-Meta/guia/Manutenção do vault.md",
     "00-Meta/guia/Manutenção do vault.md.tmp.1551157.1777381159987",
-    "00-Meta/guia/Wikilinks e MOCs.md",
     "00-Meta/guia/Wikilinks e MOCs.md.tmp.1551157.1777381118362",
     "00-Meta/guia/Convenções de escrita.md.tmp.1551157.1777381081079",
     "00-Meta/README.md.tmp.1551157.1777381025082",
     "00-Meta/guia/workflow.md.tmp.1551157.1777380997385",
-    "00-Meta/guia/Dicionario de Magia Tecnomante.md",
-    "00-Meta/guia/workflow.md",
-    "00-Meta/workflow.md",
-    "00-Meta/Dicionario de Magia Tecnomante.md",
-    "00-Meta/README.md",
-    "01-Pergaminhos/recursos/Recursos.md",
-    "01-Pergaminhos/recursos/Cursos completos.md",
-    "01-Pergaminhos/recursos/Curso Fullcycle 3.0.md",
-    "01-Pergaminhos/recursos/Courses.md",
-    "01-Pergaminhos/recursos/Brag Document.md",
-    "02-Glosas/2026-design-md-spec-coding-agents.md",
-    "00-Meta/templates/Template - Glosa.md",
-    "03-Domínios/Inglês/Inglês — entradas.md",
-    "JavaScript/Frontend/TypeScript com React/02 - Inferir vs anotar - quando deixar o TS trabalhar.md",
-    "03-Domínios/Python/Python.md",
-    "03-Domínios/Python/Python Backend.md",
-    "03-Domínios/Python/Instalando Anaconda no Ubuntu.md",
     "03-Domínios/Java/Backend/Kafka/Untitled 4.png",
     "03-Domínios/Infraestrutura/Untitled.png",
     "03-Domínios/Infraestrutura/Untitled 2.png",

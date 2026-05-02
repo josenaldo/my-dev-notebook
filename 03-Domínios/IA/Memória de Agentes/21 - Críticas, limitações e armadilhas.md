@@ -142,7 +142,7 @@ Recap consolidado das categorias acima. Em formato de checklist para quem está 
 - [[16 - MemPalace (Milla Jovovich)|16 - MemPalace]] — caso central de hype-vs-rigor analisado em detalhe
 - [[19 - Surveys e estado da arte 2026|19 - Surveys]] — onde os autores reconhecem limitações do campo
 - [[20 - Comparativo crítico (LongMemEval)|20 - Comparativo crítico]] — números rigorosos com hedge
-- [[Memória de Agentes]] — MOC com avisos sobre links descartados e segurança
+- [[03-Domínios/IA/Memória de Agentes/index]] — MOC com avisos sobre links descartados e segurança
 
 ## Referências
 

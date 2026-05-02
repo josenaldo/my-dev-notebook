@@ -26,7 +26,7 @@ IA para desenvolvedores: conceitos, LLMs, RAG, agents, MCP e ferramentas. Trilha
 
 ## Memória de Agentes
 
-- [[Memória de Agentes]] — trilha completa: do conceito ao guia de implementação, com fundamentação acadêmica e análise crítica
+- [[03-Domínios/IA/Memória de Agentes/index]] — trilha completa: do conceito ao guia de implementação, com fundamentação acadêmica e análise crítica
 
 ## Ferramentas
 
