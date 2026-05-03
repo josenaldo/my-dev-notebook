@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "03-Domínios/Empreendedorismo/Indie Hacker 101/01 - Bootstrapping vs venture capital.md",
+                "file": "03-Domínios/IA/index.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "01 - Bootstrapping vs venture capital"
+              "title": "index"
             }
           }
         ]
@@ -53,7 +53,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "restart",
+                "query": "",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -74,12 +74,11 @@
               "title": "Bookmarks"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 493.5
   },
   "right": {
     "id": "5cf9a1d974a02795",
@@ -201,44 +200,44 @@
       "markdown-importer:Open format converter": false
     }
   },
-  "active": "3974e0d4dd252257",
+  "active": "fdb4badcc6a035dc",
   "lastOpenFiles": [
-    "03-Domínios/JavaScript/Frontend/TypeScript com React/index.md",
-    "03-Domínios/Empreendedorismo/Indie Hacker 101/index.md",
-    "03-Domínios/Empreendedorismo/Indie Hacker 101/Indie Hacker 101.md",
-    "03-Domínios/Empreendedorismo/Indie Hacker 101/18 - De 0 a 2.000 — marcos de crescimento.md",
-    "03-Domínios/Empreendedorismo/Indie Hacker 101/17 - Retenção e redução de churn.md",
-    "03-Domínios/Empreendedorismo/Indie Hacker 101/16 - Lançamento — de soft launch ao Product Hunt.md",
-    "03-Domínios/Empreendedorismo/Indie Hacker 101/15 - Product-led growth para bootstrapped.md",
-    "03-Domínios/Empreendedorismo/Indie Hacker 101/14 - SEO e GEO em 2026.md",
-    "03-Domínios/Empreendedorismo/Indie Hacker 101/13 - Posicionamento — Obviously Awesome.md",
-    "03-Domínios/Empreendedorismo/Indie Hacker 101/12 - Unit economics — CAC, LTV, MRR, churn.md",
-    "03-Domínios/Empreendedorismo/Indie Hacker 101/11 - Pricing para SaaS bootstrapped.md",
-    "03-Domínios/Empreendedorismo/Indie Hacker 101/10 - Open-core — a linha entre grátis e pago.md",
-    "03-Domínios/Empreendedorismo/Indie Hacker 101/09 - Stack de custo zero.md",
-    "03-Domínios/Empreendedorismo/Indie Hacker 101/08 - Shape Up para solo founders.md",
-    "03-Domínios/Empreendedorismo/Indie Hacker 101/07 - O que é realmente um MVP.md",
-    "03-Domínios/Empreendedorismo/Indie Hacker 101/06 - Landing page de validação e sinais de demanda.md",
-    "03-Domínios/Empreendedorismo/Indie Hacker 101/05 - Nicho vs mercado amplo.md",
-    "03-Domínios/Empreendedorismo/Indie Hacker 101/04 - The Mom Test — entrevistas que não mentem.md",
-    "03-Domínios/Empreendedorismo/Indie Hacker 101/03 - Risco calculado do solo founder.md",
-    "03-Domínios/Empreendedorismo/Indie Hacker 101/02 - O conceito de enough — Company of One.md",
+    "03-Domínios/IA/Formação Engenheiro de IA/index.md",
+    "03-Domínios/IA/Inteligência Artificial.md",
+    "03-Domínios/IA/index.md",
+    "03-Domínios/IA/Memória de Agentes/02 - O problema das janelas de contexto.md",
+    "03-Domínios/IA/Anatomia dos LLMs/17 - Evaluation de LLMs em produção.md",
+    "03-Domínios/IA/Anatomia dos LLMs/17 - Evaluation de LLMs em produção.md.tmp.1493540.1777769607837",
+    "03-Domínios/IA/Anatomia dos LLMs/16 - Como LLMs são treinados — pretraining, SFT, RLHF.md",
+    "03-Domínios/IA/Anatomia dos LLMs/16 - Como LLMs são treinados — pretraining, SFT, RLHF.md.tmp.1493540.1777769552861",
     "03-Domínios/Empreendedorismo/Indie Hacker 101/01 - Bootstrapping vs venture capital.md",
-    "03-Domínios/IA/Memória de Agentes/index.md",
-    "03-Domínios/IA/Memória de Agentes/01 - O que é memória em IA.md",
-    "01-Pergaminhos/entradas.md",
-    "00-Meta/guia/Convenções de escrita.md",
-    "00-Meta/guia/Decisões do vault.md",
-    "03-Domínios/Entrevistas/STAR Method.md.tmp.1551157.1777410637985",
-    "03-Domínios/Entrevistas/Communicating Trade-offs.md.tmp.1551157.1777410636510",
-    "04-Sendas/Senda Entrevistas.md.tmp.1551157.1777410634987",
-    "00-Meta/guia/Decisões do vault.md.tmp.1551157.1777381265517",
-    "00-Meta/guia/Publicação.md.tmp.1551157.1777381226610",
-    "00-Meta/guia/Manutenção do vault.md.tmp.1551157.1777381159987",
-    "00-Meta/guia/Wikilinks e MOCs.md.tmp.1551157.1777381118362",
-    "00-Meta/guia/Convenções de escrita.md.tmp.1551157.1777381081079",
-    "00-Meta/README.md.tmp.1551157.1777381025082",
-    "00-Meta/guia/workflow.md.tmp.1551157.1777380997385",
+    "03-Domínios/IA/Formação Engenheiro de IA/index.md.tmp.1493540.1777764491041",
+    "03-Domínios/IA/Formação Engenheiro de IA",
+    "03-Domínios/IA/Segurança e Guardrails/index.md.tmp.1493540.1777763902518",
+    "03-Domínios/IA/Segurança e Guardrails/index.md",
+    "03-Domínios/IA/Segurança e Guardrails/index.md.tmp.1493540.1777763895561",
+    "03-Domínios/IA/Segurança e Guardrails/12 - O roadmap de segurança para times.md",
+    "03-Domínios/IA/Segurança e Guardrails/12 - O roadmap de segurança para times.md.tmp.1493540.1777763844823",
+    "03-Domínios/IA/Segurança e Guardrails/11 - Governance as architecture — EU AI Act, GDPR, licenças.md",
+    "03-Domínios/IA/Segurança e Guardrails/11 - Governance as architecture — EU AI Act, GDPR, licenças.md.tmp.1493540.1777763779481",
+    "03-Domínios/IA/Segurança e Guardrails/10 - Métricas de qualidade AI — defect escape rate, rework ratio.md",
+    "03-Domínios/IA/Segurança e Guardrails/10 - Métricas de qualidade AI — defect escape rate, rework ratio.md.tmp.1493540.1777763698318",
+    "03-Domínios/IA/Segurança e Guardrails/09 - Testes imutáveis — a barreira que o agente não pode reescrever.md",
+    "03-Domínios/IA/Segurança e Guardrails/09 - Testes imutáveis — a barreira que o agente não pode reescrever.md.tmp.1493540.1777763643189",
+    "03-Domínios/IA/Segurança e Guardrails/08 - Code review de código AI — o que muda.md",
+    "03-Domínios/IA/Segurança e Guardrails/07 - Security-focused prompting.md",
+    "03-Domínios/IA/Segurança e Guardrails/06 - Permissões e sandboxing.md",
+    "03-Domínios/IA/Segurança e Guardrails/05 - SAST e SCA para código AI.md",
+    "03-Domínios/IA/Segurança e Guardrails/04 - A pirâmide de validação AI.md",
+    "03-Domínios/IA/Segurança e Guardrails/03 - Alucinações em código — APIs fantasma e parâmetros inexistentes.md",
+    "03-Domínios/IA/Segurança e Guardrails/02 - Slopsquatting — o ataque via alucinação.md",
+    "03-Domínios/IA/Segurança e Guardrails/01 - Código gerado por IA é untrusted.md",
+    "03-Domínios/IA/Spec-Driven Development/index.md",
+    "03-Domínios/IA/Spec-Driven Development/12 - Debates — spec-as-source vs pragmatismo.md",
+    "03-Domínios/IA/Spec-Driven Development/11 - Guia de implementação SDD — do zero ao projeto.md",
+    "03-Domínios/IA/Spec-Driven Development/10 - Integração com context engineering — specs como contexto persistente.md",
+    "03-Domínios/IA/Spec-Driven Development/09 - SDD com agentes — coordinator, implementor, validator.md",
+    "03-Domínios/IA/Spec-Driven Development/08 - Ferramentas SDD — Kiro, Spec Kit, OpenSpec, Tessl.md",
     "03-Domínios/Java/Backend/Kafka/Untitled 4.png",
     "03-Domínios/Infraestrutura/Untitled.png",
     "03-Domínios/Infraestrutura/Untitled 2.png",
