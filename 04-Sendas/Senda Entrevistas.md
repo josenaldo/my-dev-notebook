@@ -83,7 +83,7 @@ Roteiro de preparação para entrevistas de Senior Fullstack Developer em vagas 
 - [ ] [[Inteligência Artificial]]
 - [ ] [[Anatomia dos LLMs|LLMs]]
 - [ ] [[Anatomia de Agents|Agents]]
-- [ ] [[Skills e Prompting]]
+- [ ] [[Context Engineering]]
 - [ ] [[Claude]]
 - [ ] [[GitHub Copilot]]
 - [ ] [[Codex]]

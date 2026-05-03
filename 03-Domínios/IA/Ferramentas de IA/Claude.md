@@ -379,7 +379,7 @@ Exemplo esquelético:
 
 ### Skills em Claude Code
 
-Skills são pacotes de instruções reutilizáveis. Ver [[Skills e Prompting]] para conceito. No Claude Code:
+Skills são pacotes de instruções reutilizáveis. Ver [[Context Engineering]] para conceito. No Claude Code:
 
 ```text
 .claude/skills/
@@ -863,7 +863,7 @@ Padrões frequentes em times usando Claude em produção. Não são casos vivido
 ## Veja também
 
 - [[Anatomia dos LLMs|LLMs]] — fundamentos de LLMs
-- [[Skills e Prompting]] — prompt/context engineering
+- [[Context Engineering]] — prompt/context engineering
 - [[Anatomia de Agents|Agents]] — construção de agents
 - [[RAG e Vector Databases]]
 - [[MCP]] — protocolo criado pela Anthropic

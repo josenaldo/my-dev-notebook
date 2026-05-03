@@ -100,6 +100,6 @@ publish: true
 - [[IA]]
 - [[Anatomia dos LLMs|LLMs]]
 - [[Anatomia de Agents|Agents]]
-- [[Skills e Prompting]]
+- [[Context Engineering]]
 - [[Arquitetura]]
 - [[Fundamentos]]

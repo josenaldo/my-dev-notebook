@@ -124,18 +124,20 @@ Cada Domínio em `03-Domínios/` tem um portal de entrada (MOC com mesmo nome da
 
 ## Domínio de Inteligência Artificial
 
-- [[03-Domínios/IA/index|IA]] — portal do domínio com 8 trilhas + notas conceituais + ferramentas
-- **[[Formação Engenheiro de IA]]** — programa estruturado: 8 trilhas + 4 sendas transversais (Praticante, Arquiteto, Líder Técnico, Open Source)
+- [[03-Domínios/IA/index|IA]] — portal do domínio com 10 trilhas + overview + ferramentas
+- **[[Formação Engenheiro de IA]]** — programa estruturado: 10 trilhas + 4 sendas transversais (Praticante, Arquiteto, Líder Técnico, Open Source)
 - **Trilhas atomizadas:**
     - [[Anatomia dos LLMs]] (17 notas) — fundamentos: tokens, atenção, modelos, APIs, treino, evaluation
     - [[Anatomia de Agents]] (9 notas) — fundamentos genéricos: ciclo, tools, memory, planning, multi-agent
     - [[Agentes de Codificação]] (18 notas) — Cursor, Claude Code, Copilot, Aider, MCP
     - [[Economia de Tokens]] (20 notas) — prompt caching, pruning, sub-agents, ROI
-    - [[Context Engineering]] (14 notas) — pipelines, camadas, JIT, compactação
+    - [[Context Engineering]] (16 notas) — pipelines, camadas, JIT, prompting, skills
     - [[Spec-Driven Development]] (12 notas) — Specify→Plan→Tasks→Implement, Kiro, Spec Kit
     - [[Segurança e Guardrails]] (12 notas) — SAST, sandbox, slopsquat, EU AI Act
     - [[Memória de Agentes]] (23 notas) — Letta, Mem0, Zep, Generative Agents, A-MEM
-- **Notas conceituais:** [[Inteligência Artificial]] · [[Skills e Prompting]] · [[RAG e Vector Databases]] · [[MCP]]
+    - [[RAG e Vector Databases]] (12 notas) — embeddings, chunking, retrieval, reranking, evaluation
+    - [[MCP]] (10 notas) — Model Context Protocol, servers, segurança, ecossistema
+- **Overview:** [[Inteligência Artificial]] — portal panorâmico do campo
 - **Ferramentas:** [[Ferramentas de IA/index|Ferramentas de IA]] — [[Claude]] · [[GitHub Copilot]] · [[Codex]] · [[Gemini]] · [[Comparativo de LLMs]]
 
 ## Domínio de Infraestrutura

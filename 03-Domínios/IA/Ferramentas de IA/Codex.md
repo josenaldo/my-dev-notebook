@@ -581,7 +581,7 @@ Padrões frequentes em times usando Codex em produção. Não são casos vividos
 
 - [[Anatomia dos LLMs|LLMs]]
 - [[Anatomia de Agents|Agents]]
-- [[Skills e Prompting]]
+- [[Context Engineering]]
 - [[Claude]]
 - [[GitHub Copilot]]
 - [[Gemini]]

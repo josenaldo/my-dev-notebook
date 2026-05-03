@@ -28,7 +28,7 @@ IA virou literacia básica para qualquer senior dev em 2026. Coding agents fazem
 > [!info] Programa completo
 > [[Formação Engenheiro de IA]] — MOC mestre que organiza as 8 trilhas em um caminho estruturado. Inclui sendas transversais (Praticante, Arquiteto, Líder Técnico, Open Source) com sequências exatas de notas. **Comece aqui se quer um roadmap.**
 
-## As 8 trilhas atomizadas
+## As 10 trilhas atomizadas
 
 Cada trilha tem `index.md` próprio com pré-requisitos, blocos sequenciais, rotas alternativas, e leituras recomendadas.
 
@@ -38,22 +38,21 @@ Cada trilha tem `index.md` próprio com pré-requisitos, blocos sequenciais, rot
 2. **[[Anatomia de Agents]]** (9 notas) — fundamentos genéricos: ciclo, tools, memory, planning, multi-agent
 3. **[[Agentes de Codificação]]** (18 notas) — coding agents: Cursor, Claude Code, Copilot, Aider, MCP, multi-agent
 4. **[[Economia de Tokens]]** (20 notas) — custo: prompt caching, pruning, sub-agents, governança, ROI
-5. **[[Context Engineering]]** (14 notas) — disciplina: pipelines, camadas, JIT, compactação, guardrails
+5. **[[Context Engineering]]** (16 notas) — disciplina: pipelines, camadas, JIT, prompting, skills
 6. **[[Spec-Driven Development]]** (12 notas) — metodologia: Specify→Plan→Tasks→Implement, Kiro, Spec Kit
 7. **[[Segurança e Guardrails]]** (12 notas) — defesa: SAST, sandbox, slopsquat, EU AI Act
 
-### Trilha paralela (especialização)
+### Trilhas especializadas (paralelas)
 
 8. **[[Memória de Agentes]]** (23 notas) — memory systems: MemGPT/Letta, Mem0, Zep, Generative Agents Stanford, A-MEM
+9. **[[RAG e Vector Databases]]** (12 notas) — embeddings, chunking, vector DBs, retrieval, reranking, evaluation
+10. **[[MCP]]** (10 notas) — Model Context Protocol: servers, primitivos, segurança, ecossistema 2026
 
-## Notas conceituais (single-page overviews)
+## Notas conceituais (overview)
 
-Notas grandes que servem como **referência rápida** sobre temas amplos. Para deep dive, siga para as trilhas atomizadas.
+Notas que servem como **portal panorâmico** sobre o campo. Para deep dive em tópicos específicos, siga para as trilhas atomizadas.
 
-- **[[Inteligência Artificial]]** — overview do campo: ML, DL, GenAI, trilha de aprendizado geral
-- **[[Skills e Prompting]]** — prompt engineering, context engineering, agent skills (deep dive em [[Context Engineering]])
-- **[[RAG e Vector Databases]]** — embeddings, chunking, vector DBs, evaluation de RAG
-- **[[MCP]]** — Model Context Protocol, "USB-C para agents", servers e clients
+- **[[Inteligência Artificial]]** — overview do campo IA para devs (ML, DL, GenAI), com pointers para todas as trilhas
 
 ## Ferramentas de IA
 
@@ -69,12 +68,14 @@ Notas grandes que servem como **referência rápida** sobre temas amplos. Para d
 
 ```mermaid
 graph TD
-    A["Sou novo em IA"] --> B["Comece com<br/>[[Anatomia dos LLMs]]"]
-    C["Já uso ChatGPT/Claude"] --> D["Vá para<br/>[[Agentes de Codificação]]"]
-    E["Estou queimando dinheiro<br/>em LLMs"] --> F["Direto para<br/>[[Economia de Tokens]]"]
-    G["Time virou<br/>vibe-coding"] --> H["[[Spec-Driven Development]]"]
-    I["Preciso passar em<br/>auditoria de segurança"] --> J["[[Segurança e Guardrails]]"]
-    K["Quero programa estruturado"] --> L["[[Formação Engenheiro de IA]]"]
+    A["Sou novo em IA"] --> B["Comece com<br/>Anatomia dos LLMs"]
+    C["Já uso ChatGPT/Claude"] --> D["Vá para<br/>Agentes de Codificação"]
+    E["Estou queimando dinheiro<br/>em LLMs"] --> F["Economia de Tokens"]
+    G["Time virou<br/>vibe-coding"] --> H["Spec-Driven Development"]
+    I["Preciso de auditoria<br/>de segurança"] --> J["Segurança e Guardrails"]
+    K["Vou construir RAG"] --> L["RAG e Vector Databases"]
+    M["Vou expor API como tool"] --> N["MCP"]
+    O["Quero programa estruturado"] --> P["Formação Engenheiro de IA"]
 ```
 
 ## Estatísticas do domínio

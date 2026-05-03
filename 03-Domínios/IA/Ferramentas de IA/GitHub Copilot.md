@@ -674,7 +674,7 @@ Meça diferença em qualidade com/sem referências.
 ## Veja também
 
 - [[Anatomia dos LLMs|LLMs]]
-- [[Skills e Prompting]]
+- [[Context Engineering]]
 - [[Anatomia de Agents|Agents]]
 - [[Claude]]
 - [[Codex]]

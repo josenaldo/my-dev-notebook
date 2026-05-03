@@ -1,7 +1,7 @@
 ---
 title: "Inteligência Artificial"
 created: 2026-04-01
-updated: 2026-04-11
+updated: 2026-05-02
 type: concept
 status: evergreen
 tags:
@@ -13,7 +13,23 @@ publish: true
 
 # Inteligência Artificial
 
-> Em 2026, IA deixou de ser especialização e virou literacia básica para qualquer senior dev. Coding agents fazem parte do dia a dia em times sérios: Claude Code, Cursor e Copilot atuam como pair programmer no IDE, e features de IA aparecem em praticamente todo projeto novo. Esta nota é o ponto de entrada da trilha: do zero conceitual até dominar os fundamentos que sustentam LLMs, agents e ferramentas. Um fullstack senior não precisa treinar modelos do zero — precisa saber **o que existe, como funciona por baixo o suficiente para tomar decisões, e onde cada peça se encaixa**.
+> Em 2026, IA deixou de ser especialização e virou literacia básica para qualquer senior dev. Coding agents fazem parte do dia a dia em times sérios: Claude Code, Cursor e Copilot atuam como pair programmer no IDE, e features de IA aparecem em praticamente todo projeto novo. Esta nota é **o overview conceitual do domínio** — ponto de entrada do zero conceitual aos fundamentos. Um fullstack senior não precisa treinar modelos do zero — precisa saber **o que existe, como funciona por baixo o suficiente para tomar decisões, e onde cada peça se encaixa**.
+
+> [!info] Posição desta nota no domínio IA
+> Esta é uma **nota conceitual de overview** — visão panorâmica do campo de IA para devs. Para deep dive em qualquer tópico específico, siga para a **trilha atomizada** correspondente:
+>
+> - **LLMs** → [[Anatomia dos LLMs]] (17 notas: tokens, atenção, treino, evaluation)
+> - **Agents** → [[Anatomia de Agents]] (9 notas: ciclo, tools, memory, planning)
+> - **Coding agents** → [[Agentes de Codificação]] (18 notas: Cursor, Claude Code, Copilot)
+> - **Custo** → [[Economia de Tokens]] (20 notas: caching, sub-agents, ROI)
+> - **Contexto** → [[Context Engineering]] (16 notas: pipelines, JIT, skills)
+> - **Metodologia** → [[Spec-Driven Development]] (12 notas: Specify→Plan→Tasks→Implement)
+> - **Segurança** → [[Segurança e Guardrails]] (12 notas: SAST, sandbox, EU AI Act)
+> - **Memória** → [[Memória de Agentes]] (23 notas: MemGPT, Letta, Mem0, Zep)
+> - **RAG** → [[RAG e Vector Databases]] (12 notas: embeddings, chunking, retrieval)
+> - **MCP** → [[MCP]] (10 notas: protocol, servers, segurança)
+>
+> O caminho estruturado completo: [[Formação Engenheiro de IA]].
 
 ## O que é
 
@@ -82,7 +98,7 @@ Objetivo: saber usar LLMs com proficiência, tanto via chat quanto via API.
 
 Tópicos:
 
-- **Prompt engineering:** zero-shot, few-shot, chain-of-thought, role prompts, output format constraints. Ver [[Skills e Prompting]].
+- **Prompt engineering:** zero-shot, few-shot, chain-of-thought, role prompts, output format constraints. Ver [[Context Engineering]].
 - **APIs de LLM:** chamadas básicas a Claude API, OpenAI API, Gemini API. Parâmetros (temperature, max_tokens, top_p, system prompt).
 - **Streaming vs non-streaming.** Quando usar cada um.
 - **Tool use / function calling:** como o LLM decide chamar funções do seu código.
@@ -883,14 +899,25 @@ Escolha um vetor da fase 6, defina projeto de 3 meses, execute. Exemplos:
 
 ## Veja também
 
-- [[Anatomia dos LLMs|LLMs]] — como LLMs funcionam por dentro
-- [[Skills e Prompting]] — prompt engineering e context engineering
-- [[Anatomia de Agents|Agents]] — sistemas autônomos com LLMs
-- [[RAG e Vector Databases]] — injetar conhecimento em LLMs
+### Trilhas atomizadas (deep dive)
+
+- [[Anatomia dos LLMs]] — fundamentos: tokens, atenção, modelos, APIs, treino, evaluation
+- [[Anatomia de Agents]] — fundamentos genéricos de agents
+- [[Agentes de Codificação]] — coding agents (Cursor, Claude Code, Copilot)
+- [[Economia de Tokens]] — custo: caching, sub-agents, ROI
+- [[Context Engineering]] — pipelines, camadas, JIT, prompting, skills
+- [[Spec-Driven Development]] — metodologia disciplinada
+- [[Segurança e Guardrails]] — defesa em profundidade, EU AI Act
+- [[Memória de Agentes]] — sistemas de memória (MemGPT, Letta, Zep)
+- [[RAG e Vector Databases]] — embeddings, chunking, retrieval
 - [[MCP]] — Model Context Protocol
-- [[Claude]] — o ecossistema Anthropic
-- [[GitHub Copilot]] — assistente integrado ao IDE
-- [[Codex]] — agent cloud da OpenAI
-- [[Gemini]] — multimodal do Google
-- [[Comparativo de LLMs]] — qual usar quando
-- [[Senda IA]] — roadmap estruturado
+
+### Programa estruturado
+
+- [[Formação Engenheiro de IA]] — programa completo: 10 trilhas + 4 sendas transversais
+- [[Senda IA]] — roadmap pessoal de 9-12 meses
+
+### Ferramentas (catálogo)
+
+- [[Ferramentas de IA/index|Ferramentas de IA]] — comparativos detalhados
+- [[Claude]] · [[GitHub Copilot]] · [[Codex]] · [[Gemini]] · [[Comparativo de LLMs]]

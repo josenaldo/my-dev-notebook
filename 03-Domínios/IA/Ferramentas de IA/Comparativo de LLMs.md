@@ -700,7 +700,7 @@ Padrões frequentes em times escolhendo e migrando entre LLMs em 2026.
 - [[GitHub Copilot]] — assistente integrado ao IDE
 - [[Codex]] — agent cloud da OpenAI
 - [[Gemini]] — família Google
-- [[Skills e Prompting]] — que funciona cross-model
+- [[Context Engineering]] — que funciona cross-model
 - [[Anatomia de Agents|Agents]] — padrões de agent independente de modelo
 - [[RAG e Vector Databases]]
 - [[MCP]]

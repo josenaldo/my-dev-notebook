@@ -602,7 +602,7 @@ Migração para RAG com chunking semântico tipicamente: latência → ~3s, cust
 ## Veja também
 
 - [[Anatomia dos LLMs|LLMs]]
-- [[Skills e Prompting]]
+- [[Context Engineering]]
 - [[Anatomia de Agents|Agents]]
 - [[Claude]]
 - [[GitHub Copilot]]

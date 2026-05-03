@@ -58,6 +58,13 @@ Da disciplina ao deploy: guardrails determinísticos, métrica de qualidade, set
 - [[13 - Entropia e qualidade de contexto]] — sinal por token, "context as architecture", context products
 - [[14 - Context engineering na prática — setup completo]] — checklist end-to-end, de zero ao agente robusto
 
+### Bloco 5 — Prompting e Skills (2 notas)
+
+Técnicas atomizadas e distribuição de behaviors reutilizáveis.
+
+- [[15 - Técnicas de prompting — zero-shot, few-shot, CoT, ToT]] — taxonomia de técnicas, quando usar cada
+- [[16 - Agent skills marketplace e SKILL.md]] — formato, distribuição, ecossistema 2026
+
 ## Rotas alternativas
 
 ### Rota prática (preciso aplicar agora)

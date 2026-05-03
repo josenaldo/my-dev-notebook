@@ -149,7 +149,7 @@ Mês 12+   | Fase 6: Especialização
 ### Notas de apoio (Fase 2)
 
 - [[Anatomia dos LLMs|LLMs]] — parâmetros da API, tokenização, sampling
-- [[Skills e Prompting]] — técnicas e context engineering
+- [[Context Engineering]] — técnicas e context engineering
 
 ### Checkpoint da Fase 2
 
@@ -195,7 +195,10 @@ Mês 12+   | Fase 6: Especialização
 
 ### Notas de apoio (Fase 3)
 
-- [[RAG e Vector Databases]] — trilha completa
+- [[RAG e Vector Databases]] — trilha completa atomizada (12 notas)
+- [[RAG e Vector Databases|03 - Embeddings — representação semântica]] — embeddings deep dive
+- [[RAG e Vector Databases|04 - Chunking — onde 50% da qualidade vive]] — chunking estratégias
+- [[RAG e Vector Databases|06 - Retrieval — hybrid search, BM25, query rewriting]] — hybrid retrieval
 - [[Anatomia dos LLMs|LLMs]] — embeddings, context window
 
 ### Checkpoint da Fase 3
@@ -235,11 +238,10 @@ Mês 12+   | Fase 6: Especialização
 
 ### Notas de apoio (Fase 4)
 
-- [[Anatomia de Agents]] — trilha completa de fundamentos genéricos
+- [[Anatomia de Agents]] — trilha completa de fundamentos genéricos (9 notas)
 - [[Agentes de Codificação]] — coding agents (Cursor, Claude Code, Copilot)
-- [[Context Engineering]] — pipelines, camadas, JIT retrieval, AGENTS.md
-- [[MCP]] — protocolo e construção de servers
-- [[Skills e Prompting]] — técnicas de prompting
+- [[Context Engineering]] — pipelines, camadas, JIT retrieval, AGENTS.md, prompting, skills
+- [[MCP]] — trilha completa: protocolo, servers, construção, segurança (10 notas)
 
 ### Checkpoint da Fase 4
 
@@ -419,6 +421,6 @@ Isso é um portfolio forte. Acompanhe cada repo com README que explica decisões
     - [[Anatomia dos LLMs]] · [[Anatomia de Agents]] · [[Agentes de Codificação]]
     - [[Economia de Tokens]] · [[Context Engineering]] · [[Spec-Driven Development]] · [[Segurança e Guardrails]]
     - [[Memória de Agentes]]
-- **Notas conceituais:** [[Inteligência Artificial]] · [[Skills e Prompting]] · [[RAG e Vector Databases]] · [[MCP]]
+- **Notas conceituais:** [[Inteligência Artificial]] · [[Context Engineering]] · [[RAG e Vector Databases]] · [[MCP]]
 - **Ferramentas:** [[Claude]] · [[GitHub Copilot]] · [[Codex]] · [[Gemini]] · [[Comparativo de LLMs]]
 - **Sendas relacionadas:** [[Senda Entrevistas]]
