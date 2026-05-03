@@ -78,7 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 344.5
+    "width": 336.5
   },
   "right": {
     "id": "5cf9a1d974a02795",
@@ -94,7 +94,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Welcome.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +103,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for Welcome"
+              "title": "Backlinks"
             }
           },
           {
@@ -113,12 +112,11 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Welcome.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from Welcome"
+              "title": "Outgoing links"
             }
           },
           {
@@ -170,15 +168,65 @@
             "type": "leaf",
             "state": {
               "type": "footnotes",
-              "state": {
-                "file": "01-Pergaminhos/entradas.md"
-              },
+              "state": {},
               "icon": "lucide-file-signature",
               "title": "Footnotes"
             }
           },
           {
             "id": "3d432fe96a2ed788",
+            "type": "leaf",
+            "state": {
+              "type": "terminal:terminal",
+              "state": {
+                "terminal:terminal": {
+                  "cwd": "/home/josenaldo/repos/personal/codex-technomanticus",
+                  "focus": false,
+                  "profile": {
+                    "args": [
+                      "--login"
+                    ],
+                    "executable": "/bin/zsh",
+                    "followTheme": true,
+                    "name": "zsh",
+                    "platforms": {
+                      "darwin": false,
+                      "linux": true
+                    },
+                    "pythonExecutable": "python3",
+                    "restoreHistory": false,
+                    "rightClickAction": "copyPaste",
+                    "successExitCodes": [
+                      "0",
+                      "SIGINT",
+                      "SIGTERM"
+                    ],
+                    "terminalOptions": {
+                      "fontFamily": "FiraCode Nerd Font Mono",
+                      "documentOverride": null
+                    },
+                    "type": "integrated",
+                    "useWin32Conhost": false
+                  },
+                  "serial": null
+                }
+              },
+              "icon": "terminal",
+              "title": "Terminal: ✳ Claude Code"
+            }
+          },
+          {
+            "id": "d2e3561137ceebf7",
+            "type": "leaf",
+            "state": {
+              "type": "git-view",
+              "state": {},
+              "icon": "git-pull-request",
+              "title": "Source Control"
+            }
+          },
+          {
+            "id": "0efa5e7a1a9ff348",
             "type": "leaf",
             "pinned": true,
             "state": {
@@ -218,17 +266,7 @@
               },
               "pinned": true,
               "icon": "terminal",
-              "title": "Terminal: josenaldo@saci:~/repos/personal/codex-technomanticus"
-            }
-          },
-          {
-            "id": "d2e3561137ceebf7",
-            "type": "leaf",
-            "state": {
-              "type": "git-view",
-              "state": {},
-              "icon": "git-pull-request",
-              "title": "Source Control"
+              "title": "Terminal: ✳ Use MCP tools and local REST API plugins"
             }
           }
         ],
@@ -236,7 +274,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 786.5
+    "width": 715.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -253,12 +291,30 @@
       "bases:Create new base": false,
       "markdown-importer:Open format converter": false,
       "terminal:Open terminal": false,
-      "obsidian-git:Open Git source control": false
+      "obsidian-git:Open Git source control": false,
+      "copilot:Open Copilot Chat": false
     }
   },
-  "active": "3d432fe96a2ed788",
+  "active": "d2e3561137ceebf7",
   "lastOpenFiles": [
     "03-Domínios/IA/index.md",
+    "copilot/copilot-custom-prompts/Clip Web Page.md",
+    "copilot/copilot-custom-prompts/Clip YouTube Transcript.md",
+    "copilot/copilot-custom-prompts/Rewrite as tweet thread.md",
+    "copilot/copilot-custom-prompts/Rewrite as tweet.md",
+    "copilot/copilot-custom-prompts/Remove URLs.md",
+    "copilot/copilot-custom-prompts/Generate glossary.md",
+    "copilot/copilot-custom-prompts/Generate table of contents.md",
+    "copilot/copilot-custom-prompts/Make longer.md",
+    "copilot/copilot-custom-prompts/Make shorter.md",
+    "copilot/copilot-custom-prompts/Emojify.md",
+    "copilot/copilot-custom-prompts/Explain like I am 5.md",
+    "copilot/copilot-custom-prompts/Simplify.md",
+    "copilot/copilot-custom-prompts/Summarize.md",
+    "copilot/copilot-custom-prompts/Translate to Chinese.md",
+    "copilot/copilot-custom-prompts/Fix grammar and spelling.md",
+    "copilot/copilot-custom-prompts",
+    "copilot",
     "03-Domínios/IA/index.md.tmp.1994321.1777838611656",
     "03-Domínios/IA/Formação Engenheiro de IA/index.md",
     "03-Domínios/IA/Inteligência Artificial.md",
@@ -276,23 +332,7 @@
     "03-Domínios/IA/Segurança e Guardrails/12 - O roadmap de segurança para times.md",
     "03-Domínios/IA/Segurança e Guardrails/12 - O roadmap de segurança para times.md.tmp.1493540.1777763844823",
     "03-Domínios/IA/Segurança e Guardrails/11 - Governance as architecture — EU AI Act, GDPR, licenças.md",
-    "03-Domínios/IA/Segurança e Guardrails/11 - Governance as architecture — EU AI Act, GDPR, licenças.md.tmp.1493540.1777763779481",
     "03-Domínios/IA/Segurança e Guardrails/10 - Métricas de qualidade AI — defect escape rate, rework ratio.md",
-    "03-Domínios/IA/Segurança e Guardrails/10 - Métricas de qualidade AI — defect escape rate, rework ratio.md.tmp.1493540.1777763698318",
-    "03-Domínios/IA/Segurança e Guardrails/09 - Testes imutáveis — a barreira que o agente não pode reescrever.md",
-    "03-Domínios/IA/Segurança e Guardrails/08 - Code review de código AI — o que muda.md",
-    "03-Domínios/IA/Segurança e Guardrails/07 - Security-focused prompting.md",
-    "03-Domínios/IA/Segurança e Guardrails/06 - Permissões e sandboxing.md",
-    "03-Domínios/IA/Segurança e Guardrails/05 - SAST e SCA para código AI.md",
-    "03-Domínios/IA/Segurança e Guardrails/04 - A pirâmide de validação AI.md",
-    "03-Domínios/IA/Segurança e Guardrails/03 - Alucinações em código — APIs fantasma e parâmetros inexistentes.md",
-    "03-Domínios/IA/Segurança e Guardrails/02 - Slopsquatting — o ataque via alucinação.md",
-    "03-Domínios/IA/Segurança e Guardrails/01 - Código gerado por IA é untrusted.md",
-    "03-Domínios/IA/Spec-Driven Development/index.md",
-    "03-Domínios/IA/Spec-Driven Development/12 - Debates — spec-as-source vs pragmatismo.md",
-    "03-Domínios/IA/Spec-Driven Development/11 - Guia de implementação SDD — do zero ao projeto.md",
-    "03-Domínios/IA/Spec-Driven Development/10 - Integração com context engineering — specs como contexto persistente.md",
-    "03-Domínios/IA/Spec-Driven Development/09 - SDD com agentes — coordinator, implementor, validator.md",
     "03-Domínios/Java/Backend/Kafka/Untitled 4.png",
     "03-Domínios/Infraestrutura/Untitled.png",
     "03-Domínios/Infraestrutura/Untitled 2.png",
