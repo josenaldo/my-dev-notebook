@@ -46,6 +46,7 @@ Templates Templater para criação de notas no Obsidian. Cada template cobre um 
 | `Template - TIL.md`            | "Today I Learned" — aprendizado pontual            |
 | `Template - MOC.md`            | Índice de área (Map of Content)                    |
 | `Template - Mestre.md`         | Perfil de desenvolvedor ou mentor de referência    |
+| `Template - Glossário.md`      | Glossário monolítico de domínio (50+ verbetes)     |
 
 ### `mestres/`
 

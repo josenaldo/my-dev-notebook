@@ -107,6 +107,8 @@ Inteligência Artificial (campo amplo, 1950+)
 > [!note] Conceitos fundamentais cobertos em deep dive
 > Tipos de aprendizado, training/validation/test, overfitting, métricas (precision, recall, F1), tokens e embeddings, context window, temperature/sampling, pretraining→SFT→RLHF, fine-tuning vs RAG vs prompting, transformer e attention — **tudo coberto em [[Anatomia dos LLMs]]** (Trilha 1).
 
+>[!info] Glossário
+> Você poderá usar op [[Dicionário de IA]] para adicionar items ao glossário e para referenciar esses items: Ex: [[Dicionário de IA#LSTM (Long Short-Term Memory)|LSTM]]
 ## O que diferencia um senior em IA
 
 > [!tip] As 10 marcas de senioridade
