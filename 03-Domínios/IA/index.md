@@ -37,11 +37,36 @@ Inteligência Artificial é o campo que desenvolve sistemas capazes de realizar 
 
 Para um senior fullstack, IA atua em **três eixos**:
 
-1. **IA como ferramenta de produtividade** — Copilot, Claude Code, Cursor, ChatGPT, Gemini. Você é usuário avançado, sabe quando usar cada uma, integra em workflows.
-2. **IA como feature de produto** — integrar LLMs via API em aplicações: chatbots, classificadores, RAG, agents especializados.
-3. **IA como infraestrutura** — escolher modelos, gerenciar custos, observabilidade, evaluation, segurança, governance.
+1. **IA como ferramenta de produtividade** — Usar ferramentas como Copilot, Claude Code, Cursor, ChatGPT e Gemini para desenvolver software mais rápido e com qualidade. Coding agents, autocomplete, code review, geração de testes — tudo isso é parte do kit básico.
+2. **IA como feature de produto** — integrar LLMs via API em aplicações: chatbots, classificadores, RAG, agents especializados. Quase todo projeto novo sério tem alguma feature de IA, e o engenheiro de IA é quem projeta a arquitetura dessa integração, escolhe modelos, define o pipeline de contexto, e garante que a feature seja robusta e escalável.
+3. **IA como infraestrutura** — escolher modelos, gerenciar custos, observabilidade, evaluation, segurança, governance. LLMs são dependências estocásticas com saídas não tipadas — sem disciplina operacional, o risco de falhas catastróficas é alto.
 
 Você não precisa ser ML engineer. Precisa ser **fluente o suficiente** para conversar com data scientists, tomar decisões de arquitetura em features com IA, e não ser enganado por buzzwords.
+
+> [!info]- O que significa "dependências estocásticas com saídas não tipadas"
+> A frase condensa duas propriedades incômodas dos LLMs quando você os trata como componentes de software.
+>
+> **"Dependências estocásticas"**
+>
+> - *Dependência*: seu código depende do LLM como dependeria de um banco, uma API externa, uma lib — é parte do sistema, não mágica.
+> - *Estocástica*: a saída é probabilística, não determinística. Mesma entrada, temperatura > 0, dá saídas diferentes. Mesmo com `temperature=0`, mudanças mínimas no prompt, no modelo, ou na infra do provider podem alterar o output. Diferente de uma função pura `f(x) = y`, o LLM é mais como `f(x) ≈ y` com uma distribuição em volta.
+>
+> **"Saídas não tipadas"**
+>
+> - O retorno é texto livre. Não há um contrato de tipo garantido como em `function getUser(id: string): User`.
+> - Você *pede* JSON, mas pode vir markdown com ```` ```json ```` em volta, campo faltando, vírgula sobrando, alucinação de chave. Mesmo com structured outputs / JSON mode, o conteúdo dos campos não é validado semanticamente — o modelo pode preencher um `email` com algo que não é email.
+>
+> **Por que importa (a parte do "sem disciplina operacional")**
+>
+> Em código tradicional, o compilador/runtime te protege: tipos, exceções, contratos. Com LLM, *você* precisa recriar essas garantias na borda:
+>
+> - Validação de schema (Pydantic, Zod) em todo output
+> - Retries com backoff quando a saída não parsa
+> - Fallbacks quando o modelo "viaja"
+> - Golden sets / evals para detectar regressão
+> - Testes que toleram variação semântica (não string-matching exato)
+>
+> É a mesma disciplina que você aplica a inputs de usuário ou respostas de API externa — só que aqui o "componente não confiável" está no meio do seu fluxo de negócio, não na borda. É isso que justifica as Trilhas 4 (custo), 5 (contexto), 7 (segurança) e 8-9 (memória/RAG): toda a engenharia ao redor do LLM existe para domar essas duas propriedades.
 
 ## Hierarquia dos conceitos
 

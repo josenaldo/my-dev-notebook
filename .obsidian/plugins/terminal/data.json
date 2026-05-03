@@ -9,7 +9,7 @@
   "interceptLogging": true,
   "language": "",
   "macOSOptionKeyPassthrough": true,
-  "newInstanceBehavior": "newHorizontalSplit",
+  "newInstanceBehavior": "newRightSplit",
   "noticeTimeout": 5,
   "openChangelogOnUpdate": true,
   "pinNewInstance": true,
@@ -55,8 +55,8 @@
         "SIGTERM"
       ],
       "terminalOptions": {
-        "documentOverride": null,
-        "fontFamily": "FiraCode Nerd Font Mono"
+        "fontFamily": "FiraCode Nerd Font Mono",
+        "documentOverride": null
       },
       "type": "integrated",
       "useWin32Conhost": false

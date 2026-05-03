@@ -4,83 +4,24 @@
     "type": "split",
     "children": [
       {
-        "id": "708ad77f527c5896",
-        "type": "split",
+        "id": "625a086b8dcc431e",
+        "type": "tabs",
         "children": [
           {
-            "id": "625a086b8dcc431e",
-            "type": "tabs",
-            "dimension": 51.526717557251914,
-            "children": [
-              {
-                "id": "fdb4badcc6a035dc",
-                "type": "leaf",
-                "state": {
-                  "type": "markdown",
-                  "state": {
-                    "file": "03-Domínios/IA/index.md",
-                    "mode": "source",
-                    "source": false
-                  },
-                  "icon": "lucide-file",
-                  "title": "index"
-                }
-              }
-            ]
-          },
-          {
-            "id": "9850667077856e6b",
-            "type": "tabs",
-            "dimension": 48.473282442748086,
-            "children": [
-              {
-                "id": "ba99dde71b9a7db3",
-                "type": "leaf",
-                "pinned": true,
-                "state": {
-                  "type": "terminal:terminal",
-                  "state": {
-                    "terminal:terminal": {
-                      "cwd": "/home/josenaldo/repos/personal/codex-technomanticus",
-                      "focus": false,
-                      "profile": {
-                        "args": [
-                          "--login"
-                        ],
-                        "executable": "/bin/zsh",
-                        "followTheme": true,
-                        "name": "zsh",
-                        "platforms": {
-                          "darwin": false,
-                          "linux": true
-                        },
-                        "pythonExecutable": "python3",
-                        "restoreHistory": false,
-                        "rightClickAction": "copyPaste",
-                        "successExitCodes": [
-                          "0",
-                          "SIGINT",
-                          "SIGTERM"
-                        ],
-                        "terminalOptions": {
-                          "fontFamily": "FiraCode Nerd Font Mono",
-                          "documentOverride": null
-                        },
-                        "type": "integrated",
-                        "useWin32Conhost": false
-                      },
-                      "serial": null
-                    }
-                  },
-                  "pinned": true,
-                  "icon": "terminal",
-                  "title": "Terminal: ✳ Explain LLM stochastic dependencies concept"
-                }
-              }
-            ]
+            "id": "fdb4badcc6a035dc",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "03-Domínios/IA/index.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "index"
+            }
           }
-        ],
-        "direction": "horizontal"
+        ]
       }
     ],
     "direction": "vertical"
@@ -137,7 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 493.5
+    "width": 344.5
   },
   "right": {
     "id": "5cf9a1d974a02795",
@@ -237,22 +178,65 @@
             }
           },
           {
-            "id": "2e2387d460871a8f",
+            "id": "3d432fe96a2ed788",
+            "type": "leaf",
+            "pinned": true,
+            "state": {
+              "type": "terminal:terminal",
+              "state": {
+                "terminal:terminal": {
+                  "cwd": "/home/josenaldo/repos/personal/codex-technomanticus",
+                  "focus": false,
+                  "profile": {
+                    "args": [
+                      "--login"
+                    ],
+                    "executable": "/bin/zsh",
+                    "followTheme": true,
+                    "name": "zsh",
+                    "platforms": {
+                      "darwin": false,
+                      "linux": true
+                    },
+                    "pythonExecutable": "python3",
+                    "restoreHistory": false,
+                    "rightClickAction": "copyPaste",
+                    "successExitCodes": [
+                      "0",
+                      "SIGINT",
+                      "SIGTERM"
+                    ],
+                    "terminalOptions": {
+                      "fontFamily": "FiraCode Nerd Font Mono",
+                      "documentOverride": null
+                    },
+                    "type": "integrated",
+                    "useWin32Conhost": false
+                  },
+                  "serial": null
+                }
+              },
+              "pinned": true,
+              "icon": "terminal",
+              "title": "Terminal: josenaldo@saci:~/repos/personal/codex-technomanticus"
+            }
+          },
+          {
+            "id": "d2e3561137ceebf7",
             "type": "leaf",
             "state": {
-              "type": "github-copilot-chat-view",
+              "type": "git-view",
               "state": {},
-              "icon": "bot-message-square",
-              "title": "Copilot Chat"
+              "icon": "git-pull-request",
+              "title": "Source Control"
             }
           }
         ],
-        "currentTab": 6
+        "currentTab": 7
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 786.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -268,12 +252,14 @@
       "command-palette:Open command palette": false,
       "bases:Create new base": false,
       "markdown-importer:Open format converter": false,
-      "terminal:Open terminal": false
+      "terminal:Open terminal": false,
+      "obsidian-git:Open Git source control": false
     }
   },
-  "active": "ba99dde71b9a7db3",
+  "active": "3d432fe96a2ed788",
   "lastOpenFiles": [
     "03-Domínios/IA/index.md",
+    "03-Domínios/IA/index.md.tmp.1994321.1777838611656",
     "03-Domínios/IA/Formação Engenheiro de IA/index.md",
     "03-Domínios/IA/Inteligência Artificial.md",
     "03-Domínios/IA/Memória de Agentes/02 - O problema das janelas de contexto.md",
@@ -294,7 +280,6 @@
     "03-Domínios/IA/Segurança e Guardrails/10 - Métricas de qualidade AI — defect escape rate, rework ratio.md",
     "03-Domínios/IA/Segurança e Guardrails/10 - Métricas de qualidade AI — defect escape rate, rework ratio.md.tmp.1493540.1777763698318",
     "03-Domínios/IA/Segurança e Guardrails/09 - Testes imutáveis — a barreira que o agente não pode reescrever.md",
-    "03-Domínios/IA/Segurança e Guardrails/09 - Testes imutáveis — a barreira que o agente não pode reescrever.md.tmp.1493540.1777763643189",
     "03-Domínios/IA/Segurança e Guardrails/08 - Code review de código AI — o que muda.md",
     "03-Domínios/IA/Segurança e Guardrails/07 - Security-focused prompting.md",
     "03-Domínios/IA/Segurança e Guardrails/06 - Permissões e sandboxing.md",
@@ -308,7 +293,6 @@
     "03-Domínios/IA/Spec-Driven Development/11 - Guia de implementação SDD — do zero ao projeto.md",
     "03-Domínios/IA/Spec-Driven Development/10 - Integração com context engineering — specs como contexto persistente.md",
     "03-Domínios/IA/Spec-Driven Development/09 - SDD com agentes — coordinator, implementor, validator.md",
-    "03-Domínios/IA/Spec-Driven Development/08 - Ferramentas SDD — Kiro, Spec Kit, OpenSpec, Tessl.md",
     "03-Domínios/Java/Backend/Kafka/Untitled 4.png",
     "03-Domínios/Infraestrutura/Untitled.png",
     "03-Domínios/Infraestrutura/Untitled 2.png",
