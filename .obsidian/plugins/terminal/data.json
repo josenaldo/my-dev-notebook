@@ -1,0 +1,69 @@
+{
+  "addToCommand": true,
+  "addToContextMenu": true,
+  "createInstanceNearExistingOnes": true,
+  "errorNoticeTimeout": 0,
+  "exposeInternalModules": true,
+  "focusOnNewInstance": true,
+  "hideStatusBar": "focused",
+  "interceptLogging": true,
+  "language": "",
+  "macOSOptionKeyPassthrough": true,
+  "newInstanceBehavior": "newHorizontalSplit",
+  "noticeTimeout": 5,
+  "openChangelogOnUpdate": true,
+  "pinNewInstance": true,
+  "preferredRenderer": "webgl",
+  "profiles": {
+    "linuxExternalDefault": {
+      "args": [],
+      "executable": "xterm",
+      "followTheme": true,
+      "name": "",
+      "platforms": {
+        "linux": true
+      },
+      "restoreHistory": false,
+      "rightClickAction": "copyPaste",
+      "successExitCodes": [
+        "0",
+        "SIGINT",
+        "SIGTERM"
+      ],
+      "terminalOptions": {
+        "documentOverride": null
+      },
+      "type": "external"
+    },
+    "linuxIntegratedDefault": {
+      "args": [
+        "--login"
+      ],
+      "executable": "/bin/zsh",
+      "followTheme": true,
+      "name": "zsh",
+      "platforms": {
+        "darwin": false,
+        "linux": true
+      },
+      "pythonExecutable": "python3",
+      "restoreHistory": false,
+      "rightClickAction": "copyPaste",
+      "successExitCodes": [
+        "0",
+        "SIGINT",
+        "SIGTERM"
+      ],
+      "terminalOptions": {
+        "documentOverride": null,
+        "fontFamily": "FiraCode Nerd Font Mono"
+      },
+      "type": "integrated",
+      "useWin32Conhost": false
+    }
+  },
+  "defaultProfile": "linuxIntegratedDefault",
+  "terminalOptions": {
+    "documentOverride": null
+  }
+}

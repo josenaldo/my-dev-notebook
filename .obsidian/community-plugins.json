@@ -10,5 +10,7 @@
   "tag-wrangler",
   "obsidian-code-block-enhancer",
   "slash-complete",
-  "obsidian-local-rest-api"
+  "obsidian-local-rest-api",
+  "github-copilot",
+  "terminal"
 ]
