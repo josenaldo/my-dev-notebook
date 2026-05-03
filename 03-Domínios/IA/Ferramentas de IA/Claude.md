@@ -871,5 +871,5 @@ Padrões frequentes em times usando Claude em produção. Não são casos vivido
 - [[Codex]]
 - [[Gemini]]
 - [[Comparativo de LLMs]] — Claude vs alternativas
-- [[Inteligência Artificial]]
+- [[03-Domínios/IA/index|Inteligência Artificial]]
 - [[Senda IA]]

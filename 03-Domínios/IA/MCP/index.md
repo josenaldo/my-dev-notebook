@@ -123,7 +123,7 @@ MCP é **camada de infraestrutura** que toca quase tudo no stack de agentes.
 - [[Segurança e Guardrails]] — defesa contra MCP malicioso
 - [[Memória de Agentes]] — memória via MCP servers
 - [[RAG e Vector Databases]] — alternativa quando MCP não cabe
-- [[Formação Engenheiro de IA]]
+- [[03-Domínios/IA/index|Formação Engenheiro de IA]]
 
 ## Todas as notas
 

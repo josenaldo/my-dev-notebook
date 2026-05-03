@@ -608,7 +608,7 @@ Migração para RAG com chunking semântico tipicamente: latência → ~3s, cust
 - [[GitHub Copilot]]
 - [[Codex]]
 - [[Comparativo de LLMs]]
-- [[Inteligência Artificial]]
+- [[03-Domínios/IA/index|Inteligência Artificial]]
 - [[MCP]]
 - [[RAG e Vector Databases]]
 - [[Senda IA]]

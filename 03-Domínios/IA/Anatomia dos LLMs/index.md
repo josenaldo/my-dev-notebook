@@ -18,7 +18,7 @@ aliases:
 LLMs são a infraestrutura central da engenharia de software assistida por IA em 2026. Mas usar um LLM sem entender como ele funciona é como dirigir sem saber que o carro tem freio — funciona até o momento em que não funciona. Esta trilha percorre a anatomia completa: de como texto vira números (tokens) até por que uma sessão de agente custa $25 e como pagar $5. Cobre arquitetura, modelos em produção (incluindo o ecossistema chinês), APIs, pricing, treino, evaluation, e as técnicas que determinam se você gasta dinheiro ou queima dinheiro.
 
 > [!info] Pré-requisitos
-> Nenhum. Esta trilha é o ponto de entrada da [[Formação Engenheiro de IA]]. Começa do zero e constrói progressivamente.
+> Nenhum. Esta trilha é o ponto de entrada da [[03-Domínios/IA/index|Formação Engenheiro de IA]]. Começa do zero e constrói progressivamente.
 
 > [!warning] Preços e versões de modelos
 > Os preços e versões de modelos mencionados refletem o estado de **maio de 2026**. Este campo muda a cada trimestre. Verifique sempre a documentação oficial do provider antes de tomar decisões de arquitetura.

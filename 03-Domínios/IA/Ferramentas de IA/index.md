@@ -72,11 +72,11 @@ Ferramentas mudam **rápido**. Versões, pricing, capabilities movem trimestralm
 
 ## Veja também
 
-- [[Inteligência Artificial|index do domínio IA]]
+- [[03-Domínios/IA/index|index do domínio IA]]
 - [[Anatomia dos LLMs]]
 - [[Anatomia de Agents]]
 - [[Agentes de Codificação]]
-- [[Formação Engenheiro de IA]]
+- [[03-Domínios/IA/index|Formação Engenheiro de IA]]
 
 ## Todas as ferramentas
 

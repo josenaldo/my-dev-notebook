@@ -704,5 +704,5 @@ Padrões frequentes em times escolhendo e migrando entre LLMs em 2026.
 - [[Anatomia de Agents|Agents]] — padrões de agent independente de modelo
 - [[RAG e Vector Databases]]
 - [[MCP]]
-- [[Inteligência Artificial]]
+- [[03-Domínios/IA/index|Inteligência Artificial]]
 - [[Senda IA]]

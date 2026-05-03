@@ -80,7 +80,7 @@ Roteiro de preparação para entrevistas de Senior Fullstack Developer em vagas 
 
 > IA como ferramenta de produtividade e feature de produto.
 
-- [ ] [[Inteligência Artificial]]
+- [ ] [[03-Domínios/IA/index|Inteligência Artificial]]
 - [ ] [[Anatomia dos LLMs|LLMs]]
 - [ ] [[Anatomia de Agents|Agents]]
 - [ ] [[Context Engineering]]

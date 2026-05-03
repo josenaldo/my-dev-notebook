@@ -680,6 +680,6 @@ Meça diferença em qualidade com/sem referências.
 - [[Codex]]
 - [[Gemini]]
 - [[Comparativo de LLMs]]
-- [[Inteligência Artificial]]
+- [[03-Domínios/IA/index|Inteligência Artificial]]
 - [[MCP]]
 - [[Senda IA]]

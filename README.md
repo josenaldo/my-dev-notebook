@@ -125,7 +125,7 @@ Cada Domínio em `03-Domínios/` tem um portal de entrada (MOC com mesmo nome da
 ## Domínio de Inteligência Artificial
 
 - [[03-Domínios/IA/index|IA]] — portal do domínio com 10 trilhas + overview + ferramentas
-- **[[Formação Engenheiro de IA]]** — programa estruturado: 10 trilhas + 4 sendas transversais (Praticante, Arquiteto, Líder Técnico, Open Source)
+- **[[03-Domínios/IA/index|Formação Engenheiro de IA]]** — programa estruturado: 10 trilhas + 4 sendas transversais (Praticante, Arquiteto, Líder Técnico, Open Source)
 - **Trilhas atomizadas:**
     - [[Anatomia dos LLMs]] (17 notas) — fundamentos: tokens, atenção, modelos, APIs, treino, evaluation
     - [[Anatomia de Agents]] (9 notas) — fundamentos genéricos: ciclo, tools, memory, planning, multi-agent
@@ -137,7 +137,7 @@ Cada Domínio em `03-Domínios/` tem um portal de entrada (MOC com mesmo nome da
     - [[Memória de Agentes]] (23 notas) — Letta, Mem0, Zep, Generative Agents, A-MEM
     - [[RAG e Vector Databases]] (12 notas) — embeddings, chunking, retrieval, reranking, evaluation
     - [[MCP]] (10 notas) — Model Context Protocol, servers, segurança, ecossistema
-- **Overview:** [[Inteligência Artificial]] — portal panorâmico do campo
+- **Overview:** [[03-Domínios/IA/index|Inteligência Artificial]] — portal panorâmico do campo
 - **Ferramentas:** [[Ferramentas de IA/index|Ferramentas de IA]] — [[Claude]] · [[GitHub Copilot]] · [[Codex]] · [[Gemini]] · [[Comparativo de LLMs]]
 
 ## Domínio de Infraestrutura

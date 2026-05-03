@@ -122,7 +122,7 @@ graph TB
 - [[Anatomia de Agents]] — Agentic RAG
 - [[Economia de Tokens]] — custo de embeddings + queries
 - [[MCP]] — alternativa via tools quando RAG não cabe
-- [[Formação Engenheiro de IA]]
+- [[03-Domínios/IA/index|Formação Engenheiro de IA]]
 
 ## Todas as notas
 

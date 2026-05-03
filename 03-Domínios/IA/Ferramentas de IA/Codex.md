@@ -586,6 +586,6 @@ Padrões frequentes em times usando Codex em produção. Não são casos vividos
 - [[GitHub Copilot]]
 - [[Gemini]]
 - [[Comparativo de LLMs]]
-- [[Inteligência Artificial]]
+- [[03-Domínios/IA/index|Inteligência Artificial]]
 - [[MCP]]
 - [[Senda IA]]
