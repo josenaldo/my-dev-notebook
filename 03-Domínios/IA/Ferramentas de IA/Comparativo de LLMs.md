@@ -14,7 +14,7 @@ publish: true
 
 # Comparativo de LLMs
 
-> "Qual LLM devo usar?" é a pergunta que todo senior fullstack responde dezenas de vezes por ano. Esta nota é um framework de decisão prático, destilado de literatura técnica, post-mortems públicos, e benchmarks independentes. **Não existe "o melhor LLM"** — existe o melhor para cada combinação de (task, restrições de custo, restrições de latência, stack, compliance). Esta nota dá: uma matriz de decisão prática, trade-offs reais (não marketing), e critérios para escolher entre Claude, GPT, Gemini e ferramentas derivadas em 2026. Para notas individuais, ver [[Claude]], [[GitHub Copilot]], [[Codex]], [[Gemini]]. Para fundamentos de LLMs em geral, [[LLMs]].
+> "Qual LLM devo usar?" é a pergunta que todo senior fullstack responde dezenas de vezes por ano. Esta nota é um framework de decisão prático, destilado de literatura técnica, post-mortems públicos, e benchmarks independentes. **Não existe "o melhor LLM"** — existe o melhor para cada combinação de (task, restrições de custo, restrições de latência, stack, compliance). Esta nota dá: uma matriz de decisão prática, trade-offs reais (não marketing), e critérios para escolher entre Claude, GPT, Gemini e ferramentas derivadas em 2026. Para notas individuais, ver [[Claude]], [[GitHub Copilot]], [[Codex]], [[Gemini]]. Para fundamentos de LLMs em geral, [[Anatomia dos LLMs|LLMs]].
 
 ## A pergunta errada e a pergunta certa
 
@@ -695,13 +695,13 @@ Padrões frequentes em times escolhendo e migrando entre LLMs em 2026.
 
 ## Veja também
 
-- [[LLMs]] — fundamentos técnicos
+- [[Anatomia dos LLMs|LLMs]] — fundamentos técnicos
 - [[Claude]] — ecossistema Anthropic
 - [[GitHub Copilot]] — assistente integrado ao IDE
 - [[Codex]] — agent cloud da OpenAI
 - [[Gemini]] — família Google
 - [[Skills e Prompting]] — que funciona cross-model
-- [[Agents]] — padrões de agent independente de modelo
+- [[Anatomia de Agents|Agents]] — padrões de agent independente de modelo
 - [[RAG e Vector Databases]]
 - [[MCP]]
 - [[Inteligência Artificial]]

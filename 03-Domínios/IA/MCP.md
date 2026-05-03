@@ -858,8 +858,8 @@ Padrões frequentes em times usando MCP em produção. Não são casos vividos p
 ## Veja também
 
 - [[Inteligência Artificial]]
-- [[LLMs]]
-- [[Agents]] — MCP é infraestrutura para agents
+- [[Anatomia dos LLMs|LLMs]]
+- [[Anatomia de Agents|Agents]] — MCP é infraestrutura para agents
 - [[Skills e Prompting]]
 - [[RAG e Vector Databases]]
 - [[Claude]] — primeiro client de MCP

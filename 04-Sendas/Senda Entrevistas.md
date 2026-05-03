@@ -81,8 +81,8 @@ Roteiro de preparação para entrevistas de Senior Fullstack Developer em vagas 
 > IA como ferramenta de produtividade e feature de produto.
 
 - [ ] [[Inteligência Artificial]]
-- [ ] [[LLMs]]
-- [ ] [[Agents]]
+- [ ] [[Anatomia dos LLMs|LLMs]]
+- [ ] [[Anatomia de Agents|Agents]]
 - [ ] [[Skills e Prompting]]
 - [ ] [[Claude]]
 - [ ] [[GitHub Copilot]]

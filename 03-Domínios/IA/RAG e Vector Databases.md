@@ -703,7 +703,7 @@ RAG onde um **agent** decide o que buscar, quando buscar de novo, e quando parar
 - Mais imprevisível.
 - Harder to debug.
 
-Ver [[Agents]] para o conceito geral.
+Ver [[Anatomia de Agents|Agents]] para o conceito geral.
 
 ## Como ganhar experiência prática
 
@@ -942,9 +942,9 @@ Agent com tools `search`, `rerank`, `answer`, comparado com RAG fixo. Decida se 
 ## Veja também
 
 - [[Inteligência Artificial]]
-- [[LLMs]]
+- [[Anatomia dos LLMs|LLMs]]
 - [[Skills e Prompting]]
-- [[Agents]]
+- [[Anatomia de Agents|Agents]]
 - [[MCP]]
 - [[Claude]]
 - [[GitHub Copilot]]

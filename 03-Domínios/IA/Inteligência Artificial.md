@@ -131,7 +131,7 @@ Tópicos:
 - **Guardrails:** loop limits, human-in-the-loop, confirmation steps.
 - **Evaluation de agents:** muito mais difícil que LLM puro.
 
-Ver [[Agents]] para a trilha completa.
+Ver [[Anatomia de Agents|Agents]] para a trilha completa.
 
 Projetos:
 
@@ -883,9 +883,9 @@ Escolha um vetor da fase 6, defina projeto de 3 meses, execute. Exemplos:
 
 ## Veja também
 
-- [[LLMs]] — como LLMs funcionam por dentro
+- [[Anatomia dos LLMs|LLMs]] — como LLMs funcionam por dentro
 - [[Skills e Prompting]] — prompt engineering e context engineering
-- [[Agents]] — sistemas autônomos com LLMs
+- [[Anatomia de Agents|Agents]] — sistemas autônomos com LLMs
 - [[RAG e Vector Databases]] — injetar conhecimento em LLMs
 - [[MCP]] — Model Context Protocol
 - [[Claude]] — o ecossistema Anthropic

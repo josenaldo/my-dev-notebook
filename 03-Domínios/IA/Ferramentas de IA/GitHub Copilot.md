@@ -14,7 +14,7 @@ publish: true
 
 # GitHub Copilot
 
-> Copilot foi o primeiro coding assistant de IA que um dev normal podia usar em produção. Lançado em 2021, em 2026 virou um ecossistema completo: completions no editor, chat contextual, agent mode, workspace para features multi-arquivo, integração nativa com Pull Requests, GitHub Actions, e Issues. Se você vive no GitHub, Copilot é onde a IA aparece sem você precisar trocar de janela. Esta nota cobre as capabilities, como configurar bem (skills, instructions, chat modes), workflows reais, e quando usar Copilot em vez de (ou junto com) Claude Code. Para fundamentos de LLMs ver [[LLMs]]; para comparação geral ver [[Comparativo de LLMs]].
+> Copilot foi o primeiro coding assistant de IA que um dev normal podia usar em produção. Lançado em 2021, em 2026 virou um ecossistema completo: completions no editor, chat contextual, agent mode, workspace para features multi-arquivo, integração nativa com Pull Requests, GitHub Actions, e Issues. Se você vive no GitHub, Copilot é onde a IA aparece sem você precisar trocar de janela. Esta nota cobre as capabilities, como configurar bem (skills, instructions, chat modes), workflows reais, e quando usar Copilot em vez de (ou junto com) Claude Code. Para fundamentos de LLMs ver [[Anatomia dos LLMs|LLMs]]; para comparação geral ver [[Comparativo de LLMs]].
 
 ## O que é
 
@@ -673,9 +673,9 @@ Meça diferença em qualidade com/sem referências.
 
 ## Veja também
 
-- [[LLMs]]
+- [[Anatomia dos LLMs|LLMs]]
 - [[Skills e Prompting]]
-- [[Agents]]
+- [[Anatomia de Agents|Agents]]
 - [[Claude]]
 - [[Codex]]
 - [[Gemini]]

@@ -124,10 +124,19 @@ Cada Domínio em `03-Domínios/` tem um portal de entrada (MOC com mesmo nome da
 
 ## Domínio de Inteligência Artificial
 
-- [[IA]]
-- [[Inteligência Artificial]] · [[LLMs]] · [[Agents]] · [[Skills e Prompting]] · [[MCP]] · [[RAG e Vector Databases]]
-- **Memória de Agentes** (série de 23 notas): [[03-Domínios/IA/Memória de Agentes/index]] — taxonomia, RAG vs memória, implementações (Letta, Mem0, Zep, Graphiti, Generative Agents, A-MEM), guia de implementação
-- **Ferramentas:** [[Claude]] · [[GitHub Copilot]] · [[Codex]] · [[Gemini]] · [[Comparativo de LLMs]]
+- [[03-Domínios/IA/index|IA]] — portal do domínio com 8 trilhas + notas conceituais + ferramentas
+- **[[Formação Engenheiro de IA]]** — programa estruturado: 8 trilhas + 4 sendas transversais (Praticante, Arquiteto, Líder Técnico, Open Source)
+- **Trilhas atomizadas:**
+    - [[Anatomia dos LLMs]] (17 notas) — fundamentos: tokens, atenção, modelos, APIs, treino, evaluation
+    - [[Anatomia de Agents]] (9 notas) — fundamentos genéricos: ciclo, tools, memory, planning, multi-agent
+    - [[Agentes de Codificação]] (18 notas) — Cursor, Claude Code, Copilot, Aider, MCP
+    - [[Economia de Tokens]] (20 notas) — prompt caching, pruning, sub-agents, ROI
+    - [[Context Engineering]] (14 notas) — pipelines, camadas, JIT, compactação
+    - [[Spec-Driven Development]] (12 notas) — Specify→Plan→Tasks→Implement, Kiro, Spec Kit
+    - [[Segurança e Guardrails]] (12 notas) — SAST, sandbox, slopsquat, EU AI Act
+    - [[Memória de Agentes]] (23 notas) — Letta, Mem0, Zep, Generative Agents, A-MEM
+- **Notas conceituais:** [[Inteligência Artificial]] · [[Skills e Prompting]] · [[RAG e Vector Databases]] · [[MCP]]
+- **Ferramentas:** [[Ferramentas de IA/index|Ferramentas de IA]] — [[Claude]] · [[GitHub Copilot]] · [[Codex]] · [[Gemini]] · [[Comparativo de LLMs]]
 
 ## Domínio de Infraestrutura
 

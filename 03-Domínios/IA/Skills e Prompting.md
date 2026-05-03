@@ -162,7 +162,7 @@ Thought: I have the answer.
 Answer: 15°C and cloudy in San Francisco.
 ```
 
-Em 2026 a maioria das implementações usa **tool use nativo** do modelo em vez de formatação ReAct textual, mas o mental model é o mesmo. Ver [[Agents]].
+Em 2026 a maioria das implementações usa **tool use nativo** do modelo em vez de formatação ReAct textual, mas o mental model é o mesmo. Ver [[Anatomia de Agents|Agents]].
 
 ### Role / persona prompting
 
@@ -736,7 +736,7 @@ Generalização de CoT: o modelo gera múltiplos "pensamentos" em árvore, avali
 
 ### ReAct (Yao et al., 2022)
 
-Paper que propôs intercalar "Reasoning" (CoT) com "Acting" (tool calls) em agents. Virou padrão para agents modernos. Ver [[Agents]] para deep dive.
+Paper que propôs intercalar "Reasoning" (CoT) com "Acting" (tool calls) em agents. Virou padrão para agents modernos. Ver [[Anatomia de Agents|Agents]] para deep dive.
 
 [Paper](https://arxiv.org/abs/2210.03629)
 
@@ -906,8 +906,8 @@ Projeto tinha várias skills customizadas em `.claude/skills/`. Uma skill "auto-
 ## Veja também
 
 - [[Inteligência Artificial]]
-- [[LLMs]]
-- [[Agents]]
+- [[Anatomia dos LLMs|LLMs]]
+- [[Anatomia de Agents|Agents]]
 - [[RAG e Vector Databases]]
 - [[MCP]]
 - [[Claude]]

@@ -98,7 +98,7 @@ Mês 12+   | Fase 6: Especialização
 ### Notas de apoio (Fase 1)
 
 - [[Inteligência Artificial]] — trilha completa de conceitos
-- [[LLMs]] — fundamentos de arquitetura
+- [[Anatomia dos LLMs|LLMs]] — fundamentos de arquitetura
 
 ### Checkpoint da Fase 1
 
@@ -141,7 +141,7 @@ Mês 12+   | Fase 6: Especialização
 
 ### Notas de apoio (Fase 2)
 
-- [[LLMs]] — parâmetros da API, tokenização, sampling
+- [[Anatomia dos LLMs|LLMs]] — parâmetros da API, tokenização, sampling
 - [[Skills e Prompting]] — técnicas e context engineering
 
 ### Checkpoint da Fase 2
@@ -189,7 +189,7 @@ Mês 12+   | Fase 6: Especialização
 ### Notas de apoio (Fase 3)
 
 - [[RAG e Vector Databases]] — trilha completa
-- [[LLMs]] — embeddings, context window
+- [[Anatomia dos LLMs|LLMs]] — embeddings, context window
 
 ### Checkpoint da Fase 3
 
@@ -228,7 +228,7 @@ Mês 12+   | Fase 6: Especialização
 
 ### Notas de apoio (Fase 4)
 
-- [[Agents]] — trilha completa
+- [[Anatomia de Agents|Agents]] — trilha completa
 - [[MCP]] — protocolo e construção de servers
 - [[Skills e Prompting]] — context engineering e skills
 
@@ -290,8 +290,8 @@ Mês 12+   | Fase 6: Especialização
 
 ### Notas de apoio (Fase 5)
 
-- [[LLMs]] — seções de evaluation e produção
-- [[Agents]] — guardrails e evaluation de agents
+- [[Anatomia dos LLMs|LLMs]] — seções de evaluation e produção
+- [[Anatomia de Agents|Agents]] — guardrails e evaluation de agents
 - [[RAG e Vector Databases]] — evaluation de RAG
 
 ### Checkpoint da Fase 5
@@ -403,9 +403,9 @@ Isso é um portfolio forte. Acompanhe cada repo com README que explica decisões
 
 - [[IA]] — MOC de IA
 - [[Inteligência Artificial]] — conceitos fundamentais
-- [[LLMs]]
+- [[Anatomia dos LLMs|LLMs]]
 - [[Skills e Prompting]]
-- [[Agents]]
+- [[Anatomia de Agents|Agents]]
 - [[RAG e Vector Databases]]
 - [[MCP]]
 - [[Claude]]

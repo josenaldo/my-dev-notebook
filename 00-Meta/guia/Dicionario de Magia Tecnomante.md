@@ -98,8 +98,8 @@ publish: true
 
 - [[README]]
 - [[IA]]
-- [[LLMs]]
-- [[Agents]]
+- [[Anatomia dos LLMs|LLMs]]
+- [[Anatomia de Agents|Agents]]
 - [[Skills e Prompting]]
 - [[Arquitetura]]
 - [[Fundamentos]]

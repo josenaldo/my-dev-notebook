@@ -14,7 +14,7 @@ publish: true
 
 # Claude
 
-> Claude é uma das três famílias de LLM dominantes em 2026 (junto com GPT e Gemini), com diferenciais técnicos concretos: qualidade de raciocínio em tarefas longas, tool use consistente, contexto de 1M tokens com retenção razoável (não só "no benchmark"), Claude Agent SDK limpo, e ecossistema maduro de MCP, skills e subagents. Para muitos workloads de coding e agents, é a escolha default em times sérios. Esta nota é a trilha completa: modelos, API, ferramentas (Claude Code, Desktop, web), como operar em produção, e como adotar progressivamente. Para fundamentos de LLMs em geral ver [[LLMs]]; para comparação com outros modelos ver [[Comparativo de LLMs]].
+> Claude é uma das três famílias de LLM dominantes em 2026 (junto com GPT e Gemini), com diferenciais técnicos concretos: qualidade de raciocínio em tarefas longas, tool use consistente, contexto de 1M tokens com retenção razoável (não só "no benchmark"), Claude Agent SDK limpo, e ecossistema maduro de MCP, skills e subagents. Para muitos workloads de coding e agents, é a escolha default em times sérios. Esta nota é a trilha completa: modelos, API, ferramentas (Claude Code, Desktop, web), como operar em produção, e como adotar progressivamente. Para fundamentos de LLMs em geral ver [[Anatomia dos LLMs|LLMs]]; para comparação com outros modelos ver [[Comparativo de LLMs]].
 
 ## O que é
 
@@ -862,9 +862,9 @@ Padrões frequentes em times usando Claude em produção. Não são casos vivido
 
 ## Veja também
 
-- [[LLMs]] — fundamentos de LLMs
+- [[Anatomia dos LLMs|LLMs]] — fundamentos de LLMs
 - [[Skills e Prompting]] — prompt/context engineering
-- [[Agents]] — construção de agents
+- [[Anatomia de Agents|Agents]] — construção de agents
 - [[RAG e Vector Databases]]
 - [[MCP]] — protocolo criado pela Anthropic
 - [[GitHub Copilot]]

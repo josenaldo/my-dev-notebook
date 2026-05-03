@@ -15,7 +15,7 @@ publish: true
 
 # Codex
 
-> Codex é a aposta da OpenAI em **coding agent cloud-based**: diferente de Claude Code ou Copilot (que rodam no seu IDE local), Codex opera em um sandbox na nuvem, recebe tarefas em linguagem natural, executa num ambiente isolado com seu repo clonado, e retorna um PR. Para um senior dev, o valor de Codex é diferente do uso diário: **tasks paralelas, trabalho assíncrono, e separação de concerns** — você descreve o que precisa, fecha o laptop, e volta horas depois com PRs prontos para review. Esta nota cobre o que Codex é em 2026 (muito diferente do "Codex 2021" original que era só o modelo), como usar, trade-offs, e quando faz sentido adotar. Para comparação com outras ferramentas, ver [[Comparativo de LLMs]]; para o padrão de agents em geral, [[Agents]].
+> Codex é a aposta da OpenAI em **coding agent cloud-based**: diferente de Claude Code ou Copilot (que rodam no seu IDE local), Codex opera em um sandbox na nuvem, recebe tarefas em linguagem natural, executa num ambiente isolado com seu repo clonado, e retorna um PR. Para um senior dev, o valor de Codex é diferente do uso diário: **tasks paralelas, trabalho assíncrono, e separação de concerns** — você descreve o que precisa, fecha o laptop, e volta horas depois com PRs prontos para review. Esta nota cobre o que Codex é em 2026 (muito diferente do "Codex 2021" original que era só o modelo), como usar, trade-offs, e quando faz sentido adotar. Para comparação com outras ferramentas, ver [[Comparativo de LLMs]]; para o padrão de agents em geral, [[Anatomia de Agents|Agents]].
 
 ## O que é
 
@@ -579,8 +579,8 @@ Padrões frequentes em times usando Codex em produção. Não são casos vividos
 
 ## Veja também
 
-- [[LLMs]]
-- [[Agents]]
+- [[Anatomia dos LLMs|LLMs]]
+- [[Anatomia de Agents|Agents]]
 - [[Skills e Prompting]]
 - [[Claude]]
 - [[GitHub Copilot]]
