@@ -1,7 +1,7 @@
 ---
 title: "Trilha IA"
 created: 2026-04-01
-updated: 2026-04-11
+updated: 2026-05-02
 type: moc
 status: evergreen
 tags:
@@ -15,6 +15,13 @@ publish: true
 # Trilha IA
 
 > Roadmap estruturado para um fullstack senior sair de **zero conhecimento em IA** até **domínio operacional** em ~9-12 meses de estudo consistente (10-15h/semana). Esta é a trilha que eu seguiria hoje se tivesse que recomeçar. Otimizada para **shipping features com IA em produção**, não para virar ML researcher. Cada fase tem objetivo claro, checkpoints de progresso, e links para as notas evergreen correspondentes.
+
+> [!info] Esta senda vs Formação Engenheiro de IA
+> **Esta senda** é um **roadmap pessoal** com fases mensais, projetos hands-on e checkpoints. É o "como eu estudaria do zero".
+>
+> A **[[Formação Engenheiro de IA]]** é um **curriculum de leitura** com 8 trilhas atomizadas + 4 sendas transversais (Praticante, Arquiteto, Líder Técnico, Open Source). É a "biblioteca de referência".
+>
+> As duas se complementam: use **esta senda** para definir o que estudar quando; use a **Formação** como fonte de notas detalhadas em cada fase.
 
 ## Princípios da trilha
 
@@ -228,9 +235,11 @@ Mês 12+   | Fase 6: Especialização
 
 ### Notas de apoio (Fase 4)
 
-- [[Anatomia de Agents|Agents]] — trilha completa
+- [[Anatomia de Agents]] — trilha completa de fundamentos genéricos
+- [[Agentes de Codificação]] — coding agents (Cursor, Claude Code, Copilot)
+- [[Context Engineering]] — pipelines, camadas, JIT retrieval, AGENTS.md
 - [[MCP]] — protocolo e construção de servers
-- [[Skills e Prompting]] — context engineering e skills
+- [[Skills e Prompting]] — técnicas de prompting
 
 ### Checkpoint da Fase 4
 
@@ -290,8 +299,11 @@ Mês 12+   | Fase 6: Especialização
 
 ### Notas de apoio (Fase 5)
 
-- [[Anatomia dos LLMs|LLMs]] — seções de evaluation e produção
-- [[Anatomia de Agents|Agents]] — guardrails e evaluation de agents
+- [[Anatomia dos LLMs|17 - Evaluation de LLMs em produção]] — golden set, LLM-as-judge, traces
+- [[Anatomia de Agents|09 - Evaluation de agents]] — task completion, regression tests
+- [[Economia de Tokens]] — trilha completa: monitoramento, hard limits, ROI
+- [[Segurança e Guardrails]] — trilha completa: SAST, sandbox, slopsquat, EU AI Act
+- [[Spec-Driven Development]] — disciplina sobre AI code, validation contínua
 - [[RAG e Vector Databases]] — evaluation de RAG
 
 ### Checkpoint da Fase 5
@@ -401,17 +413,12 @@ Isso é um portfolio forte. Acompanhe cada repo com README que explica decisões
 
 ## Veja também
 
-- [[IA]] — MOC de IA
-- [[Inteligência Artificial]] — conceitos fundamentais
-- [[Anatomia dos LLMs|LLMs]]
-- [[Skills e Prompting]]
-- [[Anatomia de Agents|Agents]]
-- [[RAG e Vector Databases]]
-- [[MCP]]
-- [[Claude]]
-- [[GitHub Copilot]]
-- [[Codex]]
-- [[Gemini]]
-- [[Comparativo de LLMs]]
-- [[Claude Course]]
-- [[Senda Entrevistas]]
+- [[03-Domínios/IA/index|IA]] — portal do domínio
+- [[Formação Engenheiro de IA]] — curriculum estruturado em 8 trilhas + 4 sendas transversais
+- **Trilhas atomizadas:**
+    - [[Anatomia dos LLMs]] · [[Anatomia de Agents]] · [[Agentes de Codificação]]
+    - [[Economia de Tokens]] · [[Context Engineering]] · [[Spec-Driven Development]] · [[Segurança e Guardrails]]
+    - [[Memória de Agentes]]
+- **Notas conceituais:** [[Inteligência Artificial]] · [[Skills e Prompting]] · [[RAG e Vector Databases]] · [[MCP]]
+- **Ferramentas:** [[Claude]] · [[GitHub Copilot]] · [[Codex]] · [[Gemini]] · [[Comparativo de LLMs]]
+- **Sendas relacionadas:** [[Senda Entrevistas]]
