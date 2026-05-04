@@ -31,6 +31,13 @@ Estante de **engenharia frontend** — disciplina cross-tecnologia. Cobre arquit
 
 (notas serão adicionadas conforme amadurecimento)
 
+## Aprofundamento
+
+> [!convite] Aprofundamento — padrões de design frontend
+> - [Frontend Design Patterns](https://www.netguru.com/blog/frontend-design-patterns?ref=dailydev) — netguru
+>
+> Consumiu? Faça uma glosa em `02-Glosas/` e amadureça pro domínio quando fizer sentido.
+
 ## Veja também
 
 - [[Senda Frontend]]
