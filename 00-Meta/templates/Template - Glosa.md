@@ -6,9 +6,12 @@ author:
 site: 
 published: 
 read: <% tp.date.now("YYYY-MM-DD") %>
+created: <% tp.date.now("YYYY-MM-DD") %>
+updated: <% tp.date.now("YYYY-MM-DD") %>
 type: glosa
 status: lido
 progresso: andamento
+promovida_em: []
 tags:
   - 
 lang: 
