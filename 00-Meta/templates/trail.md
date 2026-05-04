@@ -1,18 +1,70 @@
 ---
 type: trail
-title: "My Trail"
-description: ""
-level: beginner
-prerequisites: []
-tags: []
+title: "Senda <% tp.file.title %>"
+domain: "[[03-Domínios/<Domínio>/index]]"
+maturity: minimal
 status: active
-created: 2024-01-01
+publish: true
+created: <% tp.date.now("YYYY-MM-DD") %>
+updated: <% tp.date.now("YYYY-MM-DD") %>
+tags:
+  - senda
 ---
 
-## Goal
+# Senda <% tp.file.title %>
 
-<trail description>
+> Pra quem é, qual o destino, em quanto tempo.
 
-## Modules
+## Pré-requisitos
 
-- 
+- [[03-Domínios/<Outro Domínio>/<nota>]]
+
+## Sequência
+
+<!--
+Versão MINIMAL (lista plana ordenada). Use esta forma se a senda é direta
+e não precisa ser dividida em fases.
+-->
+
+1. [[03-Domínios/<Domínio>/<Nota A>]]
+2. [[03-Domínios/<Domínio>/<Nota B>]]
+3. [[03-Domínios/<Domínio>/<Nota C>]]
+
+<!--
+Versão STRUCTURED (com fases). Comente a "## Sequência" acima e descomente
+o bloco abaixo. Atualize o frontmatter pra `maturity: structured`.
+
+## Fase 0 — <Tema>
+
+1. [[03-Domínios/<Domínio>/<Nota A>]]
+2. [[03-Domínios/<Domínio>/<Nota B>]]
+
+## Fase 1 — <Tema>
+
+1. [[03-Domínios/<Domínio>/<Nota C>]]
+-->
+
+## Progresso
+
+```dataview
+TABLE WITHOUT ID
+  file.link AS "Nota",
+  default(progresso, "pendente") AS "Status"
+FROM outgoing([[]])
+WHERE file.path != this.file.path AND contains(file.path, "03-Domínios/")
+SORT file.name ASC
+```
+
+**Resumo:**
+
+```dataview
+TABLE WITHOUT ID
+  length(rows) AS "Total",
+  length(filter(rows, (r) => default(r.progresso, "pendente") = "feito")) AS "Feitas",
+  length(filter(rows, (r) => default(r.progresso, "pendente") = "andamento")) AS "Em andamento",
+  length(filter(rows, (r) => default(r.progresso, "pendente") = "pausado")) AS "Pausadas",
+  length(filter(rows, (r) => default(r.progresso, "pendente") = "pendente")) AS "Pendentes"
+FROM outgoing([[]])
+WHERE file.path != this.file.path AND contains(file.path, "03-Domínios/")
+GROUP BY true
+```
