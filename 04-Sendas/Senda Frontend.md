@@ -58,7 +58,7 @@ tags:
 
 ```dataview
 TABLE WITHOUT ID
-  link(file.path, regexreplace(file.folder, ".*/", "") + "/" + file.name) AS "Nota",
+  link(file.path, regexreplace(file.folder, "^03-Domínios/", "") + "/" + file.name) AS "Nota",
   default(progresso, "pendente") AS "Status"
 FROM outgoing([[]])
 WHERE file.path != this.file.path AND contains(file.path, "03-Domínios/")
