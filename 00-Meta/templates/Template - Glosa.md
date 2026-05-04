@@ -8,6 +8,7 @@ published:
 read: <% tp.date.now("YYYY-MM-DD") %>
 type: glosa
 status: lido
+progresso: andamento
 tags:
   - 
 lang: 
