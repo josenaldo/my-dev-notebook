@@ -6,8 +6,12 @@ author: google-labs-code
 site: GitHub
 published:
 read: 2026-04-27
+created: 2026-04-27
+updated: 2026-05-04
 type: glosa
 status: lido
+progresso: andamento
+promovida_em: []
 tags: [design-systems, design-tokens, coding-agents, specification]
 lang: en
 publish: false
