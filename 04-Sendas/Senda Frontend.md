@@ -58,11 +58,11 @@ tags:
 
 ```dataview
 TABLE WITHOUT ID
-  file.link AS "Nota",
+  link(file.path, regexreplace(file.folder, ".*/", "") + "/" + file.name) AS "Nota",
   default(progresso, "pendente") AS "Status"
 FROM outgoing([[]])
 WHERE file.path != this.file.path AND contains(file.path, "03-Domínios/")
-SORT file.name ASC
+SORT file.folder ASC, file.name ASC
 ```
 
 **Resumo:**
