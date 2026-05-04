@@ -30,6 +30,17 @@ publish: false
 
 <!-- O que evitar, erros frequentes -->
 
+## Fontes
+
+<!--
+Glosas e outras fontes que alimentaram esta nota. Wikilinks pras glosas
+em `02-Glosas/Promovidas/<ano>/` (ou raiz, se ainda não promovidas).
+Skills /promover-glosa e /sintetizar-glosas populam essa seção
+automaticamente.
+
+- [[02-Glosas/Promovidas/2026/2026-exemplo-slug|Título da glosa]]
+-->
+
 ## Aprofundamento
 
 <!--
