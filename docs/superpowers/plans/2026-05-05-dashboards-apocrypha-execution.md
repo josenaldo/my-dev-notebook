@@ -4,7 +4,7 @@
 
 **Goal:** Habilitar cross-vault awareness no apocrypha via symlink relativo, e criar três dashboards Dataview (progresso agregado, "estudar hoje", cross-glosa) que cruzam dados do vault público a partir do apocrypha.
 
-**Architecture:** Symlink relativo `Apocrypha/Codex` → `../../codex-technomanticus` (versionado pelo Git como mode 120000). Três notas de dashboard em `Apocrypha/00-Meta/dashboards/` com queries Dataview/DataviewJS lendo `Apocrypha/Codex/...`. Sem código de runtime, sem cópia de dados, sem alteração no público. Desktop-only (Android via GitSync não suporta).
+**Architecture:** Symlink relativo `Codex` → `../codex-technomanticus` (versionado pelo Git como mode 120000). Três notas de dashboard em `00-Meta/dashboards/` com queries Dataview/DataviewJS lendo `Codex/...`. Sem código de runtime, sem cópia de dados, sem alteração no público. Desktop-only (Android via GitSync não suporta).
 
 **Tech Stack:** Markdown + YAML frontmatter, Obsidian (Dataview, Templater), Git (com `core.symlinks=true`).
 
@@ -18,11 +18,11 @@
 
 | Arquivo | Ação | Responsabilidade |
 |---|---|---|
-| `Apocrypha/Codex` | Create (symlink) | Symlink relativo → `../../codex-technomanticus`. Habilita Dataview a indexar o público. |
-| `Apocrypha/00-Meta/README.md` | Create ou Modify | Nota operacional: precondição de layout, limitação mobile, comando de recriar symlink. |
-| `Apocrypha/00-Meta/dashboards/Dashboard - Progresso agregado.md` | Create | Dashboard 1: totais globais + por domínio + por senda. |
-| `Apocrypha/00-Meta/dashboards/Dashboard - O que estudar hoje.md` | Create | Dashboard 2: em andamento (sorted) + convites em sendas ativas. |
-| `Apocrypha/00-Meta/dashboards/Dashboard - Cross-glosa.md` | Create | Dashboard 3: métricas + fila + top tags + promoções recentes. |
+| `Codex` | Create (symlink) | Symlink relativo → `../codex-technomanticus`. Habilita Dataview a indexar o público. |
+| `00-Meta/README.md` | Create ou Modify | Nota operacional: precondição de layout, limitação mobile, comando de recriar symlink. |
+| `00-Meta/dashboards/Dashboard - Progresso agregado.md` | Create | Dashboard 1: totais globais + por domínio + por senda. |
+| `00-Meta/dashboards/Dashboard - O que estudar hoje.md` | Create | Dashboard 2: em andamento (sorted) + convites em sendas ativas. |
+| `00-Meta/dashboards/Dashboard - Cross-glosa.md` | Create | Dashboard 3: métricas + fila + top tags + promoções recentes. |
 
 ### Repos NÃO afetados
 
@@ -36,7 +36,7 @@
 - **Sem testes automatizados.** Dashboards são markdown + queries Dataview. Validação é visual no Obsidian (renderiza? colunas batem? totais batem com sample manual?).
 - **Sem TDD.** Não aplicável.
 - **Commits frequentes.** Cada task termina com 1 commit. Mensagens em português; **NÃO usar `Co-Authored-By: Claude`**.
-- **Caracteres especiais nos paths.** `Apocrypha`, `03-Domínios`, etc. — preservar acentos (e o nome `Dashboard - O que estudar hoje.md` tem espaços + traço).
+- **Caracteres especiais nos paths.** `03-Domínios`, etc. — preservar acentos (e o nome `Dashboard - O que estudar hoje.md` tem espaços + traço).
 - **Desktop-only:** dashboards não funcionam no Android. Documentar no README.
 - **Hoje é 2026-05-05.**
 - **Vault público NÃO é tocado.** Restrição absoluta.
@@ -91,25 +91,26 @@ Sem commit nesta task — só verificação.
 
 ---
 
-## Task 2: Criar e versionar o symlink `Apocrypha/Codex`
+## Task 2: Criar e versionar o symlink `Codex`
 
 **Files:**
-- Create: `Apocrypha/Codex` (symlink relativo → `../../codex-technomanticus`)
+- Create: `Codex` (symlink relativo → `../codex-technomanticus`)
 
-- [ ] **Step 1: Confirmar diretório alvo**
+- [ ] **Step 1: Confirmar raiz do apocrypha**
 
 ```bash
 cd ~/repos/personal/codex-technomanticus-apocrypha
-ls -d Apocrypha/
+ls -d 00-Meta 02-Glosas 03-Domínios 04-Sendas 2>&1
+test ! -e Codex && echo "Codex ausente — ok pra criar" || echo "Codex já existe — investigar antes"
 ```
 
-Expected: `Apocrypha/` listado. Se a pasta `Apocrypha/` não existir nesse repo, parar e investigar (estrutura do apocrypha pode ter mudado).
+Expected: as 4 pastas existentes listadas + "Codex ausente — ok pra criar". Se `Codex` já existir, parar e investigar.
 
 - [ ] **Step 2: Criar o symlink relativo**
 
 ```bash
-cd ~/repos/personal/codex-technomanticus-apocrypha/Apocrypha
-ln -s ../../codex-technomanticus Codex
+cd ~/repos/personal/codex-technomanticus-apocrypha
+ln -s ../codex-technomanticus Codex
 ```
 
 - [ ] **Step 3: Validar que o symlink resolve**
@@ -120,7 +121,7 @@ ls Codex/03-Domínios | head -5
 ```
 
 Expected:
-- `ls -la Codex` mostra `Codex -> ../../codex-technomanticus`.
+- `ls -la Codex` mostra `Codex -> ../codex-technomanticus`.
 - `ls Codex/03-Domínios` lista pastas de domínio do público (Arquitetura, JavaScript, IA, etc.).
 
 Se `ls Codex/...` der "No such file", o symlink está dangling — verificar layout e posição relativa.
@@ -130,44 +131,44 @@ Se `ls Codex/...` der "No such file", o symlink está dangling — verificar lay
 ```bash
 cd ~/repos/personal/codex-technomanticus-apocrypha
 git status
-git ls-files --stage Apocrypha/Codex 2>/dev/null  # após add
+git ls-files --stage Codex 2>/dev/null  # após add
 ```
 
-`git status` deve mostrar `Apocrypha/Codex` como untracked. Ainda sem `git ls-files` neste momento (não foi add'ed).
+`git status` deve mostrar `Codex` como untracked. Ainda sem `git ls-files` neste momento (não foi add'ed).
 
 - [ ] **Step 5: Adicionar e commitar**
 
 ```bash
 cd ~/repos/personal/codex-technomanticus-apocrypha
-git add Apocrypha/Codex
-git ls-files --stage Apocrypha/Codex
+git add Codex
+git ls-files --stage Codex
 ```
 
 Expected do `git ls-files --stage`: linha começando com `120000 ...` (mode de symlink, NÃO `100644`). Se vier `100644`, o Git não reconheceu como symlink — abortar, configurar `core.symlinks=true`, remover o arquivo, recriar com `ln -s`.
 
 ```bash
-git commit -m "chore: symlink relativo Apocrypha/Codex → vault público"
+git commit -m "chore: symlink relativo Codex → vault público"
 ```
 
 ---
 
-## Task 3: Criar nota operacional `Apocrypha/00-Meta/README.md`
+## Task 3: Criar nota operacional `00-Meta/README.md`
 
 **Files:**
-- Create ou Modify: `Apocrypha/00-Meta/README.md`
+- Create ou Modify: `00-Meta/README.md`
 
-- [ ] **Step 1: Verificar se a pasta `Apocrypha/00-Meta/` existe; criar se não**
+- [ ] **Step 1: Verificar se a pasta `00-Meta/` existe; criar se não**
 
 ```bash
 cd ~/repos/personal/codex-technomanticus-apocrypha
-mkdir -p Apocrypha/00-Meta
-ls Apocrypha/00-Meta/
+mkdir -p 00-Meta
+ls 00-Meta/
 ```
 
 - [ ] **Step 2: Verificar se README.md já existe**
 
 ```bash
-test -f Apocrypha/00-Meta/README.md && cat Apocrypha/00-Meta/README.md || echo "Não existe — criar do zero"
+test -f 00-Meta/README.md && cat 00-Meta/README.md || echo "Não existe — criar do zero"
 ```
 
 Se existir conteúdo: anexar a seção nova ao final, preservando o que já está lá. Se não existir: criar do zero com o conteúdo completo abaixo.
@@ -188,7 +189,7 @@ publish: false
 
 ## Cross-vault awareness (symlink → vault público)
 
-O apocrypha enxerga o vault público (`codex-technomanticus`) através do symlink relativo `Apocrypha/Codex` → `../../codex-technomanticus`. Isso habilita os dashboards em `Apocrypha/00-Meta/dashboards/` a rodarem queries Dataview contra os arquivos do público sem cópia de dados.
+O apocrypha enxerga o vault público (`codex-technomanticus`) através do symlink relativo `Codex` → `../codex-technomanticus`. Isso habilita os dashboards em `00-Meta/dashboards/` a rodarem queries Dataview contra os arquivos do público sem cópia de dados.
 
 ### Pré-condição de layout
 
@@ -205,9 +206,9 @@ No desktop atual: `~/repos/personal/`. Em qualquer máquina nova, basta clonar o
 ### Recriar o symlink (se quebrado)
 
 \`\`\`bash
-cd <base>/codex-technomanticus-apocrypha/Apocrypha
+cd <base>/codex-technomanticus-apocrypha
 rm -f Codex
-ln -s ../../codex-technomanticus Codex
+ln -s ../codex-technomanticus Codex
 \`\`\`
 
 ### Limitação mobile (Android + GitSync)
@@ -215,11 +216,11 @@ ln -s ../../codex-technomanticus Codex
 Symlinks **não funcionam** no Android com a stack atual:
 
 - O storage acessível ao Obsidian (`/storage/emulated/0/`) é FUSE/sdcardfs e bloqueia `symlink()` em muitos ROMs.
-- JGit (motor do GitSync) materializa o symlink como arquivo-texto contendo `../../codex-technomanticus` — não é referência funcional.
+- JGit (motor do GitSync) materializa o symlink como arquivo-texto contendo `../codex-technomanticus` — não é referência funcional.
 - Mesmo se criado, Obsidian Mobile não atravessa o symlink de forma confiável.
 
 **Resultado prático no celular/tablet:**
-- A pasta `Apocrypha/Codex/` aparece como arquivo (ou inválida).
+- A pasta `Codex/` aparece como arquivo (ou inválida).
 - Os 3 dashboards renderizam **vazios**.
 - Daily notes, drafts, glosas e demais conteúdos do apocrypha funcionam normalmente.
 
@@ -229,7 +230,7 @@ Symlinks **não funcionam** no Android com a stack atual:
 Comando:
 
 ```bash
-cat > Apocrypha/00-Meta/README.md << 'EOF'
+cat > 00-Meta/README.md << 'EOF'
 [colar o conteúdo acima — atenção: o exemplo de árvore usa \`\`\` escapado pra não fechar o heredoc; remover as barras invertidas ao colar]
 EOF
 ```
@@ -239,7 +240,7 @@ EOF
 - [ ] **Step 4: Verificar conteúdo escrito**
 
 ```bash
-cat Apocrypha/00-Meta/README.md | head -20
+cat 00-Meta/README.md | head -20
 ```
 
 Expected: frontmatter + título + início da seção "Cross-vault awareness".
@@ -247,7 +248,7 @@ Expected: frontmatter + título + início da seção "Cross-vault awareness".
 - [ ] **Step 5: Commitar**
 
 ```bash
-git add Apocrypha/00-Meta/README.md
+git add 00-Meta/README.md
 git commit -m "docs: README operacional do apocrypha (cross-vault + limitação mobile)"
 ```
 
@@ -256,19 +257,19 @@ git commit -m "docs: README operacional do apocrypha (cross-vault + limitação 
 ## Task 4: Criar `Dashboard - Progresso agregado.md`
 
 **Files:**
-- Create: `Apocrypha/00-Meta/dashboards/Dashboard - Progresso agregado.md`
+- Create: `00-Meta/dashboards/Dashboard - Progresso agregado.md`
 
 - [ ] **Step 1: Criar a pasta `dashboards/`**
 
 ```bash
 cd ~/repos/personal/codex-technomanticus-apocrypha
-mkdir -p Apocrypha/00-Meta/dashboards
-ls Apocrypha/00-Meta/dashboards/
+mkdir -p 00-Meta/dashboards
+ls 00-Meta/dashboards/
 ```
 
 - [ ] **Step 2: Escrever o arquivo**
 
-Caminho exato (atenção aos espaços no nome): `Apocrypha/00-Meta/dashboards/Dashboard - Progresso agregado.md`.
+Caminho exato (atenção aos espaços no nome): `00-Meta/dashboards/Dashboard - Progresso agregado.md`.
 
 Conteúdo completo:
 
@@ -282,7 +283,7 @@ publish: false
 
 # Dashboard — Progresso agregado
 
-Visão consolidada do estado de estudo cruzando dados do vault público (`Apocrypha/Codex/`).
+Visão consolidada do estado de estudo cruzando dados do vault público (`Codex/`).
 
 ## Totais globais (notas de domínio)
 
@@ -294,14 +295,14 @@ TABLE WITHOUT ID
   length(filter(rows, (r) => default(r.progresso, "pendente") = "pausado")) AS "Pausadas",
   length(filter(rows, (r) => default(r.progresso, "pendente") = "abandonado")) AS "Abandonadas",
   length(filter(rows, (r) => default(r.progresso, "pendente") = "pendente")) AS "Pendentes"
-FROM "Apocrypha/Codex/03-Domínios"
+FROM "Codex/03-Domínios"
 GROUP BY true
 ```
 
 ## Por domínio
 
 ```dataviewjs
-const pages = dv.pages('"Apocrypha/Codex/03-Domínios"');
+const pages = dv.pages('"Codex/03-Domínios"');
 
 const groups = {};
 for (const p of pages) {
@@ -327,7 +328,7 @@ dv.table(["Domínio", "Feitas", "Andamento", "Pausadas", "Abandonadas", "Pendent
 ## Por senda
 
 ```dataviewjs
-const sendas = dv.pages('"Apocrypha/Codex/04-Sendas"');
+const sendas = dv.pages('"Codex/04-Sendas"');
 
 const rows = [];
 for (const senda of sendas) {
@@ -355,7 +356,7 @@ Use o tool `Write` (não `cat <<EOF`) — heredoc com markdown nested codeblocks
 
 - [ ] **Step 3: Validação visual no Obsidian**
 
-Abrir o Obsidian no apocrypha. Navegar até `Apocrypha/00-Meta/dashboards/Dashboard - Progresso agregado.md`. Confirmar:
+Abrir o Obsidian no apocrypha. Navegar até `00-Meta/dashboards/Dashboard - Progresso agregado.md`. Confirmar:
 
 - 3 blocos renderizam (não aparecem como código bruto).
 - Bloco 1 mostra uma única linha com 6 colunas.
@@ -366,7 +367,7 @@ Se aparecer "No results" em algum bloco: provavelmente o symlink não resolve OU
 
 - [ ] **Step 4: Smoke test cruzado**
 
-Pegar 1 domínio (ex: `JavaScript`). Contar manualmente notas em `Apocrypha/Codex/03-Domínios/JavaScript/` (ou `~/repos/personal/codex-technomanticus/03-Domínios/JavaScript/`):
+Pegar 1 domínio (ex: `JavaScript`). Contar manualmente notas em `Codex/03-Domínios/JavaScript/` (ou `~/repos/personal/codex-technomanticus/03-Domínios/JavaScript/`):
 
 ```bash
 find ~/repos/personal/codex-technomanticus/03-Domínios/JavaScript -name "*.md" | wc -l
@@ -377,7 +378,7 @@ Confirmar que a soma das colunas (Feitas+Andamento+Pausadas+Abandonadas+Pendente
 - [ ] **Step 5: Commitar**
 
 ```bash
-git add "Apocrypha/00-Meta/dashboards/Dashboard - Progresso agregado.md"
+git add "00-Meta/dashboards/Dashboard - Progresso agregado.md"
 git commit -m "feat: Dashboard - Progresso agregado (totais + por domínio + por senda)"
 ```
 
@@ -386,11 +387,11 @@ git commit -m "feat: Dashboard - Progresso agregado (totais + por domínio + por
 ## Task 5: Criar `Dashboard - O que estudar hoje.md`
 
 **Files:**
-- Create: `Apocrypha/00-Meta/dashboards/Dashboard - O que estudar hoje.md`
+- Create: `00-Meta/dashboards/Dashboard - O que estudar hoje.md`
 
 - [ ] **Step 1: Escrever o arquivo**
 
-Caminho: `Apocrypha/00-Meta/dashboards/Dashboard - O que estudar hoje.md`.
+Caminho: `00-Meta/dashboards/Dashboard - O que estudar hoje.md`.
 
 Conteúdo completo:
 
@@ -414,11 +415,11 @@ Itens com `progresso: andamento`, ordenados pelo update mais antigo. ⚠️ marc
 const today = dv.date("today");
 const STALL_DIAS = 14;
 
-const pages = dv.pages('"Apocrypha/Codex"')
+const pages = dv.pages('"Codex"')
   .where(p => p.progresso === "andamento")
   .filter(p => !p.file.path.includes("Promovidas") && !p.file.path.includes("Arquivadas"));
 
-const sendas = dv.pages('"Apocrypha/Codex/04-Sendas"');
+const sendas = dv.pages('"Codex/04-Sendas"');
 
 const rows = [];
 for (const p of pages) {
@@ -444,14 +445,14 @@ dv.table(["Item", "Senda(s)", "Dias desde update"], rows);
 Callouts `[!convite]` em notas que pertencem a sendas onde já existe pelo menos uma nota com `progresso ∈ {andamento, feito}`.
 
 ```dataviewjs
-const allNotes = dv.pages('"Apocrypha/Codex/03-Domínios"');
+const allNotes = dv.pages('"Codex/03-Domínios"');
 const activeNotePaths = new Set();
 for (const n of allNotes) {
   const prog = n.progresso ?? "pendente";
   if (prog === "andamento" || prog === "feito") activeNotePaths.add(n.file.path);
 }
 
-const sendas = dv.pages('"Apocrypha/Codex/04-Sendas"');
+const sendas = dv.pages('"Codex/04-Sendas"');
 const activeSendas = sendas.filter(s =>
   s.file.outlinks.some(l => l.path && activeNotePaths.has(l.path))
 );
@@ -507,7 +508,7 @@ Pegar uma nota com `progresso: andamento` (do grep do Step 2). Confirmar que ela
 - [ ] **Step 4: Commitar**
 
 ```bash
-git add "Apocrypha/00-Meta/dashboards/Dashboard - O que estudar hoje.md"
+git add "00-Meta/dashboards/Dashboard - O que estudar hoje.md"
 git commit -m "feat: Dashboard - O que estudar hoje (em andamento + convites)"
 ```
 
@@ -516,11 +517,11 @@ git commit -m "feat: Dashboard - O que estudar hoje (em andamento + convites)"
 ## Task 6: Criar `Dashboard - Cross-glosa.md`
 
 **Files:**
-- Create: `Apocrypha/00-Meta/dashboards/Dashboard - Cross-glosa.md`
+- Create: `00-Meta/dashboards/Dashboard - Cross-glosa.md`
 
 - [ ] **Step 1: Escrever o arquivo**
 
-Caminho: `Apocrypha/00-Meta/dashboards/Dashboard - Cross-glosa.md`.
+Caminho: `00-Meta/dashboards/Dashboard - Cross-glosa.md`.
 
 Conteúdo completo:
 
@@ -539,10 +540,10 @@ Visão consolidada do repositório de glosas: métricas, fila ativa, top tags, p
 ## Métricas
 
 ```dataviewjs
-const ativas = dv.pages('"Apocrypha/Codex/02-Glosas"')
+const ativas = dv.pages('"Codex/02-Glosas"')
   .filter(p => !p.file.path.includes("Promovidas") && !p.file.path.includes("Arquivadas"));
-const promovidas = dv.pages('"Apocrypha/Codex/02-Glosas/Promovidas"');
-const arquivadas = dv.pages('"Apocrypha/Codex/02-Glosas/Arquivadas"');
+const promovidas = dv.pages('"Codex/02-Glosas/Promovidas"');
+const arquivadas = dv.pages('"Codex/02-Glosas/Arquivadas"');
 
 const N = ativas.length;
 const M = promovidas.length;
@@ -568,7 +569,7 @@ dv.paragraph(
 ```dataviewjs
 const today = dv.date("today");
 
-const ativas = dv.pages('"Apocrypha/Codex/02-Glosas"')
+const ativas = dv.pages('"Codex/02-Glosas"')
   .filter(p => !p.file.path.includes("Promovidas") && !p.file.path.includes("Arquivadas"));
 
 const rows = ativas.map(g => {
@@ -586,7 +587,7 @@ dv.table(["Glosa", "Dias parada", "Progresso", "Tags"], rows);
 ## Top 10 tags
 
 ```dataviewjs
-const fontes = dv.pages('"Apocrypha/Codex/02-Glosas"')
+const fontes = dv.pages('"Codex/02-Glosas"')
   .filter(p => !p.file.path.includes("Arquivadas"));
 
 const counts = {};
@@ -607,7 +608,7 @@ dv.table(["Tag", "Glosas"], rows);
 ## Promoções recentes (top 5)
 
 ```dataviewjs
-const promovidas = dv.pages('"Apocrypha/Codex/02-Glosas/Promovidas"');
+const promovidas = dv.pages('"Codex/02-Glosas/Promovidas"');
 
 const rows = promovidas.map(g => {
   const updatedRaw = g.updated ?? g.file.mtime;
@@ -654,7 +655,7 @@ Conferir manualmente: `taxa = M / (M + K) · 100`. No estado atual com `K=0`: `t
 - [ ] **Step 4: Commitar**
 
 ```bash
-git add "Apocrypha/00-Meta/dashboards/Dashboard - Cross-glosa.md"
+git add "00-Meta/dashboards/Dashboard - Cross-glosa.md"
 git commit -m "feat: Dashboard - Cross-glosa (métricas + fila + tags + promoções)"
 ```
 
@@ -678,7 +679,7 @@ Expected: 4 commits recentes nesta sequência (mais recente no topo):
 2. `feat: Dashboard - O que estudar hoje ...`
 3. `feat: Dashboard - Progresso agregado ...`
 4. `docs: README operacional do apocrypha ...`
-5. `chore: symlink relativo Apocrypha/Codex → vault público`
+5. `chore: symlink relativo Codex → vault público`
 
 - [ ] **Step 2: Validar que os 3 dashboards abrem no Obsidian sem erro**
 
@@ -739,6 +740,6 @@ git commit -m "docs: marca pendências do apocrypha resolvidas pela spec dashboa
 
 - [x] **Cobertura da spec:** §4 (cross-vault) → Tasks 1-2; §5 (estrutura) → Tasks 3-6; §6 (Dashboard 1) → Task 4; §7 (Dashboard 2) → Task 5; §8 (Dashboard 3) → Task 6; §11 (sequência) → Tasks 1-7 nesta ordem.
 - [x] **Sem placeholders.** Todas as queries Dataview/JS estão escritas inline; todos os comandos são exatos; nenhum "TBD".
-- [x] **Type/identifier consistency.** Paths consistentes (`Apocrypha/Codex/...` em todos os blocos), nomes de arquivos preservam espaços + traço, frontmatter idêntico nos 3 dashboards.
+- [x] **Type/identifier consistency.** Paths consistentes (`Codex/...` em todos os blocos), nomes de arquivos preservam espaços + traço, frontmatter idêntico nos 3 dashboards.
 - [x] **Restrição "não tocar no público":** apenas a Task 7 Step 6 toca o público (atualização de pendências), e é opcional/contextual — fora da execução core no apocrypha.
 - [x] **Restrição "não tocar no apocrypha agora":** o plano declara explicitamente que executa **na sessão dedicada do apocrypha**, não nesta sessão.

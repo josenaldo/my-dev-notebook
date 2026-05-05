@@ -17,15 +17,15 @@ Esta spec entrega essas visões: três dashboards no vault privado (`codex-techn
 
 A spec opera dois movimentos:
 
-1. **Infraestrutura cross-vault**: symlink relativo `Apocrypha/Codex` → `../../codex-technomanticus`, comitado no apocrypha. Habilita Dataview a indexar o público a partir do apocrypha.
-2. **Três dashboards** em `Apocrypha/00-Meta/dashboards/`, cada um num arquivo: progresso agregado, "o que estudar hoje" (heurístico), cross-glosa.
+1. **Infraestrutura cross-vault**: symlink relativo `Codex` → `../codex-technomanticus`, comitado no apocrypha. Habilita Dataview a indexar o público a partir do apocrypha.
+2. **Três dashboards** em `00-Meta/dashboards/`, cada um num arquivo: progresso agregado, "o que estudar hoje" (heurístico), cross-glosa.
 
 ## 2. Objetivo
 
 Entregar:
 
 1. **Symlink relativo** versionado dentro do apocrypha, apontando pro repo público.
-2. **Pasta `Apocrypha/00-Meta/dashboards/`** criada.
+2. **Pasta `00-Meta/dashboards/`** criada.
 3. **Três notas de dashboard** com queries Dataview/DataviewJS funcionais:
    - `Dashboard - Progresso agregado.md`
    - `Dashboard - O que estudar hoje.md`
@@ -36,19 +36,19 @@ Entregar:
 
 ### Em escopo
 
-- Criação do symlink relativo `Apocrypha/Codex` → `../../codex-technomanticus`.
+- Criação do symlink relativo `Codex` → `../codex-technomanticus`.
 - Verificação de que Dataview e Templater estão instalados/ativados no apocrypha (instalar se faltarem).
 - Criação dos três arquivos de dashboard com queries prontas.
-- Nota curta de operação em `Apocrypha/00-Meta/README.md` (ou similar) explicando precondição de layout dos repos lado a lado.
+- Nota curta de operação em `00-Meta/README.md` (ou similar) explicando precondição de layout dos repos lado a lado.
 
 ### Fora de escopo (trabalho subsequente)
 
 - **Velocidade temporal de progresso** (notas que viraram `feito` nos últimos N dias). Exigiria campo novo no público (`concluido_em`) ou parse de git log. Quando aparecer dor real, vira sub-spec.
-- **Dashboards funcionais no mobile**. Symlink não funciona via GitSync no Android (vide §4.3). Se "estudar hoje no commute" virar dor real, evolui-se pro approach Mirror (script que copia público → `Apocrypha/Codex-mirror/` versionado, sincronizável). Não fazer agora.
+- **Dashboards funcionais no mobile**. Symlink não funciona via GitSync no Android (vide §4.3). Se "estudar hoje no commute" virar dor real, evolui-se pro approach Mirror (script que copia público → `Codex-mirror/` versionado, sincronizável). Não fazer agora.
 - **"O que estudar hoje?" prescritivo** (com modelo de ordem global e prioridade). Esta spec entrega uma versão heurística que evita inventar fila/prioridade sem ter visto a dor. Modelo prescritivo vira sub-spec quando a heurística incomodar.
 - **Skill `/sync-cross-vault`** que automatize criação/verificação do symlink. Pra um único comando, manual basta. Vira skill se virar dor.
 - **Histogramas/gráficos** (glosas arquivadas por época, cadência de promoção mensal). Overkill pra valor incremental hoje.
-- **Hub MOC dos dashboards** (`Apocrypha/00-Meta/Dashboards.md` listando os três). Cada dashboard é navegável por nome ou wikilink direto; hub adiciona arquivo sem entregar valor proporcional.
+- **Hub MOC dos dashboards** (`00-Meta/Dashboards.md` listando os três). Cada dashboard é navegável por nome ou wikilink direto; hub adiciona arquivo sem entregar valor proporcional.
 
 ## 4. Arquitetura cross-vault
 
@@ -58,28 +58,34 @@ Symlink relativo, criado uma vez na máquina de desenvolvimento e versionado pel
 
 ```text
 codex-technomanticus-apocrypha/
-└── Apocrypha/
-    └── Codex          → ../../codex-technomanticus    (symlink)
+├── 00-Meta/
+├── 01-Pergaminhos/
+├── 02-Glosas/
+├── 03-Domínios/
+├── 04-Sendas/
+└── Codex          → ../codex-technomanticus    (symlink)
 ```
+
+A estrutura do apocrypha **espelha** a do público na raiz (mesmas pastas `00-Meta/`, `01-Pergaminhos/`, etc.) — cada uma contendo o conteúdo privado do vault. O symlink `Codex` é a única adição estrutural; ele expõe o vault público sob um namespace separado, sem conflitar com os diretórios homônimos do apocrypha.
 
 Comando de criação (a executar dentro do repo apocrypha, na sessão dedicada):
 
 ```bash
-cd codex-technomanticus-apocrypha/Apocrypha
-ln -s ../../codex-technomanticus Codex
+cd codex-technomanticus-apocrypha
+ln -s ../codex-technomanticus Codex
 git add Codex
 git commit -m "chore: symlink relativo pro vault público"
 ```
 
 Caminhos resultantes vistos pelo Obsidian do apocrypha:
 
-- `Apocrypha/Codex/03-Domínios/...`
-- `Apocrypha/Codex/02-Glosas/...`
-- `Apocrypha/Codex/04-Sendas/...`
+- `Codex/03-Domínios/...`
+- `Codex/02-Glosas/...`
+- `Codex/04-Sendas/...`
 
 ### 4.2 Precondição de layout (cross-device)
 
-O symlink usa caminho **relativo** (`../../codex-technomanticus`). Pra resolver corretamente em qualquer máquina, os dois repos precisam estar lado a lado, num diretório comum:
+O symlink usa caminho **relativo** (`../codex-technomanticus`). Pra resolver corretamente em qualquer máquina, os dois repos precisam estar lado a lado, num diretório comum:
 
 ```text
 <base>/
@@ -94,12 +100,12 @@ No desktop atual, `<base>` é `~/repos/personal/`. Em qualquer device futuro (la
 Symlinks não funcionam de forma confiável no Android com a stack atual (GitSync + Obsidian Mobile). Razões:
 
 - Storage acessível ao Obsidian (`/storage/emulated/0/`) é FUSE/sdcardfs por cima de ext4 — `symlink()` syscall falha em muitos ROMs/versões.
-- JGit (motor do GitSync) tipicamente cai em fallback que materializa o symlink como **arquivo de texto contendo o path-alvo** (~30 bytes, conteúdo `../../codex-technomanticus`).
+- JGit (motor do GitSync) tipicamente cai em fallback que materializa o symlink como **arquivo de texto contendo o path-alvo** (~30 bytes, conteúdo `../codex-technomanticus`).
 - Mesmo se o symlink fosse criado, o indexador do Obsidian Mobile historicamente não atravessa symlinks cross-folder de forma consistente.
 
 **Comportamento esperado no Android:**
 
-- A pasta `Apocrypha/Codex/` aparece como arquivo (não pasta) ou inválida.
+- A pasta `Codex/` aparece como arquivo (não pasta) ou inválida.
 - Os 3 dashboards renderizam **vazios** (Dataview não encontra arquivos no path).
 - Daily notes, drafts, glosas e demais conteúdos do apocrypha **continuam funcionando normalmente** (não dependem do symlink).
 
@@ -115,15 +121,20 @@ Symlinks não funcionam de forma confiável no Android com a stack atual (GitSyn
 
 ```text
 codex-technomanticus-apocrypha/
-└── Apocrypha/
-    ├── Codex                                  ← symlink (versionado)
-    └── 00-Meta/
-        ├── README.md                          ← nota curta de operação (precondição + limitação mobile)
-        └── dashboards/
-            ├── Dashboard - Progresso agregado.md
-            ├── Dashboard - O que estudar hoje.md
-            └── Dashboard - Cross-glosa.md
+├── 00-Meta/
+│   ├── README.md                          ← nota curta de operação (precondição + limitação mobile)
+│   └── dashboards/
+│       ├── Dashboard - Progresso agregado.md
+│       ├── Dashboard - O que estudar hoje.md
+│       └── Dashboard - Cross-glosa.md
+├── 01-Pergaminhos/                        ← (existente, não tocado)
+├── 02-Glosas/                             ← (existente, próprias do apocrypha — não confundir com Codex/02-Glosas/)
+├── 03-Domínios/                           ← (existente, não tocado)
+├── 04-Sendas/                             ← (existente, não tocado)
+└── Codex                                  ← symlink (versionado)
 ```
+
+**Atenção à coexistência:** o apocrypha tem `02-Glosas/`, `03-Domínios/`, etc. próprias na raiz (conteúdo privado do vault). As queries Dataview dos dashboards leem **especificamente** `Codex/02-Glosas/`, `Codex/03-Domínios/`, etc. — namespaceadas pelo prefixo do symlink. Não há mistura entre conteúdo público (via `Codex/`) e privado (na raiz do apocrypha).
 
 Frontmatter padrão dos dashboards:
 
@@ -140,7 +151,7 @@ Dashboards nunca são publicados (apocrypha não publica nada hoje, mas `publish
 
 ## 6. Dashboard 1 — Progresso agregado
 
-Arquivo: `Apocrypha/00-Meta/dashboards/Dashboard - Progresso agregado.md`.
+Arquivo: `00-Meta/dashboards/Dashboard - Progresso agregado.md`.
 
 ### 6.1 Bloco — Totais globais (apenas notas de domínio)
 
@@ -152,14 +163,14 @@ TABLE WITHOUT ID
   length(filter(rows, (r) => default(r.progresso, "pendente") = "pausado")) AS "Pausadas",
   length(filter(rows, (r) => default(r.progresso, "pendente") = "abandonado")) AS "Abandonadas",
   length(filter(rows, (r) => default(r.progresso, "pendente") = "pendente")) AS "Pendentes"
-FROM "Apocrypha/Codex/03-Domínios"
+FROM "Codex/03-Domínios"
 GROUP BY true
 ```
 
 ### 6.2 Bloco — Por domínio
 
 ```dataviewjs
-const pages = dv.pages('"Apocrypha/Codex/03-Domínios"');
+const pages = dv.pages('"Codex/03-Domínios"');
 
 const groups = {};
 for (const p of pages) {
@@ -187,7 +198,7 @@ O domínio é inferido do path (primeira pasta sob `03-Domínios/`). Sub-domíni
 ### 6.3 Bloco — Por senda
 
 ```dataviewjs
-const sendas = dv.pages('"Apocrypha/Codex/04-Sendas"');
+const sendas = dv.pages('"Codex/04-Sendas"');
 
 const rows = [];
 for (const senda of sendas) {
@@ -214,7 +225,7 @@ A consulta itera todas as notas em `04-Sendas/` independentemente de `tipo` no f
 
 ## 7. Dashboard 2 — O que estudar hoje
 
-Arquivo: `Apocrypha/00-Meta/dashboards/Dashboard - O que estudar hoje.md`.
+Arquivo: `00-Meta/dashboards/Dashboard - O que estudar hoje.md`.
 
 A heurística: sem inventar modelo de fila/prioridade global, mostra o que está aberto e onde existe atividade. Ordering surfaces stale items naturalmente.
 
@@ -224,11 +235,11 @@ A heurística: sem inventar modelo de fila/prioridade global, mostra o que está
 const today = dv.date("today");
 const STALL_DIAS = 14;
 
-const pages = dv.pages('"Apocrypha/Codex"')
+const pages = dv.pages('"Codex"')
   .where(p => p.progresso === "andamento")
   .filter(p => !p.file.path.includes("Promovidas") && !p.file.path.includes("Arquivadas"));
 
-const sendas = dv.pages('"Apocrypha/Codex/04-Sendas"');
+const sendas = dv.pages('"Codex/04-Sendas"');
 
 const rows = [];
 for (const p of pages) {
@@ -256,14 +267,14 @@ dv.table(["Item", "Senda(s)", "Dias desde update"], rows);
 Convites são callouts `[!convite]` dentro de notas de domínio (vide spec 05-03 §6.4). Dataview não indexa callouts diretamente; precisa-se ler o conteúdo bruto via `dv.io.load`.
 
 ```dataviewjs
-const allNotes = dv.pages('"Apocrypha/Codex/03-Domínios"');
+const allNotes = dv.pages('"Codex/03-Domínios"');
 const activeNotePaths = new Set();
 for (const n of allNotes) {
   const prog = n.progresso ?? "pendente";
   if (prog === "andamento" || prog === "feito") activeNotePaths.add(n.file.path);
 }
 
-const sendas = dv.pages('"Apocrypha/Codex/04-Sendas"');
+const sendas = dv.pages('"Codex/04-Sendas"');
 const activeSendas = sendas.filter(s =>
   s.file.outlinks.some(l => l.path && activeNotePaths.has(l.path))
 );
@@ -294,15 +305,15 @@ Trade-off de performance: `dv.io.load` por nota é I/O por arquivo. Em vault gra
 
 ## 8. Dashboard 3 — Cross-glosa
 
-Arquivo: `Apocrypha/00-Meta/dashboards/Dashboard - Cross-glosa.md`.
+Arquivo: `00-Meta/dashboards/Dashboard - Cross-glosa.md`.
 
 ### 8.1 Bloco A — Métricas
 
 ```dataviewjs
-const ativas = dv.pages('"Apocrypha/Codex/02-Glosas"')
+const ativas = dv.pages('"Codex/02-Glosas"')
   .filter(p => !p.file.path.includes("Promovidas") && !p.file.path.includes("Arquivadas"));
-const promovidas = dv.pages('"Apocrypha/Codex/02-Glosas/Promovidas"');
-const arquivadas = dv.pages('"Apocrypha/Codex/02-Glosas/Arquivadas"');
+const promovidas = dv.pages('"Codex/02-Glosas/Promovidas"');
+const arquivadas = dv.pages('"Codex/02-Glosas/Arquivadas"');
 
 const N = ativas.length;
 const M = promovidas.length;
@@ -330,7 +341,7 @@ Taxa de promoção considera apenas glosas **resolvidas** (promovidas ou arquiva
 ```dataviewjs
 const today = dv.date("today");
 
-const ativas = dv.pages('"Apocrypha/Codex/02-Glosas"')
+const ativas = dv.pages('"Codex/02-Glosas"')
   .filter(p => !p.file.path.includes("Promovidas") && !p.file.path.includes("Arquivadas"));
 
 const rows = ativas.map(g => {
@@ -351,7 +362,7 @@ Considera glosas ativas + promovidas (tira arquivadas pra não contaminar com li
 
 ```dataviewjs
 const fontes = [
-  ...dv.pages('"Apocrypha/Codex/02-Glosas"')
+  ...dv.pages('"Codex/02-Glosas"')
     .filter(p => !p.file.path.includes("Arquivadas")),
 ];
 
@@ -375,7 +386,7 @@ Tag rendering como `#tag` em texto (não link clicável que resolva pra busca po
 ### 8.4 Bloco D — Promoções recentes (top 5)
 
 ```dataviewjs
-const promovidas = dv.pages('"Apocrypha/Codex/02-Glosas/Promovidas"');
+const promovidas = dv.pages('"Codex/02-Glosas/Promovidas"');
 
 const rows = promovidas.map(g => {
   const updatedRaw = g.updated ?? g.file.mtime;
@@ -414,7 +425,7 @@ Nenhum arquivo público referencia o apocrypha (nem por wikilink, nem por path, 
 |---|---|
 | `codex-technomanticus` (público) | **Não tocar nesta spec.** Zero alteração. |
 | `codex-technomanticus-site` (Quartz) | **Não tocar nesta spec.** Deploy não passa pelo apocrypha. |
-| `codex-technomanticus-apocrypha` (privado) | Symlink `Apocrypha/Codex`, pasta `Apocrypha/00-Meta/dashboards/` com 3 arquivos, nota curta de operação em `Apocrypha/00-Meta/README.md`. |
+| `codex-technomanticus-apocrypha` (privado) | Symlink `Codex`, pasta `00-Meta/dashboards/` com 3 arquivos, nota curta de operação em `00-Meta/README.md`. |
 
 ## 11. Sequência de implementação
 
@@ -427,12 +438,12 @@ A executar na **sessão dedicada do apocrypha** (não nesta sessão do público)
 2. **Criar symlink relativo:**
    ```bash
    cd codex-technomanticus-apocrypha/Apocrypha
-   ln -s ../../codex-technomanticus Codex
+   ln -s ../codex-technomanticus Codex
    ```
-3. **Validar resolução:** abrir Obsidian no apocrypha; confirmar que `Apocrypha/Codex/` aparece como pasta navegável e expõe `02-Glosas/`, `03-Domínios/`, `04-Sendas/`.
-4. **Criar pasta** `Apocrypha/00-Meta/dashboards/`.
+3. **Validar resolução:** abrir Obsidian no apocrypha; confirmar que `Codex/` aparece como pasta navegável e expõe `02-Glosas/`, `03-Domínios/`, `04-Sendas/`.
+4. **Criar pasta** `00-Meta/dashboards/`.
 5. **Criar os 3 arquivos de dashboard** com o frontmatter padrão e os blocos das §§6, 7, 8.
-6. **Criar nota de operação** `Apocrypha/00-Meta/README.md` com:
+6. **Criar nota de operação** `00-Meta/README.md` com:
    - Precondição de layout (repos lado a lado).
    - Limitação mobile (Android/GitSync — dashboards não funcionam).
    - Comando de recriar o symlink se necessário.
@@ -454,10 +465,10 @@ A executar na **sessão dedicada do apocrypha** (não nesta sessão do público)
 
 ## 13. Trabalhos subsequentes
 
-- **Suporte mobile via Mirror** — script que copia `codex-technomanticus/{02-Glosas,03-Domínios,04-Sendas}` pra `Apocrypha/Codex-mirror/` versionado, sincronizável via GitSync. Quando "estudar hoje no commute" virar dor.
+- **Suporte mobile via Mirror** — script que copia `codex-technomanticus/{02-Glosas,03-Domínios,04-Sendas}` pra `Codex-mirror/` versionado, sincronizável via GitSync. Quando "estudar hoje no commute" virar dor.
 - **"O que estudar hoje?" prescritivo** — modelo de ordem global e prioridade (sub-spec). Quando a heurística atual incomodar.
 - **Campo `concluido_em`** no público pra habilitar dashboard de velocidade temporal. Sub-spec leve no público.
 - **Histogramas/gráficos** (cadência de promoção mensal, glosas arquivadas por época). Quando a leitura analítica frequente justificar o esforço de visualização.
-- **Hub MOC** `Apocrypha/00-Meta/Dashboards.md` — caso o número de dashboards cresça além de 3-4.
+- **Hub MOC** `00-Meta/Dashboards.md` — caso o número de dashboards cresça além de 3-4.
 - **Skill `/sync-cross-vault`** automatizando criação/verificação do symlink. Caso acabe replicando o setup em mais de uma máquina.
 - **CSS custom** pros dashboards (cores diferenciadas, status badges). Cosmético.
