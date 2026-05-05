@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "03-Domínios/IA/Dicionário de IA.md",
+                "file": "docs/superpowers/specs/2026-05-04-glosa-promocao-design.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Dicionário de IA"
+              "title": "2026-05-04-glosa-promocao-design"
             }
           },
           {
@@ -27,16 +27,15 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "03-Domínios/IA/index.md",
+                "file": "03-Domínios/IA/Dicionário de IA.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "index"
+              "title": "Dicionário de IA"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -68,7 +67,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "estoc",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -237,7 +236,7 @@
                 }
               },
               "icon": "terminal",
-              "title": "Terminal: ⠐ Create glossary template in Meta folder"
+              "title": "Terminal: ✳ Create glossary template in Meta folder"
             }
           }
         ],
@@ -268,41 +267,42 @@
   },
   "active": "3d432fe96a2ed788",
   "lastOpenFiles": [
-    "03-Domínios/IA/index.md",
-    "03-Domínios/IA/Dicionário de IA.md",
-    "03-Domínios/IA/Dicionário de IA.md.tmp.2105288.1777849866109",
-    "03-Domínios/IA/Dicionário de IA.md.tmp.2105288.1777846644647",
-    "00-Meta/README.md.tmp.2105288.1777846599138",
-    "00-Meta/templates/Template - Glossário.md",
-    "00-Meta/templates/note.md",
-    "00-Meta/templates/Template - Mestre.md",
-    "00-Meta/templates/Template - MOC.md",
-    "00-Meta/templates/Template - Nota.md",
-    "00-Meta/templates/Template - TIL.md",
-    "00-Meta/templates/Template - Interview Note.md",
-    "00-Meta/templates/Template - How-To.md",
+    "02-Glosas/2026-design-md-spec-coding-agents.md.tmp.2105288.1777913775607",
+    "02-Glosas/2026-design-md-spec-coding-agents.md.tmp.2105288.1777913773544",
+    "00-Meta/templates/Template - Nota.md.tmp.2105288.1777913562328",
+    "00-Meta/templates/Template - Glosa.md.tmp.2105288.1777913524076",
+    "docs/superpowers/plans/2026-05-04-glosa-promocao-execution.md",
+    "docs/superpowers/plans/2026-05-04-glosa-promocao-execution.md.tmp.2105288.1777913224192",
+    "docs/superpowers/specs/2026-05-04-glosa-promocao-design.md",
     "00-Meta/templates/Template - Glosa.md",
     "00-Meta/templates/quiz.md",
+    "00-Meta/templates/note.md",
     "00-Meta/templates/module.md",
     "00-Meta/templates/card.md",
-    "copilot/copilot-custom-prompts/Clip Web Page.md",
-    "copilot/copilot-custom-prompts/Clip YouTube Transcript.md",
-    "copilot/copilot-custom-prompts/Rewrite as tweet thread.md",
-    "copilot/copilot-custom-prompts/Rewrite as tweet.md",
-    "copilot/copilot-custom-prompts/Remove URLs.md",
-    "copilot/copilot-custom-prompts/Generate glossary.md",
-    "copilot/copilot-custom-prompts/Generate table of contents.md",
-    "copilot/copilot-custom-prompts/Make longer.md",
-    "copilot/copilot-custom-prompts/Make shorter.md",
-    "copilot/copilot-custom-prompts/Emojify.md",
-    "copilot/copilot-custom-prompts/Explain like I am 5.md",
-    "copilot/copilot-custom-prompts",
-    "copilot",
-    "03-Domínios/IA/index.md.tmp.1994321.1777838611656",
-    "03-Domínios/IA/Anatomia dos LLMs/17 - Evaluation de LLMs em produção.md.tmp.1493540.1777769607837",
-    "03-Domínios/IA/Anatomia dos LLMs/16 - Como LLMs são treinados — pretraining, SFT, RLHF.md.tmp.1493540.1777769552861",
-    "03-Domínios/IA/Formação Engenheiro de IA/index.md.tmp.1493540.1777764491041",
-    "03-Domínios/IA/Formação Engenheiro de IA",
+    "04-Sendas/Senda Frontend.md",
+    "docs/superpowers/specs/2026-05-04-glosa-promocao-design.md.tmp.2105288.1777874663351",
+    "docs/superpowers/specs/2026-05-04-glosa-promocao-design.md.tmp.2105288.1777874628732",
+    "04-Sendas/Senda Frontend.md.tmp.2105288.1777866094069",
+    "00-Meta/templates/trail.md.tmp.2105288.1777866093488",
+    "04-Sendas/Senda IA.md",
+    "04-Sendas/Senda Frontend.md.tmp.2105288.1777865732255",
+    "00-Meta/templates/trail.md.tmp.2105288.1777865730131",
+    "Untitled.md",
+    "03-Domínios/Frontend/Validação/Joi.md",
+    "03-Domínios/React/React Data Table.md",
+    "03-Domínios/React/React Admin.md",
+    "03-Domínios/React/Ícones.md",
+    "03-Domínios/Ferramentas/Monorepos.md",
+    "03-Domínios/Ferramentas/Vite.md",
+    "03-Domínios/Node/Ferramentas Node.md",
+    "03-Domínios/Frontend/Networking/Fetch.md",
+    "03-Domínios/Frontend/Networking/Axios.md",
+    "03-Domínios/Frontend/Networking/index.md",
+    "03-Domínios/Frontend/Validação/Yup.md",
+    "03-Domínios/Frontend/Validação/Zod.md",
+    "03-Domínios/Frontend/Validação/index.md",
+    "03-Domínios/Frontend/Debugging.md",
+    "03-Domínios/React/Charts/index.md",
     "03-Domínios/Java/Backend/Kafka/Untitled 4.png",
     "03-Domínios/Infraestrutura/Untitled.png",
     "03-Domínios/Infraestrutura/Untitled 2.png",
