@@ -1,6 +1,7 @@
 ---
 name: sintetizar-glosas
-description: Consolida várias glosas em UMA nota nova de domínio. Cria nota com `## Fontes` populada com wikilinks pras N glosas selecionadas, move cada glosa pra `02-Glosas/Promovidas/<ano>/`, e atualiza `promovida_em` em cada uma. Use quando o usuário invocar `/sintetizar-glosas <criterio>` ou pedir pra "sintetizar glosas sobre X", "consolidar essas glosas em uma nota", "criar nota a partir de várias glosas".
+description: >
+   Consolida várias glosas em UMA nota nova de domínio. Cria nota com `## Fontes` populada com wikilinks pras N glosas selecionadas, move cada glosa pra `02-Glosas/Promovidas/<ano>/`, e atualiza `promovida_em` em cada uma. Use quando o usuário invocar `/sintetizar-glosas <criterio>` ou pedir pra "sintetizar glosas sobre X", "consolidar essas glosas em uma nota", "criar nota a partir de várias glosas".
 ---
 
 # Skill: sintetizar-glosas
@@ -21,11 +22,11 @@ Cria UMA nota nova de domínio sintetizando VÁRIAS glosas relacionadas a um tem
 
 ## Argumentos
 
-| Forma | Comportamento |
-|---|---|
-| `/sintetizar-glosas tag:<X>` | Filtra glosas (raiz + Promovidas) com tag `<X>`. |
-| `/sintetizar-glosas <assunto>` | Busca textual em `title`, `aliases`, `tags`. |
-| `/sintetizar-glosas` | Modo interativo: pergunta filtro. |
+| Forma                          | Comportamento                                    |
+| ------------------------------ | ------------------------------------------------ |
+| `/sintetizar-glosas tag:<X>`   | Filtra glosas (raiz + Promovidas) com tag `<X>`. |
+| `/sintetizar-glosas <assunto>` | Busca textual em `title`, `aliases`, `tags`.     |
+| `/sintetizar-glosas`           | Modo interativo: pergunta filtro.                |
 
 ## Fluxo de execução
 
@@ -120,15 +121,15 @@ Cria UMA nota nova de domínio sintetizando VÁRIAS glosas relacionadas a um tem
 
 ## Edge cases
 
-| Caso | Comportamento |
-|---|---|
-| 0 candidatas | Avisar e abortar |
-| 1 candidata | Sugerir `/promover-glosa` em vez disso |
-| Tags inconsistentes | Apresentar interseção; se vazia, união como sugestão |
-| Domínio destino não existe | Mesma lógica de `/promover-glosa` (perguntar se cria) |
-| Nota já existe | Perguntar anexar/outro nome/cancelar |
+| Caso                                  | Comportamento                                           |
+| ------------------------------------- | ------------------------------------------------------- |
+| 0 candidatas                          | Avisar e abortar                                        |
+| 1 candidata                           | Sugerir `/promover-glosa` em vez disso                  |
+| Tags inconsistentes                   | Apresentar interseção; se vazia, união como sugestão    |
+| Domínio destino não existe            | Mesma lógica de `/promover-glosa` (perguntar se cria)   |
+| Nota já existe                        | Perguntar anexar/outro nome/cancelar                    |
 | Mistura de glosas (raiz + Promovidas) | OK; mover só as da raiz; atualizar frontmatter de todas |
-| Conflito de nome no destino | Abortar com erro |
+| Conflito de nome no destino           | Abortar com erro                                        |
 
 ## Convenções
 

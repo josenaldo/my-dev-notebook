@@ -1,6 +1,7 @@
 ---
 name: glosa
-description: Cria fichamento (Glosa) de artigo web a partir de URL. Use quando o usuário pedir pra fichar/catalogar/registrar um artigo, falar em "ficha de leitura", "fichamento", "glosa", invocar /glosa, ou compartilhar uma URL de artigo pedindo registro. Não suporta PDFs, vídeos do YouTube, podcasts ou tweets — nesses casos, avise e aborte.
+description: >
+   Cria fichamento (Glosa) de artigo web a partir de URL. Use quando o usuário pedir pra fichar/catalogar/registrar um artigo, falar em "ficha de leitura", "fichamento", "glosa", invocar /glosa, ou compartilhar uma URL de artigo pedindo registro. Não suporta PDFs, vídeos do YouTube, podcasts ou tweets — nesses casos, avise e aborte.
 ---
 
 # Skill: glosa
@@ -113,15 +114,15 @@ publish: false
 
 ## Edge cases (tabela)
 
-| Caso                                  | Comportamento                                                                                  |
-| ------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| URL malformada                        | Erro + abortar; não escreve arquivo                                                            |
-| WebFetch retorna 404/paywall/timeout  | Reporte erro com mensagem clara; não escreve arquivo                                           |
-| Conteúdo extraído < 500 chars         | Alerta sobre paywall ou extração parcial; pergunte se deve seguir mesmo assim                  |
-| Tipo não suportado (PDF/YouTube/etc)  | Avise tipo; sugira manter em Pergaminhos; não escreve arquivo                                  |
-| Idioma não detectado                  | Default `lang: en` (heurística para artigos técnicos)                                          |
-| Data publicação não detectada         | `published:` vazio no frontmatter; mencione no relatório final                                 |
-| Autor não detectado                   | `author: "(desconhecido)"`                                                                     |
-| Slug colide no mesmo ano              | Sufixo `-2`, `-3`...; alerta de possível duplicata                                             |
-| URL em Pergaminhos não bate exato     | Match por substring contendo a URL; remove linha inteira                                       |
-| Remoção deixa header de seção vazio   | Mantenha o header; o autor remove na próxima revisão manual                                    |
+| Caso                                 | Comportamento                                                                 |
+| ------------------------------------ | ----------------------------------------------------------------------------- |
+| URL malformada                       | Erro + abortar; não escreve arquivo                                           |
+| WebFetch retorna 404/paywall/timeout | Reporte erro com mensagem clara; não escreve arquivo                          |
+| Conteúdo extraído < 500 chars        | Alerta sobre paywall ou extração parcial; pergunte se deve seguir mesmo assim |
+| Tipo não suportado (PDF/YouTube/etc) | Avise tipo; sugira manter em Pergaminhos; não escreve arquivo                 |
+| Idioma não detectado                 | Default `lang: en` (heurística para artigos técnicos)                         |
+| Data publicação não detectada        | `published:` vazio no frontmatter; mencione no relatório final                |
+| Autor não detectado                  | `author: "(desconhecido)"`                                                    |
+| Slug colide no mesmo ano             | Sufixo `-2`, `-3`...; alerta de possível duplicata                            |
+| URL em Pergaminhos não bate exato    | Match por substring contendo a URL; remove linha inteira                      |
+| Remoção deixa header de seção vazio  | Mantenha o header; o autor remove na próxima revisão manual                   |

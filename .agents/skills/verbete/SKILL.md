@@ -1,6 +1,7 @@
 ---
 name: verbete
-description: Adiciona um verbete (termo + definição) a um glossário de domínio do vault. Use quando o usuário invocar /verbete, pedir pra "adicionar termo ao dicionário/glossário", "criar verbete", "registrar termo", "novo verbete", ou similares. Localiza o glossário pelo frontmatter `type: glossary` e insere em ordem alfabética na seção correta. Se a definição não for fornecida, ativa modo pesquisa (busca + propõe definição pra confirmação).
+description: >
+   Adiciona um verbete (termo + definição) a um glossário de domínio do vault. Use quando o usuário invocar /verbete, pedir pra "adicionar termo ao dicionário/glossário", "criar verbete", "registrar termo", "novo verbete", ou similares. Localiza o glossário pelo frontmatter `type: glossary` e insere em ordem alfabética na seção correta. Se a definição não for fornecida, ativa modo pesquisa (busca + propõe definição pra confirmação).
 ---
 
 # Skill: verbete
@@ -21,11 +22,11 @@ Ative quando o usuário:
 
 ## Quando NÃO usar (e o que fazer)
 
-| Situação                              | Resposta                                                                       |
-| ------------------------------------- | ------------------------------------------------------------------------------ |
+| Situação                              | Resposta                                                                           |
+| ------------------------------------- | ---------------------------------------------------------------------------------- |
 | Usuário pede pra criar glossário novo | Esta skill só adiciona a glossários existentes; sugira usar `Template - Glossário` |
-| Termo já existe no glossário          | Aborte; mostre a definição existente; sugira edição manual                     |
-| Nenhum glossário encontrado no vault  | Avise; sugira criar um a partir do template                                    |
+| Termo já existe no glossário          | Aborte; mostre a definição existente; sugira edição manual                         |
+| Nenhum glossário encontrado no vault  | Avise; sugira criar um a partir do template                                        |
 
 ## Fluxo de execução
 
@@ -71,19 +72,22 @@ Leia o arquivo. Se já existe um `### <Termo>` (case-insensitive, ignorando acen
 ### 5. Modo pesquisa (se definição vazia)
 
 5a. **Detectar idioma do glossário:**
-   - Lê `lang:` do frontmatter.
-   - Se ausente: infira pelas 2-3 primeiras definições existentes.
-   - Se vazio (glossário novo sem verbetes): pergunte ao usuário e persista no frontmatter.
+
+- Lê `lang:` do frontmatter.
+- Se ausente: infira pelas 2-3 primeiras definições existentes.
+- Se vazio (glossário novo sem verbetes): pergunte ao usuário e persista no frontmatter.
 
 5b. **Pesquisar:**
-   - Use conhecimento geral primeiro (suficiente pra maioria dos termos técnicos consolidados).
-   - Para termos recentes/obscuros (lançamento do mês passado, paper específico, framework novo), use `WebSearch`.
-   - Se ambos falharem (termo desconhecido): aborte e peça definição manual ao usuário.
+
+- Use conhecimento geral primeiro (suficiente pra maioria dos termos técnicos consolidados).
+- Para termos recentes/obscuros (lançamento do mês passado, paper específico, framework novo), use `WebSearch`.
+- Se ambos falharem (termo desconhecido): aborte e peça definição manual ao usuário.
 
 5c. **Compor proposta:**
-   - **Definição**: 1 a 3 frases, no idioma do glossário, estilo conciso e direto. Não acadêmico-prolixo. Sem citações no corpo.
-   - **Seção sugerida**: lê todas as `## H2` do arquivo + escolhe a melhor com base no significado do termo. Se nenhuma se encaixa bem, propõe criar nova seção.
-   - **Fonte consultada**: link, nome do paper, ou "conhecimento geral" — pra mostrar no relatório (não vai no corpo da definição).
+
+- **Definição**: 1 a 3 frases, no idioma do glossário, estilo conciso e direto. Não acadêmico-prolixo. Sem citações no corpo.
+- **Seção sugerida**: lê todas as `## H2` do arquivo + escolhe a melhor com base no significado do termo. Se nenhuma se encaixa bem, propõe criar nova seção.
+- **Fonte consultada**: link, nome do paper, ou "conhecimento geral" — pra mostrar no relatório (não vai no corpo da definição).
 
 5d. **Apresentar pro usuário:**
 
@@ -140,21 +144,21 @@ A linha de fonte só aparece se foi modo pesquisa.
 
 ## Edge cases
 
-| Caso                                     | Comportamento                                                                  |
-| ---------------------------------------- | ------------------------------------------------------------------------------ |
-| Definição vazia                          | Modo pesquisa (não é erro — é o caso de uso mais comum)                        |
-| Termo já existe no glossário             | Aborta; mostra definição existente + seção; sugere edição manual                |
-| Glossário ambíguo (vários matches)       | Lista títulos + pergunta qual                                                   |
-| Glossário não encontrado                 | Lista todos `type: glossary` do vault + pergunta                                |
-| Vault sem nenhum glossário               | Aborta; sugere criar um a partir de `Template - Glossário.md`                   |
-| Arquivo alvo sem `type: glossary`        | Aborta com erro claro (proteção contra escrever no arquivo errado)              |
-| Termo ambíguo (significa coisas diferentes) | Pede contexto ao usuário antes de pesquisar                                  |
-| WebSearch falha / sem rede               | Tenta só conhecimento geral; se também falhar, pede definição manual            |
-| Termo desconhecido (não existe)          | Aborta; sugere fornecer definição manual ou verificar grafia                    |
-| Seção pedida não existe                  | Pergunta se quer criar antes de inserir                                         |
-| Glossário sem `lang:` e sem definições   | Pergunta idioma uma vez; persiste no frontmatter                                |
-| Termo com caracteres Markdown (`#`, `[`) | Escape correto pra heading válido; preserve no display                          |
-| Definição muito longa (>5 frases)        | Em modo pesquisa, condense; em modo manual, aceite e avise gentilmente          |
+| Caso                                        | Comportamento                                                          |
+| ------------------------------------------- | ---------------------------------------------------------------------- |
+| Definição vazia                             | Modo pesquisa (não é erro — é o caso de uso mais comum)                |
+| Termo já existe no glossário                | Aborta; mostra definição existente + seção; sugere edição manual       |
+| Glossário ambíguo (vários matches)          | Lista títulos + pergunta qual                                          |
+| Glossário não encontrado                    | Lista todos `type: glossary` do vault + pergunta                       |
+| Vault sem nenhum glossário                  | Aborta; sugere criar um a partir de `Template - Glossário.md`          |
+| Arquivo alvo sem `type: glossary`           | Aborta com erro claro (proteção contra escrever no arquivo errado)     |
+| Termo ambíguo (significa coisas diferentes) | Pede contexto ao usuário antes de pesquisar                            |
+| WebSearch falha / sem rede                  | Tenta só conhecimento geral; se também falhar, pede definição manual   |
+| Termo desconhecido (não existe)             | Aborta; sugere fornecer definição manual ou verificar grafia           |
+| Seção pedida não existe                     | Pergunta se quer criar antes de inserir                                |
+| Glossário sem `lang:` e sem definições      | Pergunta idioma uma vez; persiste no frontmatter                       |
+| Termo com caracteres Markdown (`#`, `[`)    | Escape correto pra heading válido; preserve no display                 |
+| Definição muito longa (>5 frases)           | Em modo pesquisa, condense; em modo manual, aceite e avise gentilmente |
 
 ## Convenções rígidas
 

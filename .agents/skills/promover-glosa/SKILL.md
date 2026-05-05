@@ -1,6 +1,7 @@
 ---
 name: promover-glosa
-description: Promove uma glosa em `02-Glosas/` para uma nota nova em `03-Domínios/`. Cria a nota usando Template - Nota, popula `## Fontes` com wikilink pra glosa, move a glosa pra `02-Glosas/Promovidas/<ano>/`, e atualiza o frontmatter da glosa com `promovida_em`. Use quando o usuário invocar `/promover-glosa <slug>`, falar em "promover glosa", "criar nota a partir dessa glosa", "esta glosa merece nota", ou pedir explicitamente pra fazer essa transição.
+description: >
+   Promove uma glosa em `02-Glosas/` para uma nota nova em `03-Domínios/`. Cria a nota usando Template - Nota, popula `## Fontes` com wikilink pra glosa, move a glosa pra `02-Glosas/Promovidas/<ano>/`, e atualiza o frontmatter da glosa com `promovida_em`. Use quando o usuário invocar `/promover-glosa <slug>`, falar em "promover glosa", "criar nota a partir dessa glosa", "esta glosa merece nota", ou pedir explicitamente pra fazer essa transição.
 ---
 
 # Skill: promover-glosa
@@ -20,11 +21,11 @@ Promove **uma** glosa para o status de fonte de uma nota nova de domínio. A glo
 
 ## Argumentos
 
-| Forma | Comportamento |
-|---|---|
-| `/promover-glosa <slug>` | Promove a glosa especificada (slug do nome de arquivo, sem extensão). |
-| `/promover-glosa <wikilink>` | Aceita wikilink (`[[<slug>]]` ou `[[02-Glosas/<slug>]]`). |
-| `/promover-glosa` | Modo interativo: lista glosas em raiz com `progresso: feito` ou `andamento`, usuário escolhe. |
+| Forma                        | Comportamento                                                                                 |
+| ---------------------------- | --------------------------------------------------------------------------------------------- |
+| `/promover-glosa <slug>`     | Promove a glosa especificada (slug do nome de arquivo, sem extensão).                         |
+| `/promover-glosa <wikilink>` | Aceita wikilink (`[[<slug>]]` ou `[[02-Glosas/<slug>]]`).                                     |
+| `/promover-glosa`            | Modo interativo: lista glosas em raiz com `progresso: feito` ou `andamento`, usuário escolhe. |
 
 ## Fluxo de execução
 
@@ -133,16 +134,16 @@ Promove **uma** glosa para o status de fonte de uma nota nova de domínio. A glo
 
 ## Edge cases
 
-| Caso | Comportamento |
-|---|---|
-| Glosa não existe | Erro claro com sugestão de listar glosas existentes |
-| Glosa já em Promovidas/ | Append em `promovida_em`, não move; cria nota normalmente |
-| Domínio destino não existe | Pergunta se cria. Se sim, criar `03-Domínios/<X>/index.md` mínimo antes de criar a nota |
-| Nota já existe | Perguntar (a) anexar fonte, (b) outro nome, (c) cancelar |
-| Conflito de nome em Promovidas | Avisar e abortar (nome de arquivo é único por construção) |
-| Tags da glosa não mapeiam pra nenhum domínio | Listar TODOS os domínios disponíveis e pedir escolha |
-| TL;DR vazia ou ausente | Criar nota sem comentário-TL;DR; ainda popular `## Fontes` |
-| Glosa sem tags | Pedir tags pro usuário antes de criar a nota |
+| Caso                                         | Comportamento                                                                           |
+| -------------------------------------------- | --------------------------------------------------------------------------------------- |
+| Glosa não existe                             | Erro claro com sugestão de listar glosas existentes                                     |
+| Glosa já em Promovidas/                      | Append em `promovida_em`, não move; cria nota normalmente                               |
+| Domínio destino não existe                   | Pergunta se cria. Se sim, criar `03-Domínios/<X>/index.md` mínimo antes de criar a nota |
+| Nota já existe                               | Perguntar (a) anexar fonte, (b) outro nome, (c) cancelar                                |
+| Conflito de nome em Promovidas               | Avisar e abortar (nome de arquivo é único por construção)                               |
+| Tags da glosa não mapeiam pra nenhum domínio | Listar TODOS os domínios disponíveis e pedir escolha                                    |
+| TL;DR vazia ou ausente                       | Criar nota sem comentário-TL;DR; ainda popular `## Fontes`                              |
+| Glosa sem tags                               | Pedir tags pro usuário antes de criar a nota                                            |
 
 ## Convenções
 

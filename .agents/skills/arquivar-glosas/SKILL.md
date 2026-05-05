@@ -1,6 +1,7 @@
 ---
 name: arquivar-glosas
-description: Move glosas inativas há mais de 30 dias em `02-Glosas/` raiz pra `02-Glosas/Arquivadas/<ano>/`. Inatividade = `hoje - max(updated, mtime) > 30 dias`. Aplica-se a TODAS as glosas na raiz, independente de `progresso`. Use quando o usuário invocar `/arquivar-glosas`, falar em "arquivar glosas antigas", "limpar glosas antigas", "arquivar glosas paradas".
+description: >
+   Move glosas inativas há mais de 30 dias em `02-Glosas/` raiz pra `02-Glosas/Arquivadas/<ano>/`. Inatividade = `hoje - max(updated, mtime) > 30 dias`. Aplica-se a TODAS as glosas na raiz, independente de `progresso`. Use quando o usuário invocar `/arquivar-glosas`, falar em "arquivar glosas antigas", "limpar glosas antigas", "arquivar glosas paradas".
 ---
 
 # Skill: arquivar-glosas
@@ -76,13 +77,13 @@ Sem argumentos. A skill é uma varredura.
 
 ## Edge cases
 
-| Caso | Comportamento |
-|---|---|
-| Sem candidatas | Avisar "nada a arquivar" e sair sem ação |
-| Pasta `Arquivadas/<ano>/` ainda não existe | Criar com `mkdir -p` |
-| Conflito de nome (improvável) | Abortar com erro claro |
-| `updated` no frontmatter inválido | Cair no `mtime` puro |
-| Glosa em `Promovidas/` | Ignorar (skill só varre raiz) |
+| Caso                                       | Comportamento                            |
+| ------------------------------------------ | ---------------------------------------- |
+| Sem candidatas                             | Avisar "nada a arquivar" e sair sem ação |
+| Pasta `Arquivadas/<ano>/` ainda não existe | Criar com `mkdir -p`                     |
+| Conflito de nome (improvável)              | Abortar com erro claro                   |
+| `updated` no frontmatter inválido          | Cair no `mtime` puro                     |
+| Glosa em `Promovidas/`                     | Ignorar (skill só varre raiz)            |
 
 ## Convenções
 

@@ -1,6 +1,7 @@
 ---
 name: acordar-glosas
-description: Reativa glosas previamente arquivadas em `02-Glosas/Arquivadas/<ano>/`. Move pra raiz `02-Glosas/`, reseta `progresso: andamento`, atualiza `updated`. Aceita filtro por slug, tag, ou assunto. Use quando o usuário invocar `/acordar-glosas <criterio>` ou pedir pra "reativar glosas sobre X", "tirar glosas do arquivo", "acordar glosas pra estudar X".
+description: >
+   Reativa glosas previamente arquivadas em `02-Glosas/Arquivadas/<ano>/`. Move pra raiz `02-Glosas/`, reseta `progresso: andamento`, atualiza `updated`. Aceita filtro por slug, tag, ou assunto. Use quando o usuário invocar `/acordar-glosas <criterio>` ou pedir pra "reativar glosas sobre X", "tirar glosas do arquivo", "acordar glosas pra estudar X".
 ---
 
 # Skill: acordar-glosas
@@ -21,12 +22,12 @@ Move glosas de `02-Glosas/Arquivadas/**` de volta pra raiz `02-Glosas/`, com con
 
 ## Argumentos
 
-| Forma | Comportamento |
-|---|---|
-| `/acordar-glosas <slug>` | Reativa a glosa especificada (slug). |
-| `/acordar-glosas tag:<X>` | Reativa todas as glosas em `Arquivadas/` com a tag. |
-| `/acordar-glosas <assunto>` | Busca textual em `title`, `aliases`, `tags`. |
-| `/acordar-glosas` | Modo interativo: pergunta filtro. |
+| Forma                       | Comportamento                                       |
+| --------------------------- | --------------------------------------------------- |
+| `/acordar-glosas <slug>`    | Reativa a glosa especificada (slug).                |
+| `/acordar-glosas tag:<X>`   | Reativa todas as glosas em `Arquivadas/` com a tag. |
+| `/acordar-glosas <assunto>` | Busca textual em `title`, `aliases`, `tags`.        |
+| `/acordar-glosas`           | Modo interativo: pergunta filtro.                   |
 
 ## Fluxo de execução
 
@@ -82,12 +83,12 @@ Move glosas de `02-Glosas/Arquivadas/**` de volta pra raiz `02-Glosas/`, com con
 
 ## Edge cases
 
-| Caso | Comportamento |
-|---|---|
-| Glosa não está arquivada | Erro claro com sugestão de listar arquivadas |
-| 0 candidatas | "Nenhuma glosa arquivada com esse critério" |
+| Caso                     | Comportamento                                                |
+| ------------------------ | ------------------------------------------------------------ |
+| Glosa não está arquivada | Erro claro com sugestão de listar arquivadas                 |
+| 0 candidatas             | "Nenhuma glosa arquivada com esse critério"                  |
 | Conflito de nome na raiz | Abortar pra esta glosa, seguir com outras; reportar conflito |
-| Glosa em `Promovidas/` | Ignorar (skill só atua em `Arquivadas/`); explicar |
+| Glosa em `Promovidas/`   | Ignorar (skill só atua em `Arquivadas/`); explicar           |
 
 ## Convenções
 
