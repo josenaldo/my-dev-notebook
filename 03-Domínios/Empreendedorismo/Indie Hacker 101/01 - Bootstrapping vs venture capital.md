@@ -1,5 +1,5 @@
 ---
-title: "Bootstrapping vs venture capital"
+title: Bootstrapping vs venture capital
 created: 2026-05-02
 updated: 2026-05-02
 type: concept
@@ -15,6 +15,7 @@ aliases:
   - Bootstrap vs VC
   - Autofinanciamento
   - Bootstrapped business
+progresso: concluído
 ---
 
 # Bootstrapping vs venture capital
@@ -76,7 +77,7 @@ Isso cria incentivos completamente diferentes:
 - **Lucratividade desde o dia 1.** Sem colchão de capital, cada feature precisa justificar seu custo em receita ou retenção
 - **Crescimento "calm".** Sem pressão de investidores, o fundador cresce no ritmo que funciona — 10-20% mês a mês é excelente
 - **Propriedade total.** 100% das decisões, 100% do lucro, 0% de diluição
-- **Flexibilidade de exit.** Pode vender quando quiser, fechar quando quiser, ou operar indefinidamente — não há timeline imposta
+- **Flexibilidade de [[Dicionário do Indie Hacker#Exit|exit]].** Pode vender quando quiser, fechar quando quiser, ou operar indefinidamente — não há timeline imposta
 - **Risco pessoal limitado.** O pior cenário típico é perder tempo e algum dinheiro de economia — não dívida impagável
 
 Paul Jarvis formaliza isso em *Company of One*: o objetivo não é crescer infinitamente, é chegar ao "enough" — o ponto em que o negócio sustenta a vida que você quer. Sahil Lavingia, fundador do Gumroad, refina em *The Minimalist Entrepreneur*: comece por uma comunidade que você conhece, resolva um problema real, e seja lucrativo antes de pensar em escala.

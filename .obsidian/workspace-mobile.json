@@ -4,21 +4,35 @@
     "type": "split",
     "children": [
       {
-        "id": "a114d3591205c2e0",
+        "id": "ed64f9bbfa4c89c7",
         "type": "tabs",
         "children": [
           {
-            "id": "cfdaf3577fa57c04",
+            "id": "a4969ecb28dff2a1",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "JavaScript/Frontend/React.md",
+                "file": "03-Domínios/Empreendedorismo/Indie Hacker 101/02 - O conceito de enough — Company of One.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "React"
+              "title": "02 - O conceito de enough — Company of One"
+            }
+          },
+          {
+            "id": "845c6a7829b2767b",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "03-Domínios/Empreendedorismo/Indie Hacker 101/Dicionário do Indie Hacker.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Dicionário do Indie Hacker"
             }
           }
         ]
@@ -40,7 +54,7 @@
             "autoReveal": false
           },
           "icon": "lucide-folder-closed",
-          "title": "Explorador de arquivos"
+          "title": "Files"
         }
       },
       {
@@ -112,7 +126,7 @@
         "state": {
           "type": "backlink",
           "state": {
-            "file": "JavaScript/Frontend/React.md",
+            "file": "03-Domínios/Empreendedorismo/Indie Hacker 101/02 - O conceito de enough — Company of One.md",
             "collapseAll": false,
             "extraContext": false,
             "sortOrder": "alphabetical",
@@ -122,7 +136,7 @@
             "unlinkedCollapsed": true
           },
           "icon": "links-coming-in",
-          "title": "Links inversos"
+          "title": "Backlinks"
         }
       },
       {
@@ -159,20 +173,27 @@
   },
   "left-ribbon": {
     "hiddenItems": {
-      "switcher:Abrir a troca rápida": false,
-      "graph:Abrir visualização em gráfico": false,
-      "canvas:Criar novo canvas": false,
-      "daily-notes:Abrir a nota de hoje": false,
-      "templates:Inserir modelo": false,
-      "command-palette:Abrir paleta de comandos": false,
-      "bases:Criar nova base": false,
-      "obsidian-importer:Open Importer": false,
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "markdown-importer:Open format converter": false,
+      "bases:Create new base": false,
       "templater-obsidian:Templater": false,
-      "obsidian42-brat:BRAT": false
+      "obsidian42-brat:BRAT": false,
+      "terminal:Open terminal": false,
+      "obsidian-git:Open Git source control": false,
+      "copilot:Open Copilot Chat": false
     }
   },
-  "active": "ff4de4159b13b08e",
+  "active": "a4969ecb28dff2a1",
   "lastOpenFiles": [
+    "03-Domínios/Empreendedorismo/Indie Hacker 101/Dicionário do Indie Hacker.md",
+    "03-Domínios/Empreendedorismo/Indie Hacker 101/02 - O conceito de enough — Company of One.md",
+    "03-Domínios/Empreendedorismo/Indie Hacker 101/01 - Bootstrapping vs venture capital.md",
+    "Untitled.canvas",
     "Aprendizado/Communicating Trade-offs.md",
     "Aprendizado/Claude Course.md"
   ]

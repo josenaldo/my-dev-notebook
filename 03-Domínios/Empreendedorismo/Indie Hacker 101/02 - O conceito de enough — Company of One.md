@@ -1,5 +1,5 @@
 ---
-title: "O conceito de enough — Company of One"
+title: O conceito de enough — Company of One
 created: 2026-05-02
 updated: 2026-05-02
 type: concept
@@ -16,6 +16,7 @@ aliases:
   - Enough
   - Minimum Viable Profit
   - MVPr
+progresso: andamento
 ---
 
 # O conceito de "enough" — Company of One
