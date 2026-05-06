@@ -88,7 +88,7 @@ O desenvolvedor começa a pedir unidades completas de código: funções, testes
 
 O desenvolvedor muda o centro do trabalho: em vez de pedir implementação diretamente, descreve comportamento, invariantes, casos de teste, interfaces e critérios de aceite.
 
-**Prática-chave:** [[Spec-Driven Development|Spec-Driven Development]] e testes como contrato executável.
+**Prática-chave:** [[03-Dominios/IA/Spec-Driven Development/index|Spec-Driven Development]] e testes como contrato executável.
 
 **Sinal típico:** "a feature deve passar estes testes", "preserve estes invariantes", "não altere este contrato público".
 
@@ -102,7 +102,7 @@ A IA ganha acesso ao repositório e a ferramentas: ler arquivos, editar, rodar t
 
 **Ferramentas típicas:** Claude Code, Cursor agent mode, GitHub Copilot Agents, Codex CLI, Aider, OpenCode.
 
-**Conexões internas:** [[Agentes de Codificação]], [[Anatomia de Agents]], [[MCP]].
+**Conexões internas:** [[03-Dominios/IA/Agentes de Codificação/index|Agentes de Codificação]], [[03-Dominios/IA/Anatomia de Agents/index|Anatomia de Agents]], [[03-Dominios/IA/MCP/index|MCP]].
 
 **Ganho:** o agente pode fechar o ciclo `planejar -> agir -> observar -> corrigir`.
 
@@ -167,7 +167,7 @@ Um bom teste:
 - torna revisão humana mais objetiva;
 - cria memória persistente do comportamento esperado.
 
-Ver [[Spec-Driven Development]] e [[Segurança e Guardrails|09 - Testes imutáveis — a barreira que o agente não pode reescrever]].
+Ver [[03-Dominios/IA/Spec-Driven Development/index|Spec-Driven Development]] e [[03-Dominios/IA/Segurança e Guardrails/09 - Testes imutáveis — a barreira que o agente não pode reescrever|Testes imutáveis — a barreira que o agente não pode reescrever]].
 
 ### 3. Context engineering substitui prompt heroico
 
@@ -181,7 +181,7 @@ O prompt isolado perde importância quando o agente trabalha em codebase real. O
 - scripts de verificação;
 - permissões e limites operacionais.
 
-Ver [[Context Engineering]].
+Ver [[03-Dominios/IA/Context Engineering/index|Context Engineering]].
 
 ### 4. Code review muda de natureza
 
@@ -194,7 +194,7 @@ Revisar código AI-generated não é apenas procurar estilo ruim. É validar uma
 - houve alteração oportunista fora do escopo?
 - dependências, licenças e segurança foram consideradas?
 
-Ver [[Segurança e Guardrails|08 - Code review de código AI — o que muda]].
+Ver [[03-Dominios/IA/Segurança e Guardrails/08 - Code review de código AI — o que muda|Code review de código AI — o que muda]].
 
 ### 5. O risco se desloca para workflow
 
@@ -209,7 +209,7 @@ Riscos recorrentes:
 - **exposição de segredos ou dados sensíveis**;
 - **rework invisível por falta de critérios de aceite**.
 
-Ver [[Segurança e Guardrails]].
+Ver [[03-Dominios/IA/Segurança e Guardrails/index|Segurança e Guardrails]].
 
 ## Como Subir de Estágio
 
@@ -287,7 +287,7 @@ O termo "vibe coding", popularizado por Andrej Karpathy, descreve um modo de pro
 
 O objetivo não é abandonar disciplina de engenharia. É tornar a disciplina mais explícita, porque ela vira a interface de controle dos agentes.
 
-Ver [[Agentes de Codificação|02 - Vibe coding vs engenharia disciplinada]].
+Ver [[03-Dominios/IA/Agentes de Codificação/02 - Vibe coding vs engenharia disciplinada|Vibe coding vs engenharia disciplinada]].
 
 ## Críticas e Limites do Modelo
 
@@ -339,13 +339,13 @@ Para avaliar sua própria maturidade, observe comportamento real, não opinião:
 
 ## Veja também
 
-- [[Agentes de Codificação]]
-- [[Agentes de Codificação|02 - Vibe coding vs engenharia disciplinada]]
-- [[Agentes de Codificação|12 - Multi-agent — workflows com múltiplos agentes]]
-- [[Agentes de Codificação|17 - Human-in-the-loop — quando (não) confiar]]
-- [[Anatomia de Agents]]
-- [[Context Engineering]]
-- [[Spec-Driven Development]]
-- [[Segurança e Guardrails]]
-- [[Economia de Tokens]]
-- [[Minha Narrativa Profissional]]
+- [[03-Dominios/IA/Agentes de Codificação/index|Agentes de Codificação]]
+- [[03-Dominios/IA/Agentes de Codificação/02 - Vibe coding vs engenharia disciplinada|Vibe coding vs engenharia disciplinada]]
+- [[03-Dominios/IA/Agentes de Codificação/12 - Multi-agent — workflows com múltiplos agentes|Multi-agent — workflows com múltiplos agentes]]
+- [[03-Dominios/IA/Agentes de Codificação/17 - Human-in-the-loop — quando (não) confiar|Human-in-the-loop — quando (não) confiar]]
+- [[03-Dominios/IA/Anatomia de Agents/index|Anatomia de Agents]]
+- [[03-Dominios/IA/Context Engineering/index|Context Engineering]]
+- [[03-Dominios/IA/Spec-Driven Development/index|Spec-Driven Development]]
+- [[03-Dominios/IA/Segurança e Guardrails/index|Segurança e Guardrails]]
+- [[03-Dominios/IA/Economia de Tokens/index|Economia de Tokens]]
+-
