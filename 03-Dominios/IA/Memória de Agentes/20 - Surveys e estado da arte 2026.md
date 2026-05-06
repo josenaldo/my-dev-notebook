@@ -63,12 +63,12 @@ graph TB
 ```
 
 1. **Context-Resident Compression.** A memória vive *dentro* do context window, mas comprimida — sumarizações, ablações, soft prompts ou tokens latentes que condensam histórico em menos tokens. Útil em horizontes médios; falha quando o histórico cresce muito ou quando precisão semântica importa.
-2. **Retrieval-Augmented Stores.** Memória externa indexada (vetorial, lexical, grafo ou híbrida) consultada a cada turno via retrieval. É a família dominante em produção — RAG aplicado a histórico do agente, com ou sem preprocessing. Cobre desde o RAG ingênuo até sistemas como [[14 - Mem0 — vetorial + grafo|Mem0]] e [[15 - Zep e Graphiti — knowledge graph temporal|Zep/Graphiti]].
-3. **Reflective Self-Improvement.** O agente periodicamente reflete sobre memórias recentes e gera abstrações de mais alto nível, que viram novas entradas no próprio store. É o padrão inaugurado por [[17 - Generative Agents (Park, Stanford 2023)|Generative Agents]] e refinado em sistemas como [[18 - A-MEM — Zettelkasten dinâmico|A-MEM]].
-4. **Hierarchical Virtual Context.** Analogia de sistema operacional: memória organizada em níveis (RAM rápida, disco lento) com paginação explícita gerenciada pelo próprio LLM. Inaugurada pelo MemGPT e continuada em [[13 - Letta (ex-MemGPT)|Letta]]. O agente decide ativamente o que paginar para dentro e fora do contexto.
+2. **Retrieval-Augmented Stores.** Memória externa indexada (vetorial, lexical, grafo ou híbrida) consultada a cada turno via retrieval. É a família dominante em produção — RAG aplicado a histórico do agente, com ou sem preprocessing. Cobre desde o RAG ingênuo até sistemas como [[15 - Mem0 — vetorial + grafo|Mem0]] e [[16 - Zep e Graphiti — knowledge graph temporal|Zep/Graphiti]].
+3. **Reflective Self-Improvement.** O agente periodicamente reflete sobre memórias recentes e gera abstrações de mais alto nível, que viram novas entradas no próprio store. É o padrão inaugurado por [[18 - Generative Agents (Park, Stanford 2023)|Generative Agents]] e refinado em sistemas como [[19 - A-MEM — Zettelkasten dinâmico|A-MEM]].
+4. **Hierarchical Virtual Context.** Analogia de sistema operacional: memória organizada em níveis (RAM rápida, disco lento) com paginação explícita gerenciada pelo próprio LLM. Inaugurada pelo MemGPT e continuada em [[14 - Letta (ex-MemGPT)|Letta]]. O agente decide ativamente o que paginar para dentro e fora do contexto.
 5. **Policy-Learned Management.** Em vez de regras fixas para escrever/atualizar/esquecer, treina-se uma policy (geralmente via RL) que aprende quando registrar, sumarizar ou descartar. É a família mais frontier — apareceu em força em 2025-2026 com trabalhos como Agentic Memory e propostas de *learned forgetting*.
 
-Sistemas reais combinam famílias. [[16 - MemPalace (Milla Jovovich)|MemPalace]], por exemplo, mistura retrieval-augmented com hierarchical virtual context. A taxonomia é descritiva, não prescritiva — serve para localizar e comparar, não para forçar implementações em caixinhas exclusivas.
+Sistemas reais combinam famílias. [[17 - MemPalace (Milla Jovovich)|MemPalace]], por exemplo, mistura retrieval-augmented com hierarchical virtual context. A taxonomia é descritiva, não prescritiva — serve para localizar e comparar, não para forçar implementações em caixinhas exclusivas.
 
 ## ICLR 2026 Workshop "MemAgents"
 
@@ -98,7 +98,7 @@ A interseção entre os cinco surveys aponta cinco tendências que dominam a fro
 2. **Multi-agent shared memory.** Memória compartilhada entre múltiplos agents que cooperam — protocolos de leitura/escrita, controle de acesso, resolução de contradições. Crescente em 2025-2026 com o avanço de orquestração multi-agent.
 3. **Memória multimodal.** Texto, imagem e áudio coexistindo num único store. Mais difícil que parece: representações unificadas, retrieval cross-modal, evolução temporal de mídias diferentes. Du (2026) destaca como uma das frontiers menos consolidadas.
 4. **Privacy-preserving memory.** Encryption, federated learning e differential privacy aplicados a stores de memória. Particularmente relevante quando memória pessoal é armazenada por longos períodos — questão regulatória e ética, não só técnica.
-5. **Avaliação rigorosa.** **LongMemEval**, **LoCoMo**, **MemBench**, **MemoryAgentBench** e **MemoryArena** apareceram em rápida sucessão em 2025-2026. O campo passou de "olhar exemplos qualitativos" para benchmarks com métricas comparáveis. Discussão detalhada em [[20 - Comparativo crítico (LongMemEval)|20 - Comparativo crítico]].
+5. **Avaliação rigorosa.** **LongMemEval**, **LoCoMo**, **MemBench**, **MemoryAgentBench** e **MemoryArena** apareceram em rápida sucessão em 2025-2026. O campo passou de "olhar exemplos qualitativos" para benchmarks com métricas comparáveis. Discussão detalhada em [[21 - Comparativo crítico (LongMemEval)|21 - Comparativo crítico]].
 
 ## Por que importa para a trilha
 
@@ -110,10 +110,10 @@ A interseção entre os cinco surveys aponta cinco tendências que dominam a fro
 
 - [[03 - Taxonomia da memória (episódica, semântica, procedural)|03 - Taxonomia]] — vocabulário fundamental, cognitivo, anterior aos surveys
 - [[08 - Arquitetura de um sistema de memória]] — onde os 5 mecanismos encaixam num desenho concreto
-- [[17 - Generative Agents (Park, Stanford 2023)|17 - Generative Agents]] — paper foundational citado por todos os surveys
-- [[18 - A-MEM — Zettelkasten dinâmico]] — paper recente, instância de Reflective Self-Improvement
-- [[20 - Comparativo crítico (LongMemEval)|20 - Comparativo crítico]] — onde os benchmarks da tendência (5) aparecem em ação
-- [[21 - Críticas, limitações e armadilhas]] — auditoria honesta do campo, complemento crítico desta nota
+- [[18 - Generative Agents (Park, Stanford 2023)|18 - Generative Agents]] — paper foundational citado por todos os surveys
+- [[19 - A-MEM — Zettelkasten dinâmico]] — paper recente, instância de Reflective Self-Improvement
+- [[21 - Comparativo crítico (LongMemEval)|21 - Comparativo crítico]] — onde os benchmarks da tendência (5) aparecem em ação
+- [[22 - Críticas, limitações e armadilhas]] — auditoria honesta do campo, complemento crítico desta nota
 
 ## Referências
 

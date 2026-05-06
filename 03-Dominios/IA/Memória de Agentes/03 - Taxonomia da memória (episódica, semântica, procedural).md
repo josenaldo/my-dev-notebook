@@ -49,13 +49,13 @@ Cada tipo carrega uma pergunta arquetípica. Episódica responde "**aconteceu o 
 
 Cronológica, datável e contextual. Cada entrada está ancorada num momento específico e carrega o entorno em que aconteceu — quem falou, o que foi dito, qual era a tarefa, o que veio antes. Em humanos, é "lembrar do que aconteceu ontem na reunião". Em IA, manifesta-se como log de interações: chat history, registros de tool calls, observações de ambiente em ordem temporal.
 
-O exemplo canônico é o **memory stream** de Park et al. em "Generative Agents" (Stanford, 2023): um log apendado de observações em linguagem natural, cada uma com timestamp e pontuada por relevância, recência e importância no momento da recuperação. Detalhes em [[17 - Generative Agents (Park, Stanford 2023)]]. Exemplo prosaico: "em 2026-04-25 às 14h32, o usuário pediu X numa conversa sobre Y".
+O exemplo canônico é o **memory stream** de Park et al. em "Generative Agents" (Stanford, 2023): um log apendado de observações em linguagem natural, cada uma com timestamp e pontuada por relevância, recência e importância no momento da recuperação. Detalhes em [[18 - Generative Agents (Park, Stanford 2023)]]. Exemplo prosaico: "em 2026-04-25 às 14h32, o usuário pediu X numa conversa sobre Y".
 
 ### Memória semântica — "X é Y"
 
 Atemporal, factual e descontextualizada. Não importa **quando** alguém aprendeu que Paris é capital da França — o fato é tratado como verdade estável, sem âncora temporal. Em IA, manifesta-se como knowledge graph, base estruturada de fatos, páginas de wiki ou notas zettelkasten.
 
-O exemplo no qual a trilha mais investe é o **LLM Wiki Pattern** proposto por Karpathy ([[06 - O LLM Wiki Pattern (gist do Karpathy)]]): cada conceito vira página de markdown, com título, definição, links para outras páginas, atualizada quando o entendimento evolui. Outro exemplo é o **A-MEM** ([[18 - A-MEM — Zettelkasten dinâmico]]), em que o agente cria notas atômicas e as conecta dinamicamente. Entrada semântica típica: "LLM Wiki Pattern é um padrão proposto por Karpathy em abril/2026".
+O exemplo no qual a trilha mais investe é o **LLM Wiki Pattern** proposto por Karpathy ([[06 - O LLM Wiki Pattern (gist do Karpathy)]]): cada conceito vira página de markdown, com título, definição, links para outras páginas, atualizada quando o entendimento evolui. Outro exemplo é o **A-MEM** ([[19 - A-MEM — Zettelkasten dinâmico]]), em que o agente cria notas atômicas e as conecta dinamicamente. Entrada semântica típica: "LLM Wiki Pattern é um padrão proposto por Karpathy em abril/2026".
 
 ### Memória procedural — "para fazer X, ..."
 
@@ -111,13 +111,13 @@ graph TD
 - [[02 - O problema das janelas de contexto]] — por que working memory não basta
 - [[06 - O LLM Wiki Pattern (gist do Karpathy)]] — wiki como memória semântica
 - [[08 - Arquitetura de um sistema de memória]] — como tipos viram componentes
-- [[17 - Generative Agents (Park, Stanford 2023)]] — memory stream como memória episódica
-- [[18 - A-MEM — Zettelkasten dinâmico]] — semântica com evolução dinâmica
-- [[19 - Surveys e estado da arte 2026]] — formalização atual da taxonomia em IA
+- [[18 - Generative Agents (Park, Stanford 2023)]] — memory stream como memória episódica
+- [[19 - A-MEM — Zettelkasten dinâmico]] — semântica com evolução dinâmica
+- [[20 - Surveys e estado da arte 2026]] — formalização atual da taxonomia em IA
 
 ## Referências
 
 - **Tulving, E. (1972)** — "Episodic and semantic memory". In: Tulving, E. & Donaldson, W. (eds.), *Organization of Memory*, Academic Press, pp. 381-403. Capítulo foundational que distingue episódico de semântico — ponto de partida para qualquer taxonomia derivada.
 - **Tulving, E. (1985)** — "How many memory systems are there?". *American Psychologist*, 40(4), 385-398. Extensão em que Tulving formaliza a hierarquia procedural/semântica/episódica e discute dissociações neuropsicológicas que sustentam a separação.
-- **Park, J. S. et al. (2023)** — "Generative Agents: Interactive Simulacra of Human Behavior". `https://arxiv.org/abs/2304.03442` — paper foundational do memory stream, exemplo canônico de memória episódica em agentes LLM. Detalhado em [[17 - Generative Agents (Park, Stanford 2023)]].
+- **Park, J. S. et al. (2023)** — "Generative Agents: Interactive Simulacra of Human Behavior". `https://arxiv.org/abs/2304.03442` — paper foundational do memory stream, exemplo canônico de memória episódica em agentes LLM. Detalhado em [[18 - Generative Agents (Park, Stanford 2023)]].
 - **Du, Pengfei (2026)** — "Memory for Autonomous LLM Agents: Mechanisms, Evaluation, and Emerging Frontiers". `https://arxiv.org/abs/2603.07670` — survey que formaliza taxonomias modernas, cruzando a herança de Tulving com a divisão working/long-term.

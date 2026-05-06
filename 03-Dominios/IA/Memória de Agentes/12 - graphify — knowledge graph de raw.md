@@ -107,9 +107,9 @@ Os itens abaixo refletem o estado público do README de `safishamsi/graphify` em
 - [[06 - O LLM Wiki Pattern (gist do Karpathy)]] — pattern original que `graphify` estende em substrato gráfico
 - [[09 - Panorama de implementações (abril 2026)|09 - Panorama]] — onde graphify se posiciona na família Karpathy-inspired
 - [[10 - LLM-knowledge-base (Wendel) — direto do gist|10 - LLM-knowledge-base]] — alternativa markdown-based ao mesmo problema
-- [[15 - Zep e Graphiti — knowledge graph temporal|15 - Zep e Graphiti]] — outro KG, com foco em raciocínio temporal em vez de mixed-media
-- [[18 - A-MEM — Zettelkasten dinâmico]] — KG acadêmico com Zettelkasten dinâmico
-- [[22 - Guia de implementação do zero]] — como integrar `graphify` em um sistema próprio
+- [[16 - Zep e Graphiti — knowledge graph temporal|16 - Zep e Graphiti]] — outro KG, com foco em raciocínio temporal em vez de mixed-media
+- [[19 - A-MEM — Zettelkasten dinâmico]] — KG acadêmico com Zettelkasten dinâmico
+- [[23 - Guia de implementação do zero]] — como integrar `graphify` em um sistema próprio
 
 ## Referências
 

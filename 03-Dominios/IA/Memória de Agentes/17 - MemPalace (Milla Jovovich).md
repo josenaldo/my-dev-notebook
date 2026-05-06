@@ -27,7 +27,7 @@ aliases:
 > [!danger] Avisos de segurança
 > - O domínio **`mempalace.tech` é impostor com malware**, não relacionado ao projeto oficial.
 > - Fontes oficiais únicas: `github.com/milla-jovovich/mempalace` e `github.com/MemPalace/mempalace`.
-> - O score 98,4% em modo híbrido tem ressalvas críticas — análise rigorosa em [[21 - Críticas, limitações e armadilhas]].
+> - O score 98,4% em modo híbrido tem ressalvas críticas — análise rigorosa em [[22 - Críticas, limitações e armadilhas]].
 
 ## O que é
 
@@ -38,7 +38,7 @@ A arquitetura aplica a metáfora do **memory palace** — também conhecida como
 ## Por que importa
 
 - **Score auto-reportado entre os mais altos do mercado em abril de 2026.** **96,6% R@5 raw** e **98,4% no modo hybrid v4** (com LLM reranking — ≥99% reportado em alguns canais externos) no LongMemEval — com a ressalva crítica detalhada na seção *Crítica externa*.
-- **Local-first com integração MCP destrava casos onde Cloud é proibido.** Cenários regulatórios (saúde, legal, defesa) e ambientes air-gapped ganham opção MCP-native sem SaaS — diferente de [[15 - Zep e Graphiti — knowledge graph temporal|Zep]] (cloud-first) e parecido com [[12 - basic-memory — MCP nativo Obsidian|basic-memory]] em filosofia, mas com pretensão de benchmark mais alto.
+- **Local-first com integração MCP destrava casos onde Cloud é proibido.** Cenários regulatórios (saúde, legal, defesa) e ambientes air-gapped ganham opção MCP-native sem SaaS — diferente de [[16 - Zep e Graphiti — knowledge graph temporal|Zep]] (cloud-first) e parecido com [[13 - basic-memory — MCP nativo Obsidian|basic-memory]] em filosofia, mas com pretensão de benchmark mais alto.
 - **Diferenciais técnicos auto-declarados.** **AAAK compression** com claim de cerca de 30x (não verificado independentemente; ver hedge na *Anatomia técnica*) e **170-token startup** — agent inicia sessão consumindo cerca de 170 tokens antes de qualquer retrieval. Ambas precisam ser lidas com granularidade.
 - **O paper crítico é leitura obrigatória.** O arxiv 2604.21284 — *Spatial Metaphors for LLM Memory: A Critical Analysis of MemPalace* — argumenta que a "spatial palace hierarchy" é vector DB filtering com nomenclatura nova. Adotar MemPalace por convicção arquitetural sem ler essa crítica é decisão sub-informada.
 - **Sinaliza maturidade do mercado.** A existência simultânea de framework + benchmark próprio + paper crítico independente é indicador de que o campo está se profissionalizando.
@@ -63,7 +63,7 @@ A hierarquia espacial é o conceito central:
 
 Por baixo da metáfora, dois substratos coexistem:
 
-1. **Knowledge graph temporal em SQLite local.** Cada nó tem **validity intervals**, na tradição bi-temporal de [[15 - Zep e Graphiti — knowledge graph temporal|Zep/Graphiti]], mas com escopo single-user e sem Neo4j.
+1. **Knowledge graph temporal em SQLite local.** Cada nó tem **validity intervals**, na tradição bi-temporal de [[16 - Zep e Graphiti — knowledge graph temporal|Zep/Graphiti]], mas com escopo single-user e sem Neo4j.
 2. **ChromaDB como vector store padrão.** A escolha é pluggable via `mempalace/backends/base.py` (ver hedge na *Anatomia técnica*) — permite trocar por outros vector DBs em tese.
 
 As **29 MCP tools** cobrem cinco categorias: leituras/escritas no palácio (wings/rooms/drawers), operações no KG (criar nós, ligar relações, consultar timeline), navegação espacial (listar, encontrar caminhos), gerenciamento de drawers (mover, splitar, mesclar) e `agent diaries` (logs de sessão para reflective steps posteriores).
@@ -96,7 +96,7 @@ Esta seção é obrigatória — não apêndice opcional. A combinação de scor
 
 - **Score 98,4% hybrid sob suspeita de overfitting.** Análise no DEV.to descreve o **98,4% no modo hybrid v4** (≥99% reportado em alguns canais externos, arredondado para ~100%) como *"engineered through a process that most benchmark-literate engineers would consider overfitting"* — apontando que a configuração hybrid v4 held-out usa tuning específico ao LongMemEval que dificilmente generaliza. **Comparar 98,4% MemPalace com 93,4% Mem0 não é apples-to-apples.**
 
-Para tratamento integrado das críticas ao panorama (Mem0, Zep, MemPalace, Letta), ver [[21 - Críticas, limitações e armadilhas]].
+Para tratamento integrado das críticas ao panorama (Mem0, Zep, MemPalace, Letta), ver [[22 - Críticas, limitações e armadilhas]].
 
 ## Quando usar / quando não usar
 
@@ -109,9 +109,9 @@ Para tratamento integrado das críticas ao panorama (Mem0, Zep, MemPalace, Letta
 
 **Quando NÃO vale:**
 
-- **Caso decidido por benchmark** — o score 96,6% raw / 98,4% hybrid v4 auto-reportado tem ressalvas críticas que o tornam não-comparável a outros números do panorama. Quem decide por número precisa primeiro ler o paper crítico e refazer a comparação. Ver [[20 - Comparativo crítico (LongMemEval)|20 - Comparativo crítico]].
-- **Workflow Obsidian-first / markdown-first** — MemPalace não persiste em markdown legível por humano; o substrato é SQLite + ChromaDB. Para revisão manual da memória ou edição humana paralela ao agent, [[12 - basic-memory — MCP nativo Obsidian|basic-memory]] é mais adequado.
-- **Caso enterprise com audit trail formal** — não há ACL granular, logs imutáveis nem governance comparável ao [[15 - Zep e Graphiti — knowledge graph temporal|Zep Cloud]]. Para compliance regulatório com SLA, Zep é mais maduro.
+- **Caso decidido por benchmark** — o score 96,6% raw / 98,4% hybrid v4 auto-reportado tem ressalvas críticas que o tornam não-comparável a outros números do panorama. Quem decide por número precisa primeiro ler o paper crítico e refazer a comparação. Ver [[21 - Comparativo crítico (LongMemEval)|21 - Comparativo crítico]].
+- **Workflow Obsidian-first / markdown-first** — MemPalace não persiste em markdown legível por humano; o substrato é SQLite + ChromaDB. Para revisão manual da memória ou edição humana paralela ao agent, [[13 - basic-memory — MCP nativo Obsidian|basic-memory]] é mais adequado.
+- **Caso enterprise com audit trail formal** — não há ACL granular, logs imutáveis nem governance comparável ao [[16 - Zep e Graphiti — knowledge graph temporal|Zep Cloud]]. Para compliance regulatório com SLA, Zep é mais maduro.
 - **Equipe que não pode tolerar projeto novo** — MemPalace é abril de 2026, ainda em consolidação. Track-record é curto, breaking changes são esperáveis, e o domínio impostor mostra que o ecossistema ao redor ainda é frágil. Times que precisam de estabilidade plurianual devem aguardar maturação ou ir para alternativas mais antigas.
 
 ## Armadilhas comuns
@@ -128,10 +128,10 @@ Para tratamento integrado das críticas ao panorama (Mem0, Zep, MemPalace, Letta
 
 - [[06 - O LLM Wiki Pattern (gist do Karpathy)]] — pattern alternativo, markdown-led
 - [[09 - Panorama de implementações (abril 2026)|09 - Panorama]] — onde MemPalace se posiciona no mercado
-- [[12 - basic-memory — MCP nativo Obsidian|12 - basic-memory]] — alternativa local + MCP, markdown-first
-- [[15 - Zep e Graphiti — knowledge graph temporal|15 - Zep e Graphiti]] — alternativa enterprise, KG temporal maduro
-- [[20 - Comparativo crítico (LongMemEval)|20 - Comparativo crítico]] — onde o score 96,6% raw / 98,4% hybrid v4 aparece em contexto comparado
-- [[21 - Críticas, limitações e armadilhas]] — análise crítica obrigatória, com tratamento integrado do paper arxiv 2604.21284
+- [[13 - basic-memory — MCP nativo Obsidian|13 - basic-memory]] — alternativa local + MCP, markdown-first
+- [[16 - Zep e Graphiti — knowledge graph temporal|16 - Zep e Graphiti]] — alternativa enterprise, KG temporal maduro
+- [[21 - Comparativo crítico (LongMemEval)|21 - Comparativo crítico]] — onde o score 96,6% raw / 98,4% hybrid v4 aparece em contexto comparado
+- [[22 - Críticas, limitações e armadilhas]] — análise crítica obrigatória, com tratamento integrado do paper arxiv 2604.21284
 
 ## Referências
 

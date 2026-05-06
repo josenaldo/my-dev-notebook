@@ -59,7 +59,7 @@ A tabela abaixo consolida os números públicos em abril de 2026, com os ajustes
 | **graphify** | NÃO publicado | — | — | grátis | KG sobre raw markdown | sim |
 | **LLM-knowledge-base (Wendel)** | NÃO publicado (gist-grade) | — | low | grátis | markdown + SQLite | sim (gist) |
 
-¹ MemPalace 98,4% é o número auditado a partir do README oficial (`github.com/milla-jovovich/mempalace`); coberturas externas reportam até ≈99-100%, e o **paper crítico arxiv 2604.21284** argumenta que o ganho real do modo hybrid vem de armazenamento verbatim + ChromaDB, não da hierarquia espacial. Auditoria externa em `lhl/agentic-memory/blob/main/ANALYSIS-mempalace.md` encontrou **20 MCP tools efetivamente implementadas** (não 29 como circulou em material de marketing) e um drop de 12,4 pontos percentuais (AAAK) em workloads adversariais. Análise completa em [[21 - Críticas, limitações e armadilhas]].
+¹ MemPalace 98,4% é o número auditado a partir do README oficial (`github.com/milla-jovovich/mempalace`); coberturas externas reportam até ≈99-100%, e o **paper crítico arxiv 2604.21284** argumenta que o ganho real do modo hybrid vem de armazenamento verbatim + ChromaDB, não da hierarquia espacial. Auditoria externa em `lhl/agentic-memory/blob/main/ANALYSIS-mempalace.md` encontrou **20 MCP tools efetivamente implementadas** (não 29 como circulou em material de marketing) e um drop de 12,4 pontos percentuais (AAAK) em workloads adversariais. Análise completa em [[22 - Críticas, limitações e armadilhas]].
 
 ## Detalhes contextuais sobre LongMemEval
 
@@ -83,22 +83,22 @@ Quatro detalhes operacionais explicam a maior parte das discrepâncias quando se
 Recomendar pelo score puro é o erro mais comum. As recomendações abaixo são por **caso de uso real**.
 
 **Consultor solo / freelancer / knowledge worker que já vive no Obsidian.**
-[[12 - basic-memory — MCP nativo Obsidian|basic-memory]] (vault Obsidian, MCP nativo) ou [[16 - MemPalace (Milla Jovovich)|MemPalace]] (local-first, ChromaDB embarcado). Score alto onde foi medido, custo zero, dados na própria máquina. Para fluxo Obsidian puro, basic-memory é menos invasivo; para fluxo Claude Code com workload de retrieval mais agressivo, MemPalace.
+[[13 - basic-memory — MCP nativo Obsidian|basic-memory]] (vault Obsidian, MCP nativo) ou [[17 - MemPalace (Milla Jovovich)|MemPalace]] (local-first, ChromaDB embarcado). Score alto onde foi medido, custo zero, dados na própria máquina. Para fluxo Obsidian puro, basic-memory é menos invasivo; para fluxo Claude Code com workload de retrieval mais agressivo, MemPalace.
 
 **Startup early-stage que precisa de memória "que funciona" ontem.**
-[[14 - Mem0 — vetorial + grafo|Mem0]]. Lib open source (Apache 2.0), integrações com cerca de 24 frameworks, score auto-reportado de 93,4% em LongMemEval, latência reduzida em ≈91% vs full-context. Trade-off: o número é auto-reportado; reprodutibilidade externa é aceitável mas não comparável a um peer-reviewed completo.
+[[15 - Mem0 — vetorial + grafo|Mem0]]. Lib open source (Apache 2.0), integrações com cerca de 24 frameworks, score auto-reportado de 93,4% em LongMemEval, latência reduzida em ≈91% vs full-context. Trade-off: o número é auto-reportado; reprodutibilidade externa é aceitável mas não comparável a um peer-reviewed completo.
 
 **Enterprise regulado (banking, healthcare, gov).**
-[[15 - Zep e Graphiti — knowledge graph temporal|Zep/Graphiti]] pelo *audit trail temporal* embutido no KG (Neo4j) — caso clássico de *temporal reasoning* (saber não só o fato, mas quando ele passou a valer e quando deixou de valer). Score absoluto mais baixo (71,2% com gpt-4o), mas o ganho de governança compensa em domínio regulado. Alternativa: [[13 - Letta (ex-MemGPT)|Letta]] (Apache 2.0, self-host on-prem fácil, sem score público mas com hierarquia clara RAM/disk e *core memory blocks*).
+[[16 - Zep e Graphiti — knowledge graph temporal|Zep/Graphiti]] pelo *audit trail temporal* embutido no KG (Neo4j) — caso clássico de *temporal reasoning* (saber não só o fato, mas quando ele passou a valer e quando deixou de valer). Score absoluto mais baixo (71,2% com gpt-4o), mas o ganho de governança compensa em domínio regulado. Alternativa: [[14 - Letta (ex-MemGPT)|Letta]] (Apache 2.0, self-host on-prem fácil, sem score público mas com hierarquia clara RAM/disk e *core memory blocks*).
 
 **Pesquisador acadêmico.**
-[[18 - A-MEM — Zettelkasten dinâmico|A-MEM]] (paper NeurIPS 2025 + repo) como base experimental, **rodando LongMemEval e LoCoMo em paralelo** para benchmark próprio. A vantagem é que A-MEM expõe os hooks de Zettelkasten dinâmico, ideais para experimentar variações de write-path e linking automático.
+[[19 - A-MEM — Zettelkasten dinâmico|A-MEM]] (paper NeurIPS 2025 + repo) como base experimental, **rodando LongMemEval e LoCoMo em paralelo** para benchmark próprio. A vantagem é que A-MEM expõe os hooks de Zettelkasten dinâmico, ideais para experimentar variações de write-path e linking automático.
 
 **Quem quer dominar o pattern antes de adotar framework.**
 [[10 - LLM-knowledge-base (Wendel) — direto do gist|LLM-knowledge-base (Wendel)]] + [[06 - O LLM Wiki Pattern (gist do Karpathy)|gist do Karpathy]]. Score nenhum publicado (não é o foco), mas a clareza didática é máxima — entende-se o esqueleto do pattern, e depois qualquer framework "sofisticado" vira uma variação compreensível.
 
 **Quem precisa de KG com pipeline customizável.**
-[[11 - graphify — knowledge graph de raw|graphify]] ou Cognee. Sem score público em LongMemEval, mas KG é forte em multi-hop e integridade referencial, áreas onde benchmarks de QA puro nem sempre brilham.
+[[12 - graphify — knowledge graph de raw|graphify]] ou Cognee. Sem score público em LongMemEval, mas KG é forte em multi-hop e integridade referencial, áreas onde benchmarks de QA puro nem sempre brilham.
 
 ## Quando NÃO confiar em LongMemEval
 
@@ -113,7 +113,7 @@ LongMemEval é melhor que nada — mas é benchmark, não oráculo. Há cenário
 ## Armadilhas comuns
 
 - **Score alto ≠ best fit.** Workload, modelo base, custo operacional e tolerância a infra pesam mais que o número absoluto.
-- **Hybrid scores podem esconder overfitting.** O salto raw→hybrid de MemPalace levantou suspeita o suficiente para gerar paper crítico (arxiv 2604.21284). Não significa que hybrid é "trapaça" — significa que merece leitura cuidadosa. Detalhe em [[21 - Críticas, limitações e armadilhas]].
+- **Hybrid scores podem esconder overfitting.** O salto raw→hybrid de MemPalace levantou suspeita o suficiente para gerar paper crítico (arxiv 2604.21284). Não significa que hybrid é "trapaça" — significa que merece leitura cuidadosa. Detalhe em [[22 - Críticas, limitações e armadilhas]].
 - **Self-reported scores sem reprodutibilidade independente.** Mem0 e MemPalace reportam os próprios números; reprodutibilidade externa existe mas é parcial. Tratar com hedge.
 - **Modelo base pesa muito.** Zep com gpt-4o-mini (63,8%) versus Mem0 com gpt-4o (93,4%) **não é comparação válida** — modelos diferentes, mesmo benchmark, resultados não comensuráveis sem normalização.
 - **Confundir LoCoMo (A-MEM) com LongMemEval.** Benchmarks relacionados, mas distintos. Cobertura, tipos de pergunta e protocolo de avaliação diferem.
@@ -123,12 +123,12 @@ LongMemEval é melhor que nada — mas é benchmark, não oráculo. Há cenário
 ## Veja também
 
 - [[09 - Panorama de implementações (abril 2026)|09 - Panorama]] — overview do mercado e contextualização
-- [[10 - LLM-knowledge-base (Wendel) — direto do gist]] até [[16 - MemPalace (Milla Jovovich)|16 - MemPalace]] — implementações detalhadas, uma a uma
-- [[17 - Generative Agents (Park, Stanford 2023)|17 - Generative Agents]] — fundação histórica do reflection loop
-- [[18 - A-MEM — Zettelkasten dinâmico]] — usa LoCoMo, não LongMemEval
-- [[19 - Surveys e estado da arte 2026|19 - Surveys]] — fundamentação acadêmica e cinco mecanismos arquiteturais
-- [[21 - Críticas, limitações e armadilhas]] — auditoria do campo, paper crítico de MemPalace, leitura crítica do hybrid score
-- [[22 - Guia de implementação do zero]] — escolha aplicada, com checklist de decisão
+- [[10 - LLM-knowledge-base (Wendel) — direto do gist]] até [[17 - MemPalace (Milla Jovovich)|17 - MemPalace]] — implementações detalhadas, uma a uma
+- [[18 - Generative Agents (Park, Stanford 2023)|18 - Generative Agents]] — fundação histórica do reflection loop
+- [[19 - A-MEM — Zettelkasten dinâmico]] — usa LoCoMo, não LongMemEval
+- [[20 - Surveys e estado da arte 2026|20 - Surveys]] — fundamentação acadêmica e cinco mecanismos arquiteturais
+- [[22 - Críticas, limitações e armadilhas]] — auditoria do campo, paper crítico de MemPalace, leitura crítica do hybrid score
+- [[23 - Guia de implementação do zero]] — escolha aplicada, com checklist de decisão
 
 ## Referências
 
@@ -138,4 +138,4 @@ LongMemEval é melhor que nada — mas é benchmark, não oráculo. Há cenário
 4. **Paper crítico MemPalace**: `https://arxiv.org/abs/2604.21284`. Questiona origem do ganho hybrid; propõe que o ganho real vem de armazenamento verbatim + ChromaDB, não da hierarquia espacial.
 5. **Análise externa MemPalace** (auditoria de MCP tools e robustez): `https://github.com/lhl/agentic-memory/blob/main/ANALYSIS-mempalace.md`. Encontrou 20 tools efetivamente implementadas e drop de 12,4pp em workload adversarial (AAAK).
 6. **READMEs oficiais** das implementações: `github.com/milla-jovovich/mempalace`, `github.com/mem0ai/mem0`, `github.com/getzep/zep` e `github.com/getzep/graphiti`, `github.com/letta-ai/letta`, `github.com/basicmachines-co/basic-memory`.
-7. **A-MEM (LoCoMo, não LongMemEval)**: NeurIPS 2025; ver [[18 - A-MEM — Zettelkasten dinâmico|18]] para detalhes de benchmark.
+7. **A-MEM (LoCoMo, não LongMemEval)**: NeurIPS 2025; ver [[19 - A-MEM — Zettelkasten dinâmico|18]] para detalhes de benchmark.

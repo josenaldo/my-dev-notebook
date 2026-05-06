@@ -25,13 +25,13 @@ aliases:
 
 A "arquitetura de um sistema de memória" não é uma arquitetura específica — é o conjunto de componentes que **toda** implementação tem em alguma forma, ainda que disfarçada. Quando se compara o LLM Wiki de Karpathy, o servidor MCP `basic-memory`, o tier system de Letta, o grafo temporal do Zep, o retrieval vetorial do Mem0 e a metáfora espacial do MemPalace, parece à primeira vista que cada um implementa algo radicalmente diferente. Não é o caso. Por baixo da superfície, todos resolvem as mesmas cinco perguntas: o que entra, como organizar, como buscar, como manter e quais são as regras.
 
-Esse mapa arquitetural genérico é o vocabulário com o qual a trilha discute implementações específicas. As notas sobre cada ferramenta concreta — [[09 - Panorama de implementações (abril 2026)|panorama]], [[10 - LLM-knowledge-base (Wendel) — direto do gist|LLM-knowledge-base]], [[13 - Letta (ex-MemGPT)|Letta]], [[12 - basic-memory — MCP nativo Obsidian|basic-memory]], entre outras — vão se referir constantemente a esses cinco componentes. Sem o mapa, comparar implementações vira disputa de marca; com o mapa, vira conversa técnica.
+Esse mapa arquitetural genérico é o vocabulário com o qual a trilha discute implementações específicas. As notas sobre cada ferramenta concreta — [[09 - Panorama de implementações (abril 2026)|panorama]], [[10 - LLM-knowledge-base (Wendel) — direto do gist|LLM-knowledge-base]], [[14 - Letta (ex-MemGPT)|Letta]], [[13 - basic-memory — MCP nativo Obsidian|basic-memory]], entre outras — vão se referir constantemente a esses cinco componentes. Sem o mapa, comparar implementações vira disputa de marca; com o mapa, vira conversa técnica.
 
 ## Por que importa
 
 Sem essa base, comparar implementações vira anedota: "Mem0 é melhor que Letta", "Zep ganha do A-MEM", "use markdown e não vector DB". Com critério — qual componente cada solução prioriza, quais trade-offs assume, quais ignora — vira análise. Profissionais que conhecem o vocabulário arquitetural conseguem ler um repositório novo em 20 minutos, identificar o que ele faz bem e o que ignora, e decidir se serve para o caso de uso em mãos.
 
-Há também um motivo pragmático: para projetar um sistema próprio (caminho previsto na nota [[22 - Guia de implementação do zero]]), o primeiro passo é mapear o caso de uso aos cinco componentes — quanto entra por dia, quão estruturada é a entrada, qual a latência aceitável de retrieval, quem mantém o sistema, quais regras de governança existem. Sem essa decomposição, o projeto começa pelo substrato (vector DB? markdown? grafo?) — que é exatamente a decisão menos importante. E para discurso público — entrevistas, talks, mentoria — o vocabulário é o que separa quem entende o campo de quem consome marketing.
+Há também um motivo pragmático: para projetar um sistema próprio (caminho previsto na nota [[23 - Guia de implementação do zero]]), o primeiro passo é mapear o caso de uso aos cinco componentes — quanto entra por dia, quão estruturada é a entrada, qual a latência aceitável de retrieval, quem mantém o sistema, quais regras de governança existem. Sem essa decomposição, o projeto começa pelo substrato (vector DB? markdown? grafo?) — que é exatamente a decisão menos importante. E para discurso público — entrevistas, talks, mentoria — o vocabulário é o que separa quem entende o campo de quem consome marketing.
 
 ## Como funciona — componentes universais
 
@@ -88,7 +88,7 @@ A decisão central é o trade-off entre **custo de write** e **custo de read**. 
 
 Como buscar quando o agente precisa. Os padrões consolidados são: **similarity search** (cosine ou dot product sobre embeddings), **graph traversal** (seguir arestas a partir de entidades mencionadas), **hybrid search** (BM25 lexical combinado com vetor semântico) e **reranking** (segundo passo que reordena top-N por relevância semântica fina). Decisões importantes: tamanho do top-k, query rewriting (transformar a pergunta antes de buscar), e se há ou não cache de resultados.
 
-Retrieval é onde a maior parte do esforço de pesquisa acadêmica se concentra — porque é mensurável: dá para benchmarkar com LongMemEval e ver número subindo. É também onde mais se exagera. Um retrieval excelente sobre uma memória mal mantida produz respostas precisamente erradas; um retrieval mediano sobre uma memória bem curada produz respostas certas. A nota [[20 - Comparativo crítico (LongMemEval)|comparativo crítico]] explora essa assimetria.
+Retrieval é onde a maior parte do esforço de pesquisa acadêmica se concentra — porque é mensurável: dá para benchmarkar com LongMemEval e ver número subindo. É também onde mais se exagera. Um retrieval excelente sobre uma memória mal mantida produz respostas precisamente erradas; um retrieval mediano sobre uma memória bem curada produz respostas certas. A nota [[21 - Comparativo crítico (LongMemEval)|comparativo crítico]] explora essa assimetria.
 
 ### 4. Manutenção (manage)
 
@@ -154,10 +154,10 @@ Não há virtude em sobre-engenharia. Há cenários onde implementar todos os ci
 
 - [[06 - O LLM Wiki Pattern (gist do Karpathy)]] — instância concreta do pattern, com Ingest/Query/Lint mapeados aos componentes
 - [[07 - Por que Obsidian e markdown como substrato]] — substrato é decisão ortogonal à arquitetura
-- [[19 - Surveys e estado da arte 2026]] — formalização acadêmica do write-manage-read loop e dos 5 mecanismos
+- [[20 - Surveys e estado da arte 2026]] — formalização acadêmica do write-manage-read loop e dos 5 mecanismos
 - [[09 - Panorama de implementações (abril 2026)|09 - Panorama]] — quem implementa o quê, classificado pelos componentes desta nota
-- [[20 - Comparativo crítico (LongMemEval)|20 - Comparativo crítico]] — comparação técnica usando este vocabulário
-- [[22 - Guia de implementação do zero]] — aplicar a arquitetura num projeto novo, mapeando caso de uso aos componentes
+- [[21 - Comparativo crítico (LongMemEval)|21 - Comparativo crítico]] — comparação técnica usando este vocabulário
+- [[23 - Guia de implementação do zero]] — aplicar a arquitetura num projeto novo, mapeando caso de uso aos componentes
 
 ## Referências
 

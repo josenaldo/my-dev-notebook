@@ -85,7 +85,7 @@ Quando RAG é a escolha certa, padrões avançados, setup completo.
 ### Rota avançada (multi-hop, knowledge graphs)
 *"RAG vanilla não resolve, preciso patterns mais sofisticados"*
 
-[[11 - Padrões avançados — Graph RAG, Agentic RAG, multi-hop]] → [[Anatomia de Agents]] → [[Memória de Agentes|15 - Zep e Graphiti — knowledge graph temporal]]
+[[11 - Padrões avançados — Graph RAG, Agentic RAG, multi-hop]] → [[Anatomia de Agents]] → [[Memória de Agentes|16 - Zep e Graphiti — knowledge graph temporal]]
 
 ## Como esta trilha se conecta
 

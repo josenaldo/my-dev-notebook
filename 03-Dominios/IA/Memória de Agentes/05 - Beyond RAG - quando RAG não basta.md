@@ -53,7 +53,7 @@ Exemplo concreto: um tutor digital descobre na sessão 1 que o aluno tem dificul
 
 Um fato novo contradiz um fato antigo. RAG retrieva os dois sem critério — match por similaridade não tem opinião sobre temporalidade ou autoridade. Quem decide qual é atual? O modelo, na hora, sem informação suficiente. O resultado típico: respostas inconsistentes entre chamadas, a depender de quais chunks foram retrievados.
 
-Exemplo concreto: um agente de pesquisa de mercado indexa relatórios trimestrais. No Q1, a empresa X reportou margem de 18%. No Q4, reportou 12%. Sem manutenção ativa, RAG pode retrieve qualquer um dos dois trechos, e a resposta sobre "qual é a margem da X?" varia. A correção exige que **alguém** mantenha o conhecimento — marque a versão antiga como histórica, atualize a página de entidade, registre a mudança. Essa **manutenção** é o ponto da memória ativa, e é o trabalho que falta em RAG puro. Sistemas como [[15 - Zep e Graphiti — knowledge graph temporal|Zep/Graphiti]] atacam essa dimensão temporal explicitamente.
+Exemplo concreto: um agente de pesquisa de mercado indexa relatórios trimestrais. No Q1, a empresa X reportou margem de 18%. No Q4, reportou 12%. Sem manutenção ativa, RAG pode retrieve qualquer um dos dois trechos, e a resposta sobre "qual é a margem da X?" varia. A correção exige que **alguém** mantenha o conhecimento — marque a versão antiga como histórica, atualize a página de entidade, registre a mudança. Essa **manutenção** é o ponto da memória ativa, e é o trabalho que falta em RAG puro. Sistemas como [[16 - Zep e Graphiti — knowledge graph temporal|Zep/Graphiti]] atacam essa dimensão temporal explicitamente.
 
 ### 3. Conexões implícitas
 
@@ -67,7 +67,7 @@ Exemplo concreto: um analista pesquisa por meses "memória episódica em LLMs" e
 
 "O que eu sei sobre A?" é uma pergunta sobre o **estado da própria base** — exige reflection, não match. RAG não reflete: faz similaridade vetorial. Se a pergunta é "quais lacunas existem no que eu pesquisei sobre tópico X?", RAG não tem como responder, porque a resposta exige raciocínio sobre cobertura, não recuperação de chunks.
 
-Sistemas que atacam meta-conhecimento explicitamente: [[18 - A-MEM — Zettelkasten dinâmico|A-MEM]] usa estrutura de Zettelkasten para tornar conexões e lacunas inspecionáveis; [[17 - Generative Agents (Park, Stanford 2023)|Park et al. (2023)]] introduziram memory streams com reflection trees, em que o agente periodicamente faz síntese de alto nível sobre o que viu — gerando memórias derivadas que falam **sobre** as memórias originais. Em ambos os casos, há uma estrutura deliberada para sustentar perguntas meta, algo que retrieval flat não suporta.
+Sistemas que atacam meta-conhecimento explicitamente: [[19 - A-MEM — Zettelkasten dinâmico|A-MEM]] usa estrutura de Zettelkasten para tornar conexões e lacunas inspecionáveis; [[18 - Generative Agents (Park, Stanford 2023)|Park et al. (2023)]] introduziram memory streams com reflection trees, em que o agente periodicamente faz síntese de alto nível sobre o que viu — gerando memórias derivadas que falam **sobre** as memórias originais. Em ambos os casos, há uma estrutura deliberada para sustentar perguntas meta, algo que retrieval flat não suporta.
 
 Exemplo concreto: um pesquisador pergunta ao agente "que fontes contradizem a hipótese H1 na minha base?". Em RAG, o melhor que se obtém é um set de chunks que mencionam H1 — sem garantia de cobertura, sem detecção de contradição, sem mapa do território. Em memória ativa com lint regular, contradições já estão **marcadas** porque o ciclo de manutenção as detectou no momento da ingestão.
 
@@ -107,8 +107,8 @@ A regra prática: comece com RAG e introduza memória ativa quando os cinco cen�
 - [[04 - RAG vs memória de longo prazo]] — distinção fundamental entre retrieval reativo e construção ativa
 - [[06 - O LLM Wiki Pattern (gist do Karpathy)]] — a abordagem ativa que motivou o framing "Beyond RAG"
 - [[09 - Panorama de implementações (abril 2026)|09 - Panorama]] — quem está fazendo o quê em memória ativa
-- [[14 - Mem0 — vetorial + grafo]] — sistema de produção que combina RAG e memória
-- [[18 - A-MEM — Zettelkasten dinâmico]] — meta-conhecimento via Zettelkasten
+- [[15 - Mem0 — vetorial + grafo]] — sistema de produção que combina RAG e memória
+- [[19 - A-MEM — Zettelkasten dinâmico]] — meta-conhecimento via Zettelkasten
 - [[RAG e Vector Databases]] — para profundidade técnica em RAG (chunking, hybrid search, reranking)
 
 ## Referências

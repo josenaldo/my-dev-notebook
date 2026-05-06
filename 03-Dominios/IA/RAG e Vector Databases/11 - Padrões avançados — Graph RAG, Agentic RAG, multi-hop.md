@@ -246,8 +246,8 @@ graph TD
 - [[09 - Evaluation de RAG]]
 - [[Anatomia de Agents|01 - O que é um agent]]
 - [[Context Engineering|06 - Dynamic retrieval beyond RAG]]
-- [[Memória de Agentes|11 - graphify — knowledge graph de raw]]
-- [[Memória de Agentes|15 - Zep e Graphiti — knowledge graph temporal]]
+- [[Memória de Agentes|12 - graphify — knowledge graph de raw]]
+- [[Memória de Agentes|16 - Zep e Graphiti — knowledge graph temporal]]
 
 ## Referências
 

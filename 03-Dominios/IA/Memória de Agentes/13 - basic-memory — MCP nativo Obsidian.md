@@ -95,9 +95,9 @@ Os itens abaixo refletem o estado público do repositório em abril de 2026 (ver
 
 **Quando NÃO vale:**
 
-- **Enterprise com governance e audit trail formal.** Não há ACL granular, logs imutáveis nem pipeline de compliance. Para isso, [[15 - Zep e Graphiti — knowledge graph temporal|Zep]] ou Letta ([[09 - Panorama de implementações (abril 2026)|09 - Panorama]]) servem melhor.
+- **Enterprise com governance e audit trail formal.** Não há ACL granular, logs imutáveis nem pipeline de compliance. Para isso, [[16 - Zep e Graphiti — knowledge graph temporal|Zep]] ou Letta ([[09 - Panorama de implementações (abril 2026)|09 - Panorama]]) servem melhor.
 - **Volume alto ou multi-user concorrente.** Design single-user oriented; SQLite local não escala para concorrência pesada. Cloud paga ajuda com sync entre devices, mas não resolve multi-user nativamente.
-- **Knowledge graph rigoroso.** As relations são wikilinks tipados em markdown — leves, mas sem a expressividade de Cypher ou a precisão temporal de Graphiti. Para multi-hop reasoning sobre grafos densos, [[11 - graphify — knowledge graph de raw|graphify]] ou Zep/Graphiti são mais especializadas.
+- **Knowledge graph rigoroso.** As relations são wikilinks tipados em markdown — leves, mas sem a expressividade de Cypher ou a precisão temporal de Graphiti. Para multi-hop reasoning sobre grafos densos, [[12 - graphify — knowledge graph de raw|graphify]] ou Zep/Graphiti são mais especializadas.
 - **Cliente não-MCP.** Sem suporte a MCP no ambiente (LangChain puro, scripts diretos contra a API), `basic-memory` não acopla. Para esses casos, [[10 - LLM-knowledge-base (Wendel) — direto do gist|LLM-knowledge-base]] (Python direto) é mais natural.
 
 ## Armadilhas comuns
@@ -115,9 +115,9 @@ Os itens abaixo refletem o estado público do repositório em abril de 2026 (ver
 - [[07 - Por que Obsidian e markdown como substrato]] — justificativa do substrato
 - [[09 - Panorama de implementações (abril 2026)|09 - Panorama]] — onde basic-memory se posiciona no mercado
 - [[10 - LLM-knowledge-base (Wendel) — direto do gist|10 - LLM-knowledge-base]] — alternativa Python sem MCP
-- [[11 - graphify — knowledge graph de raw|11 - graphify]] — alternativa graph-based, mixed-media
-- [[15 - Zep e Graphiti — knowledge graph temporal|15 - Zep e Graphiti]] — alternativa enterprise / temporal
-- [[22 - Guia de implementação do zero|22 - Guia de implementação]] — onde basic-memory aparece como ferramenta default sugerida
+- [[12 - graphify — knowledge graph de raw|12 - graphify]] — alternativa graph-based, mixed-media
+- [[16 - Zep e Graphiti — knowledge graph temporal|16 - Zep e Graphiti]] — alternativa enterprise / temporal
+- [[23 - Guia de implementação do zero|23 - Guia de implementação]] — onde basic-memory aparece como ferramenta default sugerida
 - [[MCP]] — protocolo que `basic-memory` usa como ponto de integração
 
 ## Referências

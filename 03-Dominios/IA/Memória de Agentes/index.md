@@ -4,12 +4,12 @@ type: moc
 publish: true
 tags: [memoria-agentes, ia, moc]
 created: 2026-04-25
-updated: 2026-04-25
+updated: 2026-05-06
 ---
 
 # Memória de Agentes
 
-Memória de agentes é o campo que estuda como sistemas baseados em LLMs podem reter, recuperar e evoluir conhecimento ao longo do tempo, indo além da janela de contexto efêmera de uma única conversa. O tema ganhou tração consolidada em 2026 com surveys de referência, o workshop "MemAgents" no ICLR e uma proliferação de frameworks concorrentes — MemGPT/Letta, Mem0, Zep, MemPalace, A-MEM, basic-memory, entre outros — cada um com sua aposta arquitetural. O gancho de relevância contemporânea veio do gist publicado por Andrej Karpathy em 3 de abril de 2026, descrevendo o "LLM Wiki Pattern": uma arquitetura de três camadas que reposicionou a discussão sobre substratos de memória (markdown, grafos, vetores) na comunidade. Esta trilha percorre o campo do conceito básico ao guia de implementação, passando pela taxonomia clássica, pelo panorama de implementações disponíveis e pela leitura crítica do estado da arte.
+Memória de agentes é o campo que estuda como sistemas baseados em LLMs podem reter, recuperar e evoluir conhecimento ao longo do tempo, indo além da janela de contexto efêmera de uma única conversa. O tema ganhou tração consolidada em 2026 com surveys de referência, o workshop "MemAgents" no ICLR e uma proliferação de frameworks concorrentes — MemGPT/Letta, Mem0, Zep, MemPalace, A-MEM, basic-memory, OpenKB, entre outros — cada um com sua aposta arquitetural. O gancho de relevância contemporânea veio do gist publicado por Andrej Karpathy em 3 de abril de 2026, descrevendo o "LLM Wiki Pattern": uma arquitetura de três camadas que reposicionou a discussão sobre substratos de memória (markdown, grafos, vetores) na comunidade. Esta trilha percorre o campo do conceito básico ao guia de implementação, passando pela taxonomia clássica, pelo panorama de implementações disponíveis e pela leitura crítica do estado da arte.
 
 > [!warning] Avisos importantes
 > - O domínio `mempalace.tech` é impostor com malware. Apenas `github.com/milla-jovovich/mempalace` e `github.com/MemPalace/mempalace` são oficiais.
@@ -32,33 +32,34 @@ Trilha sequencial recomendada — leia na ordem para construir o terreno do conc
 - [[08 - Arquitetura de um sistema de memória]] — componentes, fluxos de escrita/leitura e decisões de design
 - [[09 - Panorama de implementações (abril 2026)|09 - Panorama de implementações]] — mapa dos frameworks e bibliotecas em circulação
 - [[10 - LLM-knowledge-base (Wendel) — direto do gist|10 - LLM-knowledge-base (Wendel)]] — implementação de referência derivada do gist
-- [[11 - graphify — knowledge graph de raw|11 - graphify]] — construção de grafo de conhecimento sobre dados brutos
-- [[12 - basic-memory — MCP nativo Obsidian|12 - basic-memory]] — servidor MCP que trata o vault como memória
-- [[13 - Letta (ex-MemGPT)|13 - Letta]] — herdeiro do MemGPT, com memória hierárquica e gerenciada pelo agente
-- [[14 - Mem0 — vetorial + grafo|14 - Mem0]] — abordagem híbrida de embeddings e grafo
-- [[15 - Zep e Graphiti — knowledge graph temporal|15 - Zep e Graphiti]] — grafo de conhecimento com dimensão temporal
-- [[16 - MemPalace (Milla Jovovich)|16 - MemPalace]] — projeto de memória inspirado em palácio mental
-- [[17 - Generative Agents (Park, Stanford 2023)|17 - Generative Agents]] — paper seminal de Stanford com reflexão e recuperação por relevância
-- [[18 - A-MEM — Zettelkasten dinâmico|18 - A-MEM]] — memória inspirada em Zettelkasten com links emergentes
-- [[19 - Surveys e estado da arte 2026|19 - Surveys e estado da arte]] — leituras de consolidação do campo
-- [[20 - Comparativo crítico (LongMemEval)|20 - Comparativo crítico]] — benchmarks e comparações entre frameworks
-- [[21 - Críticas, limitações e armadilhas]] — pontos cegos, custos e falhas comuns
-- [[22 - Guia de implementação do zero]] — passo a passo para montar um sistema próprio
-- [[23 - Aplicações comerciais e modelo de negócio|23 - Aplicações comerciais]] — onde memória de agentes vira produto
+- [[11 - OpenKB — wiki compilada com PageIndex|11 - OpenKB]] — wiki compilada com PageIndex para documentos longos
+- [[12 - graphify — knowledge graph de raw|12 - graphify]] — construção de grafo de conhecimento sobre dados brutos
+- [[13 - basic-memory — MCP nativo Obsidian|13 - basic-memory]] — servidor MCP que trata o vault como memória
+- [[14 - Letta (ex-MemGPT)|14 - Letta]] — herdeiro do MemGPT, com memória hierárquica e gerenciada pelo agente
+- [[15 - Mem0 — vetorial + grafo|15 - Mem0]] — abordagem híbrida de embeddings e grafo
+- [[16 - Zep e Graphiti — knowledge graph temporal|16 - Zep e Graphiti]] — grafo de conhecimento com dimensão temporal
+- [[17 - MemPalace (Milla Jovovich)|17 - MemPalace]] — projeto de memória inspirado em palácio mental
+- [[18 - Generative Agents (Park, Stanford 2023)|18 - Generative Agents]] — paper seminal de Stanford com reflexão e recuperação por relevância
+- [[19 - A-MEM — Zettelkasten dinâmico|19 - A-MEM]] — memória inspirada em Zettelkasten com links emergentes
+- [[20 - Surveys e estado da arte 2026|20 - Surveys e estado da arte]] — leituras de consolidação do campo
+- [[21 - Comparativo crítico (LongMemEval)|21 - Comparativo crítico]] — benchmarks e comparações entre frameworks
+- [[22 - Críticas, limitações e armadilhas]] — pontos cegos, custos e falhas comuns
+- [[23 - Guia de implementação do zero]] — passo a passo para montar um sistema próprio
+- [[24 - Aplicações comerciais e modelo de negócio|24 - Aplicações comerciais]] — onde memória de agentes vira produto
 
 ## Rotas alternativas
 
 ### Rota gerencial (entender e vender)
-[[01 - O que é memória em IA]] → [[02 - O problema das janelas de contexto]] → [[06 - O LLM Wiki Pattern (gist do Karpathy)|06 - O LLM Wiki Pattern]] → [[09 - Panorama de implementações (abril 2026)|09 - Panorama]] → [[23 - Aplicações comerciais e modelo de negócio|23 - Aplicações comerciais]]
+[[01 - O que é memória em IA]] → [[02 - O problema das janelas de contexto]] → [[06 - O LLM Wiki Pattern (gist do Karpathy)|06 - O LLM Wiki Pattern]] → [[09 - Panorama de implementações (abril 2026)|09 - Panorama]] → [[24 - Aplicações comerciais e modelo de negócio|24 - Aplicações comerciais]]
 
 ### Rota técnica (implementar)
-[[04 - RAG vs memória de longo prazo]] → [[06 - O LLM Wiki Pattern (gist do Karpathy)|06 - O LLM Wiki Pattern]] → [[08 - Arquitetura de um sistema de memória]] → [[09 - Panorama de implementações (abril 2026)|09 - Panorama]] → [[22 - Guia de implementação do zero]]
+[[04 - RAG vs memória de longo prazo]] → [[06 - O LLM Wiki Pattern (gist do Karpathy)|06 - O LLM Wiki Pattern]] → [[08 - Arquitetura de um sistema de memória]] → [[09 - Panorama de implementações (abril 2026)|09 - Panorama]] → [[23 - Guia de implementação do zero]]
 
 ### Rota acadêmica (fundamentar discurso)
-[[03 - Taxonomia da memória (episódica, semântica, procedural)|03 - Taxonomia]] → [[17 - Generative Agents (Park, Stanford 2023)|17 - Generative Agents]] → [[18 - A-MEM — Zettelkasten dinâmico|18 - A-MEM]] → [[19 - Surveys e estado da arte 2026|19 - Surveys]] → [[21 - Críticas, limitações e armadilhas]]
+[[03 - Taxonomia da memória (episódica, semântica, procedural)|03 - Taxonomia]] → [[18 - Generative Agents (Park, Stanford 2023)|18 - Generative Agents]] → [[19 - A-MEM — Zettelkasten dinâmico|19 - A-MEM]] → [[20 - Surveys e estado da arte 2026|20 - Surveys]] → [[22 - Críticas, limitações e armadilhas]]
 
 ### Rota implementador (mão na massa rápida)
-[[06 - O LLM Wiki Pattern (gist do Karpathy)|06 - O LLM Wiki Pattern]] → [[12 - basic-memory — MCP nativo Obsidian|12 - basic-memory]] → [[22 - Guia de implementação do zero]]
+[[06 - O LLM Wiki Pattern (gist do Karpathy)|06 - O LLM Wiki Pattern]] → [[13 - basic-memory — MCP nativo Obsidian|13 - basic-memory]] → [[23 - Guia de implementação do zero]]
 
 ## Todas as notas
 

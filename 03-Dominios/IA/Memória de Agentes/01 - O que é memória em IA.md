@@ -59,7 +59,7 @@ flowchart LR
 
 O substrato em que essa memória externa vive é um eixo de decisão importante: pode ser markdown plano, banco vetorial, grafo de conhecimento, ou combinações híbridas — cada escolha com tradeoffs próprios, explorados em [[08 - Arquitetura de um sistema de memória]] e em [[09 - Panorama de implementações (abril 2026)|09 - Panorama de implementações]].
 
-Vale registrar uma referência foundational: em 2023, Park e colegas (Stanford) introduziram em "Generative Agents" o conceito de **memory stream** — um log apendado de observações com pontuação de relevância, recência e importância para recuperação. Foi um dos primeiros desenhos completos do loop write-manage-read aplicado a agentes. O paper é detalhado em [[17 - Generative Agents (Park, Stanford 2023)]] e fica como pré-leitura recomendada para quem quiser entender a genealogia técnica do campo.
+Vale registrar uma referência foundational: em 2023, Park e colegas (Stanford) introduziram em "Generative Agents" o conceito de **memory stream** — um log apendado de observações com pontuação de relevância, recência e importância para recuperação. Foi um dos primeiros desenhos completos do loop write-manage-read aplicado a agentes. O paper é detalhado em [[18 - Generative Agents (Park, Stanford 2023)]] e fica como pré-leitura recomendada para quem quiser entender a genealogia técnica do campo.
 
 ## Quando usar / quando não usar
 
@@ -95,10 +95,10 @@ Vale registrar uma referência foundational: em 2023, Park e colegas (Stanford) 
 - [[03 - Taxonomia da memória (episódica, semântica, procedural)]] — vocabulário fundamental
 - [[04 - RAG vs memória de longo prazo]] — distinção crucial
 - [[06 - O LLM Wiki Pattern (gist do Karpathy)]] — abordagem de Karpathy
-- [[17 - Generative Agents (Park, Stanford 2023)]] — paper foundational
+- [[18 - Generative Agents (Park, Stanford 2023)]] — paper foundational
 
 ## Referências
 
 - **Du, Pengfei (2026)** — "Memory for Autonomous LLM Agents: Mechanisms, Evaluation, and Emerging Frontiers". `https://arxiv.org/abs/2603.07670` — survey que formaliza o loop write-manage-read e apresenta cinco famílias de mecanismos de gerenciamento de memória, com avaliação em benchmarks multi-sessão.
 - **The New Stack** — "Memory for AI Agents: A New Paradigm of Context Engineering" — cobertura editorial que enquadra memória de agentes como o próximo capítulo do "context engineering" depois de prompting e RAG.
-- **Park, J. S. et al. (2023)** — "Generative Agents: Interactive Simulacra of Human Behavior". `https://arxiv.org/abs/2304.03442` — paper foundational de Stanford que introduziu o conceito de memory stream com pontuação de relevância, recência e importância. Detalhado em [[17 - Generative Agents (Park, Stanford 2023)]].
+- **Park, J. S. et al. (2023)** — "Generative Agents: Interactive Simulacra of Human Behavior". `https://arxiv.org/abs/2304.03442` — paper foundational de Stanford que introduziu o conceito de memory stream com pontuação de relevância, recência e importância. Detalhado em [[18 - Generative Agents (Park, Stanford 2023)]].

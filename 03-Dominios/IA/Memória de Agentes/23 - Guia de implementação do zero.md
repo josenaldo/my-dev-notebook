@@ -26,18 +26,18 @@ aliases:
 
 Esta nota apresenta **dois caminhos práticos** para sair do conceitual e ter uma base de memória de agente rodando no mesmo dia. O **Caminho A** é didático: monta a estrutura mínima descrita no [[06 - O LLM Wiki Pattern (gist do Karpathy)|gist do Karpathy]], escreve o `CLAUDE.md` à mão e roda as primeiras operações (`ingest`, `query`, `lint`) com Claude Code. Ele ensina o pattern por dentro — quem termina o Caminho A entende exatamente por que cada peça existe.
 
-O **Caminho B** é direto: instala [[12 - basic-memory — MCP nativo Obsidian|basic-memory]], aponta para um vault Obsidian e em poucos minutos tem Claude lendo e escrevendo markdown estruturado via MCP. Pula a etapa de schema porque a ferramenta já traz convenções razoáveis. Útil para quem quer testar o pattern em um problema real antes de investir tempo em customização.
+O **Caminho B** é direto: instala [[13 - basic-memory — MCP nativo Obsidian|basic-memory]], aponta para um vault Obsidian e em poucos minutos tem Claude lendo e escrevendo markdown estruturado via MCP. Pula a etapa de schema porque a ferramenta já traz convenções razoáveis. Útil para quem quer testar o pattern em um problema real antes de investir tempo em customização.
 
 ## Por que importa
 
 Sem implementação, o conhecimento das notas anteriores (RAG, taxonomia, panorama, comparativos) fica abstrato. A diferença entre ler sobre o LLM Wiki Pattern e ter uma `wiki/` com 20 páginas geradas, lintada e versionada é qualitativa — só na prática aparecem os atritos reais (drift, contradições, índice desatualizado, schema vago).
 
-Os dois caminhos foram escolhidos por terem **barreira de entrada baixa**: 30 minutos para o Caminho A, 10 minutos para o Caminho B. Esse custo cabe em uma sessão única e produz material para experimentar antes de decidir investir em framework de produção como [[14 - Mem0 — vetorial + grafo|Mem0]], [[13 - Letta (ex-MemGPT)|Letta]] ou [[15 - Zep e Graphiti — knowledge graph temporal|Zep]]. Em outras palavras: este guia é o **primeiro experimento controlado** antes de escolhas arquiteturais maiores.
+Os dois caminhos foram escolhidos por terem **barreira de entrada baixa**: 30 minutos para o Caminho A, 10 minutos para o Caminho B. Esse custo cabe em uma sessão única e produz material para experimentar antes de decidir investir em framework de produção como [[15 - Mem0 — vetorial + grafo|Mem0]], [[14 - Letta (ex-MemGPT)|Letta]] ou [[16 - Zep e Graphiti — knowledge graph temporal|Zep]]. Em outras palavras: este guia é o **primeiro experimento controlado** antes de escolhas arquiteturais maiores.
 
 ## Caminho A — minimal seguindo o gist do Karpathy
 
 > [!warning] Quando escolher este caminho
-> Este é o caminho para quem quer **dominar o pattern**. Ao final, você entende cada peça (raw vs. wiki, schema, log append-only, lint), sabe o que customizar e por quê. É também o melhor ponto de partida para quem pretende, depois, evoluir para implementações como [[10 - LLM-knowledge-base (Wendel) — direto do gist|LLM-knowledge-base do Wendel]] ou [[11 - graphify — knowledge graph de raw|graphify]].
+> Este é o caminho para quem quer **dominar o pattern**. Ao final, você entende cada peça (raw vs. wiki, schema, log append-only, lint), sabe o que customizar e por quê. É também o melhor ponto de partida para quem pretende, depois, evoluir para implementações como [[10 - LLM-knowledge-base (Wendel) — direto do gist|LLM-knowledge-base do Wendel]] ou [[12 - graphify — knowledge graph de raw|graphify]].
 
 ### Estrutura inicial
 
@@ -126,7 +126,7 @@ Pontos de atenção no schema:
    pip install basic-memory
    ```
 
-   Para isolamento, prefira ambiente virtual ou Docker (ver [[12 - basic-memory — MCP nativo Obsidian|12 - basic-memory]] para alternativas).
+   Para isolamento, prefira ambiente virtual ou Docker (ver [[13 - basic-memory — MCP nativo Obsidian|13 - basic-memory]] para alternativas).
 
 2. **Configurar MCP server** no Claude Desktop ou Claude Code. Edite o arquivo de configuração MCP do cliente e adicione:
 
@@ -149,7 +149,7 @@ Pontos de atenção no schema:
 4. **Pronto.** A partir daí, Claude lê e escreve markdown estruturado via MCP, e Obsidian renderiza paralelamente (se aberto). As operações ficam expostas como tools nativas — `write_note`, `search_notes`, `read_note` etc.
 
 > [!warning] basic-memory não é plugin Obsidian
-> A confusão é frequente em tutoriais editoriais. basic-memory é um **MCP server externo** que escreve em uma pasta — Obsidian apenas abre essa pasta como vault e renderiza. Não há acoplamento com plugins do Obsidian. Detalhes em [[12 - basic-memory — MCP nativo Obsidian]].
+> A confusão é frequente em tutoriais editoriais. basic-memory é um **MCP server externo** que escreve em uma pasta — Obsidian apenas abre essa pasta como vault e renderiza. Não há acoplamento com plugins do Obsidian. Detalhes em [[13 - basic-memory — MCP nativo Obsidian]].
 
 ### O que você ganha e perde no Caminho B
 
@@ -164,12 +164,12 @@ Quem começa pelo Caminho B e sente atrito no schema costuma migrar parte do tra
 Os dois caminhos cobrem casos de uso individuais e bem delimitados. Sinais claros de que vale escalar para framework de produção:
 
 - **Volume cresce além de ~500 documentos:** busca textual simples começa a degradar; considere hybrid search (BM25 + vector). Implementações de referência em [[10 - LLM-knowledge-base (Wendel) — direto do gist|LLM-knowledge-base]].
-- **Multi-user concorrente:** vários agentes ou usuários escrevendo na mesma base exigem governance, locking e merge — território de [[14 - Mem0 — vetorial + grafo|Mem0]], [[13 - Letta (ex-MemGPT)|Letta]] e [[15 - Zep e Graphiti — knowledge graph temporal|Zep]].
+- **Multi-user concorrente:** vários agentes ou usuários escrevendo na mesma base exigem governance, locking e merge — território de [[15 - Mem0 — vetorial + grafo|Mem0]], [[14 - Letta (ex-MemGPT)|Letta]] e [[16 - Zep e Graphiti — knowledge graph temporal|Zep]].
 - **Tasks de alto custo:** quando cada query custa caro (em latência ou tokens), entram tiering, caching e evaluation sistemática.
 - **Compliance:** data residency, audit logs, retenção formal — Zep e Graphiti são mais sólidos nesse eixo.
-- **Casos com KG denso:** se o domínio tem grafo de relações forte (entidades muito interconectadas, raciocínio multi-hop), considere [[11 - graphify — knowledge graph de raw|graphify]] ou Zep/Graphiti.
+- **Casos com KG denso:** se o domínio tem grafo de relações forte (entidades muito interconectadas, raciocínio multi-hop), considere [[12 - graphify — knowledge graph de raw|graphify]] ou Zep/Graphiti.
 
-Para um mapa visual da escolha por critério, veja [[09 - Panorama de implementações (abril 2026)|09 - Panorama]] e [[20 - Comparativo crítico (LongMemEval)|20 - Comparativo]].
+Para um mapa visual da escolha por critério, veja [[09 - Panorama de implementações (abril 2026)|09 - Panorama]] e [[21 - Comparativo crítico (LongMemEval)|21 - Comparativo]].
 
 ## Quando NÃO escalar
 
@@ -188,21 +188,21 @@ Em todos esses casos, o tempo gasto avaliando frameworks rende mais investido em
 - **Não revisar páginas geradas pelo LLM.** Drift, alucinação e contradições silenciosas são reais. Revisão humana periódica é parte do pattern, não opcional.
 - **Misturar `raw/` com `wiki/`.** Editar fontes em `raw/` ou pedir ao agente que escreva lá quebra a auditabilidade. A separação é o que torna o pattern confiável.
 - **Esperar resultado out-of-the-box.** O pattern requer 2-3 iterações no schema antes de funcionar bem. Quem desiste depois da primeira passagem perde o efeito.
-- **Confiar cegamente em estatísticas auto-reportadas** de framework. Benchmarks de fornecedor frequentemente são otimizados para o caso ideal — ver [[21 - Críticas, limitações e armadilhas]] para auditoria honesta dos números mais citados.
+- **Confiar cegamente em estatísticas auto-reportadas** de framework. Benchmarks de fornecedor frequentemente são otimizados para o caso ideal — ver [[22 - Críticas, limitações e armadilhas]] para auditoria honesta dos números mais citados.
 
 ## Veja também
 
 - [[06 - O LLM Wiki Pattern (gist do Karpathy)]] — pattern original
 - [[07 - Por que Obsidian e markdown como substrato]] — fundamentação do substrato
 - [[10 - LLM-knowledge-base (Wendel) — direto do gist]] — implementação Python de referência
-- [[12 - basic-memory — MCP nativo Obsidian|12 - basic-memory]] — ferramenta do Caminho B
+- [[13 - basic-memory — MCP nativo Obsidian|13 - basic-memory]] — ferramenta do Caminho B
 - [[09 - Panorama de implementações (abril 2026)|09 - Panorama]] — quando ir além
-- [[20 - Comparativo crítico (LongMemEval)|20 - Comparativo]] — escolha por critério
-- [[21 - Críticas, limitações e armadilhas]] — auditoria honesta
+- [[21 - Comparativo crítico (LongMemEval)|21 - Comparativo]] — escolha por critério
+- [[22 - Críticas, limitações e armadilhas]] — auditoria honesta
 
 ## Referências
 
 - **Karpathy, A.** *LLM Wiki gist.* `https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f` — fonte primária do Caminho A.
 - **basic-memory documentation.** `https://docs.basicmemory.com/` — referência canônica do Caminho B (instalação, configuração MCP, convenções).
-- **Notas da trilha:** [[06 - O LLM Wiki Pattern (gist do Karpathy)|06]], [[10 - LLM-knowledge-base (Wendel) — direto do gist|10]], [[12 - basic-memory — MCP nativo Obsidian|12]] — contexto conceitual e de implementação que esta nota assume.
+- **Notas da trilha:** [[06 - O LLM Wiki Pattern (gist do Karpathy)|06]], [[10 - LLM-knowledge-base (Wendel) — direto do gist|10]], [[13 - basic-memory — MCP nativo Obsidian|12]] — contexto conceitual e de implementação que esta nota assume.
 - **Tutorials editoriais** (aimaker.substack, mattpaige68.substack, thetoolnerd, entre outros). Existem vários walkthroughs públicos sobre basic-memory + Obsidian; **a qualidade varia bastante** — alguns confundem basic-memory com plugin Obsidian, outros tratam o pattern como solução pronta sem mencionar lint nem revisão. Use como complemento, sempre conferindo contra a documentação oficial.

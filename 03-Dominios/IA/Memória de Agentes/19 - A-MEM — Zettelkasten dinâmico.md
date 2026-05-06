@@ -33,7 +33,7 @@ aliases:
 
 ## Problema
 
-Sistemas de memória anteriores tratam o histórico do agente de duas formas dominantes, e ambas têm limites claros. A primeira é o *memory stream* descrito em [[17 - Generative Agents (Park, Stanford 2023)|17 - Generative Agents]]: memórias são adicionadas em sequência, recuperadas por uma combinação de *recency*, importância e similarity, e nunca se reorganizam. A segunda é o RAG vetorial puro discutido em [[04 - RAG vs memória de longo prazo]] e em [[05 - Beyond RAG - quando RAG não basta]]: cada memória vira um vetor isolado em um índice, e a relação entre elas só existe implicitamente, no espaço de embeddings.
+Sistemas de memória anteriores tratam o histórico do agente de duas formas dominantes, e ambas têm limites claros. A primeira é o *memory stream* descrito em [[18 - Generative Agents (Park, Stanford 2023)|18 - Generative Agents]]: memórias são adicionadas em sequência, recuperadas por uma combinação de *recency*, importância e similarity, e nunca se reorganizam. A segunda é o RAG vetorial puro discutido em [[04 - RAG vs memória de longo prazo]] e em [[05 - Beyond RAG - quando RAG não basta]]: cada memória vira um vetor isolado em um índice, e a relação entre elas só existe implicitamente, no espaço de embeddings.
 
 O que falta nas duas abordagens é **organização emergente**. Não há mecanismo para que duas memórias reconheçam uma à outra como parte de um mesmo tópico, nem para que uma memória antiga seja *atualizada* quando uma observação posterior muda o que ela significa. A-MEM ataca exatamente esse vácuo.
 
@@ -101,16 +101,16 @@ A análise da QvickRead no Medium ("A-MEM: Pros and Cons of a New Memory System 
 ## Por que importa para a trilha
 
 - A-MEM representa a **ala acadêmica** do mesmo problema que o LLM Wiki Pattern resolve pragmaticamente. Ambos perguntam "como organizar memória que evolui", mas chegam por caminhos opostos: research-led, com taxonomia formal e benchmarks, no caso do A-MEM; engineering-led, com arquivos markdown e wikilinks, no caso do gist do Karpathy ([[06 - O LLM Wiki Pattern (gist do Karpathy)]]).
-- **Linkagem dinâmica** e ***memory evolution*** já aparecem como ideias emprestadas em sistemas de produção como Mem0 ([[14 - Mem0 — vetorial + grafo]]) — o vocabulário do paper rapidamente virou linguagem comum no campo.
+- **Linkagem dinâmica** e ***memory evolution*** já aparecem como ideias emprestadas em sistemas de produção como Mem0 ([[15 - Mem0 — vetorial + grafo]]) — o vocabulário do paper rapidamente virou linguagem comum no campo.
 - Para o vault em si, a coincidência com Zettelkasten é instrutiva: a [[03-Dominios/IA/Memória de Agentes/index]] inteira é construída como um Zettelkasten humano, e A-MEM mostra como esse mesmo padrão pode ser delegado, em parte, a um agente.
 
 ## Veja também
 
 - [[06 - O LLM Wiki Pattern (gist do Karpathy)]] — abordagem pragmática complementar ao mesmo problema
-- [[17 - Generative Agents (Park, Stanford 2023)|17 - Generative Agents]] — antecedente direto, com memory stream sem evolução
-- [[19 - Surveys e estado da arte 2026]] — onde o campo é formalizado como subárea
-- [[14 - Mem0 — vetorial + grafo]] — sistema de produção que toma ideias emprestado
-- [[20 - Comparativo crítico (LongMemEval)|20 - Comparativo crítico]] — onde A-MEM aparece em benchmark cruzado
+- [[18 - Generative Agents (Park, Stanford 2023)|18 - Generative Agents]] — antecedente direto, com memory stream sem evolução
+- [[20 - Surveys e estado da arte 2026]] — onde o campo é formalizado como subárea
+- [[15 - Mem0 — vetorial + grafo]] — sistema de produção que toma ideias emprestado
+- [[21 - Comparativo crítico (LongMemEval)|21 - Comparativo crítico]] — onde A-MEM aparece em benchmark cruzado
 - [[03 - Taxonomia da memória (episódica, semântica, procedural)]] — A-MEM atua principalmente sobre memória episódica/semântica, com o *evolve* aproximando-se de consolidação semântica
 
 ## Referências

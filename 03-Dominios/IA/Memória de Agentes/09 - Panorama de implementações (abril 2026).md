@@ -19,11 +19,11 @@ aliases:
 # Panorama de implementações
 
 > [!abstract] TL;DR
-> Em abril de 2026 há aproximadamente uma dúzia de implementações relevantes de memória de agentes circulando entre conferências, papers, threads no X e repositórios populares. Elas se agrupam em **três famílias**: (1) **inspiradas no LLM Wiki Pattern** do Karpathy — `LLM-knowledge-base` (Wendel), `graphify`, `basic-memory`, `NicholasSpisak/second-brain`, Apify Second Brain Builder; (2) **frameworks de produção** — Letta (ex-MemGPT), Mem0, Zep/Graphiti, MemPalace, Cognee, LangMem, SuperMemory; (3) **acadêmicas** — A-MEM. Esta nota é o gateway da Wave 5 da trilha: mapeia o terreno, oferece tabela síntese com hedges nos números e um fluxograma de escolha. As notas seguintes (10–16) detalham implementação por implementação.
+> Em abril de 2026 há aproximadamente uma dúzia de implementações relevantes de memória de agentes circulando entre conferências, papers, threads no X e repositórios populares. Elas se agrupam em **três famílias**: (1) **inspiradas no LLM Wiki Pattern** do Karpathy — `LLM-knowledge-base` (Wendel), `OpenKB`, `graphify`, `basic-memory`, `NicholasSpisak/second-brain`, Apify Second Brain Builder; (2) **frameworks de produção** — Letta (ex-MemGPT), Mem0, Zep/Graphiti, MemPalace, Cognee, LangMem, SuperMemory; (3) **acadêmicas** — A-MEM. Esta nota é o gateway da Wave 5 da trilha: mapeia o terreno, oferece tabela síntese com hedges nos números e um fluxograma de escolha. As notas seguintes (10–17) detalham implementação por implementação.
 
 ## O que é
 
-Esta nota é um **mapa de mercado**, não um catálogo exaustivo. O recorte temporal é deliberado: abril de 2026, momento em que o campo já tem benchmarks consolidados, surveys formais (ver [[19 - Surveys e estado da arte 2026|19 - Surveys]]) e o primeiro workshop dedicado em venue top-tier (MemAgents no ICLR 2026). Ferramentas surgem e somem rápido — três meses atrás MemPalace ainda não existia publicamente; daqui a três meses pode haver outras três que valem a pena. O objetivo aqui não é congelar uma lista definitiva, mas oferecer um esqueleto de orientação que o leitor possa reabrir periodicamente para reatualizar.
+Esta nota é um **mapa de mercado**, não um catálogo exaustivo. O recorte temporal é deliberado: abril de 2026, momento em que o campo já tem benchmarks consolidados, surveys formais (ver [[20 - Surveys e estado da arte 2026|20 - Surveys]]) e o primeiro workshop dedicado em venue top-tier (MemAgents no ICLR 2026). Ferramentas surgem e somem rápido — três meses atrás MemPalace ainda não existia publicamente; daqui a três meses pode haver outras três que valem a pena. O objetivo aqui não é congelar uma lista definitiva, mas oferecer um esqueleto de orientação que o leitor possa reabrir periodicamente para reatualizar.
 
 A trilha trata cada implementação relevante em nota própria a partir da [[10 - LLM-knowledge-base (Wendel) — direto do gist|10]] em diante. Esta nota — a 09 — funciona como índice anotado: explica como elas se relacionam, o que cada família resolve, quais sinalizam maturidade técnica e quais ainda são novidade promissora sem track-record. Quando uma decisão arquitetural precisa ser tomada — qual framework adotar, ou se vale construir do zero — esta página é o ponto de partida; as notas seguintes são o aprofundamento.
 
@@ -42,6 +42,7 @@ A trilha trata cada implementação relevante em nota própria a partir da [[10 
 | Implementação | Família | Substrato | LongMemEval | Custo | Maturidade | Quando usar |
 |---|---|---|---|---|---|---|
 | LLM-knowledge-base (Wendel) | Karpathy-inspired | Markdown + Python (`kb/`) | n/a | self-host | beta | implementação direta do gist, em PT, com hybrid search (BM25 + RRF) e healing automático |
+| OpenKB | Karpathy-inspired | Markdown wiki + PageIndex | n/a | self-host (Apache-2.0) | alpha | compilar corpus documental longo em wiki markdown; PageIndex para PDFs longos; chat com sessões persistidas |
 | graphify | Karpathy-inspired | Knowledge graph (NetworkX, sem embeddings) | n/a | self-host (MIT) | beta | mixed-media (código, docs, vídeo, imagem); skill nativa para Claude Code/Cursor/Codex |
 | basic-memory | Karpathy-inspired | Markdown + SQLite | n/a | open-source (AGPL-3.0) | estável | melhor integração markdown via MCP server; arquivos legíveis em Obsidian |
 | Letta (ex-MemGPT) | Production | Hierarchical (RAM/disco, paginação) | não publicado | freemium / cloud paga | estável | self-editing memory, herdeiro do MemGPT, ecossistema maduro |
@@ -54,7 +55,7 @@ A trilha trata cada implementação relevante em nota própria a partir da [[10 
 | A-MEM | Acadêmica | Zettelkasten linkado dinamicamente | benchmark **LoCoMo**, não LongMemEval | research code | research | estudar a fronteira (NeurIPS 2025) |
 
 > [!info] O símbolo "≈" e "+" não são casuais
-> "≈ 93,4%" significa "score auto-reportado pelos autores em uma versão específica do benchmark". "+ 18,5%" é melhoria *sobre baseline*, não score absoluto. As duas grandezas **não são diretamente comparáveis** — quem reporta uma usa convenção diferente de quem reporta a outra. Detalhes em [[20 - Comparativo crítico (LongMemEval)|20 - Comparativo crítico]].
+> "≈ 93,4%" significa "score auto-reportado pelos autores em uma versão específica do benchmark". "+ 18,5%" é melhoria *sobre baseline*, não score absoluto. As duas grandezas **não são diretamente comparáveis** — quem reporta uma usa convenção diferente de quem reporta a outra. Detalhes em [[21 - Comparativo crítico (LongMemEval)|21 - Comparativo crítico]].
 
 ## Detalhes contextuais sobre LongMemEval
 
@@ -63,8 +64,8 @@ A trilha trata cada implementação relevante em nota própria a partir da [[10 
 Três observações importantes ao ler scores:
 
 - **Quem não publicou scores.** Letta, Cognee, LangMem e SuperMemory **não divulgaram, no momento da publicação desta nota, scores em LongMemEval**. Isso não significa que sejam ruins — significa que falta evidência pública para comparação. É um sinal a considerar quando transparência importa (auditorias, decisões enterprise, defesa pública de escolha técnica).
-- **Score de MemPalace em modo híbrido tem ressalvas.** A versão *hybrid v4 held-out* atinge 98,4% R@5 e a versão com LLM reranking atinge ≥ 99% R@5. Esses números, embora reais, foram obtidos com tuning adicional — análise crítica detalhada em [[21 - Críticas, limitações e armadilhas]]. Comparar 96,6% raw com 93,4% auto-reportado por Mem0 já não é apples-to-apples; comparar 99% híbrido é menos ainda.
-- **A-MEM usa LoCoMo, não LongMemEval.** O paper de Wujiang Xu et al. (NeurIPS 2025, arXiv 2502.12110) avalia em **LoCoMo**, benchmark distinto, com cinco categorias de pergunta e formulação diferente. **Não é comparável diretamente** com os números em LongMemEval. Detalhes em [[18 - A-MEM — Zettelkasten dinâmico]].
+- **Score de MemPalace em modo híbrido tem ressalvas.** A versão *hybrid v4 held-out* atinge 98,4% R@5 e a versão com LLM reranking atinge ≥ 99% R@5. Esses números, embora reais, foram obtidos com tuning adicional — análise crítica detalhada em [[22 - Críticas, limitações e armadilhas]]. Comparar 96,6% raw com 93,4% auto-reportado por Mem0 já não é apples-to-apples; comparar 99% híbrido é menos ainda.
+- **A-MEM usa LoCoMo, não LongMemEval.** O paper de Wujiang Xu et al. (NeurIPS 2025, arXiv 2502.12110) avalia em **LoCoMo**, benchmark distinto, com cinco categorias de pergunta e formulação diferente. **Não é comparável diretamente** com os números em LongMemEval. Detalhes em [[19 - A-MEM — Zettelkasten dinâmico]].
 
 A regra prática é: scores são úteis para descartar ferramentas claramente fracas, não para escolher entre ferramentas próximas. Quando dois sistemas estão dentro de poucos pontos um do outro, custo, integração e ergonomia decidem mais do que benchmark.
 
@@ -98,7 +99,7 @@ O fluxograma é heurístico, não normativo. Existem casos legítimos de combina
 
 ## Armadilhas comuns
 
-- **Confundir LongMemEval score com qualidade real em produção.** O benchmark mede capacidades específicas em distribuição específica; sistemas podem estar otimizados para o benchmark sem ganho proporcional em casos reais. Análise crítica em [[21 - Críticas, limitações e armadilhas]].
+- **Confundir LongMemEval score com qualidade real em produção.** O benchmark mede capacidades específicas em distribuição específica; sistemas podem estar otimizados para o benchmark sem ganho proporcional em casos reais. Análise crítica em [[22 - Críticas, limitações e armadilhas]].
 - **Escolher por hype recente sem benchmark próprio.** MemPalace é abril/2026 — promissor, mas sem track-record longo. Letta tem vários anos de iteração desde MemGPT. As duas afirmações coexistem; o leitor decide o trade-off.
 - **Não checar se o framework tem fallback de provider.** Se a memória depende exclusivamente de OpenAI ou Anthropic, mudanças de pricing ou rate-limit derrubam o sistema. Frameworks maduros oferecem providers configuráveis.
 - **Achar que "estável" é absoluto.** Em 2026 o campo se move rápido; "estável hoje" pode ser "deprecated em seis meses". Reavaliar periodicamente faz parte da operação de qualquer sistema de memória que o leitor adote.
@@ -108,16 +109,17 @@ O fluxograma é heurístico, não normativo. Existem casos legítimos de combina
 
 - [[06 - O LLM Wiki Pattern (gist do Karpathy)]] — pattern que inspira a família 1
 - [[10 - LLM-knowledge-base (Wendel) — direto do gist|10 - LLM-knowledge-base]] — implementação canônica em PT
-- [[11 - graphify — knowledge graph de raw|11 - graphify]] — graph-based, mixed-media
-- [[12 - basic-memory — MCP nativo Obsidian|12 - basic-memory]] — MCP server, markdown legível em Obsidian
-- [[13 - Letta (ex-MemGPT)|13 - Letta]] — framework production, hierarchical
-- [[14 - Mem0 — vetorial + grafo|14 - Mem0]] — vetor + grafo, rede ampla de integrações
-- [[15 - Zep e Graphiti — knowledge graph temporal|15 - Zep e Graphiti]] — KG temporal, enterprise
-- [[16 - MemPalace (Milla Jovovich)|16 - MemPalace]] — memory palace local-first
-- [[18 - A-MEM — Zettelkasten dinâmico]] — research/Zettelkasten
-- [[19 - Surveys e estado da arte 2026]] — fundamentação acadêmica
-- [[20 - Comparativo crítico (LongMemEval)|20 - Comparativo crítico]] — análise rigorosa de benchmarks
-- [[21 - Críticas, limitações e armadilhas]] — auditoria honesta do campo
+- [[11 - OpenKB — wiki compilada com PageIndex|11 - OpenKB]] — CLI para wiki compilada com PageIndex
+- [[12 - graphify — knowledge graph de raw|12 - graphify]] — graph-based, mixed-media
+- [[13 - basic-memory — MCP nativo Obsidian|13 - basic-memory]] — MCP server, markdown legível em Obsidian
+- [[14 - Letta (ex-MemGPT)|14 - Letta]] — framework production, hierarchical
+- [[15 - Mem0 — vetorial + grafo|15 - Mem0]] — vetor + grafo, rede ampla de integrações
+- [[16 - Zep e Graphiti — knowledge graph temporal|16 - Zep e Graphiti]] — KG temporal, enterprise
+- [[17 - MemPalace (Milla Jovovich)|17 - MemPalace]] — memory palace local-first
+- [[19 - A-MEM — Zettelkasten dinâmico]] — research/Zettelkasten
+- [[20 - Surveys e estado da arte 2026]] — fundamentação acadêmica
+- [[21 - Comparativo crítico (LongMemEval)|21 - Comparativo crítico]] — análise rigorosa de benchmarks
+- [[22 - Críticas, limitações e armadilhas]] — auditoria honesta do campo
 
 ## Referências
 
@@ -129,6 +131,7 @@ O fluxograma é heurístico, não normativo. Existem casos legítimos de combina
 - Graphlit — *Survey of AI Agent Memory Frameworks* (comparativo editorial)
 - Repositórios primários:
     - `https://github.com/wendeus0/LLM-knowledge-base` (Wendel — direto do gist do Karpathy)
+    - `https://github.com/VectifyAI/OpenKB` (OpenKB — wiki compilada com PageIndex)
     - `https://github.com/safishamsi/graphify` (knowledge graph, MIT)
     - `https://github.com/basicmachines-co/basic-memory` (Markdown + SQLite, AGPL-3.0)
     - `https://github.com/letta-ai/letta` (ex-MemGPT)

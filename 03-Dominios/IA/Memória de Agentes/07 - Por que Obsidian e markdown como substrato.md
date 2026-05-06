@@ -82,8 +82,8 @@ A regra é simples: markdown ganha quando o caso de uso central é **conheciment
 - [[06 - O LLM Wiki Pattern (gist do Karpathy)|06 - O LLM Wiki Pattern]] — pattern que adota markdown como substrato deliberado
 - [[08 - Arquitetura de um sistema de memória]] — onde o substrato encaixa na arquitetura geral
 - [[10 - LLM-knowledge-base (Wendel) — direto do gist|10 - LLM-knowledge-base (Wendel)]] — implementação que usa markdown
-- [[12 - basic-memory — MCP nativo Obsidian|12 - basic-memory]] — servidor MCP que opera direto no vault
-- [[22 - Guia de implementação do zero]] — como começar com markdown + Obsidian
+- [[13 - basic-memory — MCP nativo Obsidian|13 - basic-memory]] — servidor MCP que opera direto no vault
+- [[23 - Guia de implementação do zero]] — como começar com markdown + Obsidian
 
 ## Referências
 

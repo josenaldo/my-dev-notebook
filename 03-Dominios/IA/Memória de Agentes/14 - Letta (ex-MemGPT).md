@@ -68,7 +68,7 @@ Os itens abaixo refletem o estado público do projeto em abril de 2026, verifica
 
 - **Tipo.** Framework open-source para agents stateful, distribuído como servidor + SDKs (Python e TypeScript). Roda como processo persistente que mantém estado em banco de dados.
 - **Linguagem.** Python (cerca de 99,5% do código, segundo a API do GitHub). SDKs cliente também em TypeScript.
-- **Licença.** Apache-2.0 (verificada via API do GitHub). Diferente de [[12 - basic-memory — MCP nativo Obsidian|basic-memory]], que usa AGPL-3.0, Letta tem licença permissiva — embutir em produto comercial fechado é menos friccionoso do ponto de vista jurídico.
+- **Licença.** Apache-2.0 (verificada via API do GitHub). Diferente de [[13 - basic-memory — MCP nativo Obsidian|basic-memory]], que usa AGPL-3.0, Letta tem licença permissiva — embutir em produto comercial fechado é menos friccionoso do ponto de vista jurídico.
 - **Componentes principais.**
     - **Letta Server** — processo que executa os agents, mantém estado, roteia chamadas a LLMs. Pode rodar local (self-host) ou na cloud gerenciada.
     - **Letta SDKs** — `pip install letta-client` (Python) e `npm install @letta-ai/letta-client` (TypeScript/Node).
@@ -89,7 +89,7 @@ Os itens abaixo refletem o estado público do projeto em abril de 2026, verifica
 - **Funding.** Letta saiu do stealth em **setembro de 2024** com **seed round de US$ 10 milhões** liderado por Felicis, com participação de Sunflower Capital e Essence VC, em valuation post-money de US$ 70 milhões. Cobertura primária em HPCwire/BigDATAwire, TechCrunch e PRNewswire. Como spin-out do **UC Berkeley AI Research Lab**, ancora a posição acadêmica do projeto na arquitetura institucional.
 
 > [!info] Sobre LongMemEval
-> Em abril de 2026, **Letta não publicou score oficial em LongMemEval** (ver [[20 - Comparativo crítico (LongMemEval)|20 - Comparativo crítico]]). Isso é **um sinal a notar**, não um veredicto: o framework existe há mais tempo que o benchmark e se posiciona como infraestrutura, não como otimizador para um teste. Mas em decisões enterprise onde transparência de benchmark importa, a ausência conta. Compare com [[14 - Mem0 — vetorial + grafo|Mem0]] (auto-reportado ≈ 93,4%) ou [[15 - Zep e Graphiti — knowledge graph temporal|Zep]] (+ 18,5% sobre full-context com GPT-4o) — números com convenções diferentes, ainda assim presentes.
+> Em abril de 2026, **Letta não publicou score oficial em LongMemEval** (ver [[21 - Comparativo crítico (LongMemEval)|21 - Comparativo crítico]]). Isso é **um sinal a notar**, não um veredicto: o framework existe há mais tempo que o benchmark e se posiciona como infraestrutura, não como otimizador para um teste. Mas em decisões enterprise onde transparência de benchmark importa, a ausência conta. Compare com [[15 - Mem0 — vetorial + grafo|Mem0]] (auto-reportado ≈ 93,4%) ou [[16 - Zep e Graphiti — knowledge graph temporal|Zep]] (+ 18,5% sobre full-context com GPT-4o) — números com convenções diferentes, ainda assim presentes.
 
 ## Quando usar / quando não usar
 
@@ -103,10 +103,10 @@ Os itens abaixo refletem o estado público do projeto em abril de 2026, verifica
 
 **Quando NÃO vale:**
 
-- Quer **simplicidade** acima de tudo. [[12 - basic-memory — MCP nativo Obsidian|basic-memory]] é mais leve: pasta de markdown e SQLite, sem servidor formal, sem Postgres. Para um vault pessoal de notas, Letta é overkill.
+- Quer **simplicidade** acima de tudo. [[13 - basic-memory — MCP nativo Obsidian|basic-memory]] é mais leve: pasta de markdown e SQLite, sem servidor formal, sem Postgres. Para um vault pessoal de notas, Letta é overkill.
 - Workflow é **Obsidian-first** ou markdown-first. Letta não tem integração nativa com vault de markdown; o substrato natural é banco. Quem quer abrir o conteúdo no Obsidian usa basic-memory ou [[10 - LLM-knowledge-base (Wendel) — direto do gist|LLM-knowledge-base]].
 - Transparência de **benchmark** é requisito formal. Sem score público em LongMemEval, comparações ficam por terra menos firme — alternativas com números publicados são mais defensáveis em auditoria.
-- Cliente regulado precisa de **audit trail temporal** robusto (mudanças versionadas, raciocínio temporal sobre fatos). [[15 - Zep e Graphiti — knowledge graph temporal|Zep/Graphiti]] foram desenhadas para esse caso.
+- Cliente regulado precisa de **audit trail temporal** robusto (mudanças versionadas, raciocínio temporal sobre fatos). [[16 - Zep e Graphiti — knowledge graph temporal|Zep/Graphiti]] foram desenhadas para esse caso.
 - Volume é tão baixo que **markdown puro + system prompt** já resolve. Quando a memória cabe num arquivo curto que o agent lê a cada chamada, qualquer framework é overhead.
 
 ## Armadilhas comuns
@@ -115,19 +115,19 @@ Os itens abaixo refletem o estado público do projeto em abril de 2026, verifica
 - **"Self-editing memory" não é mágica.** O agent só armazena ou move conteúdo se as **tools forem expostas e os prompts orientarem o uso**. Sem system prompt e exemplos sólidos, o LLM ignora `archival_memory_insert` na maioria dos turnos. A engenharia de prompt continua exigida.
 - **Hierarchical paginação custa tokens.** Cada vez que o agent decide invocar uma tool de memória, é uma chamada LLM com tokens de input e output. Em loops longos isso acumula — o "free lunch" da metáfora OS é parcial.
 - **Self-host PostgreSQL exige operação real.** Backup, replicação, monitoramento, scaling de pgvector — nada disso vem "grátis" com `docker compose up`. Para casos sérios, a operação do banco é parte do TCO; ignorar isso é uma das armadilhas clássicas de "open-source é grátis".
-- **Sem score LongMemEval público.** Comparações com [[14 - Mem0 — vetorial + grafo|Mem0]], MemPalace e outros que reportam números são, no mínimo, assimétricas. Não é argumento para descartar Letta, mas é argumento para não citar Letta como "comparativamente superior" em texto sem qualificação.
+- **Sem score LongMemEval público.** Comparações com [[15 - Mem0 — vetorial + grafo|Mem0]], MemPalace e outros que reportam números são, no mínimo, assimétricas. Não é argumento para descartar Letta, mas é argumento para não citar Letta como "comparativamente superior" em texto sem qualificação.
 - **Pricing muda.** Os tiers atuais (Pro, Max Lite, Max, API Plan) **não são** os mesmos descritos em material de 2024–2025 (que mencionavam Free 50 premium / 500 standard, Pro $20, Scale $750, Enterprise custom). Antes de citar valores em texto público, abrir `letta.com/pricing` na data corrente é obrigatório.
-- **Apache-2.0 não é AGPL.** Para quem está acostumado com [[12 - basic-memory — MCP nativo Obsidian|basic-memory]] (AGPL-3.0), assumir as mesmas restrições com Letta é erro: a licença permissiva permite embutir em produto comercial fechado sem obrigação de abrir código derivado. O trade-off, claro, é que o ecossistema também pode ser embutido por concorrentes.
+- **Apache-2.0 não é AGPL.** Para quem está acostumado com [[13 - basic-memory — MCP nativo Obsidian|basic-memory]] (AGPL-3.0), assumir as mesmas restrições com Letta é erro: a licença permissiva permite embutir em produto comercial fechado sem obrigação de abrir código derivado. O trade-off, claro, é que o ecossistema também pode ser embutido por concorrentes.
 
 ## Veja também
 
 - [[06 - O LLM Wiki Pattern (gist do Karpathy)]] — abordagem alternativa, markdown-led em vez de hierarchical
 - [[08 - Arquitetura de um sistema de memória]] — hierarchical é um dos mecanismos canônicos
 - [[09 - Panorama de implementações (abril 2026)|09 - Panorama]] — onde Letta se posiciona no mapa
-- [[12 - basic-memory — MCP nativo Obsidian|12 - basic-memory]] — alternativa leve, markdown-first
-- [[14 - Mem0 — vetorial + grafo|14 - Mem0]] — outra opção production, com benchmark publicado
-- [[15 - Zep e Graphiti — knowledge graph temporal|15 - Zep e Graphiti]] — alternativa enterprise/temporal
-- [[20 - Comparativo crítico (LongMemEval)|20 - Comparativo crítico]] — onde a ausência de score de Letta aparece
+- [[13 - basic-memory — MCP nativo Obsidian|13 - basic-memory]] — alternativa leve, markdown-first
+- [[15 - Mem0 — vetorial + grafo|15 - Mem0]] — outra opção production, com benchmark publicado
+- [[16 - Zep e Graphiti — knowledge graph temporal|16 - Zep e Graphiti]] — alternativa enterprise/temporal
+- [[21 - Comparativo crítico (LongMemEval)|21 - Comparativo crítico]] — onde a ausência de score de Letta aparece
 - [[02 - O problema das janelas de contexto]] — a dor que MemGPT propôs resolver
 
 ## Referências

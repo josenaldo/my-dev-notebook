@@ -37,9 +37,9 @@ O posicionamento canônico é o de **memory layer universal**: em vez de propor 
 ## Por que importa
 
 - **Talvez o framework de memória open-source mais comercialmente maduro em abril de 2026.** Repositório com mais de 54 mil estrelas, paper peer-review-quality (ECAI 2025), empresa por trás do projeto (Mem0 AI), pricing público estabelecido, SDKs Python e TypeScript estáveis. É a opção de referência para times que querem memória de produção sem construir do zero.
-- **Memory layer simplifica integração.** Não força reescrever o agent: acopla-se a um LangGraph existente, a um CrewAI, a um Vercel AI SDK chatbot, e ganha persistência sem reorganizar o código de orquestração. Diferente de [[13 - Letta (ex-MemGPT)|Letta]], que é um framework de agent stateful por inteiro, Mem0 é estritamente *layer*.
-- **A variante grafo destrava raciocínio multi-hop.** No paper, Mem0g supera a variante base em queries que exigem composição de múltiplos fatos (entidades + relações), no espírito do que [[15 - Zep e Graphiti — knowledge graph temporal|Zep/Graphiti]] também propõem. O ganho não é gigantesco no LOCOMO (~2 pontos), mas é consistente.
-- **Score de 93,4% no LongMemEval (auto-reportado, abril/2026) é dos mais altos do mercado.** Aparece no blog oficial *State of AI Agent Memory 2026* e na página de pesquisa, com o caveat usual de score auto-reportado por vendor (ver [[20 - Comparativo crítico (LongMemEval)|20 - Comparativo crítico]] e [[21 - Críticas, limitações e armadilhas]]).
+- **Memory layer simplifica integração.** Não força reescrever o agent: acopla-se a um LangGraph existente, a um CrewAI, a um Vercel AI SDK chatbot, e ganha persistência sem reorganizar o código de orquestração. Diferente de [[14 - Letta (ex-MemGPT)|Letta]], que é um framework de agent stateful por inteiro, Mem0 é estritamente *layer*.
+- **A variante grafo destrava raciocínio multi-hop.** No paper, Mem0g supera a variante base em queries que exigem composição de múltiplos fatos (entidades + relações), no espírito do que [[16 - Zep e Graphiti — knowledge graph temporal|Zep/Graphiti]] também propõem. O ganho não é gigantesco no LOCOMO (~2 pontos), mas é consistente.
+- **Score de 93,4% no LongMemEval (auto-reportado, abril/2026) é dos mais altos do mercado.** Aparece no blog oficial *State of AI Agent Memory 2026* e na página de pesquisa, com o caveat usual de score auto-reportado por vendor (ver [[21 - Comparativo crítico (LongMemEval)|21 - Comparativo crítico]] e [[22 - Críticas, limitações e armadilhas]]).
 - **Cobertura de integrações é o ponto comercial mais forte.** A página `docs.mem0.ai/integrations` lista ~24 frameworks de agentes — abrangência rara entre frameworks de memória.
 
 ## Como funciona
@@ -60,7 +60,7 @@ O fluxo central é deliberadamente simples e tem duas operações principais:
 1. **`memory.add(messages, user_id)`** — recebe uma lista de mensagens (ou um turno de conversa) e um identificador de usuário/sessão. Internamente, o Mem0 invoca um LLM (configurável: OpenAI, Anthropic, Ollama local, Azure, Bedrock, Groq e outros) que **extrai fatos salientes** das mensagens — afirmações estáveis sobre o usuário, sobre o domínio, sobre o que foi decidido. Esses fatos são gravados no vector store configurado (Qdrant, Pinecone, Chroma, Weaviate, PGVector, Redis, Milvus, Elasticsearch, OpenSearch, Supabase, FAISS e outros). Quando entity linking está ativo (ou na variante Mem0g do paper, com graph store externo), entidades extraídas e suas relações também são gravadas.
 2. **`memory.search(query, user_id)`** — recebe uma query e o identificador de usuário, e retorna a lista de fatos relevantes ranqueados, no estilo RAG. O agent injeta o resultado no prompt como contexto e responde.
 
-A propriedade-chave do design é que **o agent não precisa decidir o que armazenar**. Diferente de [[13 - Letta (ex-MemGPT)|Letta]], que expõe `core_memory_append` e `archival_memory_insert` como tools que o agent invoca por conta própria, no Mem0 a decisão é delegada a um pipeline de extração rodando no `add` — invisível ao agent. Isso é simultaneamente uma vantagem (menos cognitive load no LLM principal, menos tokens gastos em decisões de memória) e uma desvantagem (a heurística de extração é parcialmente opaca, e cada `add` custa pelo menos uma chamada de LLM extra).
+A propriedade-chave do design é que **o agent não precisa decidir o que armazenar**. Diferente de [[14 - Letta (ex-MemGPT)|Letta]], que expõe `core_memory_append` e `archival_memory_insert` como tools que o agent invoca por conta própria, no Mem0 a decisão é delegada a um pipeline de extração rodando no `add` — invisível ao agent. Isso é simultaneamente uma vantagem (menos cognitive load no LLM principal, menos tokens gastos em decisões de memória) e uma desvantagem (a heurística de extração é parcialmente opaca, e cada `add` custa pelo menos uma chamada de LLM extra).
 
 ## Anatomia técnica
 
@@ -90,20 +90,20 @@ Os itens abaixo foram verificados em `github.com/mem0ai/mem0`, `docs.mem0.ai` e 
 
 **Quando NÃO vale:**
 
-- Cenário **local-first puro com markdown como substrato canônico**. Para isso, [[12 - basic-memory — MCP nativo Obsidian|basic-memory]] é melhor — o Mem0 não persiste em arquivos legíveis por humano.
+- Cenário **local-first puro com markdown como substrato canônico**. Para isso, [[13 - basic-memory — MCP nativo Obsidian|basic-memory]] é melhor — o Mem0 não persiste em arquivos legíveis por humano.
 - **Workflow markdown-first** (vault Obsidian, Logseq, Foam): Mem0 grava em vector store, não em `.md` editáveis. Quem precisa de revisão humana sobre cada nota deve preferir basic-memory ou seguir o [[06 - O LLM Wiki Pattern (gist do Karpathy)|gist do Karpathy]] direto.
 - Quando se quer **transparência total do algoritmo de extração** — a seleção de "fatos salientes" via LLM é parcialmente opaca, e cada release pode mexer no pipeline.
 - **Custo de infra / equipe não comporta** Qdrant ou Pinecone em produção, e cloud da Mem0 é caro demais para o caso.
-- Caso pede **agent stateful por inteiro** (com identidade persistente, hierarquia de memória explícita, paginação RAM/disco): [[13 - Letta (ex-MemGPT)|Letta]] está mais alinhado.
-- Quando **knowledge graph temporal** é requisito (queries do tipo "qual era o estado em t1?"): [[15 - Zep e Graphiti — knowledge graph temporal|Zep/Graphiti]] tem suporte a tempo bi-temporal nativo.
+- Caso pede **agent stateful por inteiro** (com identidade persistente, hierarquia de memória explícita, paginação RAM/disco): [[14 - Letta (ex-MemGPT)|Letta]] está mais alinhado.
+- Quando **knowledge graph temporal** é requisito (queries do tipo "qual era o estado em t1?"): [[16 - Zep e Graphiti — knowledge graph temporal|Zep/Graphiti]] tem suporte a tempo bi-temporal nativo.
 
 ## Armadilhas comuns
 
-- **Confiar em score LongMemEval auto-reportado.** Os 93,4% são reportados pela própria Mem0, não por benchmark independente. Antes de citar em decisão técnica, validar com benchmark próprio sobre o caso de uso real (ver auditoria em [[21 - Críticas, limitações e armadilhas]]).
+- **Confiar em score LongMemEval auto-reportado.** Os 93,4% são reportados pela própria Mem0, não por benchmark independente. Antes de citar em decisão técnica, validar com benchmark próprio sobre o caso de uso real (ver auditoria em [[22 - Críticas, limitações e armadilhas]]).
 - **Esquecer o custo da extração.** Cada `memory.add` invoca pelo menos uma chamada extra de LLM para extrair fatos salientes. Em conversas longas e de alto volume, esse custo acumula — e não aparece no benchmark de retrieval.
 - **Tomar Mem0g do paper como sinônimo de Mem0 + Neo4j hoje.** O paper descreve graph store externo; a documentação atual indica remoção desse suporte no open-source em favor de entity linking embutido. Quem replica o setup do paper em 2026 pode encontrar surpresa na config.
 - **Cobertura de "integrations" é variável.** Algumas integrações são exemplos / cookbooks, outras são suportadas oficialmente como first-class. Antes de prometer "Mem0 funciona com X" para um cliente, abrir a página de integração de X e verificar se é cookbook, exemplo ou suporte mantido.
-- **Memória opaca para revisão humana.** Os fatos extraídos vivem em vector store. Não há `.md` legível para auditoria, comparado com [[10 - LLM-knowledge-base (Wendel) — direto do gist|LLM-knowledge-base]] ou [[12 - basic-memory — MCP nativo Obsidian|basic-memory]]. Em cenários regulados (saúde, finanças, jurídico) isso é considerável.
+- **Memória opaca para revisão humana.** Os fatos extraídos vivem em vector store. Não há `.md` legível para auditoria, comparado com [[10 - LLM-knowledge-base (Wendel) — direto do gist|LLM-knowledge-base]] ou [[13 - basic-memory — MCP nativo Obsidian|basic-memory]]. Em cenários regulados (saúde, finanças, jurídico) isso é considerável.
 - **Score em LOCOMO no paper (66,9% / 68,4%) e score em LongMemEval no blog (93,4%) são benchmarks diferentes.** Não são comparáveis lado a lado — confundir os dois inflaciona a impressão de progresso.
 - **Versão TypeScript ≠ versão Python.** SDK TS suporta menos LLMs e menos vector stores hoje. Projetos full-stack que dependem de paridade devem checar antes de se comprometer.
 
@@ -111,11 +111,11 @@ Os itens abaixo foram verificados em `github.com/mem0ai/mem0`, `docs.mem0.ai` e 
 
 - [[06 - O LLM Wiki Pattern (gist do Karpathy)]] — abordagem alternativa, markdown-led, sem extração via LLM
 - [[09 - Panorama de implementações (abril 2026)|09 - Panorama]] — onde Mem0 se posiciona no mapa
-- [[12 - basic-memory — MCP nativo Obsidian|12 - basic-memory]] — alternativa local/markdown
-- [[13 - Letta (ex-MemGPT)]] — alternativa hierarchical, stateful agent
-- [[15 - Zep e Graphiti — knowledge graph temporal|15 - Zep e Graphiti]] — alternativa KG temporal
-- [[20 - Comparativo crítico (LongMemEval)|20 - Comparativo crítico]] — onde o 93,4% aparece em contexto comparado
-- [[21 - Críticas, limitações e armadilhas]] — auditoria de claims auto-reportados
+- [[13 - basic-memory — MCP nativo Obsidian|13 - basic-memory]] — alternativa local/markdown
+- [[14 - Letta (ex-MemGPT)]] — alternativa hierarchical, stateful agent
+- [[16 - Zep e Graphiti — knowledge graph temporal|16 - Zep e Graphiti]] — alternativa KG temporal
+- [[21 - Comparativo crítico (LongMemEval)|21 - Comparativo crítico]] — onde o 93,4% aparece em contexto comparado
+- [[22 - Críticas, limitações e armadilhas]] — auditoria de claims auto-reportados
 
 ## Referências
 

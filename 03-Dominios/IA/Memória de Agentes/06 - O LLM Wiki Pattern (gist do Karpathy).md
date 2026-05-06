@@ -34,7 +34,7 @@ Há três papéis bem definidos. O **humano** cura as fontes (decide o que entra
 
 RAG passivo escala mal para conhecimento que **compõe**. Quando você pesquisa um domínio por meses, o que importa não é só recuperar trechos relevantes — é manter continuidade entre sessões, conectar ideias que aparecem em fontes diferentes, perceber quando uma afirmação nova contradiz uma antiga, e construir uma estrutura mental que evolui. RAG não faz nada disso: cada query é independente, e o knowledge base é fixo até alguém reindexar.
 
-O LLM Wiki estabelece um padrão claro para construção de "second brain" assistido por IA — território onde 2026 viu uma explosão de implementações inspiradas: [[10 - LLM-knowledge-base (Wendel) — direto do gist|LLM-knowledge-base do Wendel]] (a implementação canônica direto do gist), [[12 - basic-memory — MCP nativo Obsidian|basic-memory]] (MCP nativo para Obsidian), `graphify`, `NicholasSpisak/second-brain`, Apify Second Brain Builder, entre outros. O pattern virou referência porque resolve um problema real que profissionais de conhecimento sentem na pele: o conhecimento acumulado se perde entre sessões com o LLM.
+O LLM Wiki estabelece um padrão claro para construção de "second brain" assistido por IA — território onde 2026 viu uma explosão de implementações inspiradas: [[10 - LLM-knowledge-base (Wendel) — direto do gist|LLM-knowledge-base do Wendel]] (a implementação canônica direto do gist), [[11 - OpenKB — wiki compilada com PageIndex|OpenKB]] (wiki compilada com PageIndex para documentos longos), [[13 - basic-memory — MCP nativo Obsidian|basic-memory]] (MCP nativo para Obsidian), [[12 - graphify — knowledge graph de raw|graphify]], `NicholasSpisak/second-brain`, Apify Second Brain Builder, entre outros. O pattern virou referência porque resolve um problema real que profissionais de conhecimento sentem na pele: o conhecimento acumulado se perde entre sessões com o LLM.
 
 A simplicidade radical do pattern é deliberada e merece atenção. Não há vector DB, embeddings, framework, biblioteca exótica. Markdown em arquivos. O que torna isso poderoso é o **schema** — o documento de regras que ensina o LLM como organizar, linkar e atualizar. O substrato é trivial; a inovação real está no protocolo de manutenção. Essa decisão arquitetural alinha o pattern com [[07 - Por que Obsidian e markdown como substrato|por que markdown é o substrato certo]].
 
@@ -112,8 +112,9 @@ A wiki pessoal de Karpathy num único tópico de pesquisa cresceu para cerca de 
 - [[07 - Por que Obsidian e markdown como substrato]] — escolha de substrato
 - [[08 - Arquitetura de um sistema de memória]] — generalização do pattern
 - [[10 - LLM-knowledge-base (Wendel) — direto do gist]] — implementação canônica
-- [[12 - basic-memory — MCP nativo Obsidian]] — alternativa pronta
-- [[22 - Guia de implementação do zero]] — como começar
+- [[11 - OpenKB — wiki compilada com PageIndex]] — CLI com PageIndex para documentos longos
+- [[13 - basic-memory — MCP nativo Obsidian]] — alternativa pronta
+- [[23 - Guia de implementação do zero]] — como começar
 
 ## Referências
 

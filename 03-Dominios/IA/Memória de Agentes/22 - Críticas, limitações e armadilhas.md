@@ -24,7 +24,7 @@ aliases:
 
 ## O que é
 
-Esta nota é uma análise crítica do estado da arte em memória de agentes em abril de 2026. Ela **não é "anti-memória de agentes"** — é **pró-rigor**. As notas anteriores da trilha mostram avanços reais: o gist do Karpathy reorganizou o vocabulário público ([[06 - O LLM Wiki Pattern (gist do Karpathy)|06 - O LLM Wiki Pattern]]), Generative Agents abriu o caminho de reflexão e recuperação por relevância ([[17 - Generative Agents (Park, Stanford 2023)|17 - Generative Agents]]) e os surveys de 2026 ([[19 - Surveys e estado da arte 2026|19 - Surveys]]) deram vocabulário comum ao campo. Tudo isso é progresso real e merece ser citado com convicção.
+Esta nota é uma análise crítica do estado da arte em memória de agentes em abril de 2026. Ela **não é "anti-memória de agentes"** — é **pró-rigor**. As notas anteriores da trilha mostram avanços reais: o gist do Karpathy reorganizou o vocabulário público ([[06 - O LLM Wiki Pattern (gist do Karpathy)|06 - O LLM Wiki Pattern]]), Generative Agents abriu o caminho de reflexão e recuperação por relevância ([[18 - Generative Agents (Park, Stanford 2023)|18 - Generative Agents]]) e os surveys de 2026 ([[20 - Surveys e estado da arte 2026|20 - Surveys]]) deram vocabulário comum ao campo. Tudo isso é progresso real e merece ser citado com convicção.
 
 O que esta nota faz é a contrapartida: **reconhecer avanços e ressalvas no mesmo discurso**. Quem cita só os números altos perde credibilidade quando alguém da audiência leu o paper crítico; quem cita os números altos **e** as ressalvas já partiu da posição de quem leu mais a fundo.
 
@@ -56,7 +56,7 @@ Benchmarks são úteis até virarem alvo. LongMemEval é um benchmark vivo, com 
 
 ### 3. Viés de auto-publicação
 
-Quem publica score em LongMemEval está se sujeitando a uma comparação pública. Quem **não** publica está, de algum jeito, opting out dessa comparação. Em abril de 2026 o cenário é: **Letta, Cognee, LangMem e SuperMemory não publicaram scores** ([[20 - Comparativo crítico (LongMemEval)|20 - Comparativo crítico]] consolida).
+Quem publica score em LongMemEval está se sujeitando a uma comparação pública. Quem **não** publica está, de algum jeito, opting out dessa comparação. Em abril de 2026 o cenário é: **Letta, Cognee, LangMem e SuperMemory não publicaram scores** ([[21 - Comparativo crítico (LongMemEval)|21 - Comparativo crítico]] consolida).
 
 - Isso é **sinal, não condenação**. Razões possíveis: score baixo, custo alto de avaliação, workload-alvo diferente (Letta otimiza agentic loop, não QA multi-session), prioridades comerciais sobre publicações acadêmicas, ou simplesmente que o benchmark não captura o que o sistema otimiza. Sem mais informação, é indeterminado.
 - Mas falta de transparência é **red flag**, mesmo quando justificável. Se duas ferramentas têm features comparáveis e uma publicou scores e a outra não, a que publicou parte com vantagem de credibilidade técnica. Heurística, não regra.
@@ -139,9 +139,9 @@ Recap consolidado das categorias acima. Em formato de checklist para quem está 
 - [[04 - RAG vs memória de longo prazo]] — quando RAG basta e o "bypass total" é exagero
 - [[06 - O LLM Wiki Pattern (gist do Karpathy)|06 - O LLM Wiki Pattern]] — pattern central da trilha, lido aqui com ressalvas
 - [[08 - Arquitetura de um sistema de memória]] — schema vs substrate
-- [[16 - MemPalace (Milla Jovovich)|16 - MemPalace]] — caso central de hype-vs-rigor analisado em detalhe
-- [[19 - Surveys e estado da arte 2026|19 - Surveys]] — onde os autores reconhecem limitações do campo
-- [[20 - Comparativo crítico (LongMemEval)|20 - Comparativo crítico]] — números rigorosos com hedge
+- [[17 - MemPalace (Milla Jovovich)|17 - MemPalace]] — caso central de hype-vs-rigor analisado em detalhe
+- [[20 - Surveys e estado da arte 2026|20 - Surveys]] — onde os autores reconhecem limitações do campo
+- [[21 - Comparativo crítico (LongMemEval)|21 - Comparativo crítico]] — números rigorosos com hedge
 - [[03-Dominios/IA/Memória de Agentes/index]] — MOC com avisos sobre links descartados e segurança
 
 ## Referências
@@ -150,4 +150,4 @@ Recap consolidado das categorias acima. Em formato de checklist para quem está 
 - **Análise externa lhl:** `https://github.com/lhl/agentic-memory/blob/main/ANALYSIS-mempalace.md`. Audit de código e benchmarks. Encontra 20 MCP tools efetivamente implementadas (vs 29 anunciadas) e drop de 12,4 pp da AAAK em workloads adversariais.
 - **DEV.to (awrshift):** *I Over-Engineered Karpathy's Agent Memory. Here's What Actually Works*. Análise prática que descreve o caminho até "100% em hybrid" como overfitting de benchmark na prática.
 - **Du et al. 2026 — survey:** `https://arxiv.org/abs/2603.07670`. Limitações reconhecidas pelos próprios autores no campo: ausência de benchmarks padronizados além de LongMemEval/LoCoMo, divergência entre sistemas acadêmicos e SDKs de produção, custo computacional pouco endereçado na literatura.
-- **LongMemEval (Wu et al., ICLR 2025):** `https://github.com/xiaowu0162/LongMemEval`. Benchmark de referência discutido em [[20 - Comparativo crítico (LongMemEval)|20 - Comparativo crítico]] — relevante aqui pelo tópico de overfitting.
+- **LongMemEval (Wu et al., ICLR 2025):** `https://github.com/xiaowu0162/LongMemEval`. Benchmark de referência discutido em [[21 - Comparativo crítico (LongMemEval)|21 - Comparativo crítico]] — relevante aqui pelo tópico de overfitting.

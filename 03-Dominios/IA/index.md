@@ -135,7 +135,7 @@ graph TB
     M5["🌍 5. Context Engineering<br/>(16 notas)"]
     M6["📋 6. Spec-Driven Development<br/>(12 notas)"]
     M7["🛡️ 7. Segurança e Guardrails<br/>(12 notas)"]
-    M8["🧠 8. Memória de Agentes<br/>(23 notas)"]
+    M8["🧠 8. Memória de Agentes<br/>(24 notas)"]
     M9["🔍 9. RAG e Vector Databases<br/>(12 notas)"]
     M10["🔌 10. MCP<br/>(10 notas)"]
 
@@ -216,7 +216,7 @@ O problema (45% Veracode, slopsquat, alucinações), defesa (pirâmide de valida
 
 ### Trilhas especializadas (paralelas)
 
-#### Trilha 8 — [[Memória de Agentes]] (23 notas)
+#### Trilha 8 — [[Memória de Agentes]] (24 notas)
 
 > *"Como agentes lembram entre sessões — taxonomia, players, e guia de implementação."*
 
@@ -379,7 +379,7 @@ Termos que aparecem em múltiplas trilhas — onde estão os "dives" definitivos
 | **Sandbox / least privilege** | [[Segurança e Guardrails\|06 - Permissões e sandboxing]]                                      | Trilhas 2, 3, 5, 7 |
 | **Spec-as-source**            | [[Spec-Driven Development\|03 - Níveis de rigor — spec-first, spec-anchored, spec-as-source]] | Trilhas 5, 7       |
 | **Vibe coding**               | [[Spec-Driven Development\|01 - O problema do vibe coding em produção]]                       | Trilhas 3, 7       |
-| **Letta / MemGPT**            | [[Memória de Agentes\|13 - Letta (ex-MemGPT)]]                                                | Trilhas 2, 5, 8    |
+| **Letta / MemGPT**            | [[Memória de Agentes\|14 - Letta (ex-MemGPT)]]                                                | Trilhas 2, 5, 8    |
 | **Self-editing memory**       | [[Context Engineering\|08 - Memória agentica — self-editing memory]]                          | Trilha 8           |
 | **Embeddings**                | [[RAG e Vector Databases\|03 - Embeddings — representação semântica]]                         | Trilhas 5, 8, 9    |
 | **Chunking**                  | [[RAG e Vector Databases\|04 - Chunking — onde 50% da qualidade vive]]                        | Trilha 9           |

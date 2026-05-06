@@ -239,8 +239,8 @@ Default: **HNSW** com parâmetros padrão. Tune apenas se houver problema concre
 - [[02 - Anatomia do pipeline RAG]]
 - [[03 - Embeddings — representação semântica]]
 - [[06 - Retrieval — hybrid search, BM25, query rewriting]]
-- [[Memória de Agentes|14 - Mem0 — vetorial + grafo]]
-- [[Memória de Agentes|15 - Zep e Graphiti — knowledge graph temporal]]
+- [[Memória de Agentes|15 - Mem0 — vetorial + grafo]]
+- [[Memória de Agentes|16 - Zep e Graphiti — knowledge graph temporal]]
 
 ## Referências
 

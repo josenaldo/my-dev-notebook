@@ -79,7 +79,7 @@ Detalhes refletem o estado público do `main` em abril de 2026 — repositório 
 
 **Quando NÃO vale:**
 
-- Procura solução pronta com UX limpa — [[12 - basic-memory — MCP nativo Obsidian|basic-memory]] resolve melhor o caso "abrir Obsidian e funcionar" via MCP nativo, sem exigir CLI separada.
+- Procura solução pronta com UX limpa — [[13 - basic-memory — MCP nativo Obsidian|basic-memory]] resolve melhor o caso "abrir Obsidian e funcionar" via MCP nativo, sem exigir CLI separada.
 - Não conhece Python o suficiente para estender. O pattern é simples, mas customizar `compile.py`, ajustar prompts ou alterar o esquema de claims requer leitura de código.
 - O caso pede SaaS gerenciado — Mem0 e Zep cobrem cenários enterprise com integrações prontas; ver [[09 - Panorama de implementações (abril 2026)|09 - Panorama]].
 - Stack já é LangChain/LangGraph e a equipe quer um plug-in nativo — LangMem encaixa melhor sem adicionar uma CLI separada.
@@ -101,8 +101,9 @@ Detalhes refletem o estado público do `main` em abril de 2026 — repositório 
 
 - [[06 - O LLM Wiki Pattern (gist do Karpathy)]] — pattern original que esta nota implementa
 - [[09 - Panorama de implementações (abril 2026)|09 - Panorama]] — onde o repositório se posiciona em relação às outras famílias
-- [[12 - basic-memory — MCP nativo Obsidian|12 - basic-memory]] — alternativa Karpathy-inspired mais polida no front Obsidian
-- [[22 - Guia de implementação do zero]] — usar `kb/` como referência ao implementar variante própria
+- [[11 - OpenKB — wiki compilada com PageIndex|11 - OpenKB]] — outra implementação CLI do pattern, com foco em PageIndex e documentos longos
+- [[13 - basic-memory — MCP nativo Obsidian|13 - basic-memory]] — alternativa Karpathy-inspired mais polida no front Obsidian
+- [[23 - Guia de implementação do zero]] — usar `kb/` como referência ao implementar variante própria
 - [[RAG e Vector Databases]] — fundamentos de hybrid search, BM25 e RRF que aparecem aqui
 - [[07 - Por que Obsidian e markdown como substrato]] — escolha de substrato que o repositório adota
 

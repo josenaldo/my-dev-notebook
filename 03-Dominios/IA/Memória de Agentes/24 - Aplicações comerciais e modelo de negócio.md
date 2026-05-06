@@ -32,7 +32,7 @@ As notas anteriores da trilha cobriram a dimensão técnica e científica; esta 
 ## Por que importa
 
 - **Conhecimento técnico sem caminho de monetização vira hobby.** Quem domina o tema e quer transformá-lo em renda precisa saber em que formato o mercado paga, e por quanto.
-- **Em 2026, informação está commoditizada.** Qualquer pessoa com tempo lê os papers e segue o [[22 - Guia de implementação do zero|guia hands-on]]. O que tem prêmio é **implementação confiável aplicada ao contexto do cliente**.
+- **Em 2026, informação está commoditizada.** Qualquer pessoa com tempo lê os papers e segue o [[23 - Guia de implementação do zero|guia hands-on]]. O que tem prêmio é **implementação confiável aplicada ao contexto do cliente**.
 - **Diferenciação real é dupla.** Humano que entende **domínio do cliente** (médico, jurídico, pesquisa) **+** o pattern bem aplicado. A interseção é o nicho monetizável.
 
 ## Como funciona — três modelos
@@ -53,7 +53,7 @@ Os três modelos não são exclusivos: é comum combinar dois (produto digital c
 - **Oferta:** template Obsidian + `CLAUDE.md` afinada por nicho + skills Claude Code + 1-2h de onboarding gravado + suporte por X dias.
 - **Preço observado:** produtos digitais técnicos comparáveis em Gumroad e similares ficam em **$99-$299 (one-time)** ou **$19-$49/mês** em assinatura. Templates Notion ("second brain templates") já operavam nessa faixa pré-2026; produtos "Obsidian + IA" entraram nela.
 - **Diferenciador:** templates testados em casos reais + curadoria de skills + manutenção conforme as ferramentas evoluem.
-- **Risco:** competição com gratuitos. [[12 - basic-memory — MCP nativo Obsidian|basic-memory]] é open source e o [[06 - O LLM Wiki Pattern (gist do Karpathy)|gist]] é público. Comprador paga por **economia de tempo e curadoria**, não por acesso ao pattern.
+- **Risco:** competição com gratuitos. [[13 - basic-memory — MCP nativo Obsidian|basic-memory]] é open source e o [[06 - O LLM Wiki Pattern (gist do Karpathy)|gist]] é público. Comprador paga por **economia de tempo e curadoria**, não por acesso ao pattern.
 
 ### Modelo 3 — Treinamento corporativo / workshops
 
@@ -78,7 +78,7 @@ Os três modelos não são exclusivos: é comum combinar dois (produto digital c
 
 - **Quem é:** pós-graduando, pós-doc ou professor ativo. Lê dezenas a centenas de papers/ano. Já usa Zotero, Notion ou Obsidian.
 - **Dor típica:** volume de papers cresce mais rápido que a capacidade de relacionar. Perde conexões cruzadas entre áreas.
-- **Compra:** analítica, ticket médio. Valoriza rigor metodológico e [[19 - Surveys e estado da arte 2026|fundamentação acadêmica]].
+- **Compra:** analítica, ticket médio. Valoriza rigor metodológico e [[20 - Surveys e estado da arte 2026|fundamentação acadêmica]].
 
 ### 3. CTO / Head of R&D
 
@@ -97,7 +97,7 @@ Os três modelos não são exclusivos: é comum combinar dois (produto digital c
 | "Tenho Notion / Confluence" | Notion e Confluence são **editores** — humanos escrevem, humanos lêem. No LLM Wiki, **o LLM mantém a base** seguindo regras explícitas em `CLAUDE.md`. Diferença de tipo, não de UI. |
 | "Vai ficar obsoleto rápido" | Substrato é Markdown puro em pastas — formato com 20+ anos de longevidade. Ferramentas mudam; conteúdo sobrevive a frameworks. Ver [[07 - Por que Obsidian e markdown como substrato]]. |
 | "Posso fazer sozinho" | Pode. Pode também aprender SQL — mas DBA existe. Mesma lógica: implementação genérica é fácil; **implementação adaptada ao seu domínio** com armadilhas conhecidas é onde a curva custa caro. |
-| "É hype, vai passar" | Não é só viralidade: surveys acadêmicos consolidados (ver [[19 - Surveys e estado da arte 2026]]), ICLR Workshop dedicado e múltiplas implementações independentes com benchmarks comparáveis (ver [[20 - Comparativo crítico (LongMemEval)]]). Existe hype real **e** progresso real — [[21 - Críticas, limitações e armadilhas]] separa um do outro. |
+| "É hype, vai passar" | Não é só viralidade: surveys acadêmicos consolidados (ver [[20 - Surveys e estado da arte 2026]]), ICLR Workshop dedicado e múltiplas implementações independentes com benchmarks comparáveis (ver [[21 - Comparativo crítico (LongMemEval)]]). Existe hype real **e** progresso real — [[22 - Críticas, limitações e armadilhas]] separa um do outro. |
 
 ## ROI tipicamente apresentado
 
@@ -106,14 +106,14 @@ Os três modelos não são exclusivos: é comum combinar dois (produto digital c
 
 - **Tempo recuperado:** ofertas comparáveis descrevem **2-5 horas/semana** recuperadas em casos típicos — busca interna mais rápida, menos retrabalho de pesquisa. Faixa razoável como hipótese; **valida-se caso a caso**.
 - **Insights cruzados:** mensurável em **decisões mais rápidas** quando o agente recupera contexto histórico relevante. Difícil quantificar em horas; mais fácil em qualidade percebida.
-- **Eliminação de re-trabalho:** notas mantidas atualizadas via `ingest` + `lint` ([[22 - Guia de implementação do zero|nota 22]]) **não precisam ser re-pesquisadas**. ROI cresce com o tempo, não é linear.
+- **Eliminação de re-trabalho:** notas mantidas atualizadas via `ingest` + `lint` ([[23 - Guia de implementação do zero|nota 22]]) **não precisam ser re-pesquisadas**. ROI cresce com o tempo, não é linear.
 - **Onboarding interno (Modelo 3):** novos membros têm acesso a *second brain* compartilhado em vez de tribal knowledge — argumento mais forte para CTOs.
 
 Regra prática: **ROI escala com volume de informação manejado**. Quanto mais o cliente lê, escreve e decide com base em texto, maior o retorno. Para volume baixo, RAG simples basta — voltar a [[04 - RAG vs memória de longo prazo|nota 04]].
 
 ## Positioning vs ferramentas SaaS prontas
 
-Há confusão recorrente entre o que [[14 - Mem0 — vetorial + grafo|Mem0]], [[13 - Letta (ex-MemGPT)|Letta]] e [[15 - Zep e Graphiti — knowledge graph temporal|Zep]] vendem e o que uma consultoria de LLM Wiki Pattern vende. **Espaços complementares**, não concorrentes diretos.
+Há confusão recorrente entre o que [[15 - Mem0 — vetorial + grafo|Mem0]], [[14 - Letta (ex-MemGPT)|Letta]] e [[16 - Zep e Graphiti — knowledge graph temporal|Zep]] vendem e o que uma consultoria de LLM Wiki Pattern vende. **Espaços complementares**, não concorrentes diretos.
 
 - **Mem0/Letta/Zep = memória embarcada em apps.** **B2B SaaS** vendido para devs construindo features (chatbot com memória, agente de suporte que lembra de tickets). API + SDK + dashboard. Cliente é o *desenvolvedor que está construindo*.
 - **LLM Wiki Pattern como serviço = memória pessoal/profissional.** **B2C consultoria** (Modelo 1) ou **B2B knowledge management** (Modelo 3) — vendido para **pessoas e times com problema de KB**. Cliente é o *usuário final do conhecimento*.
@@ -129,7 +129,7 @@ A pergunta inversa importa tanto quanto a direta. Há perfis onde a oferta tende
 
 ## Armadilhas comuns
 
-- **Vender "memória de agentes" como solução universal.** Não é. A trilha — em especial [[21 - Críticas, limitações e armadilhas|nota 21]] — mostra os limites. Discurso equilibrado é diferenciador, não fraqueza.
+- **Vender "memória de agentes" como solução universal.** Não é. A trilha — em especial [[22 - Críticas, limitações e armadilhas|nota 22]] — mostra os limites. Discurso equilibrado é diferenciador, não fraqueza.
 - **Subestimar custo de mudança comportamental.** Disciplina de `lint` e `ingest` é **o que faz funcionar**. Sem treinamento e acompanhamento pós-entrega, churn é alto.
 - **Prometer ROI específico sem case próprio.** Análise de mercado **não é promessa de resultado**. Citar faixas observadas é honesto; prometer número sem case medido cria expectativa que pode não se cumprir.
 - **Confundir vender pattern com vender ferramenta.** Pattern é consultoria (intensivo em humano, ticket variável); ferramenta é template (escala, intensivo em curadoria, ticket fixo). Misturar a mensagem confunde o comprador.
@@ -139,10 +139,10 @@ A pergunta inversa importa tanto quanto a direta. Há perfis onde a oferta tende
 
 - [[06 - O LLM Wiki Pattern (gist do Karpathy)]] — pattern central da oferta
 - [[09 - Panorama de implementações (abril 2026)|09 - Panorama]] — alternativas que cliente pode considerar
-- [[19 - Surveys e estado da arte 2026|19 - Surveys]] — fundamentação para "não é hype"
-- [[20 - Comparativo crítico (LongMemEval)|20 - Comparativo]] — escolha fundamentada
-- [[21 - Críticas, limitações e armadilhas]] — discurso público equilibrado
-- [[22 - Guia de implementação do zero]] — base técnica da oferta
+- [[20 - Surveys e estado da arte 2026|20 - Surveys]] — fundamentação para "não é hype"
+- [[21 - Comparativo crítico (LongMemEval)|21 - Comparativo]] — escolha fundamentada
+- [[22 - Críticas, limitações e armadilhas]] — discurso público equilibrado
+- [[23 - Guia de implementação do zero]] — base técnica da oferta
 - [[03-Dominios/IA/Memória de Agentes/index]] — MOC
 
 ## Referências
@@ -151,4 +151,4 @@ A pergunta inversa importa tanto quanto a direta. Há perfis onde a oferta tende
 - **Pricing público de produtos digitais técnicos** em Gumroad, Lemon Squeezy e similares. Templates Notion e Obsidian focados em second brain, cursos "Obsidian + IA" e produtos de PKM workflow ficam na faixa $99-$299 (one-time) ou $19-$49/mês — base para o Modelo 2.
 - **Pricing de workshops in-company técnicos** publicados em sites de consultores independentes (Engenharia de Plataforma, DevRel, KM corporativo) — base para a faixa $5.000-$15.000 do Modelo 3.
 - **Canais públicos de monetização de conhecimento técnico** (Substack, Gumroad, GitHub Sponsors, Patreon) — observação direta de perfis e pricing tornados públicos. Útil para mapear quem cobra o quê e em que formato, sem extrapolar para promessas de resultado.
-- **Notas da trilha como referência consolidada:** [[06 - O LLM Wiki Pattern (gist do Karpathy)]], [[09 - Panorama de implementações (abril 2026)]], [[19 - Surveys e estado da arte 2026]], [[20 - Comparativo crítico (LongMemEval)]], [[21 - Críticas, limitações e armadilhas]], [[22 - Guia de implementação do zero]] — base conceitual e técnica que sustenta qualquer oferta comercial sobre o tema.
+- **Notas da trilha como referência consolidada:** [[06 - O LLM Wiki Pattern (gist do Karpathy)]], [[09 - Panorama de implementações (abril 2026)]], [[20 - Surveys e estado da arte 2026]], [[21 - Comparativo crítico (LongMemEval)]], [[22 - Críticas, limitações e armadilhas]], [[23 - Guia de implementação do zero]] — base conceitual e técnica que sustenta qualquer oferta comercial sobre o tema.

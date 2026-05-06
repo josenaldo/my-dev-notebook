@@ -137,7 +137,7 @@ graph TB
 
 ## Para deep dive
 
-A trilha [[Memória de Agentes]] tem 23 notas dedicadas: taxonomia (episódica, semântica, procedural), implementações (MemGPT/Letta, Mem0, Zep, Graphiti, Generative Agents Stanford), comparativo crítico, guia de implementação.
+A trilha [[Memória de Agentes]] tem 24 notas dedicadas: taxonomia (episódica, semântica, procedural), implementações (OpenKB, MemGPT/Letta, Mem0, Zep, Graphiti, Generative Agents Stanford), comparativo crítico, guia de implementação.
 
 ## Veja também
 

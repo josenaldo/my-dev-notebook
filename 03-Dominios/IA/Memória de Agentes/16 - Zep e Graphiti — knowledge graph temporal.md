@@ -97,7 +97,7 @@ Os itens abaixo foram verificados em `github.com/getzep/graphiti` (README e LICE
 **Quando NÃO vale:**
 
 - **Q&A simples sobre docs estáticos** — RAG tradicional basta e custa muito menos.
-- **Workflow Obsidian-first / markdown-first** — Zep não persiste em markdown legível por humano; quem precisa de revisão manual da memória deve preferir [[12 - basic-memory — MCP nativo Obsidian|basic-memory]] ou seguir o [[06 - O LLM Wiki Pattern (gist do Karpathy)|gist do Karpathy]].
+- **Workflow Obsidian-first / markdown-first** — Zep não persiste em markdown legível por humano; quem precisa de revisão manual da memória deve preferir [[13 - basic-memory — MCP nativo Obsidian|basic-memory]] ou seguir o [[06 - O LLM Wiki Pattern (gist do Karpathy)|gist do Karpathy]].
 - **Volume baixo demais** para justificar Neo4j em produção — cluster, replicação e backup têm custo fixo que só se amortiza em escala.
 - **Self-host caseiro sem time de DBA** — Neo4j em produção é compromisso operacional sério; a alternativa é assumir o Zep Cloud (e o vendor lock-in que vem junto).
 - Caso onde **transparência total da extração** é requisito — a etapa de LLM-extraction é parcialmente opaca, e mudanças no modelo subjacente alteram resultados sem aviso.
@@ -118,10 +118,10 @@ Os itens abaixo foram verificados em `github.com/getzep/graphiti` (README e LICE
 - [[06 - O LLM Wiki Pattern (gist do Karpathy)]] — abordagem alternativa, markdown-led, sem grafo formal
 - [[08 - Arquitetura de um sistema de memória]] — KG temporal como um dos padrões arquiteturais
 - [[09 - Panorama de implementações (abril 2026)|09 - Panorama]] — onde Zep/Graphiti se posicionam
-- [[11 - graphify — knowledge graph de raw|11 - graphify]] — outro KG, mas sem dimensão temporal
-- [[13 - Letta (ex-MemGPT)]] — alternativa hierarchical, stateful agent
-- [[14 - Mem0 — vetorial + grafo|14 - Mem0]] — alternativa vector + entity linking
-- [[20 - Comparativo crítico (LongMemEval)|20 - Comparativo crítico]] — onde os scores aparecem em contexto comparado
+- [[12 - graphify — knowledge graph de raw|12 - graphify]] — outro KG, mas sem dimensão temporal
+- [[14 - Letta (ex-MemGPT)]] — alternativa hierarchical, stateful agent
+- [[15 - Mem0 — vetorial + grafo|15 - Mem0]] — alternativa vector + entity linking
+- [[21 - Comparativo crítico (LongMemEval)|21 - Comparativo crítico]] — onde os scores aparecem em contexto comparado
 
 ## Referências
 

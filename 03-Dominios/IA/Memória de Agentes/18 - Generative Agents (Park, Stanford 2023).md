@@ -98,7 +98,7 @@ O agent gera um plano grosso para o dia ao acordar (5-8 itens), traduzido em lin
 
 ## Crítica externa
 
-- **Recepção.** O paper detonou uma explosão de trabalhos de "agentic memory" subsequentes. [[18 - A-MEM — Zettelkasten dinâmico|A-MEM]], MemGPT, Mem0, Memary, e várias frameworks comerciais citam Park et al. como referência fundacional. O artigo virou base citacional do campo e o termo "memory stream" entrou no léxico padrão.
+- **Recepção.** O paper detonou uma explosão de trabalhos de "agentic memory" subsequentes. [[19 - A-MEM — Zettelkasten dinâmico|A-MEM]], MemGPT, Mem0, Memary, e várias frameworks comerciais citam Park et al. como referência fundacional. O artigo virou base citacional do campo e o termo "memory stream" entrou no léxico padrão.
 - **Críticas comuns.** A escalabilidade de custo é o calcanhar de Aquiles mais frequentemente apontado — em produção, fazer LLM call para scoring de importance de cada percepção é proibitivo. Trabalhos posteriores (notavelmente A-MEM e abordagens com memory consolidation) propõem alternativas mais baratas. Outra crítica recorrente é que algumas ablations específicas têm reproducibilidade variável — o efeito agregado é robusto, mas decompor exatamente quanto cada componente contribui depende muito do prompt e do modelo base.
 - **Reproduções independentes.** O repositório oficial é completo o suficiente para que múltiplas equipes tenham reproduzido o efeito de believability. Reviews públicas (notavelmente análises detalhadas em Medium por Andrew Lukyanenko e na newsletter gonzoml no Substack) confirmam que o comportamento emergente é real e não artefato do paper original. O efeito é robusto.
 
@@ -106,7 +106,7 @@ O agent gera um plano grosso para o dia ao acordar (5-8 itens), traduzido em lin
 
 - **Cunhou o vocabulário** que toda a literatura subsequente usa: memory stream, reflection, retrieval com recency + importance + relevance, believability como métrica. Sem esse vocabulário, é impossível ler a literatura recente de agentic memory.
 - **Conexão direta com [[03 - Taxonomia da memória (episódica, semântica, procedural)]].** O memory stream é uma instância clara de memória episódica de longo prazo — log de eventos com timestamps. As reflexões são o mecanismo de **transição** de episódica para semântica: extraem padrões generalizáveis a partir de eventos concretos. O paper antecipa, na prática, a divisão taxonômica que a literatura formalizaria depois.
-- **Inspiração arquitetural para [[18 - A-MEM — Zettelkasten dinâmico]].** A-MEM evolui o conceito ampliando para um Zettelkasten dinâmico — em vez de log + reflexão, propõe uma estrutura de notas interlinkadas que se reorganizam. A relação direta de descendência intelectual está reconhecida no próprio paper do A-MEM.
+- **Inspiração arquitetural para [[19 - A-MEM — Zettelkasten dinâmico]].** A-MEM evolui o conceito ampliando para um Zettelkasten dinâmico — em vez de log + reflexão, propõe uma estrutura de notas interlinkadas que se reorganizam. A relação direta de descendência intelectual está reconhecida no próprio paper do A-MEM.
 - **Compara com [[06 - O LLM Wiki Pattern (gist do Karpathy)|06 - LLM Wiki Pattern]].** Park ataca o problema de memória com **simulação social** — agents num mundo virtual, mecanismo de retrieval probabilístico. Karpathy ataca o mesmo problema com **pragmatismo de wiki** — markdown interlinkado, schema explícito, humano na curadoria. Ambos resolvem o gap "LLM esquece"; estilos arquiteturais radicalmente diferentes. Lê-los em sequência ilumina o espaço de design.
 - **Ponte para [[08 - Arquitetura de um sistema de memória]].** O vocabulário arquitetural usado nessa nota da trilha é informado diretamente por Park et al. — entender o paper original deixa a arquitetura genérica muito mais legível.
 
@@ -115,8 +115,8 @@ O agent gera um plano grosso para o dia ao acordar (5-8 itens), traduzido em lin
 - [[03 - Taxonomia da memória (episódica, semântica, procedural)|03 - Taxonomia]] — onde memory stream encaixa
 - [[06 - O LLM Wiki Pattern (gist do Karpathy)|06 - LLM Wiki Pattern]] — abordagem complementar
 - [[08 - Arquitetura de um sistema de memória]] — vocabulário arquitetural
-- [[18 - A-MEM — Zettelkasten dinâmico]] — evolução acadêmica
-- [[19 - Surveys e estado da arte 2026]] — campo formalizado
+- [[19 - A-MEM — Zettelkasten dinâmico]] — evolução acadêmica
+- [[20 - Surveys e estado da arte 2026]] — campo formalizado
 
 ## Referências
 
