@@ -195,10 +195,11 @@ Mês 12+   | Fase 6: Especialização
 
 ### Notas de apoio (Fase 3)
 
-- [[RAG e Vector Databases]] — trilha completa atomizada (12 notas)
+- [[RAG e Vector Databases]] — trilha completa atomizada (13 notas)
 - [[RAG e Vector Databases|03 - Embeddings — representação semântica]] — embeddings deep dive
 - [[RAG e Vector Databases|04 - Chunking — onde 50% da qualidade vive]] — chunking estratégias
 - [[RAG e Vector Databases|06 - Retrieval — hybrid search, BM25, query rewriting]] — hybrid retrieval
+- [[RAG e Vector Databases|13 - PageIndex — RAG vectorless por árvore de documentos]] — retrieval para documentos longos sem vector DB
 - [[Anatomia dos LLMs|LLMs]] — embeddings, context window
 
 ### Checkpoint da Fase 3

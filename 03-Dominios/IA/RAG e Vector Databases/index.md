@@ -7,7 +7,7 @@ tags:
   - ia
   - moc
 created: 2026-04-11
-updated: 2026-05-02
+updated: 2026-05-06
 aliases:
   - RAG
   - Retrieval-Augmented Generation
@@ -16,7 +16,7 @@ aliases:
 
 # RAG e Vector Databases
 
-Em 2026, quase toda aplicação séria com LLM tem **RAG no meio do caminho**. LLMs conhecem muita coisa, mas não conhecem **seus dados** — docs internas, políticas, base de clientes, histórico do paciente. RAG resolve isso injetando dados específicos no contexto em runtime, com **citação de fonte** como capacidade-chave. Esta trilha cobre o ciclo completo: do conceito ao setup de produção, passando por embeddings, chunking, vector DBs, retrieval, reranking, evaluation e padrões avançados (Graph RAG, Agentic RAG).
+Em 2026, quase toda aplicação séria com LLM tem **RAG no meio do caminho**. LLMs conhecem muita coisa, mas não conhecem **seus dados** — docs internas, políticas, base de clientes, histórico do paciente. RAG resolve isso injetando dados específicos no contexto em runtime, com **citação de fonte** como capacidade-chave. Esta trilha cobre o ciclo completo: do conceito ao setup de produção, passando por embeddings, chunking, vector DBs, retrieval, reranking, evaluation e padrões avançados (Graph RAG, Agentic RAG, PageIndex/vectorless RAG).
 
 > [!info] Pré-requisitos
 > Recomendado ter lido [[Anatomia dos LLMs]] (Trilha 1) — especialmente sobre context window e API. [[Context Engineering]] complementa fortemente (Bloco 2 de retrieval). Para RAG agentic avançado, ver [[Anatomia de Agents]].
@@ -52,13 +52,14 @@ Como passar contexto e como medir qualidade.
 - [[08 - Generation — passar contexto ao LLM com citação]] — prompts, faithfulness, structured output
 - [[09 - Evaluation de RAG]] — Ragas, golden set, eval em CI
 
-### Bloco 4 — Decisão e Avançado (3 notas)
+### Bloco 4 — Decisão e Avançado (4 notas)
 
-Quando RAG é a escolha certa, padrões avançados, setup completo.
+Quando RAG é a escolha certa, padrões avançados, setup completo e alternativas vectorless.
 
 - [[10 - RAG vs long context vs fine-tuning]] — decision tree, hibridos
 - [[11 - Padrões avançados — Graph RAG, Agentic RAG, multi-hop]] — quando RAG vanilla falha
 - [[12 - Setup completo — checklist de produção]] — roadmap 8 semanas, stack recomendada
+- [[13 - PageIndex — RAG vectorless por árvore de documentos]] — retrieval sem vector DB para documentos longos
 
 ## Rotas alternativas
 
@@ -87,6 +88,11 @@ Quando RAG é a escolha certa, padrões avançados, setup completo.
 
 [[11 - Padrões avançados — Graph RAG, Agentic RAG, multi-hop]] → [[Anatomia de Agents]] → [[Memória de Agentes|16 - Zep e Graphiti — knowledge graph temporal]]
 
+### Rota documentos longos (PDFs, contratos, relatórios)
+*"Meu problema é navegar documentos grandes sem chunking ruim"*
+
+[[10 - RAG vs long context vs fine-tuning]] → [[11 - Padrões avançados — Graph RAG, Agentic RAG, multi-hop]] → [[13 - PageIndex — RAG vectorless por árvore de documentos]] → [[Memória de Agentes|11 - OpenKB — wiki compilada com PageIndex]]
+
 ## Como esta trilha se conecta
 
 ```mermaid
@@ -110,6 +116,7 @@ graph TB
 | **Gao et al. — HyDE** | Paper (2022) | Nota 06 |
 | **Es et al. — RAGAS paper** | Paper (2023) | Nota 09 |
 | **Edge et al. — GraphRAG paper** | Paper Microsoft (2024) | Nota 11 |
+| **VectifyAI — PageIndex** | Repositório + docs | Nota 13 |
 | **Chip Huyen — AI Engineering** | Livro (2025) | Notas 09, 10, 12 |
 | **Eugene Yan — Patterns for LLM systems** | Artigo | Trilha inteira |
 | **Lost in the Middle (Liu et al.)** | Paper | Nota 02 |

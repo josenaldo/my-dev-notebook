@@ -136,7 +136,7 @@ graph TB
     M6["📋 6. Spec-Driven Development<br/>(12 notas)"]
     M7["🛡️ 7. Segurança e Guardrails<br/>(12 notas)"]
     M8["🧠 8. Memória de Agentes<br/>(24 notas)"]
-    M9["🔍 9. RAG e Vector Databases<br/>(12 notas)"]
+    M9["🔍 9. RAG e Vector Databases<br/>(13 notas)"]
     M10["🔌 10. MCP<br/>(10 notas)"]
 
     M1 --> M2
@@ -224,7 +224,7 @@ Fundamentos, taxonomia (episódica/semântica/procedural), RAG vs memória, pano
 
 **Quando ler:** complementa Trilha 5. Específico para agentes com estado persistente.
 
-#### Trilha 9 — [[RAG e Vector Databases]] (12 notas)
+#### Trilha 9 — [[RAG e Vector Databases]] (13 notas)
 
 > *"Quase toda aplicação séria com LLM em 2026 tem RAG no caminho."*
 
@@ -384,6 +384,7 @@ Termos que aparecem em múltiplas trilhas — onde estão os "dives" definitivos
 | **Embeddings**                | [[RAG e Vector Databases\|03 - Embeddings — representação semântica]]                         | Trilhas 5, 8, 9    |
 | **Chunking**                  | [[RAG e Vector Databases\|04 - Chunking — onde 50% da qualidade vive]]                        | Trilha 9           |
 | **Hybrid search**             | [[RAG e Vector Databases\|06 - Retrieval — hybrid search, BM25, query rewriting]]             | Trilha 9           |
+| **Vectorless RAG / PageIndex** | [[RAG e Vector Databases\|13 - PageIndex — RAG vectorless por árvore de documentos]]           | Trilhas 8, 9       |
 | **MCP primitivos**            | [[MCP\|02 - Os três primitivos — Tools, Resources, Prompts]]                                  | Trilha 10          |
 | **SKILL.md**                  | [[Context Engineering\|16 - Agent skills marketplace e SKILL.md]]                             | Trilhas 3, 5       |
 | **Slopsquatting**             | [[Segurança e Guardrails\|02 - Slopsquatting — o ataque via alucinação]]                      | Trilhas 7, 10      |

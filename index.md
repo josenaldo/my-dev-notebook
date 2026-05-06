@@ -134,7 +134,7 @@ Cada Domínio em `03-Domínios/` tem um portal de entrada (MOC com mesmo nome da
     - [[Spec-Driven Development]] (12 notas) — Specify→Plan→Tasks→Implement, Kiro, Spec Kit
     - [[Segurança e Guardrails]] (12 notas) — SAST, sandbox, slopsquat, EU AI Act
     - [[Memória de Agentes]] (23 notas) — Letta, Mem0, Zep, Generative Agents, A-MEM
-    - [[RAG e Vector Databases]] (12 notas) — embeddings, chunking, retrieval, reranking, evaluation
+    - [[RAG e Vector Databases]] (13 notas) — embeddings, chunking, retrieval, reranking, evaluation
     - [[MCP]] (10 notas) — Model Context Protocol, servers, segurança, ecossistema
 - **Overview:** [[03-Dominios/IA/index|Inteligência Artificial]] — portal panorâmico do campo
 - **Ferramentas:** [[03-Dominios/IA/Ferramentas de IA/index|Ferramentas de IA]] — [[Claude]] · [[GitHub Copilot]] · [[Codex]] · [[Gemini]] · [[Comparativo de LLMs]]

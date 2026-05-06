@@ -1,7 +1,7 @@
 ---
 title: "Setup completo — checklist de produção"
 created: 2026-04-11
-updated: 2026-05-02
+updated: 2026-05-06
 type: concept
 status: seedling
 publish: true
@@ -264,6 +264,7 @@ Sinais que indicam mudança ([[11 - Padrões avançados]]):
 - Multi-hop queries falhando consistentemente → Multi-hop ou Agentic
 - Domínio com entidades fortes → Graph RAG
 - Queries muito variáveis em complexidade → Agentic com fallback
+- Documentos longos estruturados e chunking ruim → PageIndex / Tree RAG
 
 ## Anti-patterns no setup
 
@@ -280,6 +281,7 @@ Sinais que indicam mudança ([[11 - Padrões avançados]]):
 - [[01 - O que é RAG e quando usar]] — começo da trilha
 - [[09 - Evaluation de RAG]]
 - [[11 - Padrões avançados — Graph RAG, Agentic RAG, multi-hop]]
+- [[13 - PageIndex — RAG vectorless por árvore de documentos]]
 - [[Economia de Tokens|18 - Playbook de economia — checklist completo]]
 - [[Segurança e Guardrails|07 - Security-focused prompting]]
 

@@ -38,7 +38,7 @@ A arquitetura padrão criada por `openkb init` é deliberadamente legível:
 - `wiki/AGENTS.md` — instruções/schema da wiki para o LLM
 - `.openkb/` — estado operacional, configuração, hashes e sessões de chat
 
-O ponto arquitetural mais interessante é que OpenKB não tenta ser apenas "Obsidian com bot". Ele adiciona uma camada de processamento para documentos longos: PDFs a partir de um limiar configurável passam por PageIndex, que cria uma árvore hierárquica de páginas/seções. O LLM navega essa árvore em vez de carregar o PDF inteiro no contexto. Isso diferencia OpenKB de soluções markdown-first mais simples como [[13 - basic-memory — MCP nativo Obsidian|basic-memory]] e de engines mais diretas do gist como [[10 - LLM-knowledge-base (Wendel) — direto do gist|LLM-knowledge-base]].
+O ponto arquitetural mais interessante é que OpenKB não tenta ser apenas "Obsidian com bot". Ele adiciona uma camada de processamento para documentos longos: PDFs a partir de um limiar configurável passam por PageIndex, que cria uma árvore hierárquica de páginas/seções. O LLM navega essa árvore em vez de carregar o PDF inteiro no contexto. Isso diferencia OpenKB de soluções markdown-first mais simples como [[13 - basic-memory — MCP nativo Obsidian|basic-memory]] e de engines mais diretas do gist como [[10 - LLM-knowledge-base (Wendel) — direto do gist|LLM-knowledge-base]]. Para o aprofundamento técnico em PageIndex como padrão de RAG, ver [[RAG e Vector Databases|13 - PageIndex — RAG vectorless por árvore de documentos]].
 
 ## Por que importa
 
@@ -145,6 +145,7 @@ Essa separação impede o erro "gravar tudo é lembrar tudo". OpenKB deve ser vi
 - [[08 - Arquitetura de um sistema de memória]] — vocabulário ingestão, indexação, retrieval e manutenção
 - [[09 - Panorama de implementações (abril 2026)|09 - Panorama]] — mapa das implementações
 - [[10 - LLM-knowledge-base (Wendel) — direto do gist|10 - LLM-knowledge-base]] — implementação Python mais direta do gist
+- [[RAG e Vector Databases|13 - PageIndex — RAG vectorless por árvore de documentos]] — técnica de retrieval para documentos longos usada pelo OpenKB
 - [[12 - graphify — knowledge graph de raw|12 - graphify]] — alternativa graph-first
 - [[13 - basic-memory — MCP nativo Obsidian|13 - basic-memory]] — alternativa MCP/markdown para agentes
 - [[22 - Críticas, limitações e armadilhas]] — riscos de benchmarks, hype e memória persistente mal governada
@@ -158,4 +159,4 @@ Essa separação impede o erro "gravar tudo é lembrar tudo". OpenKB deve ser vi
 - `openkb/agent/chat_session.py` — persistência de sessões em `.openkb/chats/*.json` e sanitização de payloads de imagem.
 - `openkb/agent/chat.py` — REPL multi-turn, `/save`, `/clear`, `/add`, `/lint`, `--resume`, streaming e gravação do histórico via `session.record_turn(...)`.
 - `openkb/agent/tools.py` — tools de leitura/escrita da wiki com proteção de path traversal.
-- PageIndex — `https://github.com/VectifyAI/PageIndex` — sistema de document index vectorless usado por OpenKB para documentos longos.
+- PageIndex — `https://github.com/VectifyAI/PageIndex` — sistema de document index vectorless usado por OpenKB para documentos longos; ver nota dedicada em [[RAG e Vector Databases|13 - PageIndex — RAG vectorless por árvore de documentos]].

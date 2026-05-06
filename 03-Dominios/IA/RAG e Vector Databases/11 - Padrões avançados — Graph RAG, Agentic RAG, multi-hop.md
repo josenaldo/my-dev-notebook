@@ -1,7 +1,7 @@
 ---
 title: "Padrões avançados — Graph RAG, Agentic RAG, multi-hop"
 created: 2026-04-11
-updated: 2026-05-02
+updated: 2026-05-06
 type: concept
 status: seedling
 publish: true
@@ -16,12 +16,14 @@ aliases:
   - Agentic RAG
   - Multi-hop RAG
   - GraphRAG
+  - Vectorless RAG
+  - Tree RAG
 ---
 
 # Padrões avançados — Graph RAG, Agentic RAG, multi-hop
 
 > [!abstract] TL;DR
-> RAG vanilla resolve ~80% dos casos. Para os 20% restantes, padrões avançados: **Multi-hop RAG** (resposta requer juntar 2+ chunks via passos sequenciais), **Graph RAG** (Microsoft, indexa entidades e relações em knowledge graph para queries complexas), **Agentic RAG** (agent decide iterativamente quando/o que buscar). **Custo cresce significativamente** — só use quando RAG simples falha. Default: tente Hybrid + Rerank antes de partir para complexidade.
+> RAG vanilla resolve ~80% dos casos. Para os 20% restantes, padrões avançados: **Multi-hop RAG** (resposta requer juntar 2+ chunks via passos sequenciais), **Graph RAG** (Microsoft, indexa entidades e relações em knowledge graph para queries complexas), **Agentic RAG** (agent decide iterativamente quando/o que buscar) e **Vectorless / Tree RAG** (PageIndex, navegação hierárquica por documento). **Custo cresce significativamente** — só use quando RAG simples falha. Default: tente Hybrid + Rerank antes de partir para complexidade.
 
 ## Quando RAG vanilla falha
 
@@ -31,6 +33,7 @@ Sintomas que indicam padrão avançado:
 - Pergunta sobre **relacionamentos** ("quais empresas são fornecedoras de X que estão na Europa?")
 - Pergunta exige **exploração** ("encontre todos os pacientes com sintoma Y após 2024")
 - Single retrieval **não cobre** mesmo com hybrid+rerank
+- Documento é longo e estruturado, mas chunking destrói a hierarquia (contratos, relatórios, manuais)
 
 ## Multi-hop RAG
 
@@ -175,6 +178,33 @@ answer = agent.run(query, max_steps=10)
 
 Detalhes em [[Context Engineering|06 - Dynamic retrieval beyond RAG]].
 
+## Vectorless / Tree RAG (PageIndex)
+
+Em documentos longos e estruturados, a falha nem sempre é "preciso de mais embeddings"; muitas vezes é "o chunking destruiu o mapa do documento". **PageIndex** organiza o documento como uma árvore tipo table of contents e usa o LLM para navegar essa árvore por raciocínio. A pergunta deixa de ser "quais chunks são parecidos com a query?" e vira "qual ramo do documento contém a informação relevante?".
+
+```mermaid
+graph TD
+    D[Documento longo] --> A[Capítulo A]
+    D --> B[Capítulo B]
+    B --> B1[Seção B.1]
+    B --> B2[Seção B.2]
+    B2 --> P[Páginas relevantes]
+```
+
+### Quando usar
+
+✅ PDFs longos com estrutura real (financeiro, jurídico, regulatório, acadêmico, manuais técnicos)
+✅ Citação por página/seção importa
+✅ Similaridade vetorial traz trechos parecidos mas não decisivos
+✅ Corpus controlado onde operar uma árvore por documento é aceitável
+
+❌ Corpus enorme de snippets curtos
+❌ Conteúdo sem hierarquia
+❌ Latência crítica
+❌ Quando o problema é memória conversacional, não retrieval documental
+
+Detalhes em [[13 - PageIndex — RAG vectorless por árvore de documentos]].
+
 ## Comparativo de custo
 
 ```
@@ -182,6 +212,7 @@ Vanilla RAG:        1 retrieval + 1 generation = $0.005
 Multi-hop RAG:      3 retrievals + 3 generation = $0.015 (3x)
 Graph RAG:          1 retrieval + 1 generation = $0.005 (mas indexing é 5-10x mais caro)
 Agentic RAG:        5-10 LLM calls + tools = $0.020-0.050 (4-10x)
+PageIndex:          tree build + tree search = custo concentrado no index e calls de navegação
 ```
 
 ## Hybrid de patterns
@@ -213,6 +244,7 @@ graph TD
     D -->|sim| E["Graph RAG"]
     D -->|não| F["Multi-hop RAG<br/>(self-ask)"]
     B -->|"variável"| G["Agentic RAG"]
+    B -->|"documento longo<br/>estruturado"| H["PageIndex<br/>(Tree RAG)"]
 ```
 
 ## Anti-patterns
@@ -220,6 +252,7 @@ graph TD
 - **Graph RAG em corpus pequeno** — overhead enorme sem ganho
 - **Agentic RAG sempre** — custo escala assustadoramente
 - **Multi-hop sem evaluation** — não sabe se está melhorando
+- **PageIndex em corpus sem estrutura** — cria árvore artificial que não ajuda retrieval
 - **"Vamos fazer Graph RAG porque é cool"** — sem evidência de que vanilla falha
 - **Hybrid sem confidence threshold** — escala sem critério
 
@@ -239,11 +272,14 @@ graph TD
 | Recall em multi-hop | <50% | >80% | >85% | >85% |
 | Setup complexity | Baixa | Média | Alta | Alta |
 
+PageIndex não entra bem nessa tabela porque mede outro eixo: navegação dentro de documento longo. Compare contra baseline de long-context, chunking estrutural e hybrid+rerank no mesmo corpus.
+
 ## Veja também
 
 - [[02 - Anatomia do pipeline RAG]]
 - [[06 - Retrieval — hybrid search, BM25, query rewriting]]
 - [[09 - Evaluation de RAG]]
+- [[13 - PageIndex — RAG vectorless por árvore de documentos]]
 - [[Anatomia de Agents|01 - O que é um agent]]
 - [[Context Engineering|06 - Dynamic retrieval beyond RAG]]
 - [[Memória de Agentes|12 - graphify — knowledge graph de raw]]
@@ -256,3 +292,4 @@ graph TD
 - **Press et al.** — *Self-Ask paper* (2022)
 - **LlamaIndex** — *Multi-document agents* (2026)
 - **Zep** — *Graphiti documentation* (2026)
+- **VectifyAI** — *PageIndex: Vectorless, Reasoning-based RAG* (`github.com/VectifyAI/PageIndex`, 2026)
