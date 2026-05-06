@@ -235,6 +235,14 @@ A heurística: sem inventar modelo de fila/prioridade global, mostra o que está
 const today = dv.date("today");
 const STALL_DIAS = 14;
 
+function daysSince(raw) {
+  let dt = raw;
+  if (typeof dt === "string") dt = dv.date(dt);
+  if (!dt || dt.isValid !== true) return 0;
+  const diff = today.diff(dt, "days");
+  return Math.max(0, Math.floor(diff?.days ?? 0));
+}
+
 const pages = dv.pages('"Codex"')
   .where(p => p.progresso === "andamento")
   .filter(p => !p.file.path.includes("Promovidas") && !p.file.path.includes("Arquivadas"));
@@ -243,15 +251,12 @@ const sendas = dv.pages('"Codex/04-Sendas"');
 
 const rows = [];
 for (const p of pages) {
-  const updatedRaw = p.updated ?? p.file.mtime;
-  const updated = updatedRaw ? dv.date(updatedRaw) : today;
-  const days = Math.floor(today.diff(updated, "days").days);
-
+  const days = daysSince(p.updated ?? p.file.mtime);
   const flag = days > STALL_DIAS ? "⚠️ " : "";
 
   const sendasContendo = sendas
     .where(s => s.file.outlinks.some(l => l.path === p.file.path))
-    .map(s => s.file.link.markdown());
+    .map(s => s.file.link.toString());
 
   rows.push([`${flag}${p.file.link}`, sendasContendo.join(", ") || "—", days]);
 }
@@ -261,6 +266,8 @@ dv.table(["Item", "Senda(s)", "Dias desde update"], rows);
 ```
 
 `updated` é o campo canônico (introduzido pelas specs 05-03 e 05-04 e atualizado pelas skills de glosa). Fallback pra `file.mtime` quando ausente — comum em notas que ainda não foram tocadas pelo novo template.
+
+A função `daysSince` é defensiva por dois motivos práticos: (1) `dv.date()` pode retornar `null` quando recebe entrada inesperada (DateTime já-construído, string vazia, valor de frontmatter malformado) e o `today.diff(null)` quebra com TypeError; (2) `file.mtime` pode ser hoje à tarde enquanto `today` é meia-noite UTC, gerando `Math.floor(-0.6) = -1` — clamp em ≥ 0 evita "dias negativos" no display.
 
 ### 7.2 Bloco B — Convites em sendas ativas
 
@@ -341,20 +348,27 @@ Taxa de promoção considera apenas glosas **resolvidas** (promovidas ou arquiva
 ```dataviewjs
 const today = dv.date("today");
 
+function daysSince(raw) {
+  let dt = raw;
+  if (typeof dt === "string") dt = dv.date(dt);
+  if (!dt || dt.isValid !== true) return 0;
+  const diff = today.diff(dt, "days");
+  return Math.max(0, Math.floor(diff?.days ?? 0));
+}
+
 const ativas = dv.pages('"Codex/02-Glosas"')
   .filter(p => !p.file.path.includes("Promovidas") && !p.file.path.includes("Arquivadas"));
 
 const rows = ativas.map(g => {
-  const updatedRaw = g.updated ?? g.file.mtime;
-  const updated = updatedRaw ? dv.date(updatedRaw) : today;
-  const days = Math.floor(today.diff(updated, "days").days);
-
+  const days = daysSince(g.updated ?? g.file.mtime);
   return [g.file.link, days, g.progresso ?? "—", (g.tags ?? []).join(", ")];
 });
 
 rows.sort((a, b) => b[1] - a[1]);
 dv.table(["Glosa", "Dias parada", "Progresso", "Tags"], rows);
 ```
+
+Mesma função `daysSince` defensiva descrita em §7.1 — necessária por motivos idênticos.
 
 ### 8.3 Bloco C — Top 10 tags
 

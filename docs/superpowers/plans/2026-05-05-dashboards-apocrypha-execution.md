@@ -415,6 +415,14 @@ Itens com `progresso: andamento`, ordenados pelo update mais antigo. ⚠️ marc
 const today = dv.date("today");
 const STALL_DIAS = 14;
 
+function daysSince(raw) {
+  let dt = raw;
+  if (typeof dt === "string") dt = dv.date(dt);
+  if (!dt || dt.isValid !== true) return 0;
+  const diff = today.diff(dt, "days");
+  return Math.max(0, Math.floor(diff?.days ?? 0));
+}
+
 const pages = dv.pages('"Codex"')
   .where(p => p.progresso === "andamento")
   .filter(p => !p.file.path.includes("Promovidas") && !p.file.path.includes("Arquivadas"));
@@ -423,10 +431,7 @@ const sendas = dv.pages('"Codex/04-Sendas"');
 
 const rows = [];
 for (const p of pages) {
-  const updatedRaw = p.updated ?? p.file.mtime;
-  const updated = updatedRaw ? dv.date(updatedRaw) : today;
-  const days = Math.floor(today.diff(updated, "days").days);
-
+  const days = daysSince(p.updated ?? p.file.mtime);
   const flag = days > STALL_DIAS ? "⚠️ " : "";
 
   const sendasContendo = sendas
@@ -569,14 +574,19 @@ dv.paragraph(
 ```dataviewjs
 const today = dv.date("today");
 
+function daysSince(raw) {
+  let dt = raw;
+  if (typeof dt === "string") dt = dv.date(dt);
+  if (!dt || dt.isValid !== true) return 0;
+  const diff = today.diff(dt, "days");
+  return Math.max(0, Math.floor(diff?.days ?? 0));
+}
+
 const ativas = dv.pages('"Codex/02-Glosas"')
   .filter(p => !p.file.path.includes("Promovidas") && !p.file.path.includes("Arquivadas"));
 
 const rows = ativas.map(g => {
-  const updatedRaw = g.updated ?? g.file.mtime;
-  const updated = updatedRaw ? dv.date(updatedRaw) : today;
-  const days = Math.floor(today.diff(updated, "days").days);
-
+  const days = daysSince(g.updated ?? g.file.mtime);
   return [g.file.link, days, g.progresso ?? "—", (g.tags ?? []).join(", ")];
 });
 
