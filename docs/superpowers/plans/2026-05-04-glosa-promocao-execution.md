@@ -475,7 +475,7 @@ A skill `/glosa` cobre apenas artigos web (HTML). PDF, vídeo, podcast, tweets f
 
 ## Ver também
 
-- [[index|Pipeline do Codex]]
+- [[Codex/index|Pipeline do Codex]]
 - [[Glosas]]
 ```
 
@@ -612,7 +612,7 @@ Cada skill pede confirmação antes de mover ou criar arquivos. Detalhes complet
 
 ## Ver também
 
-- [[index|Pipeline do Codex]]
+- [[Codex/index|Pipeline do Codex]]
 - [[Pergaminhos]]
 - [[Domínios]]
 - [[Sendas]]
@@ -742,7 +742,7 @@ Domínios não "passam" pra outra etapa — são o destino do pipeline. Mas:
 
 ## Ver também
 
-- [[index|Pipeline do Codex]]
+- [[Codex/index|Pipeline do Codex]]
 - [[Glosas]]
 - [[Sendas]]
 ```
@@ -853,7 +853,7 @@ Sendas não "passam" pra próxima etapa — são uma forma de navegação dos do
 
 ## Ver também
 
-- [[index|Pipeline do Codex]]
+- [[Codex/index|Pipeline do Codex]]
 - [[Domínios]]
 ```
 

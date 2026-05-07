@@ -8,5 +8,7 @@
   "obsidian-code-block-enhancer",
   "slash-complete",
   "terminal",
-  "copilot"
+  "copilot",
+  "obsidian-git",
+  "obsidian-local-images-plus"
 ]

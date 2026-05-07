@@ -106,7 +106,7 @@ Cada skill pede confirmação antes de mover ou criar arquivos. Detalhes complet
 
 ## Ver também
 
-- [[index|Pipeline do Codex]]
+- [[Codex/00-Meta/guia/pipeline/index|Pipeline do Codex]]
 - [[Pergaminhos]]
 - [[Domínios]]
 - [[Sendas]]

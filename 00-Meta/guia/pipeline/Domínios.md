@@ -97,6 +97,6 @@ Domínios não "passam" pra outra etapa — são o destino do pipeline. Mas:
 
 ## Ver também
 
-- [[index|Pipeline do Codex]]
+- [[Codex/00-Meta/guia/pipeline/index|Pipeline do Codex]]
 - [[Glosas]]
 - [[Sendas]]

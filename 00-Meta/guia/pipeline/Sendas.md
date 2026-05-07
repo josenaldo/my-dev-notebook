@@ -79,5 +79,5 @@ Sendas não "passam" pra próxima etapa — são uma forma de navegação dos do
 
 ## Ver também
 
-- [[index|Pipeline do Codex]]
+- [[Codex/00-Meta/guia/pipeline/index|Pipeline do Codex]]
 - [[Domínios]]
