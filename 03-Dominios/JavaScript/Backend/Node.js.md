@@ -1,7 +1,7 @@
 ---
 title: "Node.js"
 created: 2026-04-01
-updated: 2026-04-11
+updated: 2026-05-07
 type: concept
 status: evergreen
 tags:
@@ -45,94 +45,18 @@ Em entrevistas, o que diferencia um senior em Node.js:
 
 ### Arquitetura
 
-```text
-┌──────────────────────────────────┐
-│    Seu código JavaScript         │
-├──────────────────────────────────┤
-│    Node.js APIs (fs, http, ...)  │
-├──────────────────────────────────┤
-│    Node Bindings (C++)           │
-├──────────────────────────────────┤
-│    V8 Engine   │   libuv          │
-│    (JS → ASM)  │   (event loop,  │
-│                │    I/O, threads) │
-├──────────────────────────────────┤
-│    OS (Linux, macOS, Windows)    │
-└──────────────────────────────────┘
-```
-
-- **V8** — engine JavaScript do Chrome. Compila JS para código nativo via JIT.
-- **libuv** — biblioteca C que provê event loop, thread pool, file I/O, networking, timers cross-platform.
-- **Node bindings** — pontes C++ entre JS e APIs do OS.
-- **Single-threaded event loop** — seu código JS roda em uma thread. I/O é delegado.
-- **Thread pool (libuv)** — 4 threads default (configurável via `UV_THREADPOOL_SIZE`). Usada para filesystem, DNS, crypto, compression.
+> [!nota] Migrado para galho próprio
+> A anatomia interna do runtime — V8, libuv, thread pool — foi expandida em [[Runtime e Event Loop]]. Veja em particular [[02 - V8, libuv e thread pool]] (componentes), [[01 - Single-thread e non-blocking I-O]] (modelo), e [[07 - I-O assíncrono - kernel vs thread pool]] (onde o paralelismo verdadeiro mora).
 
 ### Single-threaded com non-blocking I/O
 
-**Chave do modelo Node:** I/O **não bloqueia** a thread JS. O Node delega ao OS (via libuv) e registra um callback. Quando o I/O completa, o callback é enfileirado no event loop.
-
-```javascript
-// Thread 1 (main) executa isso
-fs.readFile('big.txt', (err, data) => {
-    console.log('done');  // callback quando I/O completar
-});
-console.log('continuando');  // imprime ANTES de "done"
-```
-
-**Consequência:** uma única thread pode gerenciar milhares de conexões simultâneas — o que seria custoso com um modelo thread-per-request tradicional.
+> [!nota] Migrado para galho próprio
+> O modelo single-thread + non-blocking I/O foi expandido em [[01 - Single-thread e non-blocking I-O]] dentro do galho [[Runtime e Event Loop]].
 
 ### Event loop phases — detalhado
 
-Ver também [[JavaScript Fundamentals]] (seção event loop). Resumo das fases do libuv:
-
-```
-   ┌───────────────────────────┐
-┌─►│           timers          │  setTimeout, setInterval
-│  └─────────────┬─────────────┘
-│  ┌─────────────┴─────────────┐
-│  │     pending callbacks     │  I/O errors retidos
-│  └─────────────┬─────────────┘
-│  ┌─────────────┴─────────────┐
-│  │       idle, prepare       │  interno
-│  └─────────────┬─────────────┘    ┌───────────────┐
-│  ┌─────────────┴─────────────┐    │   incoming:   │
-│  │           poll            │◄───┤ connections,  │
-│  └─────────────┬─────────────┘    │   data, etc.  │
-│  ┌─────────────┴─────────────┐    └───────────────┘
-│  │           check           │  setImmediate
-│  └─────────────┬─────────────┘
-│  ┌─────────────┴─────────────┐
-└──┤      close callbacks      │  'close' events
-   └───────────────────────────┘
-```
-
-**Entre cada fase** — microtasks: `process.nextTick` (prioridade máxima), depois Promise callbacks.
-
-**`setImmediate` vs `setTimeout(fn, 0)`:**
-
-```javascript
-// Em contexto I/O, setImmediate roda primeiro
-fs.readFile('file', () => {
-    setTimeout(() => console.log('timeout'), 0);
-    setImmediate(() => console.log('immediate'));
-    // → 'immediate' primeiro (próxima fase após poll)
-});
-
-// Fora de I/O, ordem é imprevisível
-setTimeout(() => console.log('timeout'), 0);
-setImmediate(() => console.log('immediate'));
-```
-
-**`process.nextTick` vs `queueMicrotask` vs `setImmediate`:**
-
-| Função | Quando roda |
-| --- | --- |
-| `process.nextTick` | **Antes** do próximo event loop iteration. Prioridade máxima. |
-| `queueMicrotask` | Após código síncrono, entre fases. Como Promise.then. |
-| `setImmediate` | Na fase `check` do próximo iteration. |
-| `setTimeout(fn, 0)` | Na fase `timers` quando o tempo passar (>= 1ms). |
-
-**Cuidado com `process.nextTick`:** recursão em `nextTick` pode **bloquear o event loop** (nunca avança para próxima fase).
+> [!nota] Migrado para galho próprio
+> As fases do event loop foram expandidas em [[Runtime e Event Loop]]. Veja em particular [[04 - As fases do event loop]] (ciclo libuv), [[05 - Microtasks - nextTick, queueMicrotask, Promise.then]] (microtasks), e [[06 - Macrotasks e timers - setTimeout, setInterval, setImmediate]] (timers).
 
 ### Worker Threads, cluster, child_process — as 3 formas de paralelismo
 
@@ -494,7 +418,7 @@ await setTimeout(1000);  // delay
 
 ## Armadilhas comuns
 
-- **Blocking the event loop:** operações CPU-intensive na thread principal (crypto sync, JSON.parse de payloads enormes). Usar Worker Threads.
+- **Blocking the event loop:** Sintomas, causas e diagnóstico em [[10 - Bloqueio do event loop - sintomas e causas]] e [[11 - Diagnóstico do event loop]] (galho [[Runtime e Event Loop]]).
 - **Unhandled promise rejections:** promises sem `.catch()` ou try/catch em async. Configurar `process.on('unhandledRejection')`.
 - **Callback hell:** aninhar callbacks. Usar async/await.
 - **Memory leaks:** event listeners não removidos, closures que retêm referências grandes, caches sem TTL.
@@ -656,31 +580,8 @@ const doctors = await prisma.doctor.findMany({
 
 ### Event loop blocking
 
-**Sintoma:** latência de todas as requests sobe; o servidor "trava" por instantes.
-
-**Causa:** operação CPU-intensive na thread principal (JSON.parse de payload grande, crypto sync, regex complexa).
-
-**Diagnóstico:**
-
-```typescript
-// Detectar event loop lag
-import { monitorEventLoopDelay } from 'perf_hooks';
-
-const h = monitorEventLoopDelay({ resolution: 50 });
-h.enable();
-
-// Exportar para métricas
-setInterval(() => {
-  console.log(`Event loop p99: ${h.percentile(99) / 1e6}ms`);
-  h.reset();
-}, 10000);
-```
-
-**Soluções:**
-- `Worker Threads` para CPU-bound tasks
-- `child_process.fork()` para processos isolados
-- Cluster mode (`pm2`, `node cluster`) para usar múltiplos cores
-- Streaming para processar dados grandes em chunks
+> [!nota] Migrado para galho próprio
+> Sintomas, causas e ferramentas de diagnóstico foram expandidos em [[Runtime e Event Loop]]: [[10 - Bloqueio do event loop - sintomas e causas]] e [[11 - Diagnóstico do event loop]].
 
 ### Memory leak
 
@@ -766,6 +667,7 @@ const result = await breaker.fire(requestData);
 
 ## Veja também
 
+- [[Runtime e Event Loop]] — galho 1 da trilha Node Senior; deep dive do motor (single-thread, libuv, fases, microtasks, async/await, bloqueio, diagnóstico)
 - [[JavaScript Fundamentals]] — linguagem, event loop, async
 - [[TypeScript]] — tipagem em Node
 - [[Testes em JavaScript]] — Vitest, MSW, built-in test runner
