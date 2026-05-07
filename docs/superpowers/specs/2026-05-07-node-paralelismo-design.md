@@ -70,18 +70,19 @@ A trilha precisa ser:
 
 **Audiência secundária:** o mesmo dev em produção, decidindo arquitetura de uma feature CPU-bound nova ou debugando um deploy que está saturando CPU.
 
-**Barra de qualidade:** ao terminar a sub-trilha, o leitor deve conseguir:
+**Barra de qualidade:** ao terminar a sub-trilha, o leitor deve **compreender ao nível exigido de um sênior** — explicar trade-offs, justificar escolhas, reconhecer patterns e armadilhas. Não é "saber implementar from scratch"; é "entender o suficiente pra decidir bem e ler/revisar código com olhar crítico".
+
+Concretamente, ao terminar a sub-trilha o leitor deve conseguir:
 
 1. Decidir, em <30 segundos, qual ferramenta (Worker Thread, Cluster, child_process) usar para um problema concreto
 2. Explicar em inglês a diferença entre os 3 modelos de paralelismo (shared memory, shared port, separate process)
-3. Implementar um pool de workers do zero ou usar `piscina` corretamente
-4. Tipar e enviar mensagens entre workers via `postMessage` + `transferList` sem cópia desnecessária
-5. Identificar quando `SharedArrayBuffer` + `Atomics` é justificado vs preferir mensagens
-6. Configurar Cluster com restart automático e graceful shutdown (e saber quando NÃO usar Cluster — quando o orquestrador já paraleliza)
-7. Usar `exec` vs `execFile` vs `spawn` entendendo as implicações de segurança (shell injection)
-8. Diferenciar `fork` de `spawn` e saber quando preferir `fork` sobre Worker Thread (isolamento total de memória, native modules incompatíveis)
-9. Citar e usar `piscina` como referência de worker pool em produção
-10. Reconhecer pelo menos 5 armadilhas operacionais (Worker sem terminate, IPC leak, race em SharedArrayBuffer, exec com input do usuário, cluster com state em memória)
+3. Reconhecer o pattern de worker pool, justificar por que ele bate worker-per-task, e citar `piscina` como referência canônica
+4. Entender o protocolo de mensagens (`postMessage`, structured clone, `transferList`) e identificar quando uma cópia desnecessária está acontecendo num PR alheio
+5. Identificar quando `SharedArrayBuffer` + `Atomics` é justificado vs preferir mensagens, e reconhecer race conditions canônicas ao revisar código
+6. Explicar o padrão Cluster (primary/worker, port sharing, restart) e — mais importante — argumentar quando **não** usar Cluster (orquestrador já paraleliza)
+7. Diferenciar `exec` / `execFile` / `spawn`, em particular as implicações de segurança (shell injection) que separam um sênior de um pleno em code review
+8. Diferenciar `fork` de `spawn` e justificar quando `fork` ainda ganha de Worker Thread (isolamento total de memória, native modules incompatíveis, supervisor tree)
+9. Reconhecer pelo menos 5 armadilhas operacionais ao ler código (Worker sem terminate, IPC leak, race em SharedArrayBuffer, exec com input do usuário, cluster com state em memória)
 
 ## 5. Estrutura da sub-trilha (13 arquivos)
 
@@ -250,7 +251,7 @@ Ao fechar o galho, executar no `03-Dominios/JavaScript/Backend/Node.js.md`:
 | Risco | Mitigação |
 |---|---|
 | Sobreposição entre nota 03 (Worker fundamentos) e 04 (comunicação) | 03 cobre lifecycle/terminate/eventos; 04 cobre exclusivamente payload e protocolo. Linhas claras de divisão. |
-| Nota 05 (SharedArrayBuffer + Atomics) ficar densa demais para 1 nota | Limitar escopo a "como usar" + "race conditions" + "wait/notify". Modelo de memória ECMAScript completo fica fora; nota aponta pra spec. Aceitar 500-600 linhas se justificado. |
+| Nota 05 (SharedArrayBuffer + Atomics) ficar densa | Sem limite artificial de tamanho — concorrência com memória compartilhada é tema profundo e merece a profundidade que pedir, mesmo que estoure 600+ linhas. O leitor sênior precisa do panorama completo: estados de memória, todas as ops do `Atomics` (load/store/add/sub/and/or/xor/exchange/compareExchange), `wait`/`notify`, race conditions canônicas, e quando preferir mensagens. Apontar pra spec ECMAScript pra quem quiser o modelo formal. |
 | Nota 09 (fork) ficar redundante com Worker Threads em 2026 | Nota explicita os 4 casos onde fork ainda ganha (isolamento total, native modules incompatíveis, supervisor tree, processo descartável). Sem isso, é tentador omitir. |
 | Cluster ficar desatualizado rapidamente | Nota 10 declara contexto 2026 explicitamente; usa "PM2 e K8s" como exemplos sem se aprofundar em features específicas que evoluem. |
 | Notas operacionais ficarem genéricas demais | Toda nota tem code sample concreto + seção "Em entrevista" com frase pronta + "Armadilhas" com 2+ casos específicos. Restrição de fabricação no plano. |
