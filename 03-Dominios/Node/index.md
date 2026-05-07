@@ -3,7 +3,7 @@ title: "Node.js"
 type: moc
 publish: true
 created: 2026-05-04
-updated: 2026-05-04
+updated: 2026-05-07
 status: seedling
 progresso: pendente
 tags:
@@ -21,7 +21,13 @@ Estante de Node.js: runtime, event loop, módulos, frameworks de servidor (Expre
 
 ## Conteúdo
 
-(notas serão adicionadas conforme amadurecimento)
+### Galhos da trilha Node Senior
+
+- [[Runtime e Event Loop]] — galho 1: o motor do Node (single-thread, libuv, fases, microtasks, async/await, bloqueio, diagnóstico)
+
+### Outras notas
+
+- [[Ferramentas Node]] — panorama de ferramentas do ecossistema (em construção)
 
 ## Veja também
 
