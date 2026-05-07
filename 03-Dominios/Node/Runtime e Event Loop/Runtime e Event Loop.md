@@ -22,7 +22,13 @@ aliases:
 
 ## Sobre este galho
 
-(introdução curta — preencher na Task 14)
+Este galho cobre o **motor** do Node.js — como uma única thread JS atende milhares de conexões. Inclui o mental model (single-thread, V8/libuv, queues), o ciclo do event loop em profundidade (fases, microtasks, macrotasks, I/O), `async/await` desmistificado (não é paralelismo!), e ferramentas para diagnosticar bloqueio em produção.
+
+É a **base de todos os outros galhos**: paralelismo, streams, frameworks, observability e segurança pressupõem esse modelo mental.
+
+**Audiência primária:** dev senior em prep para entrevista internacional. Cada nota tem seção "Em entrevista" com frase pronta em inglês + vocabulário.
+
+**Audiência secundária:** o mesmo dev em produção, debugando "comportamentos estranhos" (latência subindo, requests travando). Use a rota "debugging em produção".
 
 ## Comece por aqui — trilha completa (12 notas)
 
