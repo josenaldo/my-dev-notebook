@@ -22,7 +22,8 @@
 <https://www.systemdesignbutsimple.com/p/free-resources>
 <https://github.com/ByteByteGoHq/system-design-101/tree/main>
 [Hard truths about building in the AI era | Keith Rabois (Khosla Ventures)](https://www.lennysnewsletter.com/p/hard-truths-about-building-in-the-ai-era?utm_source=podcast-email&publication_id=10845&post_id=193008881&utm_campaign=email-play-on-substack&utm_content=listen_now_button&r=1ktqd9&triedRedirect=true)
-
+https://x.com/rodrigofm/status/2052050954908729850
+https://x.com/NainsiDwiv50980/status/2051232384436347178
 # Notion + Obsidian
 
 [Stop Notion. Here's Why Obsidian is the BEST Note-Taking app in 2026 - Article](https://x.com/noahvnct/status/2032508457278980359)
