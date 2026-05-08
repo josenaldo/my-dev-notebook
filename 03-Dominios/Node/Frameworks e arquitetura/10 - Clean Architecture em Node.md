@@ -116,6 +116,161 @@ app.post("/users", (req, res) => controller.create(req, res));
 
 Use Clean quando há regra de negócio rica, múltiplos adapters, testes de use case valiosos e vida longa do produto. Em Express/Fastify, composition root manual faz o wiring. Em NestJS, módulos e providers ajudam, mas não garantem Clean: ainda é possível violar camadas.
 
+### Regra de dependência em imports
+
+A forma mais simples de auditar Clean em Node é olhar imports.
+
+```typescript
+// Bom: aplicação depende de domínio.
+import { User } from "../domain/User";
+import type { UserRepository } from "./UserRepository";
+```
+
+```typescript
+// Ruim: domínio depende de framework/infra.
+import { Entity, Column } from "typeorm";
+import type { Request } from "express";
+```
+
+Se `domain/` importa ORM, HTTP, logger externo ou framework, a camada interna conhece detalhe externo.
+
+### Controller como adapter
+
+Controller adapta HTTP para use case. Ele não deve conter regra de negócio rica.
+
+```typescript
+export class UserController {
+  constructor(private readonly createUser: CreateUserUseCase) {}
+
+  async create(req: Request, res: Response) {
+    const input = CreateUserSchema.parse(req.body);
+    const user = await this.createUser.execute(input);
+    res.status(201).json(UserPresenter.toHttp(user));
+  }
+}
+```
+
+Validation e presenter pertencem à borda. Use case não sabe que existe Express.
+
+### Use case como política de aplicação
+
+Use case orquestra regra. Ele conhece ports, não adapters.
+
+```typescript
+export class CreateInvoiceUseCase {
+  constructor(
+    private readonly invoices: InvoiceRepository,
+    private readonly payments: PaymentGateway,
+    private readonly clock: Clock,
+  ) {}
+
+  async execute(input: CreateInvoiceInput) {
+    const invoice = Invoice.create(input, this.clock.now());
+    await this.payments.authorize(invoice.total);
+    await this.invoices.save(invoice);
+    return invoice;
+  }
+}
+```
+
+`PaymentGateway` é uma porta. Stripe, Pagar.me ou mock são adapters.
+
+### NestJS com Clean
+
+NestJS pode ser usado como composition layer, mas cuidado para decorators não contaminarem domínio.
+
+```typescript
+@Module({
+  providers: [
+    CreateInvoiceUseCase,
+    { provide: INVOICE_REPOSITORY, useClass: PrismaInvoiceRepository },
+    { provide: PAYMENT_GATEWAY, useClass: StripePaymentGateway },
+  ],
+  controllers: [InvoicesController],
+})
+export class InvoicesModule {}
+```
+
+O módulo monta dependências. O use case continua sendo TypeScript puro.
+
+### Quando não aplicar
+
+Clean não é ritual. Para CRUD administrativo simples, uma separação leve pode ser melhor:
+
+```text
+users/
+├── users.router.ts
+├── users.service.ts
+├── users.repository.ts
+└── users.schema.ts
+```
+
+Se não há regra de domínio, criar `entities/`, `use-cases/`, `ports/`, `adapters/` pode só espalhar código.
+
+## Checklist de code review
+
+- `domain/` importa apenas linguagem e tipos internos?
+- Use cases dependem de interfaces/ports?
+- Controllers são adapters finos?
+- Repositories implementam ports, não vazam ORM para use case?
+- Mappers/presenters isolam formato HTTP/DB?
+- Composition root está claro?
+- Testes de use case rodam sem framework HTTP?
+- A complexidade do domínio justifica as camadas?
+
+## Exercício de maturidade
+
+Violação comum:
+
+```typescript
+export class CreateUserUseCase {
+  constructor(private readonly prisma: PrismaClient) {}
+
+  async execute(input: Input) {
+    return this.prisma.user.create({ data: input });
+  }
+}
+```
+
+O use case conhece Prisma. Trocar ORM, banco ou teste fake fica mais caro.
+
+Versão com port:
+
+```typescript
+export class CreateUserUseCase {
+  constructor(private readonly users: UserRepository) {}
+
+  async execute(input: Input) {
+    const user = User.create(input);
+    await this.users.save(user);
+    return user;
+  }
+}
+```
+
+```typescript
+export class PrismaUserRepository implements UserRepository {
+  constructor(private readonly prisma: PrismaClient) {}
+}
+```
+
+Agora Prisma fica no adapter. O use case fala a linguagem da aplicação.
+
+### Teste como prova arquitetural
+
+Se o teste de use case precisa subir NestJS, Express ou Postgres, a camada talvez esteja acoplada demais.
+
+```typescript
+test("creates user", async () => {
+  const repo = new InMemoryUserRepository();
+  const useCase = new CreateUserUseCase(repo);
+  const user = await useCase.execute({ name: "Ada", email: "ada@example.com" });
+  expect(await repo.findById(user.id)).toEqual(user);
+});
+```
+
+Teste simples é sinal de boundary saudável.
+
 ## Armadilhas
 
 1. Entity importando ORM/decorator: framework entrou no domínio.
@@ -123,6 +278,24 @@ Use Clean quando há regra de negócio rica, múltiplos adapters, testes de use 
 3. Aplicar Clean em CRUD trivial: complexidade sem retorno.
 4. Adapter virando god class: separar por bounded context/feature.
 5. Sem composition root claro: dependências ficam espalhadas.
+6. Chamar qualquer pasta de `domain` sem regra de negócio real.
+7. Colocar validação HTTP dentro da entity.
+8. Testar use case subindo Nest/Express inteiro.
+9. Mapper ausente: formato de banco vira formato de API por acidente.
+
+## Perguntas de entrevista
+
+**Qual é a dependency rule?**
+Dependências de código apontam para dentro. Camadas internas não conhecem frameworks, banco ou UI.
+
+**Como Clean aparece em Node?**
+Domínio puro, use cases dependentes de ports, adapters para HTTP/DB e composition root no startup/framework.
+
+**Quando Clean é exagero?**
+Quando o app é CRUD simples, sem regra de domínio rica e sem múltiplos adapters relevantes.
+
+**NestJS garante Clean Architecture?**
+Não. Ele ajuda com DI e módulos, mas você ainda pode acoplar use case a framework ou ORM.
 
 ## Em entrevista
 
@@ -148,4 +321,3 @@ Vocabulário-chave:
 - [[11 - DI - manual vs container]]
 - [[Node.js]]
 - [[Arquitetura de Software]]
-
