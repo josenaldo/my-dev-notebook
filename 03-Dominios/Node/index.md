@@ -24,6 +24,7 @@ Estante de Node.js: runtime, event loop, módulos, frameworks de servidor (Expre
 ### Galhos da trilha Node Senior
 
 - [[Runtime e Event Loop]] — galho 1: o motor do Node (single-thread, libuv, fases, microtasks, async/await, bloqueio, diagnóstico)
+- [[Paralelismo]] — galho 2: as 3 ferramentas de paralelismo (Worker Threads, Cluster, child_process), SharedArrayBuffer/Atomics, pool de workers, contexto de produção, decision tree
 
 ### Outras notas
 
