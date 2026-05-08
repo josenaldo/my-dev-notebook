@@ -3,7 +3,7 @@ title: "Node.js"
 type: moc
 publish: true
 created: 2026-05-04
-updated: 2026-05-07
+updated: 2026-05-08
 status: seedling
 progresso: pendente
 tags:
@@ -25,6 +25,7 @@ Estante de Node.js: runtime, event loop, módulos, frameworks de servidor (Expre
 
 - [[Runtime e Event Loop]] — galho 1: o motor do Node (single-thread, libuv, fases, microtasks, async/await, bloqueio, diagnóstico)
 - [[Paralelismo]] — galho 2: as 3 ferramentas de paralelismo (Worker Threads, Cluster, child_process), SharedArrayBuffer/Atomics, pool de workers, contexto de produção, decision tree
+- [[Streams]] — galho 3: abstração fundamental para processar dados em chunks (4 tipos, backpressure, pipeline, async iter, Web Streams, padrões práticos, performance)
 
 ### Outras notas
 
