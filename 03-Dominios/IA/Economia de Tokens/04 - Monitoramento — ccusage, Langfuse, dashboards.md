@@ -113,10 +113,20 @@ def fix_bug(issue_description):
 | ---------------------- | ------ | ------------------ | ----------------- | -------------------------- |
 | **Provider dashboard** | Zero   | Grátis             | Diário/modelo     | Visão geral de billing     |
 | **ccusage**            | 1 min  | Grátis             | Sessão/projeto    | Usuários de Claude Code    |
+| **/statusline**        | 0 min  | Grátis             | Tempo real        | Monitorar sessão ativa     |
+| **Serena**             | 2 min  | Grátis (OS)        | Fluxo de tokens   | Redução agressiva de custo |
 | **Helicone**           | 5 min  | Freemium           | Request/feature   | Setup rápido, caching      |
 | **Langfuse**           | 30 min | Grátis (self-host) | Trace/span        | Observability profunda     |
-| **Braintrust**         | 1h     | Pago               | Trace + qualidade | Correlação custo-qualidade |
-| **Datadog**            | 2h+    | Pago               | Enterprise-grade  | Já usa Datadog             |
+
+### Destaque: Monitoramento de Interface (UI)
+
+Em 2026, economizar tokens exige visibilidade imediata. Não basta olhar o dashboard no final do dia.
+
+#### /statusline (Nativo do Claude Code)
+O comando `/statusline` permite visualizar em tempo real o uso da sessão, tempo, tokens, modelo e status do cache. É a ferramenta principal para saber a hora exata de dar um `/compact` ou `/clear`.
+
+#### Serena
+**Serena** é uma ferramenta complementar (GitHub: `oraios/serena`) que intercepta e otimiza fluxos de tokens de forma agressiva. É recomendada para quem busca reduzir tokens "absurdamente" sem depender de técnicas manuais complexas.
 
 ### Métricas a monitorar
 

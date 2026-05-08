@@ -1,7 +1,7 @@
 ---
 title: "Dicionário de IA"
 created: 2026-05-03
-updated: 2026-05-03
+updated: 2026-05-08
 type: glossary
 status: seedling
 aliases:
@@ -63,6 +63,9 @@ The maximum number of tokens a model can attend to in a single inference call, i
 - TODO: system prompt
 
 ## LLMs Anatomy
+
+### KV cache
+Uma técnica de otimização para inferência de Transformers que armazena os vetores Key (K) e Value (V) dos tokens anteriores na memória da GPU. Isso evita cálculos redundantes durante a geração autorregressiva, reduzindo a complexidade computacional de $O(N^2)$ para $O(N)$ por novo token, mas aumenta significativamente o uso de VRAM conforme o comprimento da sequência cresce.
 
 ### LLM (Large Language Model)
 A neural network — typically a decoder-only transformer — trained on large text corpora to predict the next token given a sequence. Modern LLMs scale to billions or trillions of parameters and exhibit emergent capabilities like in-context learning and instruction following.
