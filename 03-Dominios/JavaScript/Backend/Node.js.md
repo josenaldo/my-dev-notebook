@@ -1,7 +1,7 @@
 ---
 title: "Node.js"
 created: 2026-04-01
-updated: 2026-05-07
+updated: 2026-05-08
 type: concept
 status: evergreen
 tags:
@@ -102,156 +102,23 @@ app.get("/users/:id", asyncHandler(async (req, res) => {
 
 ### Streams — deep dive
 
-Streams são a **abstração fundamental** de Node.js para processar dados em chunks, sem carregar tudo em memória. Essencial para arquivos grandes, network, stdout/stdin.
-
-**4 tipos de streams:**
-
-| Tipo | Uso | Exemplo |
-| --- | --- | --- |
-| **Readable** | Fonte de dados | `fs.createReadStream`, `process.stdin`, HTTP response |
-| **Writable** | Destino de dados | `fs.createWriteStream`, `process.stdout`, HTTP request |
-| **Duplex** | Ambos (separados) | TCP socket |
-| **Transform** | Duplex que transforma | zlib, crypto, parsers |
-
-**API moderna — `stream/promises` + `pipeline`:**
-
-```typescript
-import { createReadStream, createWriteStream } from 'node:fs';
-import { pipeline } from 'node:stream/promises';
-import { Transform } from 'node:stream';
-
-// Pipeline correto — fecha tudo, propaga erros
-await pipeline(
-    createReadStream('input.csv'),
-    new Transform({
-        transform(chunk, encoding, callback) {
-            const processed = processChunk(chunk.toString());
-            callback(null, processed);
-        }
-    }),
-    createWriteStream('output.csv')
-);
-// Se qualquer stream errar, pipeline propaga e fecha tudo
-```
-
-**Por que `pipeline` e não `.pipe()`:**
-
-```typescript
-// RUIM — .pipe() não propaga erros
-source.pipe(transform).pipe(destination);
-// se transform falha, destination fica aberto, vazamento
-
-// BOM — pipeline lida com cleanup e errors
-await pipeline(source, transform, destination);
-```
+> [!nota] Migrado para galho próprio
+> Os 4 tipos de stream foram expandidos em [[Streams]] (galho 3). Veja em particular [[02 - Os 4 tipos - Readable, Writable, Duplex, Transform]] (visão geral comparativa), [[03 - Readable streams]] (Readable detalhado), [[04 - Writable streams]] (Writable detalhado) e [[05 - Duplex e Transform]] (Duplex vs Transform).
 
 ### Backpressure
 
-Quando o consumer é mais lento que o producer, o buffer enche. Streams do Node gerenciam isso automaticamente se você usa `pipe`/`pipeline` ou respeita `drain`:
-
-```typescript
-// Manual — respeitar drain
-function writeMany(writable: NodeJS.WritableStream) {
-    let i = 1_000_000;
-    function write() {
-        let ok = true;
-        while (i > 0 && ok) {
-            ok = writable.write(`${i}\n`);
-            i--;
-        }
-        if (i > 0) {
-            writable.once('drain', write);  // retoma quando buffer esvaziar
-        } else {
-            writable.end();
-        }
-    }
-    write();
-}
-```
+> [!nota] Migrado para galho próprio
+> Backpressure como mecânica explícita foi expandido em [[06 - Backpressure]] no galho [[Streams]].
 
 ### Web Streams vs Node streams
 
-Node suporta **Web Streams** (padrão universal) desde v18:
-
-```typescript
-import { Readable } from 'node:stream';
-
-// Web Stream → Node Stream
-const webStream = new ReadableStream({ start(controller) { /* ... */ } });
-const nodeStream = Readable.fromWeb(webStream);
-
-// Node Stream → Web Stream
-const web = Readable.toWeb(nodeReadable);
-
-// Fetch retorna Web Stream
-const response = await fetch('https://example.com/big.json');
-const reader = response.body!.getReader();
-while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    process(value);
-}
-```
-
-**Em 2026:** Web Streams são mais portáveis (funcionam em browser, Deno, Bun, Cloudflare Workers). Use quando possível.
+> [!nota] Migrado para galho próprio
+> Interop Node ↔ Web Streams foi expandido em [[09 - Web Streams - interop com padrão universal]] no galho [[Streams]].
 
 ### Stream patterns
 
-**Transform stream — line parser:**
-
-```typescript
-import { Transform } from 'node:stream';
-
-class LineParser extends Transform {
-    private buffer = '';
-
-    _transform(chunk: Buffer, encoding: string, callback: Function) {
-        this.buffer += chunk.toString();
-        const lines = this.buffer.split('\n');
-        this.buffer = lines.pop() || '';  // última linha pode estar incompleta
-        for (const line of lines) {
-            this.push(line);
-        }
-        callback();
-    }
-
-    _flush(callback: Function) {
-        if (this.buffer) this.push(this.buffer);
-        callback();
-    }
-}
-
-await pipeline(
-    createReadStream('big.csv'),
-    new LineParser(),
-    new Transform({
-        objectMode: true,
-        transform(line, enc, cb) {
-            const parsed = parseCSV(line);
-            cb(null, JSON.stringify(parsed) + '\n');
-        }
-    }),
-    createWriteStream('out.jsonl')
-);
-```
-
-**Async iteration de streams:**
-
-```typescript
-// Modern — for await of
-async function processLines(path: string) {
-    const stream = createReadStream(path, { encoding: 'utf8' });
-    let buffer = '';
-    for await (const chunk of stream) {
-        buffer += chunk;
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
-        for (const line of lines) {
-            await processLine(line);  // processa sequencialmente
-        }
-    }
-}
-```
+> [!nota] Migrado para galho próprio
+> Padrões práticos (line parser, CSV → JSONL, fetch streaming, multipart, tee) foram expandidos em [[10 - Padrões práticos]] no galho [[Streams]]. Decision tree e armadilhas em [[12 - Armadilhas, regras práticas, cheatsheet]].
 
 ### npm e Package Management
 
@@ -594,6 +461,7 @@ const result = await breaker.fire(requestData);
 
 - [[Runtime e Event Loop]] — galho 1 da trilha Node Senior; deep dive do motor (single-thread, libuv, fases, microtasks, async/await, bloqueio, diagnóstico)
 - [[Paralelismo]] — galho 2 da trilha Node Senior; as 3 ferramentas de paralelismo (Worker Threads, Cluster, child_process), SharedArrayBuffer/Atomics, pool de workers, decision tree
+- [[Streams]] — galho 3 da trilha Node Senior; abstração fundamental para processar dados em chunks (4 tipos, backpressure, pipeline, async iter, Web Streams, padrões práticos)
 - [[JavaScript Fundamentals]] — linguagem, event loop, async
 - [[TypeScript]] — tipagem em Node
 - [[Testes em JavaScript]] — Vitest, MSW, built-in test runner
