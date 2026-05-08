@@ -65,40 +65,13 @@ Em entrevistas, o que diferencia um senior em Node.js:
 
 ### Frameworks
 
-| Framework | Estilo | Use case |
-| --- | --- | --- |
-| Express | Minimalista, middleware-based | APIs simples, prototipagem |
-| NestJS | Opinativo, inspirado em Angular/Spring | Apps enterprise, microserviços |
-| Fastify | Performance-first, schema-based | APIs de alta performance |
-| Hono | Ultralight, edge-first | Serverless, edge computing |
-
-**NestJS** é o mais próximo do Spring Boot em filosofia: DI, decorators, módulos, guards, interceptors.
+> [!nota] Migrado para galho próprio
+> Os 4 frameworks principais foram expandidos em [[Frameworks e arquitetura]] (galho 4). Veja em particular [[01 - Os 4 frameworks - Express, NestJS, Fastify, Hono]] (visão geral comparativa), [[02 - Express idiomático]] (Express moderno), [[03 - NestJS - fundamentos]] (DI + módulos), [[05 - Fastify - schema-first, plugins, performance]] (Fastify) e [[06 - Hono e edge runtimes]] (edge-first).
 
 ### Error Handling
 
-```typescript
-// Express middleware de erro
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  logger.error(err.stack);
-  res.status(500).json({
-    type: "https://api.example.com/errors/internal",
-    title: "Internal Server Error",
-    status: 500,
-    detail: err.message
-  });
-});
-
-// Async error handling (Express não captura automaticamente)
-const asyncHandler = (fn: Function) =>
-  (req: Request, res: Response, next: NextFunction) =>
-    Promise.resolve(fn(req, res, next)).catch(next);
-
-app.get("/users/:id", asyncHandler(async (req, res) => {
-  const user = await userService.findById(req.params.id);
-  if (!user) throw new NotFoundError("User not found");
-  res.json(user);
-}));
-```
+> [!nota] Migrado para galho próprio
+> Error handling estruturado (Problem Details RFC 7807) foi expandido em [[08 - Error handling estruturado]] no galho [[Frameworks e arquitetura]], com implementação em todos os 4 frameworks principais.
 
 ### Streams — deep dive
 
@@ -462,6 +435,7 @@ const result = await breaker.fire(requestData);
 - [[Runtime e Event Loop]] — galho 1 da trilha Node Senior; deep dive do motor (single-thread, libuv, fases, microtasks, async/await, bloqueio, diagnóstico)
 - [[Paralelismo]] — galho 2 da trilha Node Senior; as 3 ferramentas de paralelismo (Worker Threads, Cluster, child_process), SharedArrayBuffer/Atomics, pool de workers, decision tree
 - [[Streams]] — galho 3 da trilha Node Senior; abstração fundamental para processar dados em chunks (4 tipos, backpressure, pipeline, async iter, Web Streams, padrões práticos)
+- [[Frameworks e arquitetura]] — galho 4 da trilha Node Senior; os 4 frameworks principais (Express, NestJS, Fastify, Hono), patterns transversais e arquitetura
 - [[JavaScript Fundamentals]] — linguagem, event loop, async
 - [[TypeScript]] — tipagem em Node
 - [[Testes em JavaScript]] — Vitest, MSW, built-in test runner
