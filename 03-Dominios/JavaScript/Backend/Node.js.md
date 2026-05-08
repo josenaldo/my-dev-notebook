@@ -60,83 +60,8 @@ Em entrevistas, o que diferencia um senior em Node.js:
 
 ### Worker Threads, cluster, child_process — as 3 formas de paralelismo
 
-| | Worker Threads | Cluster | child_process |
-| --- | --- | --- | --- |
-| **Uso** | CPU-bound tasks | Escalar HTTP server por CPU | Executar processo externo |
-| **Memória** | Separada, mensagens via postMessage | Separada, IPC | Separada, stdio |
-| **Criação** | Rápida (~ms) | Lenta (novo processo) | Lenta (novo processo) |
-| **Compartilhamento** | SharedArrayBuffer | Via IPC | Via stdio/IPC |
-| **Use case** | Image processing, crypto, ML | Servidor web escalado | Rodar comando shell |
-
-**Worker Threads — para CPU-bound:**
-
-```typescript
-// worker.ts
-import { parentPort, workerData } from 'node:worker_threads';
-
-const result = heavyComputation(workerData);
-parentPort?.postMessage(result);
-
-// main.ts
-import { Worker } from 'node:worker_threads';
-
-function runWorker(data: any) {
-    return new Promise((resolve, reject) => {
-        const worker = new Worker('./worker.js', { workerData: data });
-        worker.on('message', resolve);
-        worker.on('error', reject);
-        worker.on('exit', code => {
-            if (code !== 0) reject(new Error(`Worker stopped with code ${code}`));
-        });
-    });
-}
-
-const result = await runWorker({ input: 'heavy' });
-```
-
-**Cluster — para escalar HTTP:**
-
-```typescript
-import cluster from 'node:cluster';
-import os from 'node:os';
-
-if (cluster.isPrimary) {
-    const numCPUs = os.cpus().length;
-    for (let i = 0; i < numCPUs; i++) {
-        cluster.fork();
-    }
-    cluster.on('exit', (worker) => {
-        console.log(`Worker ${worker.process.pid} died, restarting`);
-        cluster.fork();
-    });
-} else {
-    // Worker process
-    startServer();
-}
-```
-
-**Em produção moderna:** cluster nativo é menos usado. Orchestradores (Kubernetes, PM2) fazem melhor: restart automático, rolling updates, health checks.
-
-**`child_process` — executar comandos:**
-
-```typescript
-import { exec, spawn, fork } from 'node:child_process';
-import { promisify } from 'node:util';
-
-// exec — buffer completo do output
-const execP = promisify(exec);
-const { stdout } = await execP('git log --oneline -5');
-
-// spawn — streaming
-const proc = spawn('ffmpeg', ['-i', 'input.mp4', 'output.webm']);
-proc.stdout.on('data', chunk => process.stdout.write(chunk));
-proc.on('close', code => console.log(`exited ${code}`));
-
-// fork — child Node.js com IPC
-const child = fork('./worker.js');
-child.send({ type: 'work', data: ... });
-child.on('message', msg => console.log(msg));
-```
+> [!nota] Migrado para galho próprio
+> As 3 ferramentas de paralelismo foram expandidas em [[Paralelismo]] (galho 2). Veja em particular [[02 - As 3 ferramentas - Worker Threads, Cluster, child_process]] (visão geral comparativa), [[03 - Worker Threads - fundamentos]] (Worker Threads), [[07 - Cluster - escalando HTTP por CPU]] (Cluster), [[08 - child_process com exec e spawn]] (rodar comandos externos) e [[09 - child_process com fork - Node child com IPC]] (Node child isolado). Decision tree completa em [[11 - Decision tree - qual ferramenta para qual problema]].
 
 ### Frameworks
 
@@ -668,6 +593,7 @@ const result = await breaker.fire(requestData);
 ## Veja também
 
 - [[Runtime e Event Loop]] — galho 1 da trilha Node Senior; deep dive do motor (single-thread, libuv, fases, microtasks, async/await, bloqueio, diagnóstico)
+- [[Paralelismo]] — galho 2 da trilha Node Senior; as 3 ferramentas de paralelismo (Worker Threads, Cluster, child_process), SharedArrayBuffer/Atomics, pool de workers, decision tree
 - [[JavaScript Fundamentals]] — linguagem, event loop, async
 - [[TypeScript]] — tipagem em Node
 - [[Testes em JavaScript]] — Vitest, MSW, built-in test runner
