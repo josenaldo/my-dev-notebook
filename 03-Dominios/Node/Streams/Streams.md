@@ -21,7 +21,13 @@ aliases:
 
 ## Sobre este galho
 
-(introdução curta — preencher na Task 14)
+Este galho cobre **streams em Node** — abstração fundamental para processar dados em chunks sem carregar tudo em memória. Inclui o mental model dos 4 tipos (Readable, Writable, Duplex, Transform), backpressure como mecânica explícita, `pipeline` como API moderna que substitui `.pipe()`, async iteration com `for await of`, Web Streams interop (padrão universal de 2026), padrões práticos (line parser, CSV → JSONL, fetch streaming, multipart upload) e tuning de performance.
+
+Pré-requisito: galho 1 ([[Runtime e Event Loop]]) — pressupõe entender event loop e bloqueio. Galho 2 ([[Paralelismo]]) é referência cruzada onde workers + streams se cruzam (`postMessage` + `transferList` para zero-copy).
+
+**Audiência primária:** dev senior em prep para entrevista internacional. Cada nota tem seção "Em entrevista" com frase pronta em inglês + vocabulário.
+
+**Audiência secundária:** o mesmo dev em produção, debugando memory growth em endpoint que processa CSVs grandes ou throughput baixo de pipeline de transform.
 
 ## Comece por aqui — trilha completa (12 notas)
 
