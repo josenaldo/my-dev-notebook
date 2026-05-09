@@ -182,7 +182,7 @@ O dashboard de referência para um serviço Node.js tem exatamente 5 painéis, o
 | Painel | Tipo | PromQL |
 | ------ | ---- | ------ |
 | 1. Availability | Gauge (verde/vermelho) | `1 - slo:sli_error:ratio_rate1h` |
-| 2. Latência p99 | Stat | `histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))` |
+| 2. Latência p50/p95/p99 | Time series | `histogram_quantile(N, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))` com N = 0.5, 0.95, 0.99 — três séries no mesmo painel |
 
 **Linha 2 — Tendências (time series)**
 
