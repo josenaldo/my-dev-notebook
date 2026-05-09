@@ -188,9 +188,9 @@ O dashboard de referência para um serviço Node.js tem exatamente 5 painéis, o
 
 | Painel | Tipo | PromQL |
 | ------ | ---- | ------ |
-| 3. Error budget burndown | Time series | `1 - (sum(increase(http_requests_total{status!~"5.."}[30d])) / sum(increase(http_requests_total[30d]))) / 0.001` |
+| 3. Error budget burndown | Time series | `(sum(increase(http_requests_total{status!~"5.."}[30d])) / sum(increase(http_requests_total[30d])) - 0.999) / 0.001` |
 | 4. Throughput (RPS) | Time series | `sum(rate(http_requests_total[5m])) by (status)` |
-| 5. Saturação | Time series | `db_pool_pending_acquires`, `process_cpu_usage`, `process_heap_used_bytes` |
+| 5. Saturação | Time series | `db_pool_pending_acquires`, `rate(process_cpu_seconds_total[5m])`, `process_heap_used_bytes` |
 
 O painel de burndown mostra um número que começa em 1 (100% do budget disponível no início do mês) e decresce. Se chega a 0 antes do fim do mês, o SLO foi violado.
 
@@ -321,6 +321,12 @@ spec:
               sum(rate(http_requests_total{status!~"5.."}[5m]))
               / sum(rate(http_requests_total[5m]))
             )
+        - record: slo:sli_error:ratio_rate30m
+          expr: |
+            1 - (
+              sum(rate(http_requests_total{status!~"5.."}[30m]))
+              / sum(rate(http_requests_total[30m]))
+            )
         - record: slo:sli_error:ratio_rate1h
           expr: |
             1 - (
@@ -340,7 +346,7 @@ spec:
           expr: |
             (slo:sli_error:ratio_rate1h > (14.4 * 0.001) and slo:sli_error:ratio_rate5m > (14.4 * 0.001))
             or
-            (slo:sli_error:ratio_rate6h > (6 * 0.001) and slo:sli_error:ratio_rate5m > (6 * 0.001))
+            (slo:sli_error:ratio_rate6h > (6 * 0.001) and slo:sli_error:ratio_rate30m > (6 * 0.001))
           for: 2m
           labels:
             severity: critical
