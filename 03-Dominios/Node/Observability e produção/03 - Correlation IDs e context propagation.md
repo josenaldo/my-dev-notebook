@@ -22,7 +22,7 @@ aliases:
 
 > [!abstract] TL;DR
 > Um **correlation ID** é um identificador único gerado no início de cada requisição e carregado por todos os logs, métricas e traces produzidos durante aquele ciclo de vida — sem ele, logs de 200 requisições concorrentes se misturam e rastrear um bug vira arqueologia.
-> `AsyncLocalStorage` (Node 16+, módulo `node:async_hooks`) é o mecanismo nativo para propagar contexto de forma transparente por toda a cadeia assíncrona sem passar o ID como parâmetro em cada função.
+> `AsyncLocalStorage` (estável no Node 16+, módulo `node:async_hooks`) é o mecanismo nativo para propagar contexto de forma transparente por toda a cadeia assíncrona sem passar o ID como parâmetro em cada função.
 > O padrão moderno é gerar o ID no middleware de entrada (ou reutilizar o `traceId` do header W3C `traceparent`), armazená-lo no `AsyncLocalStorage` e lê-lo em serializers do pino e em spans do OpenTelemetry.
 > Em microsserviços, o ID deve ser encaminhado nos headers das chamadas HTTP de saída (`x-request-id` ou `traceparent`) para que o serviço downstream possa continuar o mesmo "fio" de observabilidade.
 
@@ -103,7 +103,7 @@ Correlation IDs aparecem em perguntas sobre:
 
 ### AsyncLocalStorage — o mecanismo nativo
 
-`AsyncLocalStorage` é uma classe disponível em `node:async_hooks` desde Node 14 (estável no 16). Ela implementa um storage que é automaticamente **herdado por toda a cadeia assíncrona** iniciada dentro de um `run()`, sem necessidade de passar o contexto como parâmetro.
+`AsyncLocalStorage` é uma classe disponível em `node:async_hooks`. Disponível desde Node 12.17 (experimental), sem flag desde Node 14, **estável desde Node 16**. Para produção, exija Node 16+. Ela implementa um storage que é automaticamente **herdado por toda a cadeia assíncrona** iniciada dentro de um `run()`, sem necessidade de passar o contexto como parâmetro.
 
 ```typescript
 // context-store.ts
@@ -113,6 +113,7 @@ export interface RequestContext {
   requestId: string;
   userId?: string;
   startTime: number;
+  traceId?: string; // preenchido pelo otel-bridge após o span ser criado
 }
 
 // Uma única instância por módulo — é thread-safe por design do Node
@@ -206,11 +207,13 @@ import { randomUUID } from 'node:crypto';
  * Extrai o traceId de um header W3C traceparent.
  * Formato: 00-{traceId}-{spanId}-{flags}
  */
+const HEX_32 = /^[0-9a-f]{32}$/
+
 export function extractTraceId(traceparent: string | undefined): string | null {
   if (!traceparent) return null;
   const parts = traceparent.split('-');
   // versão(0) + traceId(1) + spanId(2) + flags(3)
-  if (parts.length !== 4 || parts[1].length !== 32) return null;
+  if (parts.length !== 4 || !HEX_32.test(parts[1])) return null;
   return parts[1];
 }
 
@@ -306,8 +309,10 @@ export function enrichSpanWithRequestId(): void {
   if (activeSpan) {
     activeSpan.setAttribute('app.requestId', store.requestId);
     // Também podemos adicionar o traceId ao store para aparecer nos logs
+    // Adicionado uma vez no setup, antes de qualquer leitura concorrente —
+    // diferente da mutação durante o handler (ver Armadilhas)
     const traceId = activeSpan.spanContext().traceId;
-    Object.assign(store, { traceId });
+    store.traceId = traceId;
   }
 }
 ```
@@ -331,10 +336,12 @@ import { logger } from '../logger';
  * Extrai o traceId do header W3C traceparent.
  * Formato: 00-{32hex traceId}-{16hex spanId}-{2hex flags}
  */
+const HEX_32 = /^[0-9a-f]{32}$/
+
 function extractTraceId(traceparent: string | undefined): string | null {
   if (!traceparent) return null;
   const parts = traceparent.split('-');
-  if (parts.length !== 4 || parts[1].length !== 32) return null;
+  if (parts.length !== 4 || !HEX_32.test(parts[1])) return null;
   return parts[1];
 }
 
@@ -364,7 +371,10 @@ export function requestContextMiddleware(
     logger.info({ method: req.method, path: req.path }, 'Request received');
 
     // 6. Log de fim com duração ao fechar a resposta
+    // Context propagates through event emitter listeners registered inside run()
+    // Verified behavior on Node 18+; test on older versions if targeting Node 16
     res.on('finish', () => {
+      // getStore() works here on Node 18+
       const duration = Date.now() - context.startTime;
       logger.info(
         { method: req.method, path: req.path, status: res.statusCode, duration },
