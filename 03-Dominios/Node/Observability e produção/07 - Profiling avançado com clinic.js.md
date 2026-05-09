@@ -269,7 +269,7 @@ npm install -g 0x
 npx 0x server.js
 
 # Com flags do Node.js
-npx 0x --output-dir /tmp/flamegraphs -- node --max-old-space-size=4096 server.js
+npx 0x --output-dir /tmp/flamegraphs --node-arg=--max-old-space-size=4096 server.js
 ```
 
 O `0x` usa sampling do V8 (não `perf` do Linux por padrão) e é mais portável entre ambientes.
