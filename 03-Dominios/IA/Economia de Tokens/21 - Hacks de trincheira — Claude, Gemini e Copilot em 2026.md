@@ -37,6 +37,14 @@ Adicione no topo do seu `CLAUDE.md`:
 Integre o RTK como um hook de terminal. Ele comprime a saída de ferramentas como `git diff` e `npm install` antes de serem enviadas ao Claude.
 *   **Dica:** Sessões intensas de debug são as que mais sangram tokens. O RTK remove o "ruído" dos logs e mantém apenas o sinal.
 
+### 4. /statusline (Visibilidade em Tempo Real)
+Ative o `/statusline` no Claude Code para ver tokens, custo, modelo e status do cache em tempo real na linha de status do terminal.
+*   **O Hack:** É o sinal mais rápido para decidir a hora certa de rodar `/compact` ou `/clear` — antes de o contexto explodir e forçar um restart caro.
+
+### 5. Serena (Otimização Agressiva de Tokens)
+**Serena** (GitHub: `oraios/serena`) é uma ferramenta externa que intercepta e otimiza fluxos de tokens de forma agressiva, sem exigir mudanças manuais no código de prompt.
+*   **Quando usar:** Projetos onde o custo está alto e as técnicas manuais (pruning, compactação, caching) já foram esgotadas. Serena atua como uma camada adicional de compressão.
+
 ---
 
 ## 💎 Gemini (Google): Persistência de Contexto

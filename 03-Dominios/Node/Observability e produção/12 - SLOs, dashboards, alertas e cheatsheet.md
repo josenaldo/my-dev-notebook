@@ -96,7 +96,7 @@ Exemplo: SLO = 99,9%, error_rate atual = 1,44%
   burn_rate = 0,0144 / 0,001 = 14,4×
 
 Interpretação: consumindo budget 14,4× mais rápido que o sustentável.
-Com burn rate 14,4×, o budget mensal acaba em ≈ 2 horas.
+Com burn rate 14,4×, o budget mensal acaba em ≈ 2 dias (30 dias ÷ 14,4 ≈ 50 horas).
 ```
 
 A escolha dos limiares de alerta é padronizada pela Google SRE:
@@ -129,6 +129,10 @@ groups:
         expr: |
           1 - (sum(rate(http_requests_total{status!~"5.."}[6h]))
                / sum(rate(http_requests_total[6h])))
+      - record: slo:sli_error:ratio_rate3d
+        expr: |
+          1 - (sum(rate(http_requests_total{status!~"5.."}[3d]))
+               / sum(rate(http_requests_total[3d])))
 
       # Alerta crítico: burn rate 14.4× em 1h OU 6× em 6h
       - alert: HighErrorBudgetBurn
@@ -147,14 +151,17 @@ groups:
         for: 2m
         labels:
           severity: critical
+          service: my-service
           team: backend
         annotations:
           summary: "High error budget burn rate"
           description: "{{ $labels.service }} está queimando o error budget {{ $value | humanizePercentage }} mais rápido que o alvo"
 
-      # Alerta de aviso: burn rate 3× em 3 dias
+      # Alerta de aviso: burn rate 3× em 3 dias (multi-janela: 3d longa + 6h curta)
       - alert: LowErrorBudgetBurn
         expr: |
+          slo:sli_error:ratio_rate3d > (3 * 0.001)
+          and
           slo:sli_error:ratio_rate6h > (3 * 0.001)
         for: 1h
         labels:

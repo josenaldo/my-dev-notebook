@@ -117,6 +117,18 @@ Um protocolo aberto que padroniza como aplicações de LLM expõem contexto, fer
 - TODO: vector store
 - TODO: working memory
 
+## Monitoring and Observability
+
+### Observability
+A capacidade de inferir o estado interno de um sistema a partir de suas saídas externas — logs, métricas e traces. Em aplicações de LLM, observability vai além do monitoramento tradicional: exige rastrear qualidade das respostas (não-determinísticas), custos por chamada, cadeias de tool calls e o impacto de mudanças de prompt. As três dimensões clássicas são logs (registros de eventos), métricas (séries temporais agregadas) e traces (rastreamento de uma solicitação através do sistema).
+
+- TODO: Arize Phoenix
+- TODO: Langfuse
+- TODO: OpenTelemetry GenAI
+- TODO: span
+- TODO: trace
+- TODO: tracing
+
 ## RAG and Vector Databases
 
 ### RAG (Retrieval-Augmented Generation)
@@ -159,6 +171,9 @@ Um fluxo de trabalho onde uma especificação escrita (requisitos + design) prec
 
 ## Token Economy
 
+### Cache hit rate
+A proporção de chamadas à API em que o prefixo do prompt foi encontrado no cache do provedor — evitando recomputação e sendo faturado com desconto significativo (~10% da taxa normal de entrada). Um cache hit rate baixo indica que o conteúdo estático não está posicionado corretamente no início do prompt, que o prefixo varia entre chamadas, ou que o TTL do cache expirou antes de ser reutilizado. Meta razoável para workloads com system prompt fixo: >60%.
+
 ### Completion tokens
 O total de tokens gerados pelo modelo em uma única chamada de API, incluindo a resposta visível e os tokens de raciocínio (quando aplicável). Faturado à taxa de saída — tipicamente 3 a 10 vezes a taxa de entrada. Retornado como `completion_tokens` na interface de API compatível com OpenAI.
 
@@ -175,7 +190,6 @@ Um parâmetro por solicitação que limita o número máximo de tokens de racioc
 A unidade atômica que um modelo de linguagem lê e emite — tipicamente um fragmento de sub-palavra produzido por um tokenizer. Preços, limites de contexto e latência são todos medidos em tokens, portanto, entender a tokenização é fundamental para a otimização de custo e desempenho.
 
 - TODO: batch API
-- TODO: cache hit rate
 - TODO: cost per token
 - TODO: prompt tokens
 
