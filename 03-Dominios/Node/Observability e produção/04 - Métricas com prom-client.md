@@ -399,7 +399,7 @@ const app = express();
 // Middleware antes de todas as rotas para capturar 100% das requisições
 app.use(metricsMiddleware);
 
-// Endpoint /metrics (separado para não ser instrumentado pelo próprio middleware)
+// Endpoint /metrics — nota: também é capturado pelo middleware acima; adicione exclusão em metricsMiddleware se necessário
 app.use(metricsRouter());
 
 // Rotas da aplicação
@@ -514,7 +514,7 @@ const counterB = new Counter({ name: 'counter_b', ..., registers: [register] });
 
 ## Em entrevista
 
-**Explainig the four metric types:** "Prometheus has four metric types with distinct semantics. A Counter is a monotonically increasing value that resets only on process restart — use it for total request counts or error counts. A Gauge represents an arbitrary value that can increase or decrease, like active connections or queue depth. A Histogram records observations in predefined buckets and allows calculating percentiles like p99 across multiple instances using PromQL's `histogram_quantile` function. A Summary also computes quantiles but does so client-side per process, which makes it unsuitable for horizontally scaled services because you cannot accurately aggregate quantiles across multiple instances."
+**Explaining the four metric types:** "Prometheus has four metric types with distinct semantics. A Counter is a monotonically increasing value that resets only on process restart — use it for total request counts or error counts. A Gauge represents an arbitrary value that can increase or decrease, like active connections or queue depth. A Histogram records observations in predefined buckets and allows calculating percentiles like p99 across multiple instances using PromQL's `histogram_quantile` function. A Summary also computes quantiles but does so client-side per process, which makes it unsuitable for horizontally scaled services because you cannot accurately aggregate quantiles across multiple instances."
 
 **On histograms vs summaries for latency:** "For latency SLOs in distributed systems, I always use Histograms over Summaries. Histograms store bucket counts that are additive across instances — you can `sum()` the bucket series from 10 pods and compute the fleet-wide p99. Summaries compute quantiles inside the process using a streaming algorithm over a sliding time window, so each instance has its own p99 that cannot be merged with others. The tradeoff is that Histograms require you to define buckets upfront, so you need to know your latency distribution in advance to choose meaningful bucket boundaries."
 
