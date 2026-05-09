@@ -62,11 +62,13 @@ Uma técnica de prompting que instrui o modelo a produzir etapas de raciocínio 
 ### Context window
 O número máximo de tokens que um modelo pode considerar em uma única chamada de inferência, incluindo o system prompt, input do usuário, turnos anteriores, definições de ferramentas e a resposta sendo gerada. Exceder esse limite força o truncamento, sumarização ou compactação.
 
+### system prompt
+Um bloco de instruções enviado pelo desenvolvedor no início de cada chamada de API para configurar o comportamento, personalidade, limitações e contexto do modelo. Diferente das mensagens do usuário, o system prompt é tipicamente estático e re-enviado integralmente a cada turno — tornando-o um vetor de custo constante em sessões agenticas.
+
 - TODO: context compaction
 - TODO: few-shot prompting
 - TODO: prompt engineering
 - TODO: prompt template
-- TODO: system prompt
 
 ## LLMs Anatomy
 
@@ -179,7 +181,12 @@ A unidade atômica que um modelo de linguagem lê e emite — tipicamente um fra
 
 ## Tooling
 
+### tool call
+A ação de um modelo de linguagem ao invocar uma ferramenta externa durante uma geração. O modelo produz um bloco estruturado com o nome da ferramenta e seus argumentos; o framework executa a ferramenta e devolve o resultado como input do próximo turno. Erros de sintaxe em tool calls disparam retries automáticos — cada um custando um turno completo de tokens acumulados.
+
+### tool definition
+A especificação estruturada (tipicamente JSON Schema) que descreve para o modelo o nome, descrição e parâmetros aceitos de uma ferramenta disponível. Tool definitions são enviadas no system prompt a cada turno, tornando-se um custo fixo por chamada independentemente de quantas ferramentas são realmente usadas.
+
 - TODO: function calling
 - TODO: SDK
 - TODO: structured output
-- TODO: tool definition
