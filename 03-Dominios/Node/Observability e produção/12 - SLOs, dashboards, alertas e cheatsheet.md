@@ -357,6 +357,8 @@ spec:
           for: 2m
           labels:
             severity: critical
+            service: my-service
+            team: backend
           annotations:
             summary: "Error budget burn too high"
 ```
