@@ -547,6 +547,15 @@ A V8 major GC (MarkSweepCompact) performs a full stop-the-world collection of th
 | Limite de descritores de arquivo | File descriptor limit |
 | Estatísticas de espaço de heap | Heap space statistics |
 
+## Veja também
+
+- [[Observability e produção]] — MOC do galho 5
+- [[04 - Métricas com prom-client]] — base de métricas com prom-client
+- [[07 - Profiling avançado com clinic.js]] — profiling de CPU e event loop
+- [[08 - Detecção e diagnóstico de memory leaks]] — heap snapshots e diagnóstico de memory leaks
+- [[Runtime e Event Loop]] — event loop phases e libuv (galho 1)
+- [[Node.js]] — tronco
+
 ## Fontes
 
 - [Node.js Documentation — `node:perf_hooks` — `monitorEventLoopDelay`](https://nodejs.org/api/perf_hooks.html#perf_hooksmonitoreventloopdelayoptions)
