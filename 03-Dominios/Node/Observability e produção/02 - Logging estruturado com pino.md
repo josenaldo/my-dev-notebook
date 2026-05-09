@@ -21,7 +21,7 @@ aliases:
 
 > [!abstract] TL;DR
 > Logging estruturado significa emitir cada entrada de log como um objeto JSON com campos padronizados — em vez de texto livre — para que ferramentas de agregação (Datadog, Loki, CloudWatch) possam indexar, filtrar e alertar sem parsing frágil de regex.
-> Pino é o logger mais rápido do ecossistema Node.js porque delega a serialização JSON e a escrita em disco a uma worker thread, mantendo o event loop livre para processar requisições.
+> Pino é o logger mais rápido do ecossistema Node.js: quando usado com `pino.transport()`, delega a serialização e a escrita em disco a uma worker thread, mantendo o event loop livre; sem transport, escreve no stdout do main thread com serialização ultra-rápida via fast-json-stringify.
 > Cada log de produção deve carregar pelo menos: `timestamp`, `level`, `msg`, `requestId`, `service` e `version` — sem `requestId` é impossível correlacionar logs de uma única requisição num sistema com alta concorrência.
 > Dados sensíveis (senhas, tokens, CPFs) jamais devem aparecer em logs; use a opção `redact` do pino para remover campos automaticamente antes de qualquer I/O.
 
@@ -45,7 +45,7 @@ Log estruturado (produção-ready):
 
 ```json
 {
-  "level": "error",
+  "level": 50,
   "time": "2026-05-08T12:34:56.123Z",
   "msg": "Login failed",
   "service": "auth-service",
@@ -57,15 +57,18 @@ Log estruturado (produção-ready):
 }
 ```
 
-Com JSON, qualquer sistema de agregação consegue filtrar por `userId`, contar `attempts`, agrupar por `ip` — sem expresssão regular. Com texto livre, cada sistema precisa escrever seu próprio parser e qualquer mudança de formato quebra as dashboards.
+> [!note] `level` é um número por padrão
+> Por padrão, pino emite `level` como número inteiro (10=trace, 20=debug, 30=info, 40=warn, 50=error, 60=fatal). Para emitir o label textual (`"error"`, `"info"`, etc.), é necessário configurar a opção `formatters.level`.
+
+Com JSON, qualquer sistema de agregação consegue filtrar por `userId`, contar `attempts`, agrupar por `ip` — sem expressão regular. Com texto livre, cada sistema precisa escrever seu próprio parser e qualquer mudança de formato quebra as dashboards.
 
 ### Por que pino?
 
 Pino é o logger mais rápido do ecossistema Node.js. Em benchmarks independentes, supera winston e bunyan por 2x–5x em throughput de mensagens por segundo. O segredo está na arquitetura:
 
-- O processo principal escreve objetos JSON mínimos num stream (ou num worker thread via `transport`).
-- A serialização pesada, formatação e escrita em arquivo/rede acontecem na worker thread — nunca bloqueiam o event loop.
-- A API é deliberadamente minimalista: menos overhead de chamada de função por log.
+- O processo principal serializa objetos JSON via fast-json-stringify (extremamente rápido) e escreve no stdout.
+- Com `pino.transport()`, a formatação e a escrita em arquivo/rede são delegadas a uma worker thread, liberando o event loop do I/O de disco.
+- Sem transport, pino ainda é muito mais rápido que winston/bunyan por usar fast-json-stringify em vez de `JSON.stringify` e manter a API minimalista.
 
 ---
 
@@ -148,7 +151,7 @@ Todo log de produção deve carregar um conjunto mínimo de campos para ser rast
 | Campo        | Tipo     | Descrição                                                      |
 | ------------ | -------- | -------------------------------------------------------------- |
 | `time`       | ISO 8601 | Gerado automaticamente pelo pino                               |
-| `level`      | string   | Nome do nível (info, error…)                                   |
+| `level`      | number   | Valor numérico do nível (30=info, 50=error…); string exige `formatters.level` |
 | `msg`        | string   | Mensagem humano-legível, imutável entre ocorrências            |
 | `requestId`  | string   | UUID ou trace ID da requisição                                 |
 | `service`    | string   | Nome do serviço — `auth-service`, `payment-api`               |
@@ -157,7 +160,7 @@ Todo log de produção deve carregar um conjunto mínimo de campos para ser rast
 ```typescript
 // src/logger.ts — produção completa
 import pino from 'pino';
-import { name, version } from '../package.json' assert { type: 'json' };
+import { name, version } from '../package.json' with { type: 'json' };
 
 const logger = pino({
   level: process.env.LOG_LEVEL ?? 'info',
@@ -260,11 +263,14 @@ const app = Fastify({
   // Gera requestId para cada requisição recebida
   genReqId: (req) =>
     (req.headers['x-request-id'] as string) ?? randomUUID(),
+
+  // Por padrão, Fastify usa 'reqId'; esta opção renomeia para 'requestId'
+  requestIdLogLabel: 'requestId',
 });
 
 // Rota de exemplo: child logger já tem requestId injetado
 app.get('/users/:id', async (req, reply) => {
-  // req.log é um child logger com { requestId } já incluído
+  // req.log é um child logger com { requestId } já incluído (via requestIdLogLabel)
   req.log.info({ userId: req.params.id }, 'Fetching user');
 
   try {
@@ -362,7 +368,7 @@ async function callExternalAPI(url: string) {
 
 **"How does pino achieve better performance than winston or bunyan?"**
 
-Pino achieves its performance advantage through asynchronous transport: instead of writing logs synchronously in the main thread — which blocks the event loop — pino delegates all I/O (serialization, formatting, file writes, network calls) to a separate worker thread using Node.js worker_threads. The main thread only constructs a minimal JSON object and passes it to the worker via a shared buffer, which means even under heavy logging the event loop remains free to handle incoming requests. In benchmarks, this architecture allows pino to process 2x to 5x more log entries per second compared to synchronous loggers like winston at equivalent log volumes.
+Pino achieves its performance advantage through two mechanisms. First, it uses fast-json-stringify — a schema-aware serializer — instead of the generic `JSON.stringify`, which is significantly faster for structured objects. Second, when using pino's transport API (`pino.transport()`), log formatting and file I/O happen in a dedicated worker thread via Node.js worker_threads, keeping the main thread free to handle incoming requests; without a transport, pino writes directly to stdout on the main thread but still achieves high throughput due to fast-json-stringify. In benchmarks, this architecture allows pino to process 2x to 5x more log entries per second compared to synchronous loggers like winston at equivalent log volumes.
 
 **"Why is structured logging important in a distributed system?"**
 
