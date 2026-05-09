@@ -19,13 +19,13 @@ aliases:
 # Por que agentes gastam tanto
 
 > [!abstract] TL;DR
-> Uma chamada single-shot de LLM custa centavos. Uma sessão de agente custa dólares. A diferença é estrutural, não acidental: o loop agentic re-envia contexto a cada turno (acumulação quadrática), tool definitions ficam infladas no system prompt, retries silenciosos consomem tokens sem feedback visível, e o agente pode entrar em rabbit holes iterando sem progresso. Entender essa dinâmica é pré-requisito para qualquer otimização real.
+> Uma chamada single-shot de LLM custa centavos. Uma sessão de agente custa dólares. A diferença é estrutural, não acidental: o [[Dicionário de IA#agentic loop|loop agêntico]] re-envia contexto a cada turno (acumulação quadrática), tool definitions ficam infladas no system prompt, retries silenciosos consomem tokens sem feedback visível, e o agente pode entrar em rabbit holes iterando sem progresso. Entender essa dinâmica é pré-requisito para qualquer otimização real.
 
 ## Os cinco vetores de gasto
 
 ### 1. Acumulação de contexto turno-a-turno
 
-Cada turno do loop agentic envia **todo o histórico** mais a nova mensagem. Sessão de 30 turnos onde cada turno acrescenta 1K tokens:
+Cada turno do [[Dicionário de IA#agentic loop|loop agentic]] envia **todo o histórico** mais a nova mensagem. Sessão de 30 turnos onde cada turno acrescenta 1K tokens:
 
 | Turno | Tokens enviados (input) | Acumulado |
 |---|---|---|
