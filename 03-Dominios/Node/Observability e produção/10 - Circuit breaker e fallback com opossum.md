@@ -568,6 +568,9 @@ opossum wraps any async function with `new CircuitBreaker(fn, options)`. You con
 > [!warning] Não chamar `breaker.shutdown()` em testes
 > opossum usa `setInterval` internamente para a janela deslizante e `setTimeout` para o `resetTimeout`. Se você criar um `CircuitBreaker` num teste e não chamar `breaker.shutdown()` no teardown, esses timers vazam entre suites. O Jest/Vitest pode exibir warnings de "open handles" ou, pior, os timers de um teste podem afetar o estado de outro. Sempre use `afterEach(() => breaker.shutdown())`.
 
+> [!warning] `breaker.open()` / `breaker.close()` bypassam os contadores internos
+> Chamar `breaker.open()` ou `breaker.close()` manualmente força a transição de estado **sem passar pela máquina de estados interna** — os contadores de `breaker.stats` (sucessos, falhas, rejeições) não são atualizados. Isso tem duas implicações práticas: (1) após `breaker.open()`, `breaker.stats.failures` continua em 0, então testes que verificam estatísticas após abertura manual não refletem o comportamento real de produção; (2) `breaker.close()` não reinicia os contadores da janela deslizante, então o circuito pode reabrir imediatamente se a janela ainda tiver erros suficientes. Para testar comportamento dependente de stats, prefira injetar falhas reais na função mockada e deixar o opossum abrir o circuito organicamente — use `breaker.open()` apenas para forçar o estado em testes que verificam o comportamento do fallback, não das métricas.
+
 > [!warning] Múltiplos breakers sem `name` diferente geram métricas sobrepostas
 > Se você criar dois circuit breakers sem a opção `name` (ou com o mesmo `name`) e usar `opossum-prometheus`, as métricas do Prometheus vão colidir — os contadores de um breaker somam com os do outro. Dê um nome único e descritivo para cada breaker: `name: 'payment-service'`, `name: 'user-service'`, etc.
 
