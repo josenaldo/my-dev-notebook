@@ -166,6 +166,7 @@ groups:
         for: 1h
         labels:
           severity: warning
+          service: my-service
           team: backend
         annotations:
           summary: "Slow error budget burn — review this week"
@@ -338,6 +339,12 @@ spec:
             1 - (
               sum(rate(http_requests_total{status!~"5.."}[6h]))
               / sum(rate(http_requests_total[6h]))
+            )
+        - record: slo:sli_error:ratio_rate3d
+          expr: |
+            1 - (
+              sum(rate(http_requests_total{status!~"5.."}[3d]))
+              / sum(rate(http_requests_total[3d]))
             )
 
     - name: slo_alerts
