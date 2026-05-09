@@ -186,7 +186,7 @@ async function createOrderBad(data: OrderData) {
   await trx.commit();
 }
 
-// BOM — try/finally garante rollback em qualquer caminho de erro
+// BOM — try/catch garante rollback em qualquer caminho de erro
 async function createOrderGood(data: OrderData) {
   const trx = await knex.transaction();
   try {
@@ -308,12 +308,13 @@ const dbPoolWaiting = new Gauge({
   help: 'Requests waiting for a Prisma/PG connection',
 });
 
-// Prisma expõe métricas via $metrics (Prisma 4.9+)
+// Prisma expõe métricas via $metrics (Prisma 4.9+ com previewFeatures = ["metrics"] no schema)
 async function collectPrismaMetrics() {
   const metrics = await prisma.$metrics.json();
-  const waiting = metrics.gauges.find((g) => g.key === 'prisma_pool_connections_idle');
-  if (waiting) {
-    dbPoolWaiting.set(waiting.value);
+  // prisma_pool_connections_busy sobe sob pressão; idle desce — sinal inverso
+  const busy = metrics.gauges.find((g) => g.key === 'prisma_pool_connections_busy');
+  if (busy) {
+    dbPoolWaiting.set(busy.value);
   }
 }
 setInterval(collectPrismaMetrics, 10_000);
