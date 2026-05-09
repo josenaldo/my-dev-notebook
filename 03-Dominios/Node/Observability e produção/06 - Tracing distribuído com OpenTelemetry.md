@@ -110,7 +110,7 @@ const sdk = new NodeSDK({
 sdk.start();
 
 process.on('SIGTERM', () => {
-  sdk.shutdown().finally(() => process.exit(0));
+  sdk.shutdown().finally(() => process.exit(0)); // simplificado — veja exemplo completo em Na prática
 });
 ```
 
@@ -129,7 +129,6 @@ const exporter = new OTLPTraceExporter({
 });
 
 const sdk = new NodeSDK({
-  traceExporter: exporter,
   spanProcessor: new SimpleSpanProcessor(exporter),
   instrumentations: [getNodeAutoInstrumentations()],
   sampler: new ParentBasedSampler({
@@ -140,7 +139,7 @@ const sdk = new NodeSDK({
 sdk.start();
 
 process.on('SIGTERM', () => {
-  sdk.shutdown().finally(() => process.exit(0));
+  sdk.shutdown().finally(() => process.exit(0)); // simplificado — veja exemplo completo em Na prática
 });
 ```
 
@@ -349,7 +348,7 @@ import {
   AlwaysOnSampler,
 } from '@opentelemetry/sdk-trace-base';
 import { Resource } from '@opentelemetry/resources';
-import { SEMRESATTRS_SERVICE_NAME, SEMRESATTRS_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
+import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
 
 const isDev = process.env.NODE_ENV !== 'production';
 const serviceName = process.env.OTEL_SERVICE_NAME ?? 'unknown-service';
@@ -358,8 +357,8 @@ const sampleRatio = Number(process.env.OTEL_SAMPLE_RATIO ?? (isDev ? '1.0' : '0.
 
 // Resource identifica o serviço em todos os backends
 const resource = new Resource({
-  [SEMRESATTRS_SERVICE_NAME]: serviceName,
-  [SEMRESATTRS_SERVICE_VERSION]: serviceVersion,
+  [ATTR_SERVICE_NAME]: serviceName,
+  [ATTR_SERVICE_VERSION]: serviceVersion,
   'deployment.environment': process.env.NODE_ENV ?? 'development',
 });
 
@@ -430,7 +429,7 @@ Exemplo de um serviço de pagamentos com spans manuais, atributos semânticos e 
 ```typescript
 // src/services/payment-service.ts
 import { trace, context, propagation, SpanStatusCode, SpanKind } from '@opentelemetry/api';
-import { SEMATTRS_DB_SYSTEM, SEMATTRS_DB_OPERATION } from '@opentelemetry/semantic-conventions';
+import { ATTR_DB_SYSTEM, ATTR_DB_OPERATION } from '@opentelemetry/semantic-conventions';
 
 const tracer = trace.getTracer('payment-service', '1.0.0');
 
