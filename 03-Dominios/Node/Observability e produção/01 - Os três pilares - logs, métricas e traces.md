@@ -294,7 +294,72 @@ A chave para o triângulo funcionar é a **correlação**: o mesmo `traceId` que
 
 ## Na prática
 
-O cenário "criar usuário" com os três pilares instrumentados ao mesmo tempo, num endpoint Fastify real:
+Cenário: uma rota `POST /users` que cria um usuário. Veja como cada pilar captura esse evento.
+
+**Log (pino):**
+
+```javascript
+// pino — registra intenção, resultado e contexto narrativo
+logger.info(
+  { requestId, email, action: 'user.create.start' },
+  'Iniciando criação de usuário'
+);
+
+// ... operação ...
+
+logger.info(
+  { requestId, userId: usuario.id, action: 'user.create.success', durationMs },
+  'Usuário criado com sucesso'
+);
+```
+
+**Métrica (prom-client):**
+
+```javascript
+// prom-client — conta tentativas e mede duração por status
+const userCreateTotal = new Counter({
+  name: 'user_create_total',
+  help: 'Total de criações de usuário por status',
+  labelNames: ['status'],
+});
+
+const userCreateDuration = new Histogram({
+  name: 'user_create_duration_seconds',
+  help: 'Duração da criação de usuário',
+  buckets: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1],
+});
+
+const endTimer = userCreateDuration.startTimer();
+// ... operação ...
+userCreateTotal.inc({ status: 'success' });
+endTimer({ status: 'success' });
+```
+
+**Trace (OpenTelemetry):**
+
+```javascript
+// OpenTelemetry — span com atributos e status da operação
+const tracer = trace.getTracer('user-service', '1.0.0');
+
+return tracer.startActiveSpan('user.create', async (span) => {
+  span.setAttributes({ 'user.email': email, 'request.id': requestId });
+
+  try {
+    const usuario = await db.usuarios.inserir({ email, nome });
+    span.setAttributes({ 'user.id': usuario.id });
+    span.setStatus({ code: SpanStatusCode.OK });
+    return usuario;
+  } catch (err) {
+    span.recordException(err);
+    span.setStatus({ code: SpanStatusCode.ERROR, message: err.message });
+    throw err;
+  } finally {
+    span.end();
+  }
+});
+```
+
+**Tudo junto — endpoint completo (Fastify):**
 
 ```javascript
 import Fastify from 'fastify';
