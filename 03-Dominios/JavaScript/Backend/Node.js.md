@@ -1,7 +1,7 @@
 ---
 title: "Node.js"
 created: 2026-04-01
-updated: 2026-05-08
+updated: 2026-05-09
 type: concept
 status: evergreen
 tags:
@@ -253,56 +253,8 @@ Problemas recorrentes em aplicações Node.js — equivalentes aos problemas de 
 
 ### Connection pool exausto
 
-**Sintoma:** requests travam, timeout no banco de dados.
-
-**Com knex/pg-pool:**
-
-```typescript
-// knexfile.ts
-export default {
-  pool: {
-    min: 2,
-    max: 10,
-    acquireTimeoutMillis: 30000,  // timeout para adquirir conexão
-    idleTimeoutMillis: 10000,     // liberar idle connections
-  },
-  // Detectar leaks (dev)
-  afterCreate: (conn, done) => {
-    console.log('Connection created');
-    done(null, conn);
-  }
-};
-```
-
-**Com Prisma:**
-
-```typescript
-// schema.prisma
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-  // connection_limit é via URL: ?connection_limit=10&pool_timeout=30
-}
-```
-
-**Causa comum em Node:** não fechar transações. Diferente de Java (que tem `@Transactional`), em Node você gerencia manualmente:
-
-```typescript
-// RUIM — conexão nunca devolvida se der erro
-const trx = await knex.transaction();
-await trx('patients').insert(data);
-// se der throw aqui, trx nunca fecha
-
-// BOM — try/catch com rollback
-const trx = await knex.transaction();
-try {
-  await trx('patients').insert(data);
-  await trx.commit();
-} catch (err) {
-  await trx.rollback();
-  throw err;
-}
-```
+> [!nota] Migrado para galho próprio
+> Configuração, diagnóstico e anti-padrões de connection pool foram expandidos em [[Observability e produção]]: [[11 - Connection pool tuning]].
 
 ### N+1 queries
 
@@ -350,74 +302,18 @@ const doctors = await prisma.doctor.findMany({
 
 ### Memory leak
 
-**Diagnóstico:**
-
-```bash
-# Iniciar com inspector
-node --inspect app.js
-
-# Chrome DevTools → chrome://inspect → Heap Snapshot
-# Comparar 2 snapshots separados por tempo → objetos que só crescem
-
-# Ou via CLI
-node --expose-gc -e "global.gc(); console.log(process.memoryUsage())"
-```
-
-**Causas comuns:**
-- Event listeners não removidos (`emitter.on` sem `emitter.off`)
-- Closures que capturam objetos grandes
-- Cache em memória sem TTL (`Map` que só cresce)
-- Timers não limpos (`setInterval` sem `clearInterval`)
-
-```typescript
-// RUIM — leak clássico
-const cache = new Map();  // cresce para sempre
-
-// BOM — com TTL
-import { LRUCache } from 'lru-cache';
-const cache = new LRUCache({ max: 1000, ttl: 1000 * 60 * 5 }); // 5 min
-```
+> [!nota] Migrado para galho próprio
+> Diagnóstico, causas comuns e técnicas de detecção foram expandidos em [[Observability e produção]]: [[08 - Detecção e diagnóstico de memory leaks]].
 
 ### Graceful shutdown
 
-```typescript
-// Express
-const server = app.listen(3000);
-
-process.on('SIGTERM', () => {
-  console.log('SIGTERM received, draining...');
-  server.close(() => {  // para de aceitar novas, espera em andamento
-    // fechar conexões de banco, Redis, etc.
-    prisma.$disconnect();
-    process.exit(0);
-  });
-
-  // força saída após timeout
-  setTimeout(() => process.exit(1), 30000);
-});
-
-// NestJS — built-in
-app.enableShutdownHooks();  // dispara onModuleDestroy nos providers
-```
+> [!nota] Migrado para galho próprio
+> Padrão completo para Express e NestJS, com tratamento de conexões e timeout de força, foi expandido em [[Observability e produção]]: [[09 - Graceful shutdown profundo]].
 
 ### Circuit breaker
 
-```typescript
-// Com opossum
-import CircuitBreaker from 'opossum';
-
-const breaker = new CircuitBreaker(callExternalService, {
-  timeout: 3000,           // timeout de 3s
-  errorThresholdPercentage: 50,  // abre após 50% de falhas
-  resetTimeout: 30000,     // tenta half-open após 30s
-});
-
-breaker.fallback(() => ({ cached: true, data: getCachedData() }));
-
-breaker.on('open', () => metrics.increment('circuit.open'));
-
-const result = await breaker.fire(requestData);
-```
+> [!nota] Migrado para galho próprio
+> Implementação com opossum, estados (closed/open/half-open) e padrões de fallback foram expandidos em [[Observability e produção]]: [[10 - Circuit breaker e fallback com opossum]].
 
 → Para comparação cross-stack: [[System Design]] (seção Problemas comuns em produção)
 
@@ -436,6 +332,7 @@ const result = await breaker.fire(requestData);
 - [[Paralelismo]] — galho 2 da trilha Node Senior; as 3 ferramentas de paralelismo (Worker Threads, Cluster, child_process), SharedArrayBuffer/Atomics, pool de workers, decision tree
 - [[Streams]] — galho 3 da trilha Node Senior; abstração fundamental para processar dados em chunks (4 tipos, backpressure, pipeline, async iter, Web Streams, padrões práticos)
 - [[Frameworks e arquitetura]] — galho 4 da trilha Node Senior; os 4 frameworks principais (Express, NestJS, Fastify, Hono), patterns transversais e arquitetura
+- [[Observability e produção]] — galho 5 da trilha Node Senior; logs, métricas, traces, profiling, SLOs, dashboards, alertas e checklists de produção
 - [[JavaScript Fundamentals]] — linguagem, event loop, async
 - [[TypeScript]] — tipagem em Node
 - [[Testes em JavaScript]] — Vitest, MSW, built-in test runner
