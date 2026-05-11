@@ -1,10 +1,14 @@
 ---
 title: "Panorama de ORMs"
 created: 2026-05-10
-updated: 2026-05-10
+updated: 2026-05-11
 type: concept
 status: seedling
 progresso: andamento
+aliases:
+  - Panorama ORMs Node
+  - ORMs Node comparativo
+publish: false
 tags:
   - node
   - orm
@@ -12,7 +16,6 @@ tags:
   - prisma
   - typeorm
   - drizzle
-publish: false
 ---
 
 # Panorama de ORMs
@@ -83,7 +86,7 @@ A tabela abaixo compara os 4 principais ORMs do ecossistema Node.js em 2026 nos 
 |------|-------------|-----------|--------------|----------------|
 | **Paradigma** | Code-first | Schema-first | Code-first (decorators) | SQL-first |
 | **Type safety** | Manual/parcial | Gerada automaticamente | Manual via decorators | Nativa (inferida) |
-| **Migration strategy** | Sequelize CLI / manual | `prisma migrate` (automático) | `typeorm migration:generate` | `drizzle-kit push` / `generate` |
+| **Migration strategy** | Sequelize CLI / manual | `prisma migrate` (automático) | `typeorm migration:generate` | `drizzle-kit generate` + `migrate` (`push` = dev-only) |
 | **Performance overhead** | Médio | Médio-alto (query engine) | Médio | Mínimo (zero proxies) |
 | **Edge runtime** | Não | Sim (v6+, Prisma Accelerate) | Não | Sim (nativo) |
 | **Maturidade** | Alta (2011+) | Alta (2019+, v6 2025) | Alta (2016+) | Crescente (2022+) |
@@ -94,8 +97,12 @@ A tabela abaixo compara os 4 principais ORMs do ecossistema Node.js em 2026 nos 
 | **Suporte a SQLite** | Sim | Sim | Sim | Sim |
 | **Suporte a MySQL** | Sim | Sim | Sim | Sim |
 
-> [!note] Overhead do Prisma
-> O Prisma tem um query engine binário (Rust) que roda como processo separado. Isso gera um overhead de cold start notável em ambientes serverless. O Prisma Accelerate (GA em 2025) mitiga isso com connection pooling e cache externo, mas é um serviço pago.
+> [!note] Prisma v6 e serverless
+> O Prisma v6 usa um query engine baseado em WASM que roda in-process
+> (sem sidecar binário separado). Em ambientes serverless, o gargalo é a
+> inicialização do WASM + setup do connection pool a cada cold start.
+> O Prisma Accelerate mitiga isso com connection pooling externo e cache
+> de queries, mas é um serviço pago.
 
 ---
 
