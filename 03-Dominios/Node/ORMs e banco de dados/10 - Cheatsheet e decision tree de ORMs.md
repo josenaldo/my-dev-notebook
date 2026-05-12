@@ -92,8 +92,10 @@ const posts = await db
 
 DataLoader (qualquer ORM — útil em GraphQL resolvers):
 ```typescript
+import { In } from 'typeorm';
+
 const userLoader = new DataLoader(async (ids: readonly number[]) => {
-  const users = await userRepository.findByIds([...ids]);
+  const users = await userRepository.find({ where: { id: In([...ids]) } });
   return ids.map(id => users.find(u => u.id === id) ?? null);
 });
 ```
@@ -106,8 +108,8 @@ const userLoader = new DataLoader(async (ids: readonly number[]) => {
 |---|---|---|---|
 | Sequelize | `npx sequelize-cli migration:generate --name <name>` | `npx sequelize-cli db:migrate` | `npx sequelize-cli db:migrate:undo` |
 | Prisma | `npx prisma migrate dev --name <name>` | automático no `dev` / `npx prisma migrate deploy` (prod) | não tem rollback automático — crie migration de reverso |
-| TypeORM | `npx typeorm migration:generate -n <name>` | `npx typeorm migration:run` | `npx typeorm migration:revert` |
-| Drizzle | `npx drizzle-kit generate:pg` | `npx drizzle-kit push:pg` (dev) / `npx drizzle-kit migrate` (prod) | manual — edite ou crie migration de reverso |
+| TypeORM | `npx typeorm migration:generate src/migrations/<Name> -d src/data-source.ts` | `npx typeorm migration:run -d src/data-source.ts` | `npx typeorm migration:revert -d src/data-source.ts` |
+| Drizzle | `npx drizzle-kit generate` | `npx drizzle-kit push` (dev) / `npx drizzle-kit migrate` (prod) | manual — edite ou crie migration de reverso |
 
 > [!warning] Prisma não tem rollback automático
 > `prisma migrate dev` aplica e não oferece `down` nativo. Em produção, planeje migrations reversíveis escrevendo a operação inversa como nova migration antes de deployar.
