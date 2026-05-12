@@ -28,6 +28,7 @@ Estante de Node.js: runtime, event loop, módulos, frameworks de servidor (Expre
 - [[Streams]] — galho 3: abstração fundamental para processar dados em chunks (4 tipos, backpressure, pipeline, async iter, Web Streams, padrões práticos, performance)
 - [[Frameworks e arquitetura]] — galho 4: os 4 frameworks principais (Express, NestJS, Fastify, Hono), patterns transversais (middleware, error handling, validation), Clean Architecture e DI
 - [[Observability e produção]] — galho 5: logs, métricas, traces, profiling avançado, SLOs, dashboards Grafana, alertas multi-janela e checklists de produção
+- [[ORMs e banco de dados]] — galho 6: os 4 ORMs principais (Sequelize, Prisma, TypeORM, Drizzle), padrões críticos de N+1, migrations, transações e paginação, decision tree para escolha de ORM
 
 ### Outras notas
 
