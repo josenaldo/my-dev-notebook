@@ -1,7 +1,7 @@
 ---
 title: "Sequelize - queries e associações"
 created: 2026-05-10
-updated: 2026-05-10
+updated: 2026-05-11
 type: concept
 status: seedling
 progresso: andamento
@@ -17,7 +17,7 @@ publish: false
 # Sequelize - queries e associações
 
 > [!abstract] TL;DR
-> O Sequelize v7 é o ORM mais antigo do ecossistema Node.js — battle-tested desde 2011 e com suporte TypeScript melhorado na versão 7 via `sequelize-typescript` e tipos embutidos.
+> O Sequelize v7 é o ORM mais antigo do ecossistema Node.js — battle-tested desde 2011 e com suporte TypeScript melhorado na versão 7 via decorators embutidos em `@sequelize/core/decorators-legacy` e tipos nativos.
 > O modelo de definição usa classes que estendem `Model` (API nativa) ou decorators via `sequelize-typescript`; associações são declaradas com `HasMany`, `BelongsTo`, `HasOne` e `BelongsToMany`.
 > Eager loading com `include` é a solução para evitar N+1 queries — passar `required: false` controla se o join é LEFT ou INNER, e aninhar `include` em mais de 3 níveis é sinal de problema de modelagem.
 > Em 2026, o Sequelize ainda é relevante para projetos legacy e equipes que já dominam sua API, mas Prisma e Drizzle são preferidos para projetos novos pela DX superior e melhor type safety.
@@ -54,7 +54,7 @@ import {
   InferCreationAttributes,
   CreationOptional,
   NonAttribute,
-} from 'sequelize';
+} from '@sequelize/core';
 import { sequelize } from '../database';
 import type { Post } from './post';
 
@@ -118,51 +118,52 @@ User.init(
 export { User };
 ```
 
-**Estilo 2 — `sequelize-typescript`** (decorators, mais próximo do TypeORM):
+**Estilo 2 — decorators embutidos do v7** (via `@sequelize/core/decorators-legacy`, mais próximo do TypeORM):
 
 ```typescript
-// models/user.ts — sequelize-typescript (decorators)
+// models/user.ts — Sequelize v7 com built-in decorators
 import {
   Table,
-  Column,
-  Model,
-  DataType,
+  Attribute,
+  NotNull,
   HasMany,
-  Unique,
-  AllowNull,
   Default,
   CreatedAt,
   UpdatedAt,
-} from 'sequelize-typescript';
+  PrimaryKey,
+  AutoIncrement,
+} from '@sequelize/core/decorators-legacy';
+import { DataTypes, Model } from '@sequelize/core';
 import { Post } from './post';
 
 @Table({ tableName: 'users', timestamps: true })
 export class User extends Model {
-  @Column({ type: DataType.INTEGER, autoIncrement: true, primaryKey: true })
+  @PrimaryKey
+  @AutoIncrement
+  @Attribute(DataTypes.INTEGER)
   declare id: number;
 
-  @AllowNull(false)
-  @Column({ type: DataType.STRING(100), validate: { notEmpty: true, len: [2, 100] } })
+  @NotNull
+  @Attribute(DataTypes.STRING(100))
   declare name: string;
 
-  @Unique
-  @AllowNull(false)
-  @Column({ type: DataType.STRING, validate: { isEmail: true } })
+  @NotNull
+  @Attribute(DataTypes.STRING)
   declare email: string;
 
-  @AllowNull(false)
-  @Column(DataType.STRING)
+  @NotNull
+  @Attribute(DataTypes.STRING)
   declare passwordHash: string;
 
   @Default('user')
-  @Column(DataType.ENUM('admin', 'user'))
+  @Attribute(DataTypes.ENUM('admin', 'user'))
   declare role: 'admin' | 'user';
 
   // Metadados extras em JSONB — útil no PostgreSQL
-  @Column(DataType.JSONB)
+  @Attribute(DataTypes.JSONB)
   declare metadata: Record<string, unknown> | null;
 
-  @HasMany(() => Post)
+  @HasMany(() => Post, 'userId')
   declare posts: Post[];
 
   @CreatedAt
@@ -239,7 +240,7 @@ export function setupAssociations(): void {
 
 ```typescript
 // queries/user-queries.ts
-import { Op } from 'sequelize';
+import { Op } from '@sequelize/core';
 import { User } from '../models/user';
 import { Post } from '../models/post';
 
@@ -323,7 +324,7 @@ Eager loading é a técnica de carregar modelos associados junto com a query pri
 
 ```typescript
 // eager-loading/post-queries.ts
-import { Op } from 'sequelize';
+import { Op } from '@sequelize/core';
 import { Post } from '../models/post';
 import { User } from '../models/user';
 import { Tag } from '../models/tag';
@@ -441,7 +442,7 @@ async function transferFunds(
 // Transação NÃO GERENCIADA (unmanaged): commit/rollback manual
 // Use quando precisar de controle granular (ex: savepoints)
 async function batchCreateUsers(users: Array<{ name: string; email: string }>) {
-  const t = await sequelize.transaction();
+  const t = await sequelize.startUnmanagedTransaction();
   try {
     const created = await User.bulkCreate(users, { transaction: t });
     await t.commit();
@@ -453,13 +454,32 @@ async function batchCreateUsers(users: Array<{ name: string; email: string }>) {
 }
 ```
 
-Para patterns avançados de transação, isolamento e integração com filas, veja [[08 - Transações e isolamento]].
+Para patterns avançados de transação, isolamento e integração com filas, veja [[08 - Transações - gerenciamento manual vs automático]].
 
 ---
 
 ### Hooks e lifecycle
 
 Hooks são callbacks executados antes ou depois de eventos no ciclo de vida de uma instância. São úteis para lógica transversal sem poluir o código de negócio:
+
+> [!warning] Hooks em Sequelize v7
+> Os métodos estáticos `User.beforeCreate(...)`, `User.afterCreate(...)` etc. estão **deprecated** no Sequelize v7. A forma preferida é declarar os hooks na opção `hooks` dentro de `Model.init()`:
+>
+> ```typescript
+> // v7: hooks definidos no Model.init()
+> User.init({ /* ... colunas */ }, {
+>   sequelize,
+>   hooks: {
+>     beforeCreate: async (user) => {
+>       if (user.password) {
+>         user.password = await bcrypt.hash(user.password, 10);
+>       }
+>     },
+>   },
+> });
+> ```
+>
+> O exemplo abaixo usa a API legada (ainda funcional em v7, mas que será removida em versões futuras).
 
 ```typescript
 // models/user.ts — adicionando hooks ao modelo User
@@ -638,9 +658,10 @@ const users = await User.findAll({
 });
 
 // ✅ OPÇÃO 2 — full-text search no PostgreSQL para busca de texto real
+// sequelize.escape() previne SQL injection ao escapar o valor do usuário
 const users = await User.findAll({
   where: sequelize.literal(
-    `to_tsvector('portuguese', name) @@ plainto_tsquery('portuguese', '${searchTerm}')`
+    `to_tsvector('portuguese', name) @@ plainto_tsquery('portuguese', ${sequelize.escape(searchTerm)})`
   ),
 });
 ```
@@ -709,12 +730,12 @@ In production, I never use `sequelize.sync({ force: true })` or even `{ alter: t
 ## Fontes
 
 - [Sequelize v7 — Documentação oficial](https://sequelize.org/docs/v7/)
-- [sequelize-typescript — GitHub](https://github.com/sequelize/sequelize-typescript)
+- [Sequelize v7 — Decorators (built-in)](https://sequelize.org/docs/v7/models/defining-models/#with-decorators)
 - [Sequelize v7 — Getting Started](https://sequelize.org/docs/v7/getting-started/)
-- [Sequelize v7 — Associations](https://sequelize.org/docs/v7/associations/)
-- [Sequelize v7 — Eager Loading](https://sequelize.org/docs/v7/eager-loading/)
-- [Sequelize v7 — Transactions](https://sequelize.org/docs/v7/transactions/)
-- [Sequelize v7 — Hooks](https://sequelize.org/docs/v7/hooks/)
+- [Sequelize v7 — Associations](https://sequelize.org/docs/v7/associations/basics/)
+- [Sequelize v7 — Eager Loading](https://sequelize.org/docs/v7/querying/eager-loading/)
+- [Sequelize v7 — Transactions](https://sequelize.org/docs/v7/querying/transactions/)
+- [Sequelize v7 — Hooks](https://sequelize.org/docs/v7/other-topics/hooks/)
 
 ---
 
@@ -727,4 +748,4 @@ In production, I never use `sequelize.sync({ force: true })` or even `{ alter: t
 - [[04 - TypeORM - decorators e NestJS]]
 - [[05 - Drizzle - SQL-first e edge runtimes]]
 - [[06 - N+1 queries - detecção e DataLoader]]
-- [[08 - Transações e isolamento]]
+- [[08 - Transações - gerenciamento manual vs automático]]
