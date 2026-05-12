@@ -193,6 +193,8 @@ async function listarOrdensKeyset(lastId?: number, limite = 10) {
 **Offset:**
 
 ```typescript
+import { desc, count } from 'drizzle-orm';
+
 async function listarEventosOffset(pagina: number, porPagina: number) {
   const [eventos, [{ total }]] = await Promise.all([
     db
@@ -230,8 +232,8 @@ async function listarEventosKeyset(lastId?: number, limite = 10) {
 }
 ```
 
-> [!tip] `undefined` em `.where()` no Drizzle
-> No Drizzle, passe `undefined` para `.where()` para omitir o filtro — o ORM ignora cláusulas `undefined` automaticamente, eliminando condicionais de string.
+> [!tip] `undefined` em `.where()` no Drizzle (≥ 0.29)
+> No Drizzle ORM ≥ 0.29, passe `undefined` para `.where()` para omitir o filtro — o ORM ignora cláusulas `undefined` automaticamente, eliminando condicionais de string.
 
 ## Quando usar
 
@@ -270,7 +272,7 @@ OFFSET pagination forces the database to perform a full table scan up to the off
 
 **Q: "How does cursor pagination work, and what are its trade-offs?"**
 
-Cursor pagination encodes the position of the last-seen row into an opaque token — typically a base64-encoded primary key or composite key value — which the client sends back on the next request to anchor the query at that exact position. Because the query filters from a known row forward rather than counting and skipping, it delivers stable results even when rows are inserted or deleted between requests, and the query cost stays constant regardless of how many pages have already been consumed. The primary trade-off is that there is no random access: the client cannot jump to page 5 without having traversed pages 1 through 4, and there is no meaningful concept of a total page count. Implementing `hasNextPage` correctly requires the N+1 fetch pattern — requesting one extra item, checking if it exists, and popping it before returning the response — to avoid an expensive COUNT query. This model is well-suited for infinite scroll and social feeds but a poor fit for UIs where users expect to navigate directly to a specific page number.
+Cursor pagination encodes the position of the last-seen row into an opaque token — the raw primary key or composite key value, optionally base64-encoded at the API layer for opacity — which the client sends back on the next request to anchor the query at that exact position. Because the query filters from a known row forward rather than counting and skipping, it delivers stable results even when rows are inserted or deleted between requests, and the query cost stays constant regardless of how many pages have already been consumed. The primary trade-off is that there is no random access: the client cannot jump to page 5 without having traversed pages 1 through 4, and there is no meaningful concept of a total page count. Implementing `hasNextPage` correctly requires the N+1 fetch pattern — requesting one extra item, checking if it exists, and popping it before returning the response — to avoid an expensive COUNT query. This model is well-suited for infinite scroll and social feeds but a poor fit for UIs where users expect to navigate directly to a specific page number.
 
 ## Vocabulário
 
