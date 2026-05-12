@@ -18,7 +18,7 @@ publish: false
 
 > [!abstract] TL;DR
 > O Sequelize v7 é o ORM mais antigo do ecossistema Node.js — battle-tested desde 2011 e com suporte TypeScript melhorado na versão 7 via decorators embutidos em `@sequelize/core/decorators-legacy` e tipos nativos.
-> O modelo de definição usa classes que estendem `Model` (API nativa) ou decorators via `sequelize-typescript`; associações são declaradas com `HasMany`, `BelongsTo`, `HasOne` e `BelongsToMany`.
+> O modelo de definição usa classes que estendem `Model` (API nativa) ou decorators embutidos via `@sequelize/core/decorators-legacy`; associações são declaradas com `HasMany`, `BelongsTo`, `HasOne` e `BelongsToMany`.
 > Eager loading com `include` é a solução para evitar N+1 queries — passar `required: false` controla se o join é LEFT ou INNER, e aninhar `include` em mais de 3 níveis é sinal de problema de modelagem.
 > Em 2026, o Sequelize ainda é relevante para projetos legacy e equipes que já dominam sua API, mas Prisma e Drizzle são preferidos para projetos novos pela DX superior e melhor type safety.
 
