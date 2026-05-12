@@ -303,7 +303,7 @@ import { User } from '../models/user';
 export async function importarUsuariosEmLote(
   usuarios: Array<{ name: string; email: string }>,
 ): Promise<User[]> {
-  const t = await sequelize.startUnmanagedTransaction();
+  const t = await sequelize.startUnmanagedTransaction(); // Sequelize ≥ 6.29
   try {
     const criados = await User.bulkCreate(usuarios, { transaction: t });
     await t.commit();
@@ -339,8 +339,7 @@ export async function transferirSaldo(
       .for('update'); // SELECT FOR UPDATE
 
     if (!contaOrigem || contaOrigem.balance < valor) {
-      tx.rollback(); // lança TransactionRollbackError → rollback automático
-      return;
+      tx.rollback(); // lança TransactionRollbackError — não retorna, sai por exceção
     }
 
     // Use tx em TODAS as queries — nunca db dentro do callback
