@@ -365,10 +365,10 @@ A flamegraph is a visualization where the horizontal axis represents the proport
 
 ## Veja também
 
-- [[Observability e produção]] — MOC do galho 5
+- [[03-Dominios/Node/Observability e produção/index]] — MOC do galho 5
 - [[05 - Node-specific metrics - event loop lag, GC, heap]] — métricas de event loop e heap
 - [[08 - Detecção e diagnóstico de memory leaks]] — diagnóstico de memory leaks
-- [[Runtime e Event Loop]] — event loop phases e libuv (galho 1)
+- [[03-Dominios/Node/Runtime e Event Loop/index]] — event loop phases e libuv (galho 1)
 - [[Node.js]] — tronco
 
 ## Fontes

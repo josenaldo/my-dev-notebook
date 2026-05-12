@@ -18,7 +18,7 @@ aliases:
 # Transações - gerenciamento manual vs automático
 
 > [!abstract] TL;DR
-> Uma transação agrupa operações de banco em uma unidade **ACID** — tudo persiste ou nada persiste. Em Node, cada ORM expõe dois modos: **gerenciado** (callback com commit/rollback automático) e **manual** (controle explícito). **Prisma** usa `prisma.$transaction([...])` para batches sem dependência ou `prisma.$transaction(async (tx) => {...})` para lógica interativa. **TypeORM** usa `dataSource.transaction(async (manager) => {...})` ou `QueryRunner` manual, que exige `release()` no `finally`. **Sequelize** usa `sequelize.transaction(async (t) => {...})` e requer `{ transaction: t }` em cada operação. **Drizzle** usa `db.transaction(async (tx) => {...})` — todas as queries dentro devem usar `tx`, nunca `db`. Confira [[ORMs e banco de dados]] para o panorama completo do Galho 6.
+> Uma transação agrupa operações de banco em uma unidade **ACID** — tudo persiste ou nada persiste. Em Node, cada ORM expõe dois modos: **gerenciado** (callback com commit/rollback automático) e **manual** (controle explícito). **Prisma** usa `prisma.$transaction([...])` para batches sem dependência ou `prisma.$transaction(async (tx) => {...})` para lógica interativa. **TypeORM** usa `dataSource.transaction(async (manager) => {...})` ou `QueryRunner` manual, que exige `release()` no `finally`. **Sequelize** usa `sequelize.transaction(async (t) => {...})` e requer `{ transaction: t }` em cada operação. **Drizzle** usa `db.transaction(async (tx) => {...})` — todas as queries dentro devem usar `tx`, nunca `db`. Confira [[03-Dominios/Node/ORMs e banco de dados/index]] para o panorama completo do Galho 6.
 
 ## Como funciona
 
@@ -506,7 +506,7 @@ Chamadas HTTP (APIs de pagamento, webhooks, notificações) dentro de uma transa
 
 ## Veja também
 
-- [[ORMs e banco de dados]] — panorama completo do Galho 6
+- [[03-Dominios/Node/ORMs e banco de dados/index]] — panorama completo do Galho 6
 - [[06 - N+1 queries - detecção e DataLoader]] — performance e batching de queries
 - [[07 - Migrations e versionamento de schema]] — versionamento e deploy de schema
 - [[09 - Paginação - offset, cursor e keyset]] — paginação eficiente em APIs Node

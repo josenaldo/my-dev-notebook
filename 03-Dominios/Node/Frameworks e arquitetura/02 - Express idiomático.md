@@ -185,7 +185,7 @@ app.get("/export", async (req, res, next) => {
 });
 ```
 
-Se `pipeline` falhar depois de bytes enviados, não dá para trocar para JSON Problem Details. O máximo seguro é fechar conexão e logar com correlation ID. Essa fronteira conecta Express a [[Streams]].
+Se `pipeline` falhar depois de bytes enviados, não dá para trocar para JSON Problem Details. O máximo seguro é fechar conexão e logar com correlation ID. Essa fronteira conecta Express a [[03-Dominios/Node/Streams/index]].
 
 ### Organização por feature
 

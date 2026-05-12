@@ -3,9 +3,9 @@ title: "Node.js"
 type: moc
 publish: true
 created: 2026-05-04
-updated: 2026-05-09
-status: seedling
-progresso: pendente
+updated: 2026-05-12
+status: growing
+progresso: andamento
 tags:
   - node
   - moc
@@ -14,25 +14,23 @@ aliases:
   - NodeJS
   - Node
 ---
-
 # Node.js
 
-Estante de Node.js: runtime, event loop, módulos, frameworks de servidor (Express, NestJS), ORMs (Sequelize, Prisma), padrões arquiteturais (Clean Architecture), tooling do ecossistema, e práticas de backend com JavaScript/TypeScript.
+> [!abstract] TL;DR
+> Trilha Node Senior em 6 galhos: Runtime e Event Loop, Paralelismo, Streams, Frameworks e arquitetura, Observability e produção, ORMs e banco de dados. Cada galho cobre os 4–5 players principais de cada área, padrões críticos de produção, vocabulário técnico e respostas de entrevista em inglês.
+
+Estante de Node.js da trilha senior em prep para entrevistas internacionais. Cobre desde os fundamentos do runtime (event loop, libuv, single-thread) até padrões de produção (observability, SLOs, alertas Grafana). A trilha está organizada em 6 galhos temáticos progressivos — cada galho é um conjunto de notas atômicas com seção de entrevista em inglês, vocabulário técnico e decision trees práticos.
 
 ## Conteúdo
 
 ### Galhos da trilha Node Senior
 
-- [[Runtime e Event Loop]] — galho 1: o motor do Node (single-thread, libuv, fases, microtasks, async/await, bloqueio, diagnóstico)
-- [[Paralelismo]] — galho 2: as 3 ferramentas de paralelismo (Worker Threads, Cluster, child_process), SharedArrayBuffer/Atomics, pool de workers, contexto de produção, decision tree
-- [[Streams]] — galho 3: abstração fundamental para processar dados em chunks (4 tipos, backpressure, pipeline, async iter, Web Streams, padrões práticos, performance)
-- [[Frameworks e arquitetura]] — galho 4: os 4 frameworks principais (Express, NestJS, Fastify, Hono), patterns transversais (middleware, error handling, validation), Clean Architecture e DI
-- [[Observability e produção]] — galho 5: logs, métricas, traces, profiling avançado, SLOs, dashboards Grafana, alertas multi-janela e checklists de produção
-- [[ORMs e banco de dados]] — galho 6: os 4 ORMs principais (Sequelize, Prisma, TypeORM, Drizzle), padrões críticos de N+1, migrations, transações e paginação, decision tree para escolha de ORM
-
-### Outras notas
-
-- [[Ferramentas Node]] — panorama de ferramentas do ecossistema (em construção)
+- [[03-Dominios/Node/Runtime e Event Loop/index]] — galho 1: o motor do Node (single-thread, libuv, fases, microtasks, async/await, bloqueio, diagnóstico)
+- [[03-Dominios/Node/Paralelismo/index]] — galho 2: as 3 ferramentas de paralelismo (Worker Threads, Cluster, child_process), SharedArrayBuffer/Atomics, pool de workers, contexto de produção, decision tree
+- [[03-Dominios/Node/Streams/index]] — galho 3: abstração fundamental para processar dados em chunks (4 tipos, backpressure, pipeline, async iter, Web Streams, padrões práticos, performance)
+- [[03-Dominios/Node/Frameworks e arquitetura/index]] — galho 4: os 4 frameworks principais (Express, NestJS, Fastify, Hono), patterns transversais (middleware, error handling, validation), Clean Architecture e DI
+- [[03-Dominios/Node/Observability e produção/index]] — galho 5: logs, métricas, traces, profiling avançado, SLOs, dashboards Grafana, alertas multi-janela e checklists de produção
+- [[03-Dominios/Node/ORMs e banco de dados/index]] — galho 6: os 4 ORMs principais (Sequelize, Prisma, TypeORM, Drizzle), padrões críticos de N+1, migrations, transações e paginação, decision tree para escolha de ORM
 
 ## Veja também
 

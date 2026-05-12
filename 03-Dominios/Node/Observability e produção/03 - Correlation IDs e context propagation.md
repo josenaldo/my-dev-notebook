@@ -26,7 +26,7 @@ aliases:
 > O padrão moderno é gerar o ID no middleware de entrada (ou reutilizar o `traceId` do header W3C `traceparent`), armazená-lo no `AsyncLocalStorage` e lê-lo em serializers do pino e em spans do OpenTelemetry.
 > Em microsserviços, o ID deve ser encaminhado nos headers das chamadas HTTP de saída (`x-request-id` ou `traceparent`) para que o serviço downstream possa continuar o mesmo "fio" de observabilidade.
 
-Esta nota aprofunda a correlação entre os três pilares apresentados em [[02 - Logging estruturado com pino]] e faz parte do galho [[Observability e produção]]. A integração completa com spans é detalhada em [[06 - Tracing distribuído com OpenTelemetry]].
+Esta nota aprofunda a correlação entre os três pilares apresentados em [[02 - Logging estruturado com pino]] e faz parte do galho [[03-Dominios/Node/Observability e produção/index]]. A integração completa com spans é detalhada em [[06 - Tracing distribuído com OpenTelemetry]].
 
 ---
 

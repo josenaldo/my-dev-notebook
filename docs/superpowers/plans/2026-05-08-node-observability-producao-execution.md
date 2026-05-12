@@ -177,10 +177,10 @@ SORT file.name ASC
 
 - [[03-Dominios/Node/index|Node.js (MOC central)]]
 - [[Node.js]] — tronco
-- [[Runtime e Event Loop]] — galho 1
-- [[Paralelismo]] — galho 2
-- [[Streams]] — galho 3
-- [[Frameworks e arquitetura]] — galho 4
+- [[03-Dominios/Node/Runtime e Event Loop/index]] — galho 1
+- [[03-Dominios/Node/Paralelismo/index]] — galho 2
+- [[03-Dominios/Node/Streams/index]] — galho 3
+- [[03-Dominios/Node/Frameworks e arquitetura/index]] — galho 4
 ```
 
 - [ ] **Step 2: Verificar se a pasta foi criada corretamente**
@@ -604,7 +604,7 @@ aliases:
 
 9. **Fontes**: [AsyncLocalStorage MDN/Node docs](https://nodejs.org/api/async_context.html), [W3C Trace Context](https://www.w3.org/TR/trace-context/).
 
-10. **Veja também**: nota 02 (pino), nota 06 (OTEL), [[Runtime e Event Loop]] (Worker Threads e contexto).
+10. **Veja também**: nota 02 (pino), nota 06 (OTEL), [[03-Dominios/Node/Runtime e Event Loop/index]] (Worker Threads e contexto).
 
 - [ ] **Step 2: Self-check**
 
@@ -909,7 +909,7 @@ aliases:
 
 9. **Fontes**: [Node.js perf_hooks](https://nodejs.org/api/perf_hooks.html), [Node.js diagnostics guide](https://nodejs.org/en/docs/guides/diagnostics).
 
-10. **Veja também**: notas 04, 07, 08 do galho + [[Runtime e Event Loop]] (galho 1).
+10. **Veja também**: notas 04, 07, 08 do galho + [[03-Dominios/Node/Runtime e Event Loop/index]] (galho 1).
 
 - [ ] **Step 2: Self-check**
 
@@ -1236,7 +1236,7 @@ aliases:
 
 9. **Fontes**: [clinic.js](https://clinicjs.org/), [0x GitHub](https://github.com/davidmarkclements/0x), [autocannon](https://github.com/mcollina/autocannon).
 
-10. **Veja também**: notas 05, 08, 12 do galho + [[Runtime e Event Loop]] (galho 1, event loop blocking).
+10. **Veja também**: notas 05, 08, 12 do galho + [[03-Dominios/Node/Runtime e Event Loop/index]] (galho 1, event loop blocking).
 
 - [ ] **Step 2: Self-check**
 
@@ -1400,7 +1400,7 @@ aliases:
 
 9. **Fontes**: [Node.js memory debugging](https://nodejs.org/en/docs/guides/diagnostics/memory), [clinic heapprof](https://clinicjs.org/heapprof/).
 
-10. **Veja também**: notas 05, 07, 12 do galho + [[Runtime e Event Loop]] (galho 1).
+10. **Veja também**: notas 05, 07, 12 do galho + [[03-Dominios/Node/Runtime e Event Loop/index]] (galho 1).
 
 - [ ] **Step 2: Self-check**
 
@@ -1593,7 +1593,7 @@ aliases:
 
 9. **Fontes**: [Kubernetes pod lifecycle](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/), [Node.js process signals](https://nodejs.org/api/process.html#signal-events).
 
-10. **Veja também**: notas 10, 11 do galho + [[Frameworks e arquitetura]] (galho 4).
+10. **Veja também**: notas 10, 11 do galho + [[03-Dominios/Node/Frameworks e arquitetura/index]] (galho 4).
 
 - [ ] **Step 2: Self-check**
 

@@ -196,7 +196,7 @@ Essa separação reduz vazamento sem perder debuggability.
 
 ### Streaming e erro tardio
 
-Depois que headers/body começaram, não há como responder Problem Details. Em Express, se `res.headersSent`, delegue ou encerre. Em streams, use [[Streams]] e `pipeline` para cleanup.
+Depois que headers/body começaram, não há como responder Problem Details. Em Express, se `res.headersSent`, delegue ou encerre. Em streams, use [[03-Dominios/Node/Streams/index]] e `pipeline` para cleanup.
 
 ```typescript
 if (res.headersSent) {

@@ -411,7 +411,7 @@ Vou diagnosticar problema de memória ou lentidão?
 
 ## Veja também
 
-- [[Streams]] — MOC do galho 3 (índice completo)
+- [[03-Dominios/Node/Streams/index]] — MOC do galho 3 (índice completo)
 - [[01 - Por que streams]] — motivação e quando usar
 - [[02 - Os 4 tipos - Readable, Writable, Duplex, Transform]] — visão geral dos 4 tipos
 - [[03 - Readable streams]] — modos flowing/paused, `_read`, `Readable.from`
@@ -424,5 +424,5 @@ Vou diagnosticar problema de memória ou lentidão?
 - [[10 - Padrões práticos]] — line parser, CSV → JSONL, multipart upload, fetch streaming, tee
 - [[11 - Performance e tuning]] — quando streams perdem, `highWaterMark` tuning, sync vs async transform
 - [[Node.js]] — tronco do domínio Node no Codex
-- [[Runtime e Event Loop]] — galho 1: event loop, bloqueio, async model (pré-requisito)
-- [[Paralelismo]] — galho 2: Worker Threads + streams para transform CPU-bound
+- [[03-Dominios/Node/Runtime e Event Loop/index]] — galho 1: event loop, bloqueio, async model (pré-requisito)
+- [[03-Dominios/Node/Paralelismo/index]] — galho 2: Worker Threads + streams para transform CPU-bound

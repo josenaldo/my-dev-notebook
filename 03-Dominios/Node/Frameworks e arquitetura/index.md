@@ -23,7 +23,7 @@ aliases:
 
 Este galho cobre **frameworks Node**: os 4 principais (Express, NestJS, Fastify, Hono) com trade-offs explícitos, patterns transversais (middleware, error handling Problem Details, schema validation), Clean Architecture em Node e DI manual vs container. Sem dogma framework-religioso: decision tree é matching, não ranking.
 
-Pré-requisito: galho 1 ([[Runtime e Event Loop]]) - pressupõe entender event loop. Galho 3 ([[Streams]]) é referência cruzada, porque frameworks abstraem multipart e streaming via libs como busboy.
+Pré-requisito: galho 1 ([[03-Dominios/Node/Runtime e Event Loop/index]]) - pressupõe entender event loop. Galho 3 ([[03-Dominios/Node/Streams/index]]) é referência cruzada, porque frameworks abstraem multipart e streaming via libs como busboy.
 
 **Audiência primária:** dev senior em prep para entrevista internacional. Cada nota tem seção "Em entrevista" com frase pronta em inglês + vocabulário.
 
@@ -96,7 +96,7 @@ SORT file.name ASC
 
 - [[03-Dominios/Node/index|Node.js (MOC central)]]
 - [[Node.js]] - tronco
-- [[Runtime e Event Loop]] - galho 1
-- [[Paralelismo]] - galho 2
-- [[Streams]] - galho 3
+- [[03-Dominios/Node/Runtime e Event Loop/index]] - galho 1
+- [[03-Dominios/Node/Paralelismo/index]] - galho 2
+- [[03-Dominios/Node/Streams/index]] - galho 3
 

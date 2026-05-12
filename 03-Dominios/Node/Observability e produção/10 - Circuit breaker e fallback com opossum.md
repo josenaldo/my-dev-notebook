@@ -576,7 +576,7 @@ opossum wraps any async function with `new CircuitBreaker(fn, options)`. You con
 
 ## Veja também
 
-- [[Observability e produção]] — MOC do galho 5
+- [[03-Dominios/Node/Observability e produção/index]] — MOC do galho 5
 - [[04 - Métricas com prom-client]] — métricas para monitorar o circuito
 - [[09 - Graceful shutdown profundo]] — resiliência no shutdown
 - [[Node.js]] — tronco

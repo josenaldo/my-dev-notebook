@@ -258,7 +258,7 @@ Não. `async/await` é açúcar sintático sobre Promises — gerencia quando a 
 - [[02 - As 3 ferramentas - Worker Threads, Cluster, child_process]] — visão panorâmica das 3 ferramentas com comparação de trade-offs
 - [[03 - Worker Threads - fundamentos]] — como criar, comunicar e destruir Worker Threads
 - [[11 - Decision tree - qual ferramenta para qual problema]] — fluxograma de decisão com critérios objetivos
-- [[Runtime e Event Loop]] — galho 1: o modelo mental de base que esta nota pressupõe
+- [[03-Dominios/Node/Runtime e Event Loop/index]] — galho 1: o modelo mental de base que esta nota pressupõe
 - [[09 - async-await - o que é, o que não é]] — galho 1: por que `async` não resolve CPU-bound
 - [[10 - Bloqueio do event loop - sintomas e causas]] — galho 1: como diagnosticar e confirmar bloqueio
 - [[Node.js]] — tronco da trilha Node Senior

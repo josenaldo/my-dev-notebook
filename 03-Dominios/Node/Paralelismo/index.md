@@ -23,7 +23,7 @@ aliases:
 
 Este galho cobre **as 3 ferramentas de paralelismo em Node**: Worker Threads (threads JS no mesmo processo), Cluster (múltiplos processos compartilhando porta HTTP), child_process (processo externo via spawn/exec ou Node child via fork). Inclui SharedArrayBuffer/Atomics (concorrência com memória compartilhada), pool de workers (pattern de produção, `piscina`), contexto de produção em 2026 (Cluster vs PM2 vs Kubernetes) e uma decision tree completa de "qual ferramenta para qual problema".
 
-Pré-requisito: galho 1 ([[Runtime e Event Loop]]). Em particular as notas [[09 - async-await - o que é, o que não é]] (mito da performance) e [[10 - Bloqueio do event loop - sintomas e causas]] (sintomas que pedem paralelismo).
+Pré-requisito: galho 1 ([[03-Dominios/Node/Runtime e Event Loop/index]]). Em particular as notas [[09 - async-await - o que é, o que não é]] (mito da performance) e [[10 - Bloqueio do event loop - sintomas e causas]] (sintomas que pedem paralelismo).
 
 **Audiência primária:** dev senior em prep para entrevista internacional. Cada nota tem seção "Em entrevista" com frase pronta em inglês + vocabulário.
 
@@ -89,4 +89,4 @@ SORT file.name ASC
 
 - [[03-Dominios/Node/index|Node.js (MOC central)]]
 - [[Node.js]] — tronco (deep dive panorâmico)
-- [[Runtime e Event Loop]] — galho 1 (pré-requisito)
+- [[03-Dominios/Node/Runtime e Event Loop/index]] — galho 1 (pré-requisito)

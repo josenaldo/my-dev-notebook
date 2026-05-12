@@ -27,7 +27,7 @@ aliases:
 > Pressão de GC se manifesta como picos de latência intermitentes — `major GC` frequente é sinal de que o heap está cheio e o V8 está lutando para recuperar memória.
 > O trio `nodejs_eventloop_lag_p99_seconds`, `nodejs_heap_size_used_bytes / nodejs_heap_size_total_bytes` e `nodejs_gc_duration_seconds` deve constar em todo dashboard Node.js de produção.
 
-Esta nota faz parte de [[Observability e produção]] e expande as métricas de runtime expostas por `collectDefaultMetrics()` do [[04 - Métricas com prom-client]]. A nota [[08 - Detecção e diagnóstico de memory leaks]] retoma o tema de heap e GC com ferramentas de diagnóstico mais profundas (heap snapshots, clinic.js).
+Esta nota faz parte de [[03-Dominios/Node/Observability e produção/index]] e expande as métricas de runtime expostas por `collectDefaultMetrics()` do [[04 - Métricas com prom-client]]. A nota [[08 - Detecção e diagnóstico de memory leaks]] retoma o tema de heap e GC com ferramentas de diagnóstico mais profundas (heap snapshots, clinic.js).
 
 ## O que é
 
@@ -549,11 +549,11 @@ A V8 major GC (MarkSweepCompact) performs a full stop-the-world collection of th
 
 ## Veja também
 
-- [[Observability e produção]] — MOC do galho 5
+- [[03-Dominios/Node/Observability e produção/index]] — MOC do galho 5
 - [[04 - Métricas com prom-client]] — base de métricas com prom-client
 - [[07 - Profiling avançado com clinic.js]] — profiling de CPU e event loop
 - [[08 - Detecção e diagnóstico de memory leaks]] — heap snapshots e diagnóstico de memory leaks
-- [[Runtime e Event Loop]] — event loop phases e libuv (galho 1)
+- [[03-Dominios/Node/Runtime e Event Loop/index]] — event loop phases e libuv (galho 1)
 - [[Node.js]] — tronco
 
 ## Fontes

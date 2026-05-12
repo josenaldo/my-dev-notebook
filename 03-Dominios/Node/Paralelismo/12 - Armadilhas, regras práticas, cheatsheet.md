@@ -316,7 +316,7 @@ Para **isolamento e sandbox**: `vm` module, `isolated-vm` (V8 isolate sem acesso
 
 ## Veja também
 
-- [[Paralelismo]] — MOC do galho 2
+- [[03-Dominios/Node/Paralelismo/index]] — MOC do galho 2
 - [[01 - Por que paralelismo em Node]] — quando paralelizar; CPU-bound vs I/O-bound; sequência de diagnóstico
 - [[02 - As 3 ferramentas - Worker Threads, Cluster, child_process]] — visão panorâmica dos 3 modelos
 - [[03 - Worker Threads - fundamentos]] — criação, eventos de ciclo de vida, terminate
@@ -329,4 +329,4 @@ Para **isolamento e sandbox**: `vm` module, `isolated-vm` (V8 isolate sem acesso
 - [[10 - Cluster vs PM2 vs Kubernetes - quem orquestra]] — onde Cluster ainda faz sentido em 2026
 - [[11 - Decision tree - qual ferramenta para qual problema]] — decision tree completa com tabela problema→ferramenta→razão
 - [[Node.js]] — tronco da trilha Node Senior
-- [[Runtime e Event Loop]] — galho 1: event loop, async/await, bloqueio — pré-requisito do galho 2
+- [[03-Dominios/Node/Runtime e Event Loop/index]] — galho 1: event loop, async/await, bloqueio — pré-requisito do galho 2

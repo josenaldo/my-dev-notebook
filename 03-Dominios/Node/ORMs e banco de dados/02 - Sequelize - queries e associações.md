@@ -742,7 +742,7 @@ In production, I never use `sequelize.sync({ force: true })` or even `{ alter: t
 ## Veja também
 
 - [[Node.js]]
-- [[ORMs e banco de dados]]
+- [[03-Dominios/Node/ORMs e banco de dados/index]]
 - [[01 - Panorama de ORMs]]
 - [[03 - Prisma - schema, migrations e type safety]]
 - [[04 - TypeORM - decorators e NestJS]]

@@ -771,7 +771,7 @@ On the migrations side, the critical point for interviews is the dev vs prod wor
 ## Veja também
 
 - [[Node.js]]
-- [[ORMs e banco de dados]]
+- [[03-Dominios/Node/ORMs e banco de dados/index]]
 - [[01 - Panorama de ORMs]]
 - [[06 - N+1 queries - detecção e DataLoader]]
 - [[07 - Migrations e versionamento de schema]]

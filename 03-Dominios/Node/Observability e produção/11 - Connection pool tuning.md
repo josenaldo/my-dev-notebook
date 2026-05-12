@@ -368,7 +368,7 @@ Connection pool exhaustion is one of the most common silent failures in Node.js 
 
 ## Veja também
 
-- [[Observability e produção]] — MOC do galho 5
+- [[03-Dominios/Node/Observability e produção/index]] — MOC do galho 5
 - [[09 - Graceful shutdown profundo]] — desconectar o pool no SIGTERM
 - [[10 - Circuit breaker e fallback com opossum]] — proteger chamadas quando o downstream está lento
 - [[12 - SLOs, dashboards, alertas e cheatsheet]] — PromQL para monitorar pool waiting

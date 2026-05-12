@@ -503,7 +503,7 @@ The preStop hook solves a subtle race condition called endpoint propagation dela
 
 ## Veja também
 
-- [[Observability e produção]] — MOC do galho 5
+- [[03-Dominios/Node/Observability e produção/index]] — MOC do galho 5
 - [[11 - Connection pool tuning]] — impacto do pool no shutdown e como dimensionar conexões para suportar rotatividade de pods
 - [[Node.js]] — tronco
 

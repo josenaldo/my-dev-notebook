@@ -27,7 +27,7 @@ aliases:
 > Golden signals (latência, tráfego, erros, saturação) são o subconjunto mínimo de métricas que toda API em produção deve monitorar.
 > SLI define o que medir, SLO define a meta, SLA define a consequência contratual — confundir os três é erro clássico em entrevista e em PRs de infra.
 
-Esta nota é a porta de entrada do [[Observability e produção]] e estabelece o vocabulário e o modelo mental usados em todas as notas do galho. Leia-a antes de qualquer outra.
+Esta nota é a porta de entrada do [[03-Dominios/Node/Observability e produção/index]] e estabelece o vocabulário e o modelo mental usados em todas as notas do galho. Leia-a antes de qualquer outra.
 
 ## O que é
 
@@ -629,7 +629,7 @@ In a distributed system, a single user request may touch five or more services. 
 
 ## Veja também
 
-- [[Observability e produção]] — MOC do galho completo
+- [[03-Dominios/Node/Observability e produção/index]] — MOC do galho completo
 - [[02 - Logging estruturado com pino]] — implementação detalhada de logs estruturados
 - [[03 - Correlation IDs e context propagation]] — como correlacionar logs, métricas e traces
 - [[04 - Métricas com prom-client]] — instrumentação completa de métricas Prometheus

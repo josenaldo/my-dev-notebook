@@ -364,5 +364,5 @@ Nada quebra, mas você tem overhead sem benefício equivalente. 4 réplicas K8s 
 - [[08 - child_process com exec e spawn]]
 - [[09 - child_process com fork - Node child com IPC]]
 - [[10 - Cluster vs PM2 vs Kubernetes - quem orquestra]]
-- [[Paralelismo]] (MOC)
+- [[03-Dominios/Node/Paralelismo/index]] (MOC)
 - [[Node.js]] (tronco)

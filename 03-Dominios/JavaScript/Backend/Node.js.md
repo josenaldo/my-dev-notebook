@@ -46,52 +46,52 @@ Em entrevistas, o que diferencia um senior em Node.js:
 ### Arquitetura
 
 > [!nota] Migrado para galho próprio
-> A anatomia interna do runtime — V8, libuv, thread pool — foi expandida em [[Runtime e Event Loop]]. Veja em particular [[02 - V8, libuv e thread pool]] (componentes), [[01 - Single-thread e non-blocking I-O]] (modelo), e [[07 - I-O assíncrono - kernel vs thread pool]] (onde o paralelismo verdadeiro mora).
+> A anatomia interna do runtime — V8, libuv, thread pool — foi expandida em [[03-Dominios/Node/Runtime e Event Loop/index]]. Veja em particular [[02 - V8, libuv e thread pool]] (componentes), [[01 - Single-thread e non-blocking I-O]] (modelo), e [[07 - I-O assíncrono - kernel vs thread pool]] (onde o paralelismo verdadeiro mora).
 
 ### Single-threaded com non-blocking I/O
 
 > [!nota] Migrado para galho próprio
-> O modelo single-thread + non-blocking I/O foi expandido em [[01 - Single-thread e non-blocking I-O]] dentro do galho [[Runtime e Event Loop]].
+> O modelo single-thread + non-blocking I/O foi expandido em [[01 - Single-thread e non-blocking I-O]] dentro do galho [[03-Dominios/Node/Runtime e Event Loop/index]].
 
 ### Event loop phases — detalhado
 
 > [!nota] Migrado para galho próprio
-> As fases do event loop foram expandidas em [[Runtime e Event Loop]]. Veja em particular [[04 - As fases do event loop]] (ciclo libuv), [[05 - Microtasks - nextTick, queueMicrotask, Promise.then]] (microtasks), e [[06 - Macrotasks e timers - setTimeout, setInterval, setImmediate]] (timers).
+> As fases do event loop foram expandidas em [[03-Dominios/Node/Runtime e Event Loop/index]]. Veja em particular [[04 - As fases do event loop]] (ciclo libuv), [[05 - Microtasks - nextTick, queueMicrotask, Promise.then]] (microtasks), e [[06 - Macrotasks e timers - setTimeout, setInterval, setImmediate]] (timers).
 
 ### Worker Threads, cluster, child_process — as 3 formas de paralelismo
 
 > [!nota] Migrado para galho próprio
-> As 3 ferramentas de paralelismo foram expandidas em [[Paralelismo]] (galho 2). Veja em particular [[02 - As 3 ferramentas - Worker Threads, Cluster, child_process]] (visão geral comparativa), [[03 - Worker Threads - fundamentos]] (Worker Threads), [[07 - Cluster - escalando HTTP por CPU]] (Cluster), [[08 - child_process com exec e spawn]] (rodar comandos externos) e [[09 - child_process com fork - Node child com IPC]] (Node child isolado). Decision tree completa em [[11 - Decision tree - qual ferramenta para qual problema]].
+> As 3 ferramentas de paralelismo foram expandidas em [[03-Dominios/Node/Paralelismo/index]] (galho 2). Veja em particular [[02 - As 3 ferramentas - Worker Threads, Cluster, child_process]] (visão geral comparativa), [[03 - Worker Threads - fundamentos]] (Worker Threads), [[07 - Cluster - escalando HTTP por CPU]] (Cluster), [[08 - child_process com exec e spawn]] (rodar comandos externos) e [[09 - child_process com fork - Node child com IPC]] (Node child isolado). Decision tree completa em [[11 - Decision tree - qual ferramenta para qual problema]].
 
 ### Frameworks
 
 > [!nota] Migrado para galho próprio
-> Os 4 frameworks principais foram expandidos em [[Frameworks e arquitetura]] (galho 4). Veja em particular [[01 - Os 4 frameworks - Express, NestJS, Fastify, Hono]] (visão geral comparativa), [[02 - Express idiomático]] (Express moderno), [[03 - NestJS - fundamentos]] (DI + módulos), [[05 - Fastify - schema-first, plugins, performance]] (Fastify) e [[06 - Hono e edge runtimes]] (edge-first).
+> Os 4 frameworks principais foram expandidos em [[03-Dominios/Node/Frameworks e arquitetura/index]] (galho 4). Veja em particular [[01 - Os 4 frameworks - Express, NestJS, Fastify, Hono]] (visão geral comparativa), [[02 - Express idiomático]] (Express moderno), [[03 - NestJS - fundamentos]] (DI + módulos), [[05 - Fastify - schema-first, plugins, performance]] (Fastify) e [[06 - Hono e edge runtimes]] (edge-first).
 
 ### Error Handling
 
 > [!nota] Migrado para galho próprio
-> Error handling estruturado (Problem Details RFC 7807) foi expandido em [[08 - Error handling estruturado]] no galho [[Frameworks e arquitetura]], com implementação em todos os 4 frameworks principais.
+> Error handling estruturado (Problem Details RFC 7807) foi expandido em [[08 - Error handling estruturado]] no galho [[03-Dominios/Node/Frameworks e arquitetura/index]], com implementação em todos os 4 frameworks principais.
 
 ### Streams — deep dive
 
 > [!nota] Migrado para galho próprio
-> Os 4 tipos de stream foram expandidos em [[Streams]] (galho 3). Veja em particular [[02 - Os 4 tipos - Readable, Writable, Duplex, Transform]] (visão geral comparativa), [[03 - Readable streams]] (Readable detalhado), [[04 - Writable streams]] (Writable detalhado) e [[05 - Duplex e Transform]] (Duplex vs Transform).
+> Os 4 tipos de stream foram expandidos em [[03-Dominios/Node/Streams/index]] (galho 3). Veja em particular [[02 - Os 4 tipos - Readable, Writable, Duplex, Transform]] (visão geral comparativa), [[03 - Readable streams]] (Readable detalhado), [[04 - Writable streams]] (Writable detalhado) e [[05 - Duplex e Transform]] (Duplex vs Transform).
 
 ### Backpressure
 
 > [!nota] Migrado para galho próprio
-> Backpressure como mecânica explícita foi expandido em [[06 - Backpressure]] no galho [[Streams]].
+> Backpressure como mecânica explícita foi expandido em [[06 - Backpressure]] no galho [[03-Dominios/Node/Streams/index]].
 
 ### Web Streams vs Node streams
 
 > [!nota] Migrado para galho próprio
-> Interop Node ↔ Web Streams foi expandido em [[09 - Web Streams - interop com padrão universal]] no galho [[Streams]].
+> Interop Node ↔ Web Streams foi expandido em [[09 - Web Streams - interop com padrão universal]] no galho [[03-Dominios/Node/Streams/index]].
 
 ### Stream patterns
 
 > [!nota] Migrado para galho próprio
-> Padrões práticos (line parser, CSV → JSONL, fetch streaming, multipart, tee) foram expandidos em [[10 - Padrões práticos]] no galho [[Streams]]. Decision tree e armadilhas em [[12 - Armadilhas, regras práticas, cheatsheet]].
+> Padrões práticos (line parser, CSV → JSONL, fetch streaming, multipart, tee) foram expandidos em [[10 - Padrões práticos]] no galho [[03-Dominios/Node/Streams/index]]. Decision tree e armadilhas em [[12 - Armadilhas, regras práticas, cheatsheet]].
 
 ### npm e Package Management
 
@@ -183,7 +183,7 @@ await setTimeout(1000);  // delay
 
 ## Armadilhas comuns
 
-- **Blocking the event loop:** Sintomas, causas e diagnóstico em [[10 - Bloqueio do event loop - sintomas e causas]] e [[11 - Diagnóstico do event loop]] (galho [[Runtime e Event Loop]]).
+- **Blocking the event loop:** Sintomas, causas e diagnóstico em [[10 - Bloqueio do event loop - sintomas e causas]] e [[11 - Diagnóstico do event loop]] (galho [[03-Dominios/Node/Runtime e Event Loop/index]]).
 - **Unhandled promise rejections:** promises sem `.catch()` ou try/catch em async. Configurar `process.on('unhandledRejection')`.
 - **Callback hell:** aninhar callbacks. Usar async/await.
 - **Memory leaks:** event listeners não removidos, closures que retêm referências grandes, caches sem TTL.
@@ -254,7 +254,7 @@ Problemas recorrentes em aplicações Node.js — equivalentes aos problemas de 
 ### Connection pool exausto
 
 > [!nota] Migrado para galho próprio
-> Configuração, diagnóstico e anti-padrões de connection pool foram expandidos em [[Observability e produção]]: [[11 - Connection pool tuning]].
+> Configuração, diagnóstico e anti-padrões de connection pool foram expandidos em [[03-Dominios/Node/Observability e produção/index]]: [[11 - Connection pool tuning]].
 
 ### N+1 queries
 
@@ -298,22 +298,22 @@ const doctors = await prisma.doctor.findMany({
 ### Event loop blocking
 
 > [!nota] Migrado para galho próprio
-> Sintomas, causas e ferramentas de diagnóstico foram expandidos em [[Runtime e Event Loop]]: [[10 - Bloqueio do event loop - sintomas e causas]] e [[11 - Diagnóstico do event loop]].
+> Sintomas, causas e ferramentas de diagnóstico foram expandidos em [[03-Dominios/Node/Runtime e Event Loop/index]]: [[10 - Bloqueio do event loop - sintomas e causas]] e [[11 - Diagnóstico do event loop]].
 
 ### Memory leak
 
 > [!nota] Migrado para galho próprio
-> Diagnóstico, causas comuns e técnicas de detecção foram expandidos em [[Observability e produção]]: [[08 - Detecção e diagnóstico de memory leaks]].
+> Diagnóstico, causas comuns e técnicas de detecção foram expandidos em [[03-Dominios/Node/Observability e produção/index]]: [[08 - Detecção e diagnóstico de memory leaks]].
 
 ### Graceful shutdown
 
 > [!nota] Migrado para galho próprio
-> Padrão completo para Express e NestJS, com tratamento de conexões e timeout de força, foi expandido em [[Observability e produção]]: [[09 - Graceful shutdown profundo]].
+> Padrão completo para Express e NestJS, com tratamento de conexões e timeout de força, foi expandido em [[03-Dominios/Node/Observability e produção/index]]: [[09 - Graceful shutdown profundo]].
 
 ### Circuit breaker
 
 > [!nota] Migrado para galho próprio
-> Implementação com opossum, estados (closed/open/half-open) e padrões de fallback foram expandidos em [[Observability e produção]]: [[10 - Circuit breaker e fallback com opossum]].
+> Implementação com opossum, estados (closed/open/half-open) e padrões de fallback foram expandidos em [[03-Dominios/Node/Observability e produção/index]]: [[10 - Circuit breaker e fallback com opossum]].
 
 → Para comparação cross-stack: [[System Design]] (seção Problemas comuns em produção)
 
@@ -328,11 +328,11 @@ const doctors = await prisma.doctor.findMany({
 
 ## Veja também
 
-- [[Runtime e Event Loop]] — galho 1 da trilha Node Senior; deep dive do motor (single-thread, libuv, fases, microtasks, async/await, bloqueio, diagnóstico)
-- [[Paralelismo]] — galho 2 da trilha Node Senior; as 3 ferramentas de paralelismo (Worker Threads, Cluster, child_process), SharedArrayBuffer/Atomics, pool de workers, decision tree
-- [[Streams]] — galho 3 da trilha Node Senior; abstração fundamental para processar dados em chunks (4 tipos, backpressure, pipeline, async iter, Web Streams, padrões práticos)
-- [[Frameworks e arquitetura]] — galho 4 da trilha Node Senior; os 4 frameworks principais (Express, NestJS, Fastify, Hono), patterns transversais e arquitetura
-- [[Observability e produção]] — galho 5 da trilha Node Senior; logs, métricas, traces, profiling, SLOs, dashboards, alertas e checklists de produção
+- [[03-Dominios/Node/Runtime e Event Loop/index]] — galho 1 da trilha Node Senior; deep dive do motor (single-thread, libuv, fases, microtasks, async/await, bloqueio, diagnóstico)
+- [[03-Dominios/Node/Paralelismo/index]] — galho 2 da trilha Node Senior; as 3 ferramentas de paralelismo (Worker Threads, Cluster, child_process), SharedArrayBuffer/Atomics, pool de workers, decision tree
+- [[03-Dominios/Node/Streams/index]] — galho 3 da trilha Node Senior; abstração fundamental para processar dados em chunks (4 tipos, backpressure, pipeline, async iter, Web Streams, padrões práticos)
+- [[03-Dominios/Node/Frameworks e arquitetura/index]] — galho 4 da trilha Node Senior; os 4 frameworks principais (Express, NestJS, Fastify, Hono), patterns transversais e arquitetura
+- [[03-Dominios/Node/Observability e produção/index]] — galho 5 da trilha Node Senior; logs, métricas, traces, profiling, SLOs, dashboards, alertas e checklists de produção
 - [[JavaScript Fundamentals]] — linguagem, event loop, async
 - [[TypeScript]] — tipagem em Node
 - [[Testes em JavaScript]] — Vitest, MSW, built-in test runner

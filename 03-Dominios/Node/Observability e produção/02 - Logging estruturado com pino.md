@@ -25,7 +25,7 @@ aliases:
 > Cada log de produção deve carregar pelo menos: `timestamp`, `level`, `msg`, `requestId`, `service` e `version` — sem `requestId` é impossível correlacionar logs de uma única requisição num sistema com alta concorrência.
 > Dados sensíveis (senhas, tokens, CPFs) jamais devem aparecer em logs; use a opção `redact` do pino para remover campos automaticamente antes de qualquer I/O.
 
-Esta nota aprofunda o pilar de *logs* introduzido em [[01 - Os três pilares - logs, métricas e traces]] e faz parte do galho [[Observability e produção]].
+Esta nota aprofunda o pilar de *logs* introduzido em [[01 - Os três pilares - logs, métricas e traces]] e faz parte do galho [[03-Dominios/Node/Observability e produção/index]].
 
 ---
 

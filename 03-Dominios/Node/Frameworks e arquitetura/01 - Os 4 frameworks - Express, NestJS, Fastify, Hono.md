@@ -193,9 +193,9 @@ O papel de senior é transformar preferência em hipótese verificável. Se a hi
 
 Framework não substitui fundamentos:
 
-- [[Runtime e Event Loop]] continua decidindo impacto de CPU-heavy work, timers, microtasks e bloqueio.
-- [[Paralelismo]] continua necessário quando o problema é CPU-bound ou isolamento de processo.
-- [[Streams]] continua aparecendo em upload, download, proxy, CSV, multipart e respostas longas.
+- [[03-Dominios/Node/Runtime e Event Loop/index]] continua decidindo impacto de CPU-heavy work, timers, microtasks e bloqueio.
+- [[03-Dominios/Node/Paralelismo/index]] continua necessário quando o problema é CPU-bound ou isolamento de processo.
+- [[03-Dominios/Node/Streams/index]] continua aparecendo em upload, download, proxy, CSV, multipart e respostas longas.
 
 ```typescript
 // Framework nenhum torna isso barato:
@@ -292,7 +292,7 @@ Vocabulário-chave:
 
 ## Veja também
 
-- [[Frameworks e arquitetura]]
+- [[03-Dominios/Node/Frameworks e arquitetura/index]]
 - [[02 - Express idiomático]]
 - [[03 - NestJS - fundamentos]]
 - [[05 - Fastify - schema-first, plugins, performance]]

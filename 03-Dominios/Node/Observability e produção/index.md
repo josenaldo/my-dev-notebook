@@ -28,8 +28,8 @@ aliases:
 Este galho cobre **observability e produção em Node.js**: os três pilares (logs, métricas, traces), golden signals, SLO/SLA, ferramentas idiomáticas do ecossistema (pino, prom-client, OpenTelemetry), diagnóstico avançado (clinic.js, heap snapshots) e patterns de resiliência (graceful shutdown, circuit breaker, connection pool tuning).
 
 **Pré-requisitos:**
-- [[Runtime e Event Loop]] (galho 1) — event loop phases, libuv thread pool, bloqueio — necessário para entender event loop lag e clinic.js
-- [[Frameworks e arquitetura]] (galho 4) — middleware pipeline e hooks de shutdown nos frameworks
+- [[03-Dominios/Node/Runtime e Event Loop/index]] (galho 1) — event loop phases, libuv thread pool, bloqueio — necessário para entender event loop lag e clinic.js
+- [[03-Dominios/Node/Frameworks e arquitetura/index]] (galho 4) — middleware pipeline e hooks de shutdown nos frameworks
 
 **Audiência primária:** dev senior em prep para entrevista internacional. Cada nota tem seção "Em entrevista" com frase pronta em inglês + vocabulário PT→EN.
 
@@ -99,7 +99,7 @@ SORT file.name ASC
 
 - [[03-Dominios/Node/index|Node.js (MOC central)]]
 - [[Node.js]] — tronco
-- [[Runtime e Event Loop]] — galho 1
-- [[Paralelismo]] — galho 2
-- [[Streams]] — galho 3
-- [[Frameworks e arquitetura]] — galho 4
+- [[03-Dominios/Node/Runtime e Event Loop/index]] — galho 1
+- [[03-Dominios/Node/Paralelismo/index]] — galho 2
+- [[03-Dominios/Node/Streams/index]] — galho 3
+- [[03-Dominios/Node/Frameworks e arquitetura/index]] — galho 4

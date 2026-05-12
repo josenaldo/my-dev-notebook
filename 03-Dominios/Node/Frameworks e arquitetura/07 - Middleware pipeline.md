@@ -259,7 +259,7 @@ const price = discountPolicy.apply(order, campaign);
 2. Fastify: `onRequest` roda antes de parsing/validation; nem todo dado está disponível.
 3. NestJS: middleware tradicional é mais cru; interceptor/guard tem melhor integração com DI.
 4. Hono: sem `await next()`, o handler posterior não executa.
-5. Middleware que faz CPU-heavy work bloqueia [[Runtime e Event Loop]].
+5. Middleware que faz CPU-heavy work bloqueia [[03-Dominios/Node/Runtime e Event Loop/index]].
 6. Logging só no caminho feliz: erros e aborts ficam invisíveis.
 7. Auth global bloqueando `/health` e `/metrics`.
 8. Rate limit depois de operação cara: ataque ainda consome CPU/DB.

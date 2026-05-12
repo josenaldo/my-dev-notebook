@@ -283,8 +283,8 @@ Backpressure é o mecanismo pelo qual um consumidor lento sinaliza ao produtor p
 - [[02 - Os 4 tipos - Readable, Writable, Duplex, Transform]]
 - [[06 - Backpressure]]
 - [[07 - pipeline vs pipe - error handling]]
-- [[Runtime e Event Loop]] — galho 1
+- [[03-Dominios/Node/Runtime e Event Loop/index]] — galho 1
 - [[10 - Bloqueio do event loop - sintomas e causas]] — galho 1: buffer de payload gigante como causa de bloqueio
-- [[Paralelismo]] — galho 2
+- [[03-Dominios/Node/Paralelismo/index]] — galho 2
 - [[04 - Comunicação entre workers - postMessage e MessageChannel]] — galho 2: transferList como alternativa a streams para Worker Threads
 - [[Node.js]] — tronco

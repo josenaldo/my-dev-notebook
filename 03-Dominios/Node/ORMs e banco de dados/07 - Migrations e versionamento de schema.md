@@ -20,7 +20,7 @@ aliases:
 # Migrations e versionamento de schema
 
 > [!abstract] TL;DR
-> Uma **migration** é um script SQL versionado e ordenado que transforma o schema do banco de um estado A para um estado B — o equivalente de um commit de git, mas para a estrutura do banco de dados. Sem migrations, o schema deriva silenciosamente entre ambientes (dev, staging, prod), tornando o deploy imprevisível e o rollback impossível. A dicotomia central do ecossistema Node é **generate + migrate** (produção) vs **push** (desenvolvimento local): nunca misture os dois fora do laptop. Todos os ORMs principais — Prisma, Drizzle, TypeORM, Sequelize — implementam o padrão de duas formas ligeiramente diferentes, mas compartilham as mesmas primitivas: arquivo de migration em disco, tabela de controle no banco, e comandos `up`/`down`. Veja o panorama completo do ecossistema em [[ORMs e banco de dados]].
+> Uma **migration** é um script SQL versionado e ordenado que transforma o schema do banco de um estado A para um estado B — o equivalente de um commit de git, mas para a estrutura do banco de dados. Sem migrations, o schema deriva silenciosamente entre ambientes (dev, staging, prod), tornando o deploy imprevisível e o rollback impossível. A dicotomia central do ecossistema Node é **generate + migrate** (produção) vs **push** (desenvolvimento local): nunca misture os dois fora do laptop. Todos os ORMs principais — Prisma, Drizzle, TypeORM, Sequelize — implementam o padrão de duas formas ligeiramente diferentes, mas compartilham as mesmas primitivas: arquivo de migration em disco, tabela de controle no banco, e comandos `up`/`down`. Veja o panorama completo do ecossistema em [[03-Dominios/Node/ORMs e banco de dados/index]].
 
 ## O que é
 

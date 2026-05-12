@@ -642,7 +642,7 @@ When choosing an ORM for a Node.js project, the decision should be driven by run
 
 ## Veja também
 
-- [[ORMs e banco de dados]] — MOC do galho 6
+- [[03-Dominios/Node/ORMs e banco de dados/index]] — MOC do galho 6
 - [[Node.js]] — tronco da trilha Node Senior
 - [[02 - Sequelize - queries e associações]] — deep dive Sequelize
 - [[03 - Prisma - schema-first e type safety]] — deep dive Prisma

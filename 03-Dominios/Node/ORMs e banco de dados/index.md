@@ -26,7 +26,7 @@ Este galho cobre **ORMs e banco de dados em Node.js**: os 4 principais ORMs do e
 
 Os padrões transversais são tão importantes quanto os ORMs em si. N+1 queries destroem performance silenciosamente. Migrations mal gerenciadas quebram deploys. Transações mal colocadas geram inconsistência de dados. Paginação ingênua com `OFFSET` trava em tabelas grandes. Cada um desses tópicos tem uma nota dedicada com diagnóstico, solução e vocabulário para entrevista.
 
-**Pré-requisito:** [[Frameworks e arquitetura]] (galho 4) — pressupõe entender como uma API Node está estruturada antes de conectar banco. [[Node.js]] (tronco) — especialmente async/await e event loop para entender o comportamento de queries assíncronas.
+**Pré-requisito:** [[03-Dominios/Node/Frameworks e arquitetura/index]] (galho 4) — pressupõe entender como uma API Node está estruturada antes de conectar banco. [[Node.js]] (tronco) — especialmente async/await e event loop para entender o comportamento de queries assíncronas.
 
 **Audiência primária:** dev senior em prep para entrevista internacional. Cada nota tem seção "Em entrevista" com resposta em inglês + vocabulário técnico para impressionar entrevistadores de empresas globais.
 
@@ -87,8 +87,8 @@ SORT file.name ASC
 
 - [[03-Dominios/Node/index|Node.js (MOC central)]]
 - [[Node.js]] — tronco
-- [[Runtime e Event Loop]] — galho 1
-- [[Paralelismo]] — galho 2
-- [[Streams]] — galho 3
-- [[Frameworks e arquitetura]] — galho 4
-- [[Observability e produção]] — galho 5
+- [[03-Dominios/Node/Runtime e Event Loop/index]] — galho 1
+- [[03-Dominios/Node/Paralelismo/index]] — galho 2
+- [[03-Dominios/Node/Streams/index]] — galho 3
+- [[03-Dominios/Node/Frameworks e arquitetura/index]] — galho 4
+- [[03-Dominios/Node/Observability e produção/index]] — galho 5

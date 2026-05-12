@@ -26,7 +26,7 @@ aliases:
 > Histograms são a ferramenta certa para latência — permitem calcular p50/p95/p99 via `histogram_quantile` no PromQL sem guardar cada observação individual.
 > Alta cardinalidade em labels é o erro mais comum e mais destrutivo: usar `userId` ou `traceId` como label pode causar OOM no Prometheus em minutos.
 
-Esta nota faz parte do [[Observability e produção]] e detalha instrumentação de métricas. Leia [[01 - Os três pilares - logs, métricas e traces]] antes para entender o contexto dos três pilares. A nota seguinte, [[05 - Node-specific metrics - event loop lag, GC, heap]], expande as métricas de runtime incluídas por `collectDefaultMetrics`.
+Esta nota faz parte do [[03-Dominios/Node/Observability e produção/index]] e detalha instrumentação de métricas. Leia [[01 - Os três pilares - logs, métricas e traces]] antes para entender o contexto dos três pilares. A nota seguinte, [[05 - Node-specific metrics - event loop lag, GC, heap]], expande as métricas de runtime incluídas por `collectDefaultMetrics`.
 
 ## O que é
 

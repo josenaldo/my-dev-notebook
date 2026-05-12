@@ -200,7 +200,7 @@ modernizar antes de migrar
 
 - Observability: logging estruturado, métricas, tracing, profiling e diagnóstico de frameworks em produção.
 - Segurança: Helmet, CORS, rate limiting, CSRF, input sanitization e hardening por framework.
-- Base técnica: [[Runtime e Event Loop]], [[Paralelismo]] e [[Streams]].
+- Base técnica: [[03-Dominios/Node/Runtime e Event Loop/index]], [[03-Dominios/Node/Paralelismo/index]] e [[03-Dominios/Node/Streams/index]].
 
 ## Revisão em 60 segundos
 
@@ -293,7 +293,7 @@ Vocabulário-chave:
 
 ## Veja também
 
-- [[Frameworks e arquitetura]]
+- [[03-Dominios/Node/Frameworks e arquitetura/index]]
 - [[01 - Os 4 frameworks - Express, NestJS, Fastify, Hono]]
 - [[02 - Express idiomático]]
 - [[03 - NestJS - fundamentos]]
@@ -306,6 +306,6 @@ Vocabulário-chave:
 - [[10 - Clean Architecture em Node]]
 - [[11 - DI - manual vs container]]
 - [[Node.js]]
-- [[Runtime e Event Loop]]
-- [[Paralelismo]]
-- [[Streams]]
+- [[03-Dominios/Node/Runtime e Event Loop/index]]
+- [[03-Dominios/Node/Paralelismo/index]]
+- [[03-Dominios/Node/Streams/index]]

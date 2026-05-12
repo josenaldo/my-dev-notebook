@@ -19,7 +19,7 @@ aliases:
 # Armadilhas, regras práticas, cheatsheet
 
 > [!abstract] TL;DR
-> Nota de fechamento da sub-trilha [[Runtime e Event Loop]]. Agrega as 10 armadilhas mais críticas (com exemplo e fix), tabela de timer/fase, decision tree de "minha request está lenta", vocabulário PT→EN com 22 termos, e ponteiros para os próximos galhos. Use como referência rápida após percorrer as 11 notas anteriores.
+> Nota de fechamento da sub-trilha [[03-Dominios/Node/Runtime e Event Loop/index]]. Agrega as 10 armadilhas mais críticas (com exemplo e fix), tabela de timer/fase, decision tree de "minha request está lenta", vocabulário PT→EN com 22 termos, e ponteiros para os próximos galhos. Use como referência rápida após percorrer as 11 notas anteriores.
 
 ---
 
@@ -367,7 +367,7 @@ Profiling, logging estruturado, métricas e tracing distribuído. `perf_hooks`, 
 
 ## Veja também
 
-- [[Runtime e Event Loop]] — MOC do galho; visão geral e rotas de leitura
+- [[03-Dominios/Node/Runtime e Event Loop/index]] — MOC do galho; visão geral e rotas de leitura
 - [[Node.js]] — tronco: panorama completo do runtime
 - [[01 - Single-thread e non-blocking I-O]] — single thread, I/O-bound vs CPU-bound
 - [[02 - V8, libuv e thread pool]] — V8, libuv, bindings C++, thread pool

@@ -636,7 +636,7 @@ Antes de commitar cada nota, verificar:
 - Ler o tronco antes de podar para confirmar níveis de heading reais
 - Substituir as 4 seções conforme § 6 deste spec
 - Atualizar `updated:` no frontmatter do tronco
-- Adicionar link para [[Observability e produção]] no ## Veja também do tronco
+- Adicionar link para [[03-Dominios/Node/Observability e produção/index]] no ## Veja também do tronco
 - 1 commit para a poda: `chore(node/g5): prune trunk - 4 sections migrated`
 
 ---

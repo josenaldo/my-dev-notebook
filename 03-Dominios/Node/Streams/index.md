@@ -23,7 +23,7 @@ aliases:
 
 Este galho cobre **streams em Node** — abstração fundamental para processar dados em chunks sem carregar tudo em memória. Inclui o mental model dos 4 tipos (Readable, Writable, Duplex, Transform), backpressure como mecânica explícita, `pipeline` como API moderna que substitui `.pipe()`, async iteration com `for await of`, Web Streams interop (padrão universal de 2026), padrões práticos (line parser, CSV → JSONL, fetch streaming, multipart upload) e tuning de performance.
 
-Pré-requisito: galho 1 ([[Runtime e Event Loop]]) — pressupõe entender event loop e bloqueio. Galho 2 ([[Paralelismo]]) é referência cruzada onde workers + streams se cruzam (`postMessage` + `transferList` para zero-copy).
+Pré-requisito: galho 1 ([[03-Dominios/Node/Runtime e Event Loop/index]]) — pressupõe entender event loop e bloqueio. Galho 2 ([[03-Dominios/Node/Paralelismo/index]]) é referência cruzada onde workers + streams se cruzam (`postMessage` + `transferList` para zero-copy).
 
 **Audiência primária:** dev senior em prep para entrevista internacional. Cada nota tem seção "Em entrevista" com frase pronta em inglês + vocabulário.
 
@@ -89,5 +89,5 @@ SORT file.name ASC
 
 - [[03-Dominios/Node/index|Node.js (MOC central)]]
 - [[Node.js]] — tronco (deep dive panorâmico)
-- [[Runtime e Event Loop]] — galho 1 (pré-requisito)
-- [[Paralelismo]] — galho 2 (referência cruzada onde workers + streams)
+- [[03-Dominios/Node/Runtime e Event Loop/index]] — galho 1 (pré-requisito)
+- [[03-Dominios/Node/Paralelismo/index]] — galho 2 (referência cruzada onde workers + streams)

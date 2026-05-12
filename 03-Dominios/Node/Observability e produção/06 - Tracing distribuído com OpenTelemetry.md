@@ -617,7 +617,7 @@ Sampling is the practice of recording only a fraction of traces to control stora
 
 ## Veja também
 
-- [[Observability e produção]] — MOC do galho 5
+- [[03-Dominios/Node/Observability e produção/index]] — MOC do galho 5
 - [[01 - Os três pilares - logs, métricas e traces]] — visão geral de observabilidade: logs, métricas e traces como pilares complementares
 - [[03 - Correlation IDs e context propagation]] — propagação de contexto manual com `AsyncLocalStorage` antes de usar OTel
 - [[Node.js]] — tronco principal do domínio
