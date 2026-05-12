@@ -241,17 +241,17 @@ import { Post } from './post.entity';
 const posts = await dataSource
   .createQueryBuilder(Post, 'post')
   .leftJoinAndSelect('post.author', 'author')
-  .leftJoinAndSelect('post.tags', 'tag')
-  .leftJoin('post.comments', 'comment')
+  .leftJoin('post.comments', 'comment') // leftJoin sem Select — não queremos dados de comment
   .addSelect('COUNT(comment.id)', 'commentCount')
   .where('post.createdAt > :since', { since: new Date('2026-01-01') })
   .andWhere('author.active = :active', { active: true })
   .groupBy('post.id')
   .addGroupBy('author.id')
-  .addGroupBy('tag.id')
   .orderBy('commentCount', 'DESC')
   .take(10)
   .getMany();
+// ATENÇÃO: não use leftJoinAndSelect em ManyToMany dentro de GROUP BY — o getMany()
+// retorna um Post por linha da tabela de junção, duplicando entidades silenciosamente.
 
 // getCount() — COUNT sem carregar entidades
 const total = await dataSource
@@ -434,7 +434,20 @@ TypeOrmModule.forRoot({
 
 ### N+1 silencioso com lazy loading
 
-O TypeORM suporta lazy loading quando as relações são tipadas como `Promise<T>` e `lazy: true` está no config da DataSource. O problema: cada acesso a uma relação lazy disparar uma query separada. Se você busca 50 posts e acessa `post.author` em cada iteração, dispara 51 queries (1 para posts + 50 para autores).
+O TypeORM suporta lazy loading quando as relações são tipadas como `Promise<T>` e `lazy: true` está na decoradora da relação. O problema: cada acesso a uma relação lazy dispara uma query separada. Se você busca 50 posts e acessa `post.author` em cada iteração, dispara 51 queries (1 para posts + 50 para autores).
+
+```typescript
+// Entidade com lazy loading habilitado — requer Promise<T> no tipo da relação
+@Entity('posts')
+export class PostLazy {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  // lazy: true exige que o campo seja tipado como Promise<User>
+  @ManyToOne(() => User, (user) => user.posts, { lazy: true })
+  author: Promise<User>;
+}
+```
 
 ```typescript
 // PROBLEMA — lazy loading dispara queries N+1
