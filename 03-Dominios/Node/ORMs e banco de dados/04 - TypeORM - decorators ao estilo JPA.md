@@ -250,8 +250,11 @@ const posts = await dataSource
   .orderBy('commentCount', 'DESC')
   .take(10)
   .getMany();
-// ATENÇÃO: não use leftJoinAndSelect em ManyToMany dentro de GROUP BY — o getMany()
-// retorna um Post por linha da tabela de junção, duplicando entidades silenciosamente.
+// ATENÇÃO: não combine leftJoinAndSelect em ManyToMany com GROUP BY.
+// leftJoinAndSelect injeta colunas de tag no SELECT; o PostgreSQL exige que apareçam no
+// GROUP BY ou em um agregador. Ao adicionar tag.id ao GROUP BY, o agrupamento vira
+// (post, tag) em vez de post — COUNT e SUM passam a calcular por par, não por post.
+// Use leftJoin (sem Select) para relações ManyToMany em queries com GROUP BY.
 
 // getCount() — COUNT sem carregar entidades
 const total = await dataSource
@@ -434,17 +437,17 @@ TypeOrmModule.forRoot({
 
 ### N+1 silencioso com lazy loading
 
-O TypeORM suporta lazy loading quando as relações são tipadas como `Promise<T>` e `lazy: true` está na decoradora da relação. O problema: cada acesso a uma relação lazy dispara uma query separada. Se você busca 50 posts e acessa `post.author` em cada iteração, dispara 51 queries (1 para posts + 50 para autores).
+O TypeORM suporta lazy loading quando as relações são tipadas como `Promise<T>` — o tipo `Promise` é suficiente para ativar o comportamento lazy, sem necessidade de `lazy: true` no decorator. O problema: cada acesso a uma relação lazy dispara uma query separada. Se você busca 50 posts e acessa `post.author` em cada iteração, dispara 51 queries (1 para posts + 50 para autores).
 
 ```typescript
-// Entidade com lazy loading habilitado — requer Promise<T> no tipo da relação
+// Entidade com lazy loading — Promise<User> no tipo é o que ativa o comportamento
 @Entity('posts')
 export class PostLazy {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  // lazy: true exige que o campo seja tipado como Promise<User>
-  @ManyToOne(() => User, (user) => user.posts, { lazy: true })
+  // Promise<User> como tipo ativa o lazy loading — não é necessário lazy: true no decorator
+  @ManyToOne(() => User, (user) => user.posts)
   author: Promise<User>;
 }
 ```
