@@ -21,7 +21,7 @@ aliases:
 # N+1 queries — detecção e DataLoader
 
 > [!abstract] TL;DR
-> O problema **N+1** ocorre quando o código emite 1 query para buscar uma lista de N registros e depois dispara mais N queries individuais para carregar uma associação de cada registro — totalizando N+1 queries no banco. É silencioso: nenhum erro é lançado, apenas latência crescente proporcional ao tamanho do resultado, inviabilizando performance em produção. A forma mais rápida de detectar é habilitar o log de queries em cada ORM e verificar se o número de queries emitidas cresce com o tamanho do resultado. A solução primária para APIs REST é **eager loading** (JOINs), disponível em todos os ORMs via `include` (Sequelize/Prisma), `relations` (TypeORM) ou `with` (Drizzle). Para contextos GraphQL — onde resolvers são chamados individualmente por campo — o **DataLoader** resolve o problema via batching automático no mesmo tick de evento e cache por requisição. Veja também [[01 - Panorama de ORMs]] para o comparativo geral entre ORMs e [[06 - N+1 queries - detecção e DataLoader]] para acesso direto a este tópico.
+> O problema **N+1** ocorre quando o código emite 1 query para buscar uma lista de N registros e depois dispara mais N queries individuais para carregar uma associação de cada registro — totalizando N+1 queries no banco. É silencioso: nenhum erro é lançado, apenas latência crescente proporcional ao tamanho do resultado, inviabilizando performance em produção. A forma mais rápida de detectar é habilitar o log de queries em cada ORM e verificar se o número de queries emitidas cresce com o tamanho do resultado. A solução primária para APIs REST é **eager loading** (JOINs), disponível em todos os ORMs via `include` (Sequelize/Prisma), `relations` (TypeORM) ou `with` (Drizzle). Para contextos GraphQL — onde resolvers são chamados individualmente por campo — o **DataLoader** resolve o problema via batching automático no mesmo tick de evento e cache por requisição. Veja também [[01 - Panorama de ORMs]] para o comparativo geral entre ORMs e o contexto de quando cada solução se aplica.
 
 ## O que é
 
@@ -182,7 +182,7 @@ const posts = await AppDataSource.getRepository(Post).find({
 });
 
 // Opção B: QueryBuilder com LEFT JOIN explícito (1 query com JOIN)
-const posts = await AppDataSource.getRepository(Post)
+const postsWithAuthor = await AppDataSource.getRepository(Post)
   .createQueryBuilder("post")
   .leftJoinAndSelect("post.author", "author")
   .getMany();
