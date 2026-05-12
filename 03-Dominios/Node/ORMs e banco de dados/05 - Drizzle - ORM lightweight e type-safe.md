@@ -341,6 +341,7 @@ ORMs tradicionais que dependem de `pg` (node-postgres) ou `mysql2` usam sockets 
 // Cloudflare Workers + Neon (PostgreSQL serverless via HTTP)
 import { neon } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
+import { eq } from 'drizzle-orm';
 import { users } from './schema';
 
 export default {
