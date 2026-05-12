@@ -72,6 +72,10 @@ npx drizzle-kit generate
 
 # Aplica as migrations pendentes no banco configurado em drizzle.config.ts
 npx drizzle-kit migrate
+
+# Desenvolvimento local APENAS: sincroniza o schema sem gerar arquivo de migration
+# NUNCA use em CI, staging ou produção — destrói o histórico de versionamento
+npx drizzle-kit push
 ```
 
 ### Migrations em TypeORM
@@ -249,13 +253,13 @@ A regra de ouro: **`push` é para desenvolvimento local apenas**. Em qualquer am
 
 | Ambiente        | Comando recomendado                                      | Motivo                                                          |
 | --------------- | -------------------------------------------------------- | --------------------------------------------------------------- |
-| Dev local       | `prisma migrate dev` / `drizzle-kit generate` + `migrate`| Permite iteração rápida; arquivo de migration é gerado e commitado |
+| Dev local       | `prisma migrate dev` / `drizzle-kit generate` + `migrate` (ou `drizzle-kit push`) | Permite iteração rápida; arquivo de migration é gerado e commitado |
 | CI (testes)     | `prisma migrate deploy` / `drizzle-kit migrate`          | Aplica migrations existentes; nunca gera novas                  |
 | Staging         | `prisma migrate deploy` / `drizzle-kit migrate`          | Valida as migrations antes de chegar em produção                |
 | Produção        | `prisma migrate deploy` / `drizzle-kit migrate`          | Apenas aplica; nunca gera; idempotente                          |
 
-> [!warning] Nunca use `prisma db push` ou equivalente em CI/staging/produção
-> `db push` sincroniza o schema sem criar arquivos de migration, destruindo o histórico de versionamento. Se usado em produção, o banco fica em um estado que não pode ser reproduzido ou revertido de forma controlada.
+> [!warning] Nunca use `prisma db push` ou `drizzle-kit push` em CI/staging/produção
+> Esses comandos sincronizam o schema sem criar arquivos de migration, destruindo o histórico de versionamento. Se usados em produção, o banco fica em um estado que não pode ser reproduzido ou revertido de forma controlada. Use-os apenas para prototipagem local.
 
 ## Armadilhas comuns
 
