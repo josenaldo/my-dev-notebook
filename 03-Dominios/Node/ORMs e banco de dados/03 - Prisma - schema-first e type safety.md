@@ -527,7 +527,8 @@ Prisma Client cobre a maioria dos casos de uso, mas há situações onde SQL bru
 **`$queryRaw` — SELECT com resultado tipado:**
 
 ```typescript
-import { prisma, Prisma } from '@prisma/client'
+import { Prisma } from '@prisma/client'
+import { prisma } from './lib/prisma'
 
 // CORRETO — usa Prisma.sql para parametrização segura
 const userId = 1
@@ -585,7 +586,14 @@ Bancos de dados relacionais têm um limite de conexões simultâneas. Em ambient
 
 **Cache de queries em CDN:**
 
+`cacheStrategy` requer o pacote `@prisma/extension-accelerate` instalado como dependência. O cliente padrão (`PrismaClient`) não expõe essa opção.
+
 ```typescript
+import { withAccelerate } from '@prisma/extension-accelerate'
+
+// Cliente deve ser extendido com Accelerate para cacheStrategy funcionar
+const prisma = new PrismaClient().$extends(withAccelerate())
+
 // Ativar cache por query com TTL e stale-while-revalidate
 const users = await prisma.user.findMany({
   cacheStrategy: {
@@ -655,45 +663,23 @@ const users = await prisma.user.findMany({
 })
 ```
 
-### 2. `include` aninhado e o problema de N+1 em contextos inesperados
+### 2. N+1 queries — chamar Prisma dentro de um loop
 
-**Problema:** o Prisma resolve relações com `include` usando joins ou queries separadas dependendo do contexto. Em alguns bancos e configurações, `include` de relações many-to-many aninhadas gera N queries adicionais — uma por registro pai.
+**Problema:** o N+1 clássico em Prisma com PostgreSQL não vem do `include` (que usa JOINs ou no máximo 2 queries com `relation.mode='join'`, o padrão para PostgreSQL). O N+1 real acontece quando relações são buscadas individualmente dentro de um loop — 1 query para a lista pai + N queries para cada item filho.
 
 ```typescript
-// PROBLEMA — em listas grandes, pode gerar N+1 internamente
-// para relações many-to-many (tags) dependendo do banco/versão
-const posts = await prisma.post.findMany({
-  take: 100,
-  include: {
-    tags: true, // em PostgreSQL com relation.mode='query', pode ser N queries
-    author: {
-      include: {
-        profile: true, // inclui aninhado de 3 níveis — sinal de alerta
-      },
-    },
-  },
-})
+// PROBLEMA: N+1 — 1 query para posts + N queries para o author de cada post
+const posts = await prisma.post.findMany()
+const result = await Promise.all(
+  posts.map(post => prisma.user.findUnique({ where: { id: post.authorId } }))
+)
 ```
 
 ```typescript
-// FIX 1 — usar select com projection granular reduz o volume de dados
+// FIX — include carrega tudo em 2 queries (posts + JOIN com users)
 const posts = await prisma.post.findMany({
-  take: 100,
-  select: {
-    id: true,
-    title: true,
-    tags: { select: { id: true, name: true } },
-    author: { select: { id: true, name: true } },
-  },
+  include: { author: true }
 })
-
-// FIX 2 — para listas grandes onde N+1 é confirmado no log de queries,
-// buscar dados separadamente e fazer join em memória
-const posts = await prisma.post.findMany({ take: 100, select: { id: true, title: true, authorId: true } })
-const authorIds = [...new Set(posts.map(p => p.authorId))]
-const authors = await prisma.user.findMany({ where: { id: { in: authorIds } } })
-const authorMap = new Map(authors.map(a => [a.id, a]))
-const postsWithAuthors = posts.map(p => ({ ...p, author: authorMap.get(p.authorId) }))
 ```
 
 Ativar `log: ['query']` no `PrismaClient` durante desenvolvimento para inspecionar o SQL gerado e identificar N+1 real.
