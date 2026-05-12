@@ -1,7 +1,7 @@
 ---
 title: "Drizzle - ORM lightweight e type-safe"
 created: 2026-05-10
-updated: 2026-05-10
+updated: 2026-05-12
 type: concept
 status: seedling
 progresso: andamento
@@ -234,8 +234,8 @@ await db
   .where(eq(posts.authorId, newUser.id));
 ```
 
-> [!warning] `.returning()` é PostgreSQL-specific
-> O método `.returning()` é suportado nativamente no PostgreSQL. No MySQL e SQLite, o Drizzle emite queries adicionais para simular o comportamento ou retorna tipos diferentes. Em projetos multi-banco, verifique a documentação do dialect específico.
+> [!warning] `.returning()` é PostgreSQL e SQLite only
+> O método `.returning()` é suportado nativamente no **PostgreSQL** e no **SQLite**. No **MySQL, não há suporte** — não existe simulação automática nem queries extras emitidas pelo Drizzle. Para recuperar o ID gerado em inserts com autoincrement no MySQL, use `.$returningId()`. Para outros campos, execute um `SELECT` separado após o insert.
 
 ### Relations API
 
@@ -260,12 +260,14 @@ export const postsRelations = relations(posts, ({ one }) => ({
 Com as relações definidas, o `db.query.*` (Relational Query API) permite carregar dados aninhados:
 
 ```typescript
+import { asc, isNull } from 'drizzle-orm';
+
 // Users com posts associados — gera SQL otimizado (sem N+1)
 const usersWithPosts = await db.query.users.findMany({
   with: {
     posts: {
       where: isNull(posts.publishedAt), // só rascunhos
-      orderBy: posts.createdAt,
+      orderBy: [asc(posts.publishedAt)],
       limit: 5,
     },
   },
@@ -283,7 +285,7 @@ const post = await db.query.posts.findFirst({
 ```
 
 > [!important] SQL joins vs Relations API — não misture
-> O query builder SQL (`.select().from().leftJoin()`) retorna **linhas planas** — você define manualmente a forma do resultado. A Relations API (`.query.*`) retorna **objetos aninhados estruturados** com tipos inferidos automaticamente. Misturar os dois em uma mesma query não é possível e confunde os tipos gerados pelo TypeScript.
+> O query builder SQL (`.select().from().leftJoin()`) sem projeção retorna **objetos agrupados por tabela** (`{ posts: Post; users: User | null }[]`), não relações aninhadas. Com projeção customizada, retorna exatamente a forma que você definiu. A Relations API (`.query.*`) retorna **objetos aninhados estruturados** automaticamente com tipos inferidos. Misturar os dois em uma mesma query não é possível e confunde os tipos gerados pelo TypeScript.
 
 ### Drizzle Kit — migrations
 
@@ -344,7 +346,7 @@ import { users } from './schema';
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const sql = neon(env.DATABASE_URL);
-    const db = drizzle(sql);
+    const db = drizzle({ client: sql });
 
     const result = await db
       .select({ id: users.id, name: users.name })
@@ -406,7 +408,7 @@ A armadilha mais comum ao aprender Drizzle é misturar os dois sistemas de query
 **Problema:** usar `leftJoin` no query builder e esperar objetos aninhados como na Relations API:
 
 ```typescript
-// ❌ leftJoin retorna linhas PLANAS — você define a forma do objeto
+// ❌ leftJoin sem projeção retorna objetos agrupados por tabela — não relações aninhadas
 const result = await db
   .select()
   .from(posts)
@@ -414,7 +416,7 @@ const result = await db
 
 // result é: { posts: Post; users: User | null }[]
 // NÃO é: (Post & { author: User })[]
-// Tentar tratar como objeto aninhado gera runtime errors silenciosos
+// Tentar acessar result[0].author retorna undefined — não existe essa chave
 ```
 
 **Fix:** use a Relations API quando precisar de objetos aninhados, ou shape o resultado manualmente no query builder:
@@ -488,7 +490,7 @@ import { neon } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
 
 const sql = neon(process.env.DATABASE_URL!);
-export const db = drizzle(sql);
+export const db = drizzle({ client: sql });
 
 // ✅ Opção 2: postgres.js com max de conexões limitado
 // e DATABASE_URL apontando para PgBouncer/Supabase Pooler
