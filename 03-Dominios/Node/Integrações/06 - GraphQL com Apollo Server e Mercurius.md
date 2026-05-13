@@ -286,7 +286,9 @@ const contextFn = async ({ req }: { req: Express.Request }): Promise<RequestCont
 
 ```typescript
 // ── Apollo Server + graphql-ws ──────────────────────────────────────────────
+import express from 'express';
 import { ApolloServer } from "@apollo/server";
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import { PubSub } from "graphql-subscriptions";
 import { useServer } from "graphql-ws/lib/use/ws";
@@ -332,6 +334,7 @@ const resolvers = {
   Subscription: {
     messageSent: {
       subscribe: (_: unknown, { channel }: { channel: string }) =>
+        // graphql-subscriptions v1.x — use asyncIterableIterator() in v2+
         pubsub.asyncIterator([`${MESSAGE_SENT}_${channel}`]),
     },
   },
@@ -501,6 +504,7 @@ const productionServer = new ApolloServer({
   introspection: process.env.NODE_ENV !== "production", // false em prod
   plugins: [
     ApolloServerPluginLandingPageDisabled(), // desabilita Apollo Sandbox em prod
+    ApolloServerPluginInlineTrace(), // opcional: habilita tracing inline para Apollo Studio / APM
   ],
 });
 ```
