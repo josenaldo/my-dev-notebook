@@ -17,7 +17,9 @@ tags:
 # Semver e gerenciamento de dependências
 
 > [!abstract] TL;DR
-> Semver define `MAJOR.MINOR.PATCH`: MAJOR quebra API, MINOR adiciona retrocompatível, PATCH corrige bugs sem quebrar. Os operadores `^` (compatível com MAJOR: `>=1.2.3 <2.0.0`) e `~` (compatível com MINOR: `>=1.2.3 <1.3.0`) são os mais usados em `package.json`. Lockfiles (`package-lock.json`, `pnpm-lock.yaml`, `yarn.lock`, `bun.lock`) garantem reprodutibilidade — **sempre comite**. Automatização de atualizações via **Renovate** ou **Dependabot** é prática essencial em 2026 para manter deps atualizadas sem risco de quebras silenciosas.
+> Semver define `MAJOR.MINOR.PATCH`: MAJOR quebra API, MINOR adiciona retrocompatível, PATCH corrige bugs sem quebrar. A versão `0.x.y` é pre-stable — qualquer mudança pode quebrar.
+> Os operadores `^` (compatível com MAJOR: `>=1.2.3 <2.0.0`) e `~` (compatível com MINOR: `>=1.2.3 <1.3.0`) são os mais usados em `package.json`; evite `*` e `latest` em produção.
+> Lockfiles (`package-lock.json`, `pnpm-lock.yaml`, `yarn.lock`, `bun.lock`) garantem reprodutibilidade — **sempre comite** em apps; use `npm ci` em pipelines, nunca `npm install`. Automatize atualizações com **Renovate** ou **Dependabot** para manter deps seguras sem risco de quebras silenciosas.
 
 ## O que é
 
