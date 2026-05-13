@@ -66,7 +66,7 @@ aliases:
 
 > Ver [[05 - Built-in test runner - node-test]] para guia do `node:test` nativo.
 
-### Runtime
+### Runtime alternativo
 
 | Situação | Recomendação |
 |----------|-------------|
