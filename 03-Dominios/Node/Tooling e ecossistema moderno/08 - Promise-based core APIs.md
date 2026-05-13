@@ -41,7 +41,7 @@ Para resolver isso sem quebrar compatibilidade retroativa, o Node.js adicionou *
 
 ### node:fs/promises
 
-Disponível desde Node 10.0.0 (estável em Node 14). Cobre operações de arquivo e diretório com interface promise.
+Disponível como `fs.promises` desde Node 10.1.0 (experimental), estável em Node 11.14.0/10.17.0; o subpath `node:fs/promises` foi adicionado em Node 14.0.0. Cobre operações de arquivo e diretório com interface promise.
 
 **Operações principais:** `readFile`, `writeFile`, `appendFile`, `unlink`, `rename`, `mkdir`, `rm`, `stat`, `access`, `readdir`, `copyFile`, `open`.
 
@@ -129,30 +129,32 @@ console.log('500ms depois');
 const result = await setTimeout(100, 'done');  // resolve com 'done' após 100ms
 console.log(result);  // 'done'
 
-// setImmediate: resolve no próximo tick do check phase
+// setImmediate: resolve na check phase da próxima iteração do event loop
 await setImmediate();
-console.log('após o check phase atual');
+console.log('após a check phase atual');
 ```
 
 **`setInterval` como async generator** — gera ticks em intervalos regulares sem acumular callback hell:
 
 ```js
-import { setInterval } from 'node:timers/promises';
-import { setTimeout } from 'node:timers/promises';
+import { setInterval, setTimeout } from 'node:timers/promises';
 
-// polling: verifica condição a cada 200ms
-const ac = new AbortController();
+const TIMEOUT_MS = 2000;
+const start = Date.now();
 
-// para o generator após 2 segundos
-setTimeout(2000).then(() => ac.abort());
-
-for await (const _ of setInterval(200, null, { signal: ac.signal })) {
+// polling: verifica condição a cada 200ms, para com break ou timeout
+for await (const _ of setInterval(200)) {
   const status = await verificarServico();  // função hipotética
   if (status === 'ready') {
     console.log('serviço pronto');
     break;
   }
+  if (Date.now() - start > TIMEOUT_MS) {
+    throw new Error('timeout aguardando serviço');
+  }
 }
+// Nota: para cancelamento externo com AbortController, envolva em try/catch
+// para capturar o AbortError que o generator lança ao ser abortado
 ```
 
 ### node:readline/promises
