@@ -19,7 +19,7 @@ tags:
 # Package managers - npm, pnpm, yarn e bun
 
 > [!abstract] TL;DR
-> Em 2026, há 4 gerenciadores de pacotes relevantes para projetos [[Node.js]]: **npm v10** é o default, vem bundled com o Node e cobre 99% dos casos com boa maturidade e compatibilidade universal; **pnpm v9** é o mais eficiente em disco e memória — instala cada versão de pacote uma única vez no store global e usa hard links + symlinks, tornando monorepos rápidos e enxutos; **yarn v4 Berry** aposta em Plug'n'Play (PnP), eliminando `node_modules` por completo via `.pnp.cjs` e habilitando zero-installs em CI ao commitar a cache; **Bun v1.1+** é o mais rápido de todos — 10 a 25× mais rápido que npm no install graças a I/O nativo em Zig, lockfile binário e integração com seu próprio runtime. Para projetos novos sem restrições externas: **pnpm**; para performance máxima de install ou uso em edge/CLI: **Bun**; para compatibilidade máxima com tooling legado ou times conservadores: **npm**. A escolha de package manager não é cosmética — afeta lockfile, hoisting, funcionamento de workspaces, CI cache e reprodutibilidade de builds.
+> Em 2026, há 4 gerenciadores de pacotes relevantes para projetos [[Node.js]]: **npm v10** é o default, vem bundled com o Node e cobre 99% dos casos com boa maturidade e compatibilidade universal; **pnpm v9** é o mais eficiente em disco e memória — instala cada versão de pacote uma única vez no store global e usa hard links + symlinks, tornando monorepos rápidos e enxutos; **yarn v4 Berry** aposta em Plug'n'Play (PnP), eliminando `node_modules` por completo via `.pnp.cjs` e habilitando zero-installs em CI ao commitar a cache; **Bun v1.1+** é o mais rápido de todos — 10 a 25× mais rápido que npm no install graças a I/O nativo em Zig, lockfile texto otimizado (padrão desde v1.2) e integração com seu próprio runtime. Para projetos novos sem restrições externas: **pnpm**; para performance máxima de install ou uso em edge/CLI: **Bun**; para compatibilidade máxima com tooling legado ou times conservadores: **npm**. A escolha de package manager não é cosmética — afeta lockfile, hoisting, funcionamento de workspaces, CI cache e reprodutibilidade de builds.
 
 ## O que é
 
@@ -139,7 +139,7 @@ npm version patch    # Incrementar versão patch e criar tag git
 
 ### pnpm v9
 
-O **pnpm** (Performant npm) usa uma arquitetura fundamentalmente diferente para armazenar e acessar pacotes. Em vez de copiar arquivos para cada `node_modules` de cada projeto, ele mantém um **store global** (`~/.pnpm-store`) onde cada versão de cada pacote existe uma única vez. Os `node_modules` dos projetos são preenchidos com **hard links** para os arquivos do store — evitando duplicação de bytes em disco. Pastas em `node_modules` são implementadas como **symlinks** para o store virtual.
+O **pnpm** (Performant npm) usa uma arquitetura fundamentalmente diferente para armazenar e acessar pacotes. Em vez de copiar arquivos para cada `node_modules` de cada projeto, ele mantém um **store global** (`~/.pnpm-store`) onde cada versão de cada pacote existe uma única vez. Os **arquivos individuais** dentro dos pacotes são acessados por **hard links** diretos ao store — sem nenhuma duplicação de bytes em disco. Já as **entradas de pacote** em `node_modules` (o que você usa ao fazer `require('express')`) são **symlinks** que apontam para o diretório correspondente dentro de `node_modules/.pnpm/<pkg@version>/node_modules/<pkg>/` (o virtual store). É essa separação — hard links para arquivos, symlinks para diretórios de pacotes — que impede phantom dependencies: apenas pacotes explicitamente declarados no `package.json` ficam visíveis na raiz de `node_modules`.
 
 Essa arquitetura traz dois benefícios principais:
 1. **Economiza disco**: um projeto com 500 dependências que compartilha 80% com outro projeto ocupa apenas 20% extra de espaço.
@@ -277,7 +277,7 @@ Para ferramentas sem suporte a PnP (alguns bundlers legados, IDEs sem plugin), o
 
 O **Bun** é um runtime JavaScript que inclui package manager, bundler, test runner e transpiler nativos. Diferentemente de npm, pnpm e yarn — que são ferramentas que gerenciam pacotes para o Node.js — o Bun é um runtime completo construído sobre o motor **JavaScriptCore** (o mesmo do Safari/WebKit) e implementado em **Zig**, uma linguagem de sistemas com performance próxima a C.
 
-O package manager do Bun é integrado ao runtime: `bun install` usa I/O nativo em Zig com operações de arquivo altamente otimizadas, paralelização agressiva de downloads e um **lockfile binário** (`bun.lockb`) que é muito mais rápido de ler e escrever do que JSON ou YAML.
+O package manager do Bun é integrado ao runtime: `bun install` usa I/O nativo em Zig com operações de arquivo altamente otimizadas, paralelização agressiva de downloads e um **lockfile texto** (`bun.lock`, padrão desde Bun v1.2) — legível por humanos e revisável em pull requests. O formato binário legado `bun.lockb` ainda é suportado mas não é mais o padrão.
 
 **Benchmarks de install (2025–2026, projeto médio ~500 deps):**
 
@@ -310,14 +310,17 @@ bun run src/index.ts
 # Equivalente ao npx
 bunx create-next-app@latest
 
-# Executar comando de pacote local
-bun exec tsc --noEmit
+# Executar comando de pacote local (equivalente a npx/pnpm exec)
+bunx tsc --noEmit
 
-# Lockfile binário — visualizar como texto
-bun bun.lockb
+# Lockfile texto (padrão desde Bun v1.2) — legível diretamente
+cat bun.lock
+
+# Lockfile binário legado — visualizar como texto (se ainda usando bun.lockb)
+bun ./bun.lockb
 ```
 
-O Bun gera um `node_modules` convencional por padrão, garantindo compatibilidade com ferramentas que assumem essa estrutura. O lockfile `bun.lockb` é binário (não legível por humanos), mas o Bun provê comando para inspecioná-lo.
+O Bun gera um `node_modules` convencional por padrão, garantindo compatibilidade com ferramentas que assumem essa estrutura. Desde Bun v1.2 (início de 2025), o lockfile padrão é `bun.lock` (texto, legível e revisável em PRs). O formato binário legado `bun.lockb` ainda é suportado para projetos existentes.
 
 **Compatibilidade com `package.json` existente:** O Bun lê e respeita `package.json` padrão. Projetos npm/pnpm/yarn podem usar `bun install` como drop-in replacement para install mais rápido, mesmo sem migrar o runtime. É possível ter `package-lock.json` e `bun.lockb` coexistindo, mas o recomendado é escolher um e usar `--frozen-lockfile` em CI.
 
@@ -330,7 +333,7 @@ O Bun gera um `node_modules` convencional por padrão, garantindo compatibilidad
 | **Velocidade install** | Lento | Rápido | Rápido | Ultra-rápido |
 | **Uso de disco** | Alto (cópias) | Muito baixo (hard links) | Baixo (PnP) | Baixo |
 | **node_modules** | Flat hoisted | Symlinks + virtual store | Não (PnP) ou node-modules | Convencional |
-| **Lockfile** | `package-lock.json` (JSON) | `pnpm-lock.yaml` (YAML) | `yarn.lock` (YAML) | `bun.lockb` (binário) |
+| **Lockfile** | `package-lock.json` (JSON) | `pnpm-lock.yaml` (YAML) | `yarn.lock` (YAML) | `bun.lock` (texto, padrão v1.2+) |
 | **Workspaces** | Sim (nativo v7+) | Excelente (pnpm-workspace.yaml) | Sim (nativo) | Sim (nativo) |
 | **Compatibilidade** | Universal | Muito alta | Requer suporte PnP | Alta (node_modules mode) |
 | **PnP / zero-installs** | Não | Não | Sim (modo padrão) | Não |
@@ -495,7 +498,7 @@ When asked about this, you can say:
 
 When asked about this, you can say:
 
-> "I'd recommend Bun as a package manager in two specific scenarios: first, when install speed is a bottleneck — Bun's native I/O implementation in Zig makes it 10 to 25 times faster than npm on cold cache, which directly reduces CI costs in pipelines that install from scratch frequently. Second, when you're already using Bun as your runtime, since the package manager is deeply integrated and the lockfile format is optimized for Bun's resolver. The main trade-off is the binary lockfile format, bun.lockb, which is not human-readable and cannot be reviewed in pull requests the same way JSON or YAML lockfiles can — you need the Bun CLI to inspect it. Another consideration is that Bun is newer and moves fast, so some edge cases around specific npm lifecycle hooks or unusual package structures may not be supported yet, though the compatibility story has improved significantly in v1.1. For teams already on npm or pnpm who want faster installs without changing anything else, using bun install as a drop-in replacement for the install step — while keeping the existing runtime and scripts — is a very low-risk way to get the speed benefits."
+> "I'd recommend Bun as a package manager in two specific scenarios: first, when install speed is a bottleneck — Bun's native I/O implementation in Zig makes it 10 to 25 times faster than npm on cold cache, which directly reduces CI costs in pipelines that install from scratch frequently. Second, when you're already using Bun as your runtime, since the package manager is deeply integrated and the lockfile format is optimized for Bun's resolver. Since Bun v1.2 the default lockfile is bun.lock, a text format that is human-readable and reviewable in pull requests just like JSON or YAML lockfiles. The legacy binary format bun.lockb is still supported for existing projects. Another consideration is that Bun is newer and moves fast, so some edge cases around specific npm lifecycle hooks or unusual package structures may not be supported yet, though the compatibility story has improved significantly in v1.1. For teams already on npm or pnpm who want faster installs without changing anything else, using bun install as a drop-in replacement for the install step — while keeping the existing runtime and scripts — is a very low-risk way to get the speed benefits."
 
 ---
 
