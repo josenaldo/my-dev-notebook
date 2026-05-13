@@ -3,7 +3,7 @@ title: "Node.js"
 type: moc
 publish: true
 created: 2026-05-04
-updated: 2026-05-12
+updated: 2026-05-13
 status: growing
 progresso: andamento
 tags:
@@ -17,9 +17,9 @@ aliases:
 # Node.js
 
 > [!abstract] TL;DR
-> Trilha Node Senior em 6 galhos: Runtime e Event Loop, Paralelismo, Streams, Frameworks e arquitetura, Observability e produção, ORMs e banco de dados. Cada galho cobre os 4–5 players principais de cada área, padrões críticos de produção, vocabulário técnico e respostas de entrevista em inglês.
+> Trilha Node Senior em 7 galhos: Runtime e Event Loop, Paralelismo, Streams, Frameworks e arquitetura, Observability e produção, ORMs e banco de dados, Integrações. Cada galho cobre os 4–5 players principais de cada área, padrões críticos de produção, vocabulário técnico e respostas de entrevista em inglês.
 
-Estante de Node.js da trilha senior em prep para entrevistas internacionais. Cobre desde os fundamentos do runtime (event loop, libuv, single-thread) até padrões de produção (observability, SLOs, alertas Grafana). A trilha está organizada em 6 galhos temáticos progressivos — cada galho é um conjunto de notas atômicas com seção de entrevista em inglês, vocabulário técnico e decision trees práticos.
+Estante de Node.js da trilha senior em prep para entrevistas internacionais. Cobre desde os fundamentos do runtime (event loop, libuv, single-thread) até integrações de produção (PostgreSQL, Redis, Kafka, gRPC, GraphQL, WebSockets, HTTP clients e padrões de resiliência). A trilha está organizada em 7 galhos temáticos progressivos — cada galho é um conjunto de notas atômicas com seção de entrevista em inglês, vocabulário técnico e decision trees práticos.
 
 ## Conteúdo
 
@@ -31,9 +31,10 @@ Estante de Node.js da trilha senior em prep para entrevistas internacionais. Cob
 - [[03-Dominios/Node/Frameworks e arquitetura/index]] — galho 4: os 4 frameworks principais (Express, NestJS, Fastify, Hono), patterns transversais (middleware, error handling, validation), Clean Architecture e DI
 - [[03-Dominios/Node/Observability e produção/index]] — galho 5: logs, métricas, traces, profiling avançado, SLOs, dashboards Grafana, alertas multi-janela e checklists de produção
 - [[03-Dominios/Node/ORMs e banco de dados/index]] — galho 6: os 4 ORMs principais (Sequelize, Prisma, TypeORM, Drizzle), padrões críticos de N+1, migrations, transações e paginação, decision tree para escolha de ORM
+- [[03-Dominios/Node/Integrações/index]] — galho 9: PostgreSQL (node-postgres), Redis (ioredis), BullMQ, Kafka (kafkajs), gRPC, GraphQL, WebSockets, HTTP clients e padrões de resiliência
 
 ## Veja também
 
-- [[03-Domínios/JavaScript/index|JavaScript]]
+- [[03-Dominios/JavaScript/index|JavaScript]]
 - [[03-Dominios/TypeScript/index|TypeScript]]
 - [[Ferramentas|Ferramentas]]
