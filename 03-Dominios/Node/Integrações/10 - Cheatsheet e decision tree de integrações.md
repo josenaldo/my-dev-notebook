@@ -332,7 +332,6 @@ import {
   bulkhead,
   timeout,
   TimeoutStrategy,
-  wrap,
 } from 'cockatiel';
 
 /**
@@ -377,7 +376,7 @@ export function createResilientPolicy(options: {
   const bulkheadPolicy = bulkhead(concurrency, concurrency * 2); // queue até 2x concurrency
 
   // Composição: bulkhead > circuit breaker > retry > timeout
-  return wrap(bulkheadPolicy, cbPolicy, retryPolicy, timeoutPolicy);
+  return Policy.wrap(bulkheadPolicy, cbPolicy, retryPolicy, timeoutPolicy);
 }
 
 // Exemplo de uso: chamada HTTP protegida por resiliência
