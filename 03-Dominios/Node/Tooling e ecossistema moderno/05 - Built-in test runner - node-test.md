@@ -21,7 +21,7 @@ aliases:
 
 > [!abstract] TL;DR
 > O `node:test` (Node 18 experimental, estável no Node 20+) oferece `test`, `describe`, `it`, hooks (`before`/`after`/`beforeEach`/`afterEach`) e mocking nativo (`t.mock.fn`, `t.mock.method`, `t.mock.timers`) sem dependências externas.
-> É competitivo com Vitest para projetos simples, bibliotecas e CLIs. `node --test --watch` e `--test-reporter=spec` completam o setup básico.
+> É competitivo com Vitest para projetos simples, bibliotecas e CLIs. `node --test --watch` (Node 18.13+/19.2+) e `--test-reporter=spec` (Node 19.9+/20.3+) completam o setup básico.
 > Para Testing Library, JSDOM, snapshot testing ou cobertura via istanbul, ainda use Vitest ou Jest.
 
 ## O que é
@@ -274,24 +274,26 @@ node --test
 # Roda arquivo específico
 node --test src/utils.test.js
 
-# Modo watch: re-executa ao detectar mudanças (Node 22+)
+# Modo watch: re-executa ao detectar mudanças (Node 18.13+/19.2+, estável no Node 22)
 node --test --watch
 
-# Saída legível por humanos
+# Saída legível por humanos (Node 19.9+/20.3+)
 node --test --test-reporter=spec
 
-# Saída TAP para CI/CD (padrão quando redirecionado)
+# Saída TAP para CI/CD (padrão em Node 18 e quando redirecionado)
 node --test --test-reporter=tap
 
 # Executa apenas testes marcados com test.only
 node --test --test-only
 
-# Paralelismo de arquivos (Node 21+)
+# Paralelismo de arquivos (Node 18.19+/20.10+/21+)
 node --test --test-concurrency=4
 
 # Cobertura de código nativa (Node 22+, experimental)
 node --test --experimental-test-coverage
 ```
+
+> [!tip] Em Node 18 LTS, o output padrão é TAP. O `--test-reporter=spec` está disponível a partir do Node 19.9+/20.3+.
 
 No `package.json`, o padrão recomendado para projetos que usam `node:test`:
 
@@ -319,8 +321,8 @@ No `package.json`, o padrão recomendado para projetos que usam `node:test`:
 | JSDOM / browser mode | Não | Sim |
 | Testing Library | Não | Sim |
 | Cobertura via istanbul | Não (nativa limitada) | Sim (`@vitest/coverage-v8`) |
-| Watch mode | Sim (Node 22+) | Sim (nativo, mais maduro) |
-| TypeScript sem config | Não (precisa de tsx/ts-node) | Sim (com Vite pipeline) |
+| Watch mode | Sim (Node 18.13+/19.2+) | Sim (nativo, mais maduro) |
+| TypeScript sem config | Não (< Node 22); nativo com strip-types (Node 22+) | Sim (com Vite pipeline) |
 | Velocidade de startup | Muito rápida | Rápida (mas com overhead Vite) |
 | Reporters customizados | Sim | Sim (mais ecossistema) |
 
@@ -385,7 +387,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 test('soma', () => {
-  assert.equal(2 + 2, 5); // falhou, mas o processo sai com código 0
+  assert.equal(2 + 2, 5); // assert falha, mas o comportamento do exit code não é confiável (pode variar por versão)
 });
 ```
 
@@ -502,7 +504,7 @@ The most significant limitation is the absence of snapshot testing, which is a c
 | Cobertura de código | Code coverage |
 | Modo de observação | Watch mode |
 | Suíte de testes | Test suite |
-| Substituição de método | Method stubbing |
+| Substituição de método | Method mocking |
 | Isolamento de teste | Test isolation |
 
 ## Fontes
