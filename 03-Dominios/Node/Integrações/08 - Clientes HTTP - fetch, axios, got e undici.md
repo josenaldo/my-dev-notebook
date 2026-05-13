@@ -216,9 +216,9 @@ async function fetchWithRetry(url: string): Promise<string> {
       limit: 3,                        // máximo 3 tentativas extras
       methods: ['GET', 'HEAD'],
       statusCodes: [429, 500, 502, 503, 504],
-      calculateDelay: ({ retryCount }) =>
+      calculateDelay: ({ attemptCount }) =>
         // backoff exponencial com jitter: 500ms, 1000ms, 2000ms (± 20%)
-        Math.floor(500 * 2 ** retryCount * (0.8 + Math.random() * 0.4)),
+        Math.floor(500 * 2 ** attemptCount * (0.8 + Math.random() * 0.4)),
     },
     timeout: {
       connect: 2_000,    // TCP handshake
@@ -227,7 +227,7 @@ async function fetchWithRetry(url: string): Promise<string> {
     },
     hooks: {
       beforeRetry: [
-        ({ retryCount, error }) => {
+        (error, retryCount) => {
           console.warn(`Retry #${retryCount} after error: ${error.message}`);
         },
       ],
@@ -363,7 +363,7 @@ function mockJsonResponse(data: unknown, status = 200): Response {
 
 describe('fetchUserById', () => {
   afterEach(() => {
-    vi.restoreAllMocks(); // restaura o fetch global após cada teste
+    vi.unstubAllGlobals(); // restaura o fetch global após cada teste (stubGlobal não é desfeito por restoreAllMocks)
   });
 
   it('retorna o usuário quando a API responde 200', async () => {
