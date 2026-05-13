@@ -201,46 +201,34 @@ const result = await hash('password', 10);
 
 Um binário SEA gerado no macOS não roda no Linux e vice-versa — o binário é uma cópia do Node nativo da máquina de build. Distribuir um único binário para múltiplas plataformas requer builds separados, tipicamente em CI.
 
-```bash
-# ❌ Problema: gerar o binário apenas na máquina local (macOS) e distribuir para Linux
-# O binário é um Mach-O (macOS), não um ELF (Linux)
-cp $(which node) myapp   # copia o Node macOS arm64
-npx postject myapp ...
-# ./myapp no Linux → exec format error
+```js
+// ❌ Problema: gerar o binário apenas na máquina local (macOS) e distribuir para Linux
+// O binário é um Mach-O (macOS), não um ELF (Linux)
+// cp $(which node) myapp   → copia o Node macOS arm64
+// npx postject myapp ...
+// ./myapp no Linux → exec format error
 
-# ✅ Fix: configurar CI com jobs por plataforma
-# .github/workflows/build.yml (exemplo):
-# jobs:
-#   build-linux:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - run: cp $(which node) myapp-linux && npx postject ...
-#   build-macos:
-#     runs-on: macos-latest
-#     steps:
-#       - run: cp $(which node) myapp-macos && npx postject ...
+// ✅ Fix: configurar CI com jobs por plataforma (cada runner gera o binário nativo)
+// build-linux: runs-on ubuntu-latest → myapp-linux
+// build-macos: runs-on macos-latest  → myapp-macos
+// build-win:   runs-on windows-latest → myapp.exe
 ```
 
 ### Armadilha 3: Incluir o diretório node_modules no bundle sem tree-shaking
 
 Se o bundle for gerado com `esbuild --bundle` sem otimização, todas as dependências (incluindo devDependencies não removidas) podem ser incluídas, inflando o blob e o binário final.
 
-```bash
-# ❌ Problema: bundle sem tree-shaking — inclui dependências desnecessárias
-npx esbuild src/index.js --bundle --platform=node --outfile=dist/bundle.js
-# Resultado: bundle.js com 15 MB (inclui lodash completo, tipos TypeScript, etc.)
-# Binário final: ~80 MB
+```js
+// ❌ Problema: bundle sem tree-shaking — inclui dependências desnecessárias
+// npx esbuild src/index.js --bundle --platform=node --outfile=dist/bundle.js
+// Resultado: bundle.js com 15 MB (inclui lodash completo, tipos TypeScript, etc.)
+// Binário final: ~80 MB
 
-# ✅ Fix: ativar minification e tree-shaking, externalizar módulos nativos
-npx esbuild src/index.js \
-  --bundle \
-  --platform=node \
-  --minify \
-  --tree-shaking=true \
-  --external:*.node \
-  --outfile=dist/bundle.js
-# Resultado: bundle.js com 3 MB
-# Binário final: ~65 MB
+// ✅ Fix: ativar minification e tree-shaking, externalizar módulos nativos
+// npx esbuild src/index.js \
+//   --bundle --platform=node --minify --tree-shaking=true \
+//   --external:*.node --outfile=dist/bundle.js
+// Resultado: bundle.js com 3 MB → Binário final: ~65 MB
 ```
 
 ## Em entrevista
