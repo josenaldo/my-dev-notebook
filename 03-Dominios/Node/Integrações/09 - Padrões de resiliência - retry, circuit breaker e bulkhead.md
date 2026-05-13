@@ -280,7 +280,7 @@ async function resilientFetch(url: string): Promise<unknown> {
 | Composição de políticas | `Policy.wrap()` elegante | Não tem | Manual e frágil |
 | Monitoramento/eventos | Eventos por política | Eventos ricos no CB | Você implementa tudo |
 | Tamanho do bundle | ~15 KB | ~12 KB | 0 KB |
-| API | Fluent/builder | Orientada a eventos | Qualquer coisa |
+| API | Standalone functions + `Policy.wrap()` | Orientada a eventos | Qualquer coisa |
 | Typescript | Excelente suporte | Tipos incluídos | Você define |
 | Melhor para | Composição de múltiplas políticas | Somente circuit breaker robusto | Aprender ou caso muito específico |
 
