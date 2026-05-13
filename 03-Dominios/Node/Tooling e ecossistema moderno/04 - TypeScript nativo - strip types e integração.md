@@ -18,7 +18,7 @@ tags:
 
 > [!abstract] TL;DR
 > O Node.js 22.6.0 introduziu `--experimental-strip-types`, que remove anotações de tipo diretamente do runtime sem transpilação completa — sem build step, sem ts-node.
-> O Node 22.7.0 adicionou `--transform-types`, que vai além: suporta `enum` usando esbuild internamente. O Node 24 estabilizou ambos, removendo o prefixo `--experimental`.
+> O Node 22.7.0 adicionou `--experimental-transform-types`, que vai além: suporta `enum` usando esbuild internamente. O Node 24 (24.12.0+) estabilizou o type stripping como padrão para sintaxe TypeScript apagável — `node app.ts` funciona sem flag. `--experimental-transform-types` (enum/namespace) permanece experimental mesmo no Node 24.
 > Para desenvolvimento com hot reload, `tsx` (baseado em esbuild) é o substituto moderno do `ts-node`. Para projetos legados com ts-node, adicionar `@swc/core` como transpiler acelera significativamente a inicialização.
 > Independente da estratégia de execução, configure o `tsconfig.json` com `moduleResolution: "NodeNext"` e `module: "NodeNext"` para projetos Node modernos.
 
@@ -33,13 +33,13 @@ A partir do Node 22.6.0, o runtime passou a oferecer suporte nativo para TypeScr
 | Aspecto | Type stripping | Transpilação completa |
 |---------|---------------|-----------------------|
 | O que faz | Remove anotações de tipo | Converte sintaxe TS para JS |
-| Suporta `enum` | Não (strip-types) / Sim (transform-types) | Sim |
+| Suporta `enum` | Não (strip-types) / Sim (--experimental-transform-types) | Sim |
 | Suporta decorators legados | Não | Sim |
 | Velocidade | Muito rápida (pura remoção de texto) | Mais lenta (parsing + geração) |
 | Sourcemaps | Não (strip-types) | Sim |
 | Ferramentas | Node nativo | tsc, esbuild, SWC, Babel |
 
-O type stripping é adequado para scripts simples, CLIs e código de servidor que não usa features TypeScript avançadas. Para projetos que dependem de `enum`, decorators legados ou `namespace`, é necessário `--transform-types` ou um transpiler completo.
+O type stripping é adequado para scripts simples, CLIs e código de servidor que não usa features TypeScript avançadas. Para projetos que dependem de `enum`, decorators legados ou `namespace`, é necessário `--experimental-transform-types` ou um transpiler completo.
 
 ### Por que suporte nativo importa
 
@@ -73,9 +73,10 @@ O Node remove as anotações de tipo do arquivo TypeScript e executa o JavaScrip
 
 - `enum` (gera código JavaScript, não é apenas anotação)
 - `namespace` (mesmo motivo)
-- Decorators legados (`@Decorator` estilo TypeScript < 5 sem `experimentalDecorators`)
+- Decorators legados (`@Decorator` estilo TypeScript < 5 com `experimentalDecorators`)
 - `const enum` (substituído por valores literais em tempo de compilação)
 - Paths aliases do tsconfig (`@/components/...`) — o Node não resolve paths do tsconfig
+- `.tsx` (JSX + TypeScript) — não suportado pelo mecanismo nativo de strip-types; use tsx CLI ou um bundler
 
 **Execução básica:**
 
@@ -112,13 +113,13 @@ for (const user of users) {
 ```
 
 > [!important]
-> O Node 22.18 é o LTS que embarca `--experimental-strip-types` estável para o ramo 22. Ambientes de produção no Node 22 devem usar 22.18+.
+> A partir do Node 22.18.0 (LTS do ramo 22), o type stripping é habilitado **por padrão** — `node app.ts` funciona sem nenhuma flag para sintaxe TypeScript apagável (interfaces, type aliases, generics, etc.). O flag `--experimental-strip-types` não é mais necessário nessa versão, embora o comportamento continue ativo. Ambientes de produção no Node 22 devem usar 22.18+.
 
 ---
 
-### `--transform-types` (Node 22.7.0+)
+### `--experimental-transform-types` (Node 22.7.0+)
 
-Introduzido uma versão após o strip-types, o `--transform-types` vai além: usa **esbuild** internamente para transformar construções TypeScript que geram código JavaScript real, como `enum`.
+Introduzido uma versão após o strip-types, o `--experimental-transform-types` vai além: usa **esbuild** internamente para transformar construções TypeScript que geram código JavaScript real, como `enum`.
 
 **O que adiciona sobre strip-types:**
 
@@ -129,23 +130,24 @@ Introduzido uma versão após o strip-types, o `--transform-types` vai além: us
 **Trade-offs:**
 
 - Mais lento que strip-types porque invoca esbuild
-- Ainda sem sourcemaps nativos
+- Sourcemaps habilitados automaticamente (implica `--enable-source-maps`)
 - Ainda não resolve paths aliases do tsconfig
 
-**Execução com transform-types:**
+**Execução com --experimental-transform-types:**
 
 ```bash
 # Node 22.7.0 a 22.x
-node --transform-types app.ts
+node --experimental-transform-types app.ts
 
-# Node 24 — flag --experimental removida, suporte estável
-node app.ts  # TypeScript suportado nativamente sem flag
+# Node 24 — type stripping é padrão para sintaxe apagável, mas enum/namespace ainda requer a flag
+node app.ts                              # TypeScript sem enum/namespace: funciona sem flag (Node 24+)
+node --experimental-transform-types app.ts  # ainda necessário para enum/namespace em qualquer versão
 ```
 
-**Exemplo usando enum (requer --transform-types ou tsx):**
+**Exemplo usando enum (requer --experimental-transform-types ou tsx):**
 
 ```ts
-// status.ts — requer --transform-types (ou tsx)
+// status.ts — requer --experimental-transform-types (ou tsx)
 enum Status {
   Active = "active",
   Inactive = "inactive",
@@ -165,7 +167,7 @@ console.log(describe(Status.Pending));  // Aguardando ativação
 ```
 
 > [!tip]
-> No Node 24, o suporte a TypeScript é estável e ambas as flags (`--experimental-strip-types` e `--transform-types`) funcionam sem o prefixo `--experimental`. A experiência é equivalente ao tsx para casos simples.
+> No Node 24 (24.12.0+), o type stripping para sintaxe apagável é o comportamento padrão — `node app.ts` funciona diretamente sem nenhuma flag para código TypeScript que não usa `enum` ou `namespace`. `--experimental-transform-types` permanece experimental mesmo no Node 24 e ainda é necessário para enum e namespace.
 
 ---
 
@@ -321,7 +323,7 @@ A configuração do `tsconfig.json` tem impacto direto em como TypeScript se int
 | Cenário | Ferramenta recomendada |
 |---------|------------------------|
 | Script rápido, sem `enum` ou decorators | `node --experimental-strip-types` (Node 22.6+) |
-| Script com `enum`, Node 22 | `node --transform-types` (Node 22.7+) |
+| Script com `enum`, Node 22 | `node --experimental-transform-types` (Node 22.7+) |
 | Qualquer script TypeScript, Node 24 | `node` (suporte nativo estável) |
 | Dev server com hot reload | `tsx watch` |
 | Projeto legado com ts-node | `ts-node` + SWC (otimização incremental) |
@@ -331,15 +333,15 @@ A configuração do `tsconfig.json` tem impacto direto em como TypeScript se int
 
 ### Comparativo detalhado
 
-| | Node nativo (strip) | Node nativo (transform) | tsx | ts-node + SWC |
-|--|---------------------|------------------------|-----|----------------|
+| | Node nativo (strip) | Node nativo (--experimental-transform-types) | tsx | ts-node + SWC |
+|--|---------------------|----------------------------------------------|-----|----------------|
 | Velocidade de início | ⚡ Muito rápida | 🟡 Rápida | ⚡ Muito rápida | 🟡 Rápida |
 | Suporte a `enum` | ❌ | ✅ | ✅ | ✅ |
-| Sourcemaps | ❌ | ❌ | ✅ | ✅ |
+| Sourcemaps | ❌ | ✅ | ✅ | ✅ |
 | Paths aliases | ❌ | ❌ | ✅ | ✅ (com config) |
 | Hot reload | ❌ (use --watch) | ❌ (use --watch) | ✅ (tsx watch) | ❌ |
 | Zero dependência | ✅ | ✅ | ❌ (dev dep) | ❌ (dev dep) |
-| Node mínimo | 22.6.0 | 22.7.0 | 12+ | 12+ |
+| Node mínimo | 22.6.0 | 22.7.0 | 18+ | 12+ |
 
 ---
 
@@ -369,8 +371,8 @@ move(Direction.Up);
 ```
 
 ```ts
-// ✅ Fix — use --transform-types ou tsx
-// node --transform-types app.ts  (Node 22.7.0+)
+// ✅ Fix — use --experimental-transform-types ou tsx
+// node --experimental-transform-types app.ts  (Node 22.7.0+)
 // ou: npx tsx app.ts
 
 enum Direction {
@@ -472,7 +474,7 @@ The `--experimental-strip-types` flag (introduced in Node 22.6.0) tells the Node
 
 **Q: When would you choose `tsx` over Node's native TypeScript support?**
 
-I would choose `tsx` whenever the project requires features that Node's native strip-types cannot handle: `enum`, path aliases defined in `tsconfig.json`, or reliable sourcemaps for debugging. `tsx` is also the clear choice for development workflows that need hot reload, since `tsx watch` automatically restarts the process on file changes — something the native Node `--watch` flag offers for `.js` files but with less TypeScript awareness. Another practical reason is compatibility with older Node versions: `tsx` works on Node 12+ while `--experimental-strip-types` requires Node 22.6.0 at minimum. For production, I would compile TypeScript with `tsc` or `tsup` regardless of which runtime tool I use in development, so the choice of tsx vs native strip-types mainly affects the developer experience and iteration speed.
+I would choose `tsx` whenever the project requires features that Node's native strip-types cannot handle: `enum`, path aliases defined in `tsconfig.json`, or reliable sourcemaps for debugging. `tsx` is also the clear choice for development workflows that need hot reload, since `tsx watch` automatically restarts the process on file changes — something the native Node `--watch` flag offers for `.js` files but with less TypeScript awareness. Another practical reason is compatibility with older Node versions: `tsx` works on Node 18+ while `--experimental-strip-types` requires Node 22.6.0 at minimum. For production, I would compile TypeScript with `tsc` or `tsup` regardless of which runtime tool I use in development, so the choice of tsx vs native strip-types mainly affects the developer experience and iteration speed.
 
 **Q: What tsconfig settings are recommended for a modern Node.js project?**
 
