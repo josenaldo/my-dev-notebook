@@ -20,7 +20,9 @@ aliases:
 # Built-in test runner - node:test
 
 > [!abstract] TL;DR
-> O `node:test` está disponível desde o Node 18 (experimental) e tornou-se estável no Node 20+. Oferece as funções `test`, `describe`, `it`, `before`, `after`, `beforeEach`, `afterEach` e suporte nativo a mocks via `t.mock.fn`, `t.mock.method` e `t.mock.timers` — zero dependências externas. Para projetos simples é competitivo com o Vitest: `node --test --watch` fornece modo de observação nativo e `--test-reporter=spec` gera saída legível por humanos. A principal limitação é a ausência de snapshot testing, integração com JSDOM, Testing Library e cobertura via istanbul nativa — para esses casos, Vitest ou Jest continuam sendo a escolha certa.
+> O `node:test` (Node 18 experimental, estável no Node 20+) oferece `test`, `describe`, `it`, hooks (`before`/`after`/`beforeEach`/`afterEach`) e mocking nativo (`t.mock.fn`, `t.mock.method`, `t.mock.timers`) sem dependências externas.
+> É competitivo com Vitest para projetos simples, bibliotecas e CLIs. `node --test --watch` e `--test-reporter=spec` completam o setup básico.
+> Para Testing Library, JSDOM, snapshot testing ou cobertura via istanbul, ainda use Vitest ou Jest.
 
 ## O que é
 
@@ -387,10 +389,10 @@ test('soma', () => {
 });
 ```
 
-```bash
-# ✅ Fix: sempre usar --test para execução correta
-node --test src/calculadora.test.js
-# Saída: TAP ou spec com status correto e exit code 1 em caso de falha
+```js
+// ✅ Fix: sempre executar via node --test, nunca diretamente
+// node --test src/calculadora.test.js
+// Saída: TAP ou spec com status correto e exit code 1 em caso de falha
 ```
 
 > [!warning]
