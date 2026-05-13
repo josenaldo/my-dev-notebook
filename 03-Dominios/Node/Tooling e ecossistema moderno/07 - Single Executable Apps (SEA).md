@@ -21,7 +21,7 @@ aliases:
 
 > [!abstract] TL;DR
 > Single Executable Applications (SEA) permitem empacotar um script Node.js em um único binário nativo sem precisar que o Node esteja instalado no destino — útil para CLIs distribuíveis e ferramentas internas.
-> O processo Node SEA usa `sea-config.json` + `node --experimental-sea-config` + `postject` para injetar o script no binário do Node; disponível como experimental no Node 20, estável no Node 22.
+> O processo Node SEA usa `sea-config.json` + `node --experimental-sea-config` + `postject` para injetar o script no binário do Node; disponível como experimental no Node 20, em desenvolvimento ativo no Node 22 (stability 1.1 — a API ainda pode mudar).
 > Alternativa mais simples: `bun build --compile` faz o mesmo em um único comando. Principal limitação de ambas as abordagens: o binário final inclui o runtime completo (~60-90 MB), e o Node SEA não suporta addons nativos (`.node` files) nem múltiplos arquivos sem bundling prévio.
 
 ## O que é
@@ -39,7 +39,7 @@ O SEA não substitui Docker ou ambientes de container — o binário ainda é de
 
 ## Como funciona
 
-### Fluxo Node SEA (experimental Node 20.0.0, estável Node 22.12.0)
+### Fluxo Node SEA (experimental Node 20.0.0, active development Node 22 — stability 1.1)
 
 O processo requer cinco etapas manuais:
 
@@ -147,12 +147,12 @@ O binário gerado pelo `bun build --compile` inclui o runtime JavaScriptCore (ma
 | Tamanho do binário | ~60-90 MB | ~50-80 MB | ~60-80 MB |
 | Compatibilidade Node API | 100% (é o Node) | ~90-95% | ~95% |
 | Addons nativos (.node) | Não suportado | Não suportado | Suportado (limitado) |
-| Maturidade (2026) | Estável (Node 22.12.0) | Beta/experimental | Descontinuado (2024) |
+| Maturidade (2026) | Active development (stability 1.1) | Beta/experimental | Descontinuado (2023) |
 | Cross-compilation | Não (gerar por plataforma) | Experimental | Sim |
-| Assets estáticos | Sim (via sea-config) | Sim (via --assets) | Sim |
+| Assets estáticos | Sim (via sea-config) | Sim (import attributes) | Sim |
 
 > [!warning] pkg está descontinuado
-> O pacote `pkg` (Vercel) foi descontinuado em 2024. Projetos que o usavam devem migrar para Node SEA ou `bun build --compile`. O `@yao-pkg/pkg` é um fork da comunidade, mas sem garantias de manutenção ativa.
+> O pacote `pkg` (Vercel) foi descontinuado em 2023. Projetos que o usavam devem migrar para Node SEA ou `bun build --compile`. O `@yao-pkg/pkg` é um fork da comunidade, mas sem garantias de manutenção ativa.
 
 ## Quando usar
 
@@ -183,7 +183,7 @@ Módulos que dependem de extensões nativas compiladas (`.node` files), como `bc
 ```js
 // ❌ Problema: bundle com addon nativo incluído no SEA
 // dist/bundle.js importa 'bcrypt' que usa um .node addon
-import bcrypt from 'bcrypt';      // bcrypt usa bcrypt/lib/binding/napi-v3/bcrypt_lib.node
+import bcrypt from 'bcrypt';      // bcrypt requer um addon nativo compilado (.node file)
 const hash = await bcrypt.hash('password', 10);
 // ./myapp → Error: Cannot find module 'bcrypt_lib.node'
 // Addons nativos não são encontrados dentro do blob SEA
@@ -235,7 +235,7 @@ Se o bundle for gerado com `esbuild --bundle` sem otimização, todas as depend�
 
 **Q: What are Single Executable Applications in Node.js and when would you use them?**
 
-Single Executable Applications, or SEA, is a Node.js feature (experimental since Node 20, stable in Node 22) that bundles a JavaScript script into the Node.js binary itself, producing a standalone executable that runs without Node.js installed on the target machine. The primary use case is distributing command-line tools or automation scripts as a single binary — similar to what Go or Rust developers can do natively. You would reach for SEA when you need to deliver a CLI tool to machines that don't have Node installed, or when you want to avoid shipping `node_modules` directories or requiring users to run `npm install` before using a tool.
+Single Executable Applications, or SEA, is a Node.js feature (experimental since Node 20, active development in Node 22 at stability level 1.1 — meaning the API can still change) that bundles a JavaScript script into the Node.js binary itself, producing a standalone executable that runs without Node.js installed on the target machine. The primary use case is distributing command-line tools or automation scripts as a single binary — similar to what Go or Rust developers can do natively. You would reach for SEA when you need to deliver a CLI tool to machines that don't have Node installed, or when you want to avoid shipping `node_modules` directories or requiring users to run `npm install` before using a tool.
 
 **Q: What is the difference between Node SEA and `bun build --compile`, and how do you choose between them?**
 
