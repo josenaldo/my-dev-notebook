@@ -43,7 +43,7 @@ As credenciais controlam segurança da conexão:
 | Credencial | Uso |
 |---|---|
 | `grpc.ServerCredentials.createInsecure()` | Desenvolvimento local — sem TLS |
-| `grpc.ServerCredentials.createSsl(rootCerts, keyPairs)` | Produção — TLS mútuo (mTLS) |
+| `grpc.ServerCredentials.createSsl(rootCerts, [{ private_key, cert_chain }], true)` | Produção — TLS mútuo (mTLS) |
 
 O endereço segue o formato `host:port`, com `0.0.0.0:50051` sendo o padrão para escutar em todas as interfaces.
 
@@ -134,8 +134,9 @@ function getUser(
 ): void {
   const { id } = call.request;
 
-  // Simulação de banco — em produção vem de um repositório
-  const user = { id, name: "Alice", email: "alice@example.com" };
+  // Simulate DB lookup — in production this would query your database
+  const user: { id: string; name: string; email: string } | null =
+    id === 'known-id' ? { id, name: 'Alice', email: 'alice@example.com' } : null;
 
   if (!user) {
     return callback({
@@ -221,6 +222,7 @@ function getUser(id: string): Promise<{ id: string; name: string; email: string 
   return new Promise((resolve, reject) => {
     const deadline = new Date(Date.now() + 5_000); // 5 segundos
 
+    // import { randomUUID } from 'node:crypto'; // use this import for Node.js 18
     const metadata = new grpc.Metadata();
     metadata.add("x-request-id", crypto.randomUUID());
 
@@ -320,8 +322,8 @@ function bearerTokenInterceptor(token: string): grpc.Interceptor {
       halfClose(next) {
         next();
       },
-      cancel(message, next) {
-        next(message);
+      cancel(next) {
+        next();
       },
     };
     return new grpc.InterceptingCall(nextCall(options), requester);
@@ -352,7 +354,7 @@ function getUser(call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryD
 ## Armadilhas
 
 > [!danger] Não usar TLS em produção
-> Por padrão, `grpc.credentials.createInsecure()` trafega todos os dados **em texto plano** — incluindo payloads sensíveis e tokens de autenticação. Em produção, use `grpc.ServerCredentials.createSsl(rootCerts, keyPairs)` no servidor e `grpc.credentials.createSsl(rootCerts, clientKey, clientCert)` no cliente. Considere **mTLS** (TLS mútuo) para autenticação bidirecional entre microserviços. Nunca use `createInsecure()` fora de rede local controlada ou localhost.
+> Por padrão, `grpc.credentials.createInsecure()` trafega todos os dados **em texto plano** — incluindo payloads sensíveis e tokens de autenticação. Em produção, use `grpc.ServerCredentials.createSsl(rootCerts, [{ private_key: keyBuffer, cert_chain: certBuffer }], true)` no servidor e `grpc.credentials.createSsl(rootCerts, clientKey, clientCert)` no cliente. Considere **mTLS** (TLS mútuo) para autenticação bidirecional entre microserviços. Nunca use `createInsecure()` fora de rede local controlada ou localhost.
 
 > [!warning] Código desatualizado após mudança no `.proto` (stale codegen)
 > Se você usa geração estática com `protoc`, qualquer alteração no `.proto` exige regenerar os arquivos de código. É comum durante desenvolvimento esquecer de rodar o script de geração, resultando em clientes e servidores com contratos distintos — o erro manifesta como falha de serialização silenciosa ou campos `undefined`. Inclua a geração de código no pipeline de CI e trate os arquivos gerados como **artefatos de build** (não os commite, ou commite e falhe o CI quando diferirem). Com `proto-loader` dinâmico, o problema é menor mas o arquivo `.proto` ainda precisa estar sincronizado entre cliente e servidor.
