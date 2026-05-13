@@ -322,7 +322,7 @@ bun ./bun.lockb
 
 O Bun gera um `node_modules` convencional por padrão, garantindo compatibilidade com ferramentas que assumem essa estrutura. Desde Bun v1.2 (início de 2025), o lockfile padrão é `bun.lock` (texto, legível e revisável em PRs). O formato binário legado `bun.lockb` ainda é suportado para projetos existentes.
 
-**Compatibilidade com `package.json` existente:** O Bun lê e respeita `package.json` padrão. Projetos npm/pnpm/yarn podem usar `bun install` como drop-in replacement para install mais rápido, mesmo sem migrar o runtime. É possível ter `package-lock.json` e `bun.lockb` coexistindo, mas o recomendado é escolher um e usar `--frozen-lockfile` em CI.
+**Compatibilidade com `package.json` existente:** O Bun lê e respeita `package.json` padrão. Projetos npm/pnpm/yarn podem usar `bun install` como drop-in replacement para install mais rápido, mesmo sem migrar o runtime. É possível ter `package-lock.json` e `bun.lock` coexistindo, mas o recomendado é escolher um e usar `--frozen-lockfile` em CI.
 
 ---
 
@@ -375,7 +375,7 @@ O Bun gera um `node_modules` convencional por padrão, garantindo compatibilidad
 
 > [!danger] Armadilha 1: Misturar lockfiles de diferentes package managers no mesmo projeto
 
-**Descrição:** Ter `package-lock.json`, `pnpm-lock.yaml` e `bun.lockb` ao mesmo tempo no mesmo repositório significa que cada dev está usando o package manager que preferir. O resultado é que cada ambiente tem versões diferentes de pacotes transitivos, bugs aparecem em produção que não reproduzem em desenvolvimento, e o CI pode instalar versões diferentes a cada build.
+**Descrição:** Ter `package-lock.json`, `pnpm-lock.yaml` e `bun.lock` ao mesmo tempo no mesmo repositório significa que cada dev está usando o package manager que preferir. O resultado é que cada ambiente tem versões diferentes de pacotes transitivos, bugs aparecem em produção que não reproduzem em desenvolvimento, e o CI pode instalar versões diferentes a cada build.
 
 **Código problemático:**
 ```bash
