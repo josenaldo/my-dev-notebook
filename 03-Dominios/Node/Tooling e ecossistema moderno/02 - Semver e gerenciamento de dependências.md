@@ -176,7 +176,7 @@ jobs:
 
 **`package-lock.json` v2 vs v3:**
 
-A partir do npm v7, o lockfile usa o formato v3, que registra o grafo completo incluindo `node_modules` aninhados (em vez de apenas as deps de primeiro nível do v2). O v3 é mais robusto para reprodutibilidade e suporta workspaces, mas é significativamente maior em tamanho. O npm v6 gerava v1; npm v7–v8 geram v2 por padrão; npm v9+ geram v3. O lockfile v3 não é legível pelo npm v6 — se precisar de compatibilidade com Node/npm antigos, verifique a versão mínima esperada.
+A partir do npm v7, o lockfile usa o formato v2, que registra o grafo completo incluindo `node_modules` aninhados e suporta workspaces — recursos ausentes no v1. O v3, introduzido no npm v9, é uma versão compacta do v2 que remove o campo `dependencies` redundante mantido no v2 apenas para compatibilidade retroativa com npm 6. O npm v6 gerava v1; npm v7–v8 geram v2 por padrão; npm v9+ geram v3. O lockfile v3 não é legível pelo npm v6 — se precisar de compatibilidade com Node/npm antigos, verifique a versão mínima esperada.
 
 ---
 
@@ -293,7 +293,7 @@ O Dependabot abre um PR por dep por padrão (diferente do Renovate que agrupa). 
 
 Às vezes uma dependência transitiva (dep de uma dep) tem uma vulnerabilidade ou bug que o mantenedor da dep direta ainda não corrigiu. Os **overrides** permitem forçar uma versão específica de uma dep transitiva em todo o grafo.
 
-**`overrides` no npm v8.3+ (Node 18+):**
+**`overrides` no npm v8.3+ (Node 16.14+):**
 
 ```json
 {
@@ -474,7 +474,7 @@ O `npm ci` oferece duas garantias fundamentais: instala exatamente o que está n
 
 **Pergunta:** "How do you handle a critical security vulnerability in a transitive dependency?"
 
-> "The first step is to understand the exposure: `npm audit` will show the vulnerable package, its severity, and which of your direct dependencies pull it in. If the direct dependency already has a patched version in its latest release, `npm update` or `npm audit fix` will often resolve it automatically — the fix is just updating the direct dep to a version that pins the patched transitive dep. If the direct dep hasn't released a fix yet, the right tool is `overrides` in npm v8+ or `pnpm.overrides` in pnpm — you add a field to `package.json` that forces a specific version of the transitive dep regardless of what the direct dep declares. This bypasses the vulnerable version across the entire dependency graph immediately. I always validate the fix with `npm audit` after applying the override to confirm the CVE is cleared, and I track the upstream issue so I can remove the override once the direct dep ships its own fix — overrides are a temporary workaround, not a permanent solution."
+> "The first step is to understand the exposure: `npm audit` will show the vulnerable package, its severity, and which of your direct dependencies pull it in. If the direct dependency already has a patched version in its latest release, `npm update` or `npm audit fix` will often resolve it automatically — the fix is just updating the direct dep to a version that pins the patched transitive dep. If the direct dep hasn't released a fix yet, the right tool is `overrides` in npm v8.3+ or `pnpm.overrides` in pnpm — you add a field to `package.json` that forces a specific version of the transitive dep regardless of what the direct dep declares. This bypasses the vulnerable version across the entire dependency graph immediately. I always validate the fix with `npm audit` after applying the override to confirm the CVE is cleared, and I track the upstream issue so I can remove the override once the direct dep ships its own fix — overrides are a temporary workaround, not a permanent solution."
 
 ---
 
