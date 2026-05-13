@@ -157,7 +157,6 @@ interface AliveSocket extends WebSocket {
 const wss = new WebSocketServer({ port: 8080 });
 
 const HEARTBEAT_INTERVAL_MS = 30_000; // 30 segundos
-const HEARTBEAT_TIMEOUT_MS = 10_000;  // se não responder em 10s, considera morto
 
 wss.on('connection', (ws: WebSocket) => {
   const socket = ws as AliveSocket;
@@ -277,10 +276,7 @@ import { createServer } from 'http';
 import { Server, Socket } from 'socket.io';
 
 interface ServerToClientEvents {
-  newOrder: (
-    order: { id: string; items: string[]; total: number },
-    callback: (ack: { status: 'received' | 'error'; error?: string }) => void
-  ) => void;
+  newOrder: (order: { id: string; items: string[]; total: number }) => void;
 }
 
 interface ClientToServerEvents {
@@ -305,16 +301,9 @@ io.on('connection', (socket: Socket<ClientToServerEvents, ServerToClientEvents>)
       // O cliente só chama o callback quando o servidor invoca esta função
       callback({ orderId, status: 'created' });
 
-      // Notifica outros clientes sobre o novo pedido (também com ack)
-      socket.broadcast.emit(
-        'newOrder',
-        { id: orderId, ...payload },
-        (ack) => {
-          if (ack.status === 'received') {
-            console.log(`Order ${orderId} acknowledged by broadcast client`);
-          }
-        }
-      );
+      // Notifica outros clientes sobre o novo pedido
+      // broadcast.emit NÃO suporta ack — use io.timeout().emit() se precisar de confirmação
+      socket.broadcast.emit('newOrder', { id: orderId, ...payload });
     } catch (err) {
       // Em caso de erro, invoca o callback com status de erro
       callback({ orderId: '', status: 'error' });
