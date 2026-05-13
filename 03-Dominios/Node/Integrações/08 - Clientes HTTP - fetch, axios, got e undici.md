@@ -20,7 +20,11 @@ aliases:
 # Clientes HTTP - fetch, axios, got e undici
 
 > [!abstract] TL;DR
-> O Node.js 18+ trouxe `fetch` nativo baseado no padrão WHATWG — a escolha padrão para novos projetos sem dependências extras. **`axios`** permanece popular por seu sistema de **interceptors** (middleware de request/response), cancelamento via `AbortController` e tratamento automático de erros HTTP. **`got`** é a opção mais rica em features sem overhead excessivo: retry automático com backoff configurável, hooks de ciclo de vida e streaming de primeira classe. **`undici`** é o motor que alimenta o `fetch` nativo do Node — acessá-lo diretamente com `Pool` e `Agent` dá máximo controle sobre connection pooling, pipeline e throughput em cenários de alto volume. Veja [[03-Dominios/Node/Integrações/index|Integrações]] para o contexto completo do galho.
+> O Node.js 18+ trouxe `fetch` nativo baseado no padrão WHATWG — a escolha padrão para novos projetos sem dependências extras. **`axios`** permanece popular por seu sistema de **interceptors** (middleware de request/response), cancelamento via `AbortController` e tratamento automático de erros HTTP.
+>
+> **`got`** é a opção mais rica em features sem overhead excessivo: retry automático com backoff configurável, hooks de ciclo de vida e streaming de primeira classe. **`undici`** é o motor que alimenta o `fetch` nativo do Node — acessá-lo diretamente com `Pool` e `Agent` dá máximo controle sobre connection pooling, pipeline e throughput em cenários de alto volume.
+>
+> Critério de escolha: `fetch` para padrão moderno, `undici` para performance crítica, `got` para retry/stream embutidos, `axios` quando interceptors ou legado exigem. Veja [[03-Dominios/Node/Integrações/index|Integrações]] para o contexto completo do galho.
 
 ## Como funciona
 
