@@ -96,12 +96,12 @@ Em entrevistas, o que diferencia um senior em Node.js:
 ### npm e Package Management
 
 > [!nota] Migrado para galho próprio
-> Package managers, semver e ecossistema npm foram expandidos em [[03-Dominios/Node/Tooling e ecossistema moderno/index|Tooling e ecossistema moderno]] (galho 7). Veja em particular [[01 - Package managers - npm, pnpm, yarn e bun]] (comparativo dos 4 gerenciadores: npm v10, pnpm v9, yarn v4 Berry, bun v1.1+) e [[02 - Semver e gerenciamento de dependências]] (versionamento semântico, lockfiles e estratégias de atualização automatizada com Renovate/Dependabot).
+> Package managers, semver e ecossistema npm foram expandidos em [[03-Dominios/Node/Tooling e ecossistema moderno/index]] (galho 7). Veja em particular [[01 - Package managers - npm, pnpm, yarn e bun]] (comparativo dos 4 gerenciadores: npm v10, pnpm v9, yarn v4 Berry, bun v1.1+) e [[02 - Semver e gerenciamento de dependências]] (versionamento semântico, lockfiles e estratégias de atualização automatizada com Renovate/Dependabot).
 
 ### Node moderno — features que você deveria usar
 
 > [!nota] Migrado para galho próprio
-> As features modernas do Node foram expandidas em [[03-Dominios/Node/Tooling e ecossistema moderno/index|Tooling e ecossistema moderno]] (galho 7). Veja em particular [[04 - TypeScript nativo - strip types e integração]] (`--experimental-strip-types` no Node 22.18+), [[05 - Built-in test runner - node-test]] (`node:test` com mock e watch), [[06 - DX flags modernos - watch, env-file e import]] (`--watch`, `--env-file`), [[07 - Single Executable Apps (SEA)]] e [[08 - Promise-based core APIs]] (`fs/promises`, `timers/promises`, `stream/promises`).
+> As features modernas do Node foram expandidas em [[03-Dominios/Node/Tooling e ecossistema moderno/index]] (galho 7). Veja em particular [[04 - TypeScript nativo - strip types e integração]] (`--experimental-strip-types` no Node 22.18+), [[05 - Built-in test runner - node-test]] (`node:test` com mock e watch), [[06 - DX flags modernos - watch, env-file e import]] (`--watch`, `--env-file`), [[07 - Single Executable Apps (SEA)]] e [[08 - Promise-based core APIs]] (`fs/promises`, `timers/promises`, `stream/promises`).
 
 ## Quando usar
 
@@ -263,7 +263,7 @@ const doctors = await prisma.doctor.findMany({
 - [[03-Dominios/Node/Frameworks e arquitetura/index]] — galho 4 da trilha Node Senior; os 4 frameworks principais (Express, NestJS, Fastify, Hono), patterns transversais e arquitetura
 - [[03-Dominios/Node/Observability e produção/index]] — galho 5 da trilha Node Senior; logs, métricas, traces, profiling, SLOs, dashboards, alertas e checklists de produção
 - [[03-Dominios/Node/ORMs e banco de dados/index]] — galho 6 da trilha Node Senior; os 4 ORMs principais (Sequelize, Prisma, TypeORM, Drizzle), N+1, migrations, transações, decision tree
-- [[03-Dominios/Node/Tooling e ecossistema moderno/index|Tooling e ecossistema moderno]] — galho 7 da trilha Node Senior; package managers (npm, pnpm, yarn, Bun), semver, ESM vs CJS, TypeScript nativo, test runner nativo, DX flags, SEA e Bun como runtime
+- [[03-Dominios/Node/Tooling e ecossistema moderno/index]] — galho 7 da trilha Node Senior; package managers (npm, pnpm, yarn, Bun), semver, ESM vs CJS, TypeScript nativo, test runner nativo, DX flags, SEA e Bun como runtime
 - [[03-Dominios/Node/Integrações/index]] — galho 9 da trilha Node Senior; PostgreSQL, Redis, BullMQ, Kafka, gRPC, GraphQL, WebSockets, HTTP clients e padrões de resiliência
 - [[JavaScript Fundamentals]] — linguagem, event loop, async
 - [[TypeScript]] — tipagem em Node

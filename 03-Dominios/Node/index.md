@@ -17,9 +17,9 @@ aliases:
 # Node.js
 
 > [!abstract] TL;DR
-> Trilha Node Senior em 7 galhos: Runtime e Event Loop, Paralelismo, Streams, Frameworks e arquitetura, Observability e produção, ORMs e banco de dados, Integrações. Cada galho cobre os 4–5 players principais de cada área, padrões críticos de produção, vocabulário técnico e respostas de entrevista em inglês.
+> Trilha Node Senior em 8 galhos: Runtime e Event Loop, Paralelismo, Streams, Frameworks e arquitetura, Observability e produção, ORMs e banco de dados, Tooling e ecossistema moderno, Integrações. Cada galho cobre os 4–5 players principais de cada área, padrões críticos de produção, vocabulário técnico e respostas de entrevista em inglês.
 
-Estante de Node.js da trilha senior em prep para entrevistas internacionais. Cobre desde os fundamentos do runtime (event loop, libuv, single-thread) até integrações de produção (PostgreSQL, Redis, Kafka, gRPC, GraphQL, WebSockets, HTTP clients e padrões de resiliência). A trilha está organizada em 7 galhos temáticos progressivos — cada galho é um conjunto de notas atômicas com seção de entrevista em inglês, vocabulário técnico e decision trees práticos.
+Estante de Node.js da trilha senior em prep para entrevistas internacionais. Cobre desde os fundamentos do runtime (event loop, libuv, single-thread) até integrações de produção (PostgreSQL, Redis, Kafka, gRPC, GraphQL, WebSockets, HTTP clients e padrões de resiliência). A trilha está organizada em 8 galhos temáticos progressivos — cada galho é um conjunto de notas atômicas com seção de entrevista em inglês, vocabulário técnico e decision trees práticos.
 
 ## Conteúdo
 
