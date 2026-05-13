@@ -50,7 +50,7 @@ aliases:
 | Situação | Recomendação |
 |----------|-------------|
 | Dev rápido sem enum/namespace | `node --experimental-strip-types` |
-| Precisa de enums ou decorators | `tsx` (dev) + `tsc` (build) |
+| Precisa de enums ou decorators | `--experimental-transform-types` (Node 22.7+) ou `tsx` (fallback) |
 | Node 24+ (estável) | strip-types sem flag experimental |
 | CI/build de produção | `tsc --noEmit` + `tsx` ou `esbuild` para bundle |
 
@@ -89,11 +89,11 @@ aliases:
 | `--inspect-brk` | Debug pausado no início | `node --inspect-brk server.js` |
 | `--max-old-space-size` | Limite de heap V8 | `node --max-old-space-size=4096 app.js` |
 | `--experimental-strip-types` | TypeScript sem build | `node --experimental-strip-types app.ts` |
-| `--transform-types` | TypeScript com enum/decorators | `node --experimental-strip-types --transform-types app.ts` |
+| `--experimental-transform-types` | TypeScript com enum/decorators | `node --experimental-transform-types app.ts` |
 | `--enable-source-maps` | Source maps no stack trace | `node --enable-source-maps dist/app.js` |
 | `--test` | Executa test runner | `node --test **/*.test.js` |
 | `--test-reporter` | Formato dos resultados | `node --test --test-reporter=spec` |
-| `--test-watch` | Watch para testes | `node --test --test-watch` |
+| `--watch` com `--test` | Watch para testes | `node --test --watch` |
 
 > Ver [[06 - DX flags modernos - watch, env-file e import]] para exemplos práticos e casos de uso avançados.
 
@@ -108,9 +108,9 @@ Template para projetos Node.js + TypeScript modernos. Cobre os cenários mais co
     "dev:debug": "node --inspect --watch --experimental-strip-types src/index.ts",
     "build": "tsc --noEmit && esbuild src/index.ts --bundle --platform=node --outfile=dist/index.js",
     "start": "node dist/index.js",
-    "test": "node --test src/**/*.test.ts",
-    "test:watch": "node --test --test-watch src/**/*.test.ts",
-    "test:coverage": "node --test --experimental-test-coverage src/**/*.test.ts",
+    "test": "node --experimental-strip-types --test src/**/*.test.ts",
+    "test:watch": "node --experimental-strip-types --test --watch src/**/*.test.ts",
+    "test:coverage": "node --experimental-strip-types --test --experimental-test-coverage src/**/*.test.ts",
     "lint": "eslint src/",
     "typecheck": "tsc --noEmit"
   }
@@ -186,10 +186,10 @@ Veja [[03 - ESM vs CJS - módulos no Node moderno]] para o guia completo de dual
 // ❌ Problema: código com enum não funciona com strip-types puro
 // enum Status { Active = 'active', Inactive = 'inactive' }
 // node --experimental-strip-types app.ts
-// → SyntaxError: TypeScript enums require the --transform-types flag
+// → SyntaxError: TypeScript enum is not supported in strip-only mode
 
-// ✅ Fix 1: adicionar --transform-types para suporte a enums/namespaces
-// node --experimental-strip-types --transform-types app.ts
+// ✅ Fix 1: adicionar --experimental-transform-types para suporte a enums/namespaces
+// node --experimental-transform-types app.ts
 
 // ✅ Fix 2 (preferível a longo prazo): migrar enums para const objects
 // const Status = { Active: 'active', Inactive: 'inactive' } as const;
@@ -251,7 +251,7 @@ CommonJS (CJS) is the original Node.js module system using `require()` and `modu
 
 **P: O que mudou no Node.js com o suporte nativo a TypeScript via strip types?**
 
-Node 22.6+ introduced the `--experimental-strip-types` flag, which allows running `.ts` files directly by stripping type annotations at parse time — no transpilation, no `ts-node`, no build step during development. This eliminates a major source of toolchain friction: developers no longer need to configure TypeScript compilation just to run a file. The key limitation is that TypeScript features that require actual code transformation — like enums, decorators, and `const enum` — are not supported without the additional `--transform-types` flag. In Node 24, strip-types became stable, so this is the direction the ecosystem is moving toward as the default development experience.
+Node 22.6+ introduced the `--experimental-strip-types` flag, which allows running `.ts` files directly by stripping type annotations at parse time — no transpilation, no `ts-node`, no build step during development. This eliminates a major source of toolchain friction: developers no longer need to configure TypeScript compilation just to run a file. The key limitation is that TypeScript features that require actual code transformation — like enums, decorators, and `const enum` — are not supported without the additional `--experimental-transform-types` flag. In Node 24, strip-types became stable, so this is the direction the ecosystem is moving toward as the default development experience.
 
 ---
 
