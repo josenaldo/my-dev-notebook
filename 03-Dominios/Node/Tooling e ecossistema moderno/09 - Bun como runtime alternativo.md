@@ -20,13 +20,13 @@ aliases:
 # Bun como runtime alternativo
 
 > [!abstract] TL;DR
-> Bun é um runtime JavaScript/TypeScript baseado em JavaScriptCore (não V8), escrito em Zig, adquirido pela Anthropic em 2024. É o runtime mais rápido em benchmarks de I/O e startup, com TypeScript e JSX nativos sem configuração.
+> Bun é um runtime JavaScript/TypeScript baseado em JavaScriptCore (não V8), escrito em Zig, adquirido pela Anthropic em dezembro de 2025. É o runtime mais rápido em benchmarks de I/O e startup, com TypeScript e JSX nativos sem configuração.
 > Inclui runtime + package manager + bundler + test runner em um único binário — substituindo `node`, `npm`/`pnpm`, `esbuild`/`webpack` e Jest/Vitest de uma vez só.
 > Compatibilidade com APIs Node.js é alta (Express, Fastify, Prisma funcionam), mas não é 100%: módulos com native addons (`.node`) e código que usa a API `v8` diretamente não são suportados — verifique antes de migrar.
 
 ## O que é
 
-Bun foi criado por Jarred Sumner e lançado com a versão 1.0 em setembro de 2023, sendo adquirido pela Anthropic em 2024. Seu objetivo declarado é ser um runtime JavaScript/TypeScript moderno e de alta performance, projetado como alternativa ao Node.js e ao Deno.
+Bun foi criado por Jarred Sumner e lançado com a versão 1.0 em setembro de 2023, sendo adquirido pela Anthropic em dezembro de 2025. Seu objetivo declarado é ser um runtime JavaScript/TypeScript moderno e de alta performance, projetado como alternativa ao Node.js e ao Deno.
 
 Enquanto o Node.js nasceu focado em I/O não-bloqueante com callbacks e foi adicionando suporte a ESM e TypeScript gradualmente, o Bun foi construído do zero com essas necessidades em mente: TypeScript e JSX funcionam nativamente sem Babel, sem `ts-node`, sem configuração extra.
 
@@ -244,7 +244,7 @@ A escolha entre Bun, Node e Deno depende do contexto do projeto:
 
 // ✅ Fix: commitar bun.lockb normalmente (o Bun consegue ler e garantir reprodutibilidade)
 // Em CI: usar bun install --frozen-lockfile para garantir reprodutibilidade
-// Para ver diff legível: bun install --print-lockfile (imprime JSON temporário no stdout)
+// Para projetos em Bun ≥ 1.2: o lockfile padrão já é texto (bun.lock), não binário
 // Para auditar: bun pm ls --all mostra a árvore de dependências resolvidas
 ```
 
@@ -329,7 +329,7 @@ Bun ships as a single binary that replaces multiple tools in the Node.js ecosyst
 
 **P: O que é o `bun.lockb` e por que ele é diferente do `package-lock.json`?**
 
-`bun.lockb` is a binary lockfile format used by Bun, as opposed to the human-readable JSON format of `package-lock.json` or `yarn.lock`. The binary format is faster to parse and significantly smaller on disk, which contributes to Bun's install speed advantage. The tradeoff is that `git diff bun.lockb` produces unreadable binary output — to inspect changes, you can run `bun install --print-lockfile` to get a temporary JSON representation, and in CI you use `bun install --frozen-lockfile` to enforce reproducibility.
+`bun.lockb` is a binary lockfile format used by Bun, as opposed to the human-readable JSON format of `package-lock.json` or `yarn.lock`. The binary format is faster to parse and significantly smaller on disk, which contributes to Bun's install speed advantage. The tradeoff is that `git diff bun.lockb` produces unreadable binary output. In projects using Bun ≥ 1.2, the default lockfile is the text file `bun.lock`, which is human-readable and produces useful diffs in git. In CI you use `bun install --frozen-lockfile` to enforce reproducibility.
 
 ## Vocabulário
 
