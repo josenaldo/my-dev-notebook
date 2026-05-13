@@ -102,4 +102,4 @@ SORT file.name ASC
 - [[JavaScript/Backend/Node.js|Node.js]] — tronco da trilha Node Senior
 - [[03-Dominios/Node/index|Node.js (MOC central)]] — visão geral de todos os galhos
 - [[03-Dominios/Node/Runtime e Event Loop/index|Runtime e Event Loop]] — galho 1, modelo mental de event loop
-- [[03-Dominios/Node/Frameworks e arquitetura/index|Frameworks e arquitetura]] — galho 2, Express, NestJS, Fastify, Hono
+- [[03-Dominios/Node/Frameworks e arquitetura/index|Frameworks e arquitetura]] — galho 4, Express, NestJS, Fastify, Hono
