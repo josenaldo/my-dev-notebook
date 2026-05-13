@@ -67,13 +67,16 @@ Sem bulkhead, um serviço lento pode esgotar todas as threads/event-loop slots d
 ### Snippet 1 — Retry com `cockatiel`
 
 ```typescript
-import { Policy, ExponentialBackoff } from 'cockatiel';
+import { retry, ExponentialBackoff, Policy } from 'cockatiel';
 
-// Política de retry: tenta até 5 vezes com backoff exponencial + jitter
-const retryPolicy = Policy.handleAll().retry().attempts(5).exponential({
-  initialDelay: 100,   // 100ms na primeira retentativa
-  maxDelay: 30_000,    // nunca esperar mais de 30s
-  exponent: 2,         // dobra a cada tentativa
+// Política de retry: até 5 tentativas com backoff exponencial + jitter
+const retryPolicy = retry(Policy.handleAll(), {
+  maxAttempts: 5,
+  backoff: new ExponentialBackoff({
+    initialDelay: 100,   // 100ms na primeira retentativa
+    maxDelay: 30_000,    // nunca esperar mais de 30s
+    exponent: 2,         // dobra a cada tentativa
+  }),
 });
 
 // Executa uma chamada HTTP com retry automático
@@ -82,9 +85,10 @@ async function fetchWithRetry(url: string): Promise<Response> {
 }
 
 // Uso: retry apenas em status 5xx (erros do servidor, não do cliente)
-const retryOn5xx = Policy.handleWhenResult(
-  (res) => res instanceof Response && res.status >= 500,
-).retry().attempts(3).exponential({ initialDelay: 200, maxDelay: 5_000 });
+const retryOn5xx = retry(
+  Policy.handleWhenResult((res) => res instanceof Response && res.status >= 500),
+  { maxAttempts: 3, backoff: new ExponentialBackoff({ initialDelay: 200, maxDelay: 5_000 }) },
+);
 
 async function fetchApi(url: string): Promise<Response> {
   const response = await retryOn5xx.execute(() => fetch(url));
@@ -171,17 +175,19 @@ demonstrateBulkhead().catch(console.error);
 ### Snippet 4 — Composição de políticas com `cockatiel`
 
 ```typescript
-import { Policy, ExponentialBackoff, bulkhead, CircuitBreakerPolicy } from 'cockatiel';
+import { retry, circuitBreaker, ConsecutiveBreaker, ExponentialBackoff, bulkhead, Policy } from 'cockatiel';
 
 // 1. Retry: 4 tentativas com backoff exponencial
-const retryPolicy = Policy.handleAll()
-  .retry()
-  .attempts(4)
-  .exponential(new ExponentialBackoff({ initialDelay: 150, maxDelay: 10_000 }));
+const retryPolicy = retry(Policy.handleAll(), {
+  maxAttempts: 4,
+  backoff: new ExponentialBackoff({ initialDelay: 150, maxDelay: 10_000 }),
+});
 
 // 2. Circuit breaker: abre após 3 falhas em 30s, aguarda 15s antes de half-open
-const cbPolicy = Policy.handleAll()
-  .circuitBreaker(15_000, new Policy.ConsecutiveBreaker(3));
+const cbPolicy = circuitBreaker(Policy.handleAll(), {
+  halfOpenAfter: 15_000,
+  breaker: new ConsecutiveBreaker(3),
+});
 
 // 3. Bulkhead: 8 slots paralelos, fila de 16
 const bhPolicy = bulkhead(8, 16);
@@ -209,6 +215,8 @@ async function getUser(userId: string) {
 ### Snippet 5 — Timeout com `AbortController`
 
 ```typescript
+import { retry, ExponentialBackoff, Policy } from 'cockatiel';
+
 // Timeout como política independente: cancela a chamada após N milissegundos
 // Funciona com fetch, grpc, qualquer API que aceite AbortSignal
 
@@ -235,11 +243,10 @@ async function fetchWithManualTimeout(url: string, timeoutMs = 5000): Promise<un
 }
 
 // Composição: timeout + retry via cockatiel
-import { Policy, ExponentialBackoff } from 'cockatiel';
-
-const retryWithTimeout = Policy.handleAll().retry().attempts(3).exponential(
-  new ExponentialBackoff({ initialDelay: 100, maxDelay: 3000 }),
-);
+const retryWithTimeout = retry(Policy.handleAll(), {
+  maxAttempts: 3,
+  backoff: new ExponentialBackoff({ initialDelay: 100, maxDelay: 3000 }),
+});
 
 async function resilientFetch(url: string): Promise<unknown> {
   return retryWithTimeout.execute(() => fetchWithNativeTimeout(url, 4000));
