@@ -238,7 +238,7 @@ O [Renovate](https://docs.renovatebot.com) abre PRs automáticos quando novas ve
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
-  "schedule": ["before 9am on Monday"],
+  "schedule": ["* 0-8 * * 1"],
   "packageRules": [
     {
       "matchDepTypes": ["devDependencies"],
@@ -293,7 +293,7 @@ O Dependabot abre um PR por dep por padrão (diferente do Renovate que agrupa). 
 
 Às vezes uma dependência transitiva (dep de uma dep) tem uma vulnerabilidade ou bug que o mantenedor da dep direta ainda não corrigiu. Os **overrides** permitem forçar uma versão específica de uma dep transitiva em todo o grafo.
 
-**`overrides` no npm v8+:**
+**`overrides` no npm v8.3+ (Node 18+):**
 
 ```json
 {
