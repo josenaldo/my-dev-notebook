@@ -142,7 +142,7 @@ O V8 Inspector Protocol é uma interface de depuração baseada em WebSocket que
 **Como conectar no Chrome DevTools:**
 
 1. Executar `node --inspect app.js`
-2. Abrir `chrome://inspect` (ou `about:inspect`) no Chrome
+2. Abrir `chrome://inspect` no Chrome
 3. Clicar em "Open dedicated DevTools for Node" ou no link do processo listado
 
 ```bash
@@ -199,7 +199,7 @@ Além das quatro principais, o runtime expõe um conjunto de flags adicionais qu
 | `--watch` | nodemon | Node 18.11.0 (exp), estável Node 22 |
 | `--watch-path` | nodemon (padrão de diretório) | Node 22.0.0 |
 | `--env-file` | dotenv | Node 20.6.0 |
-| `--import` | `--require` (para ESM) + loaders manuais | Node 12.0.0 |
+| `--import` | `--require` (para ESM) + loaders manuais | Node 12.0.0 (hooks: Node 20.6.0) |
 | `--inspect` | ndb, `node-inspector` (legado) | Node 6.3.0 |
 | `--inspect-brk` | breakpoints externos | Node 7.6.0 |
 | `--max-old-space-size` | variável `NODE_OPTIONS` com mesmo flag | Node muito antigo |
