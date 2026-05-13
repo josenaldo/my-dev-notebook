@@ -110,7 +110,7 @@ O ESM é o sistema de módulos nativo do JavaScript moderno. Diferente do CJS, o
 - `import`/`export` são analisados **estaticamente** antes da execução
 - Suporta **top-level `await`** — o módulo age como uma função assíncrona para quem o importa
 - `import.meta.url` fornece a URL do módulo atual (substitui `__filename`)
-- `import.meta.dirname` fornece o diretório do módulo (Node 21.2+ / Node 22+; para versões anteriores, use `fileURLToPath`)
+- `import.meta.dirname` / `import.meta.filename` fornecem diretório e caminho do módulo (Node 20.11.0+ / Node 21.2+ / Node 22+; para versões anteriores, use `fileURLToPath`)
 - **Exports nomeados**, **export default**, e **namespace imports** (`import * as`)
 - **Imutável por design**: o objeto de namespace de um módulo é read-only (não pode ser monkey-patched como `module.exports`)
 - Pode ser tree-shaken por bundlers (Rollup, esbuild, Vite, tsup)
@@ -377,18 +377,18 @@ const data = fs.readFileSync(configPath, 'utf-8');
 **Fix — usando `import.meta` para recriar as variáveis:**
 
 ```js
-// ✅ ESM com Node 22+ (import.meta.dirname disponível desde Node 21.2)
+// ✅ ESM com Node 20.11.0+ (import.meta.dirname/filename disponível desde Node 20.11.0 / Node 21.2+)
 import path from 'node:path';
 import fs from 'node:fs';
 
-// Node 21.2+ e Node 22+ LTS: import.meta.dirname nativo
+// Node 20.11.0+ / Node 21.2+ / Node 22+ LTS: import.meta.dirname e import.meta.filename nativos
 const __dirname = import.meta.dirname;
 const __filename = import.meta.filename;
 
 const configPath = path.join(__dirname, 'config', 'app.json');
 const data = fs.readFileSync(configPath, 'utf-8');
 
-// ── Para Node < 21.2 (Node 18, Node 20 antes do 21.2) ──────────────────
+// ── Para Node < 20.11.0 (Node 18, Node 20.0–20.10) ───────────────────────
 import { fileURLToPath } from 'node:url';
 
 const __filename_compat = fileURLToPath(import.meta.url);
@@ -535,4 +535,5 @@ oldLib2.someFunction('arg');
 - [[Tooling e ecossistema moderno]] — índice do galho 7, visão geral de todas as notas
 - [[04 - TypeScript nativo - strip types e integração]] — próxima nota: TypeScript sem transpilação no Node 22+
 - [[01 - Package managers - npm, pnpm, yarn e bun]] — package managers e como o campo `exports` interage com resolução de deps
+- [[03-Dominios/Node/index|Node.js (MOC central)]] — visão geral de todos os galhos da trilha Node Senior
 - [[Node.js]] — tronco da trilha Node Senior
