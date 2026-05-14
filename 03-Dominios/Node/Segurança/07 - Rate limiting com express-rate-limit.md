@@ -137,7 +137,7 @@ const distributedLimiter = rateLimit({
   legacyHeaders: false,
   // RedisStore usa sendCommand para compatibilidade com qualquer cliente Redis
   store: new RedisStore({
-    sendCommand: (...args: string[]) => redisClient.sendCommand(args),
+    sendCommand: (...args: string[]) => redisClient.call(...args),
     prefix: 'rl:', // prefixo das chaves no Redis (evita colisão com outros dados)
   }),
   message: { error: 'Too many requests. Try again later.' },
@@ -162,7 +162,7 @@ const redis = new Redis({ host: process.env.REDIS_HOST ?? 'localhost' })
 
 const makeStore = (prefix: string) =>
   new RedisStore({
-    sendCommand: (...args: string[]) => redis.sendCommand(args),
+    sendCommand: (...args: string[]) => redis.call(...args),
     prefix,
   })
 
