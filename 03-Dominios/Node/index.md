@@ -32,6 +32,7 @@ Estante de Node.js da trilha senior em prep para entrevistas internacionais. Cob
 - [[03-Dominios/Node/Observability e produção/index]] — galho 5: logs, métricas, traces, profiling avançado, SLOs, dashboards Grafana, alertas multi-janela e checklists de produção
 - [[03-Dominios/Node/ORMs e banco de dados/index]] — galho 6: os 4 ORMs principais (Sequelize, Prisma, TypeORM, Drizzle), padrões críticos de N+1, migrations, transações e paginação, decision tree para escolha de ORM
 - [[03-Dominios/Node/Tooling e ecossistema moderno/index]] — galho 7: package managers (npm, pnpm, yarn, Bun), semver, ESM vs CJS, TypeScript nativo, test runner nativo (`node:test`), DX flags e SEA
+- [[03-Dominios/Node/Segurança/index]] — galho 8: supply chain, segredos, validação de entrada (Zod/Joi), JWT, OAuth 2.0 e OIDC, RBAC, rate limiting, Helmet.js e OWASP Top 10
 - [[03-Dominios/Node/Integrações/index]] — galho 9: PostgreSQL (node-postgres), Redis (ioredis), BullMQ, Kafka (kafkajs), gRPC, GraphQL, WebSockets, HTTP clients e padrões de resiliência
 
 ## Veja também

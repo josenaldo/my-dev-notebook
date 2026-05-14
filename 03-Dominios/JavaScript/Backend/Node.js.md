@@ -1,7 +1,7 @@
 ---
 title: "Node.js"
 created: 2026-04-01
-updated: 2026-05-09
+updated: 2026-05-13
 type: concept
 status: evergreen
 tags:
@@ -264,6 +264,7 @@ const doctors = await prisma.doctor.findMany({
 - [[03-Dominios/Node/Observability e produção/index]] — galho 5 da trilha Node Senior; logs, métricas, traces, profiling, SLOs, dashboards, alertas e checklists de produção
 - [[03-Dominios/Node/ORMs e banco de dados/index]] — galho 6 da trilha Node Senior; os 4 ORMs principais (Sequelize, Prisma, TypeORM, Drizzle), N+1, migrations, transações, decision tree
 - [[03-Dominios/Node/Tooling e ecossistema moderno/index]] — galho 7 da trilha Node Senior; package managers (npm, pnpm, yarn, Bun), semver, ESM vs CJS, TypeScript nativo, test runner nativo, DX flags, SEA e Bun como runtime
+- [[03-Dominios/Node/Segurança/index|Segurança]] — galho 8 da trilha Node Senior; supply chain, segredos, validação, JWT, OAuth 2.0, RBAC, rate limiting, Helmet.js e OWASP Top 10
 - [[03-Dominios/Node/Integrações/index]] — galho 9 da trilha Node Senior; PostgreSQL, Redis, BullMQ, Kafka, gRPC, GraphQL, WebSockets, HTTP clients e padrões de resiliência
 - [[JavaScript Fundamentals]] — linguagem, event loop, async
 - [[TypeScript]] — tipagem em Node
