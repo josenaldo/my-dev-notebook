@@ -217,7 +217,7 @@ export function authorize(
 
 ```typescript
 // src/auth/casl.guard.ts
-import { CanActivate, ExecutionContext, Injectable, ForbiddenException } from '@nestjs/common'
+import { CanActivate, ExecutionContext, Injectable, ForbiddenException, SetMetadata } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { defineAbilityFor, Actions, Subjects } from './ability'
 
@@ -397,7 +397,7 @@ export async function authenticate(req: Request, res: Response, next: NextFuncti
   if (!token) return res.status(401).json({ error: 'No token' })
 
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload
+    const payload = jwt.verify(token, process.env.JWT_SECRET!, { algorithms: ['HS256'] }) as JwtPayload
     const user: AuthUser = { id: payload.sub, roles: payload.roles }
     req.user = user
     // Instância de Ability criada uma vez por requisição
