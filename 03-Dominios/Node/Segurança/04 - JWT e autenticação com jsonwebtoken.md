@@ -224,14 +224,14 @@ async function refreshTokenEndpoint(req, res) {
     })
 
     // Verifica se o refresh token foi revogado (blacklist Redis)
-    const isBlacklisted = await redis.get(`blacklist:${payload.jti}`)
+    const isBlacklisted = await redis.get(`jwt:blacklist:${payload.jti}`)
     if (isBlacklisted) {
       return res.status(401).json({ error: 'Token revoked' })
     }
 
     // Rotação: invalida o refresh token atual
     const ttl = payload.exp - Math.floor(Date.now() / 1000)
-    await redis.setex(`blacklist:${payload.jti}`, ttl, '1')
+    await redis.setex(`jwt:blacklist:${payload.jti}`, ttl, '1')
 
     // Emite novo par de tokens
     const user = await User.findById(payload.sub)
@@ -418,7 +418,7 @@ async function invalidateAllTokens(userId) {
 > // ✅ Seguro — restringe ao algoritmo esperado
 > jwt.verify(token, secret, { algorithms: ['HS256'] })
 > ```
-> A biblioteca `jsonwebtoken` v9 já rejeita `alg: none` por padrão se um secret for fornecido, mas a opção explícita é defesa em profundidade e documenta a intenção.
+> A biblioteca `jsonwebtoken` v9 já rejeita `alg: none` por padrão — é necessário passar explicitamente `algorithms: ['none']` para aceitar tokens não assinados. A opção explícita continua sendo defesa em profundidade e documenta a intenção.
 
 > [!danger] Secrets fracos e previsíveis
 > Um secret HS256 de baixa entropia pode ser quebrado por força bruta offline — o atacante captura um token válido e tenta secrets até a assinatura bater. A RFC 7518 recomenda mínimo de 256 bits (32 bytes) de entropia para HS256. Nunca use strings curtas, palavras do dicionário ou valores hardcoded no código. Use `node:crypto` para gerar secrets seguros:
