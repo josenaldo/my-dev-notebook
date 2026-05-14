@@ -1,7 +1,7 @@
 ---
 title: "Validação de entrada com Zod e Joi"
 created: 2026-05-12
-updated: 2026-05-12
+updated: 2026-05-13
 type: concept
 status: growing
 publish: true
@@ -595,6 +595,55 @@ app.post('/products', {
   reply.send({ ok: true });
 });
 ```
+
+### Integração com NestJS
+
+NestJS não tem suporte nativo a Zod, mas integra via `PipeTransform` — a interface do framework para transformação e validação de valores antes de chegarem ao handler. A abordagem manual cria um `ValidationPipe` reutilizável que recebe qualquer `ZodSchema` no construtor:
+
+```typescript
+import { z } from 'zod'
+import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common'
+import { ZodSchema } from 'zod'
+
+@Injectable()
+export class ZodValidationPipe implements PipeTransform {
+  constructor(private schema: ZodSchema) {}
+
+  transform(value: unknown) {
+    const result = this.schema.safeParse(value)
+    if (!result.success) {
+      throw new BadRequestException(result.error.format())
+    }
+    return result.data
+  }
+}
+```
+
+Uso no controller via `@UsePipes`, passando uma instância com o schema específico da rota:
+
+```typescript
+import { Body, Controller, Post, UsePipes } from '@nestjs/common'
+import { z } from 'zod'
+import { ZodValidationPipe } from './zod-validation.pipe'
+
+const CreateUserSchema = z.object({
+  email: z.string().email(),
+  name: z.string().min(2).max(100),
+})
+
+type CreateUserDto = z.infer<typeof CreateUserSchema>
+
+@Controller('users')
+export class UsersController {
+  @Post()
+  @UsePipes(new ZodValidationPipe(CreateUserSchema))
+  create(@Body() body: CreateUserDto) {
+    return { message: 'User created', data: body }
+  }
+}
+```
+
+O pacote `nestjs-zod` é uma alternativa que adiciona decoradores (`@ZodBody()`, `@ZodParam()`) e auto-wiring do pipe globalmente, eliminando o `@UsePipes` por rota.
 
 ## Joi v17
 
