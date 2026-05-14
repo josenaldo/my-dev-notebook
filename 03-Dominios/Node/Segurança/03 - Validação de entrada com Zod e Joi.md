@@ -330,8 +330,8 @@ export const CreateUserSchema = z.object({
 
   birthDate: z.string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'Use YYYY-MM-DD format')
-    .optional()
-    .transform(val => val ? new Date(val) : undefined),
+    .transform(val => new Date(val))
+    .optional(),
 
   preferences: z.object({
     language: z.enum(['en', 'pt', 'es']).default('en'),
@@ -527,7 +527,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 
 ## Integração Zod com Fastify
 
-Fastify tem suporte nativo a JSON Schema para validação, mas também aceita Zod via plugin `@fastify/type-provider-zod` (anteriormente `fastify-zod`) ou via hook `preHandler` manual.
+Fastify tem suporte nativo a JSON Schema para validação, mas também aceita Zod via plugin `@fastify/type-provider-zod` ou via hook `preHandler` manual.
 
 ```typescript
 import Fastify from 'fastify';
@@ -535,7 +535,7 @@ import {
   serializerCompiler,
   validatorCompiler,
   ZodTypeProvider,
-} from 'fastify-type-provider-zod';
+} from '@fastify/type-provider-zod';
 import { z } from 'zod';
 
 const app = Fastify({ logger: true });
@@ -601,13 +601,12 @@ app.post('/products', {
 NestJS não tem suporte nativo a Zod, mas integra via `PipeTransform` — a interface do framework para transformação e validação de valores antes de chegarem ao handler. A abordagem manual cria um `ValidationPipe` reutilizável que recebe qualquer `ZodSchema` no construtor:
 
 ```typescript
-import { z } from 'zod'
+import { z, ZodTypeAny } from 'zod'
 import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common'
-import { ZodSchema } from 'zod'
 
 @Injectable()
 export class ZodValidationPipe implements PipeTransform {
-  constructor(private schema: ZodSchema) {}
+  constructor(private schema: ZodTypeAny) {}
 
   transform(value: unknown) {
     const result = this.schema.safeParse(value)
