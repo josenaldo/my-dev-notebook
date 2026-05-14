@@ -125,6 +125,7 @@ Mitigações: Zod ou Joi para validar todo input externo antes de qualquer opera
 **O problema**: falhas de segurança arquitetural que nenhuma implementação correta pode corrigir porque o design em si é inseguro. Em Node.js, exemplos comuns incluem: endpoints de autenticação sem rate limiting (brute force irrestrito), flows de reset de senha com tokens sem expiração, ausência de MFA em operações críticas, e ausência de separação entre tokens de curta e longa duração.
 
 ```typescript
+import crypto from 'node:crypto'
 import rateLimit from 'express-rate-limit'
 import express from 'express'
 
@@ -133,7 +134,7 @@ const app = express()
 // DESIGN CORRETO: rate limiting no endpoint de login evita brute force
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 10, // máximo 10 tentativas por IP por janela
+  limit: 10, // máximo 10 tentativas por IP por janela
   message: { error: 'Too many login attempts, please try again later' },
   standardHeaders: true, // retorna RateLimit-* headers (RFC 6585)
   legacyHeaders: false,
