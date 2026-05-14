@@ -106,6 +106,7 @@ const client = new issuer.Client({
   client_secret: process.env.CLIENT_SECRET,
 });
 
+// v5: client.grant() não processa nem valida a resposta como um TokenSet completo
 // Troca credenciais por access token — sem redirect, sem usuário
 const tokenSet = await client.grant({
   grant_type: 'client_credentials',
@@ -453,7 +454,7 @@ app.get('/auth/callback',
 | Simplicidade | Alto — abstrações prontas | Médio — API mais explícita |
 | Suporte OIDC completo | Limitado | Total |
 | Validação de ID Token | Manual | Automática |
-| PKCE | Não nativo | Nativo |
+| PKCE | Sim (v1.5+, `pkce: true`) | Nativo |
 | Discovery automático | Não | Sim |
 | Flexibilidade | Menor | Maior |
 | Ideal para | OAuth 2.0 simples, muitos providers via plugins | OIDC completo, ambientes corporativos, segurança rigorosa |
